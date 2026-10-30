@@ -114,7 +114,7 @@ Attributes on `TagGroup` (other than `aria-label`) fall through to the root elem
 
 ## EmptyState
 
-`EmptyState` is the small muted placeholder HeroUI renders inside empty collections (TagGroup, ListBox, Table). It renders "No results found" by default; pass your own text in the default slot. Use it in TagGroup's `#empty` slot.
+`EmptyState` is the small muted placeholder for empty collections (TagGroup, ListBox, Table). It renders "No results found" by default; pass your own text in the default slot. Use it in TagGroup's `#empty` slot.
 
 ```vue
 <template>
@@ -191,7 +191,7 @@ app.use(
 
 ## Accessibility
 
-- The list has `role="grid"`; each tag has `role="row"` wrapping a `role="gridcell"`, matching React Aria's `TagGroup`
+- The list has `role="grid"`; each tag has `role="row"` wrapping a `role="gridcell"`
 - `aria-multiselectable` is set on the list when `selection-mode` is `'multiple'`
 - `label` names the list through `aria-labelledby`; without one, pass `aria-label`
 - `description` and `error-message` are both referenced by the list's `aria-describedby`

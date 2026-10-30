@@ -17,8 +17,7 @@ import { Fieldset } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's compound parts (`Fieldset.Legend`, `Fieldset.Group`, `Fieldset.Actions`) become props and
-named slots, rendered in a fixed order: legend, description, field group, then actions.
+Fieldset is composed through props and named slots, rendered in a fixed order: legend, description, field group, then actions.
 
 ```vue
 <Fieldset legend="…" description="…">
@@ -31,7 +30,7 @@ named slots, rendered in a fixed order: legend, description, field group, then a
 
 - Each part renders only when its prop or slot is provided.
 - `disabled` sets the native `disabled` attribute and `data-disabled="true"`, and disables HareUI
-  controls inside (such as `Button` and `Link`) the same way HeroUI's fieldset does.
+  controls inside (such as `Button` and `Link`).
 
 `ui` keys: `base`, `legend`, `description`, `fieldGroup`, `actions`.
 
@@ -72,7 +71,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
 | `ui` key      | `data-slot`            | Description                  |
 | ------------- | ---------------------- | ---------------------------- |

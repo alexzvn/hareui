@@ -3,7 +3,7 @@ title: Composition
 description: Build flexible UI with named slots, scoped slot props, and the as prop.
 ---
 
-HareUI replaces HeroUI's compound-component pattern (`Card.Header`, `Alert.Icon`, …) with named template slots on a single component, plus a `:ui` prop for per-slot classes and an `as` prop to change the rendered element. This page covers the three composition tools you'll use across every component.
+HareUI composes components with named template slots on a single component, plus a `:ui` prop for per-slot classes and an `as` prop to change the rendered element. This page covers the three composition tools you'll use across every component.
 
 ## Named Slots
 
@@ -18,25 +18,9 @@ Each component documents its available slots on its own Anatomy section. A slot 
 </template>
 ```
 
-Compare to HeroUI's compound parts:
+Named slots replace separate sub-components:
 
-::: code-group
-
-```tsx [HeroUI (React)]
-import { Card } from '@heroui/react'
-
-;<Card>
-  <Card.Header>
-    <Card.Title>Settings</Card.Title>
-  </Card.Header>
-  <Card.Content>Body</Card.Content>
-  <Card.Footer>
-    <Card.Footer.Action>Save</Card.Footer.Action>
-  </Card.Footer>
-</Card>
-```
-
-```vue [HareUI (Vue)]
+```vue
 <template>
   <Card title="Settings">
     Body
@@ -46,8 +30,6 @@ import { Card } from '@heroui/react'
   </Card>
 </template>
 ```
-
-:::
 
 ## Scoped Slot Props
 

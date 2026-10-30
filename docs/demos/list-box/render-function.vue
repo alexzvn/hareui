@@ -1,5 +1,5 @@
 <template>
-  <!-- HeroUI's `render` prop has no Vue equivalent (plan drop: render functions); attributes fall through instead. -->
+  <!-- Attributes fall through to the root element -->
   <ListBox aria-label="Users" class="w-[220px]" data-custom="true" :items="users">
     <template #item-leading="{ item }">
       <Avatar size="sm" :alt="item.label" :src="item.avatar" :fallback="item.label?.[0]" />
@@ -19,19 +19,19 @@ const users: User[] = [
   {
     value: '1',
     label: 'Bob',
-    description: 'bob@heroui.com',
+    description: 'bob@example.com',
     avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
   },
   {
     value: '2',
     label: 'Fred',
-    description: 'fred@heroui.com',
+    description: 'fred@example.com',
     avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
   },
   {
     value: '3',
     label: 'Martha',
-    description: 'martha@heroui.com',
+    description: 'martha@example.com',
     avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/purple.jpg',
   },
 ]

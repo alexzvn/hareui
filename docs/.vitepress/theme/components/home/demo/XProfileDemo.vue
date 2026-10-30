@@ -27,7 +27,7 @@
       Building the future of UI for Vue.&nbsp;
       <br />
       <!-- One line: JSX drops the newline between the emoji and `&nbsp;`, Vue would render it as a space. -->
-      <span aria-label="rocket" role="img">🚀</span>&nbsp;A Vue port of HeroUI v3&nbsp;
+      <span aria-label="rocket" role="img">🚀</span>&nbsp;The modern UI library for Vue&nbsp;
     </p>
     <template #footer>
       <div class="flex gap-1">

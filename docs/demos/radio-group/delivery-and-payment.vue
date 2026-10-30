@@ -95,8 +95,7 @@ const paymentOptions: PaymentOption[] = [
   { description: 'Pay with PayPal', icon: paypal, label: 'PayPal', value: 'paypal' },
 ]
 
-// HeroUI wraps the radios in `<div class="grid gap-x-4 md:grid-cols-N">`; the group root takes that grid here,
-// with the label spanning every column.
+// The group root is a grid, with the label spanning every column.
 const deliveryBase = 'grid gap-x-4 md:grid-cols-3 [&>[data-slot=label]]:col-span-full'
 const paymentBase = 'grid gap-x-4 md:grid-cols-2 [&>[data-slot=label]]:col-span-full'
 

@@ -1,6 +1,6 @@
 <template>
   <AlertDialog class="sm:max-w-[400px]" status="danger" title="Delete this item?">
-    <!-- Any focusable element can be the trigger (HeroUI's AlertDialog.Trigger) -->
+    <!-- Any focusable element can be the trigger -->
     <button
       type="button"
       class="group flex cursor-(--cursor-interactive) items-center gap-3 rounded-2xl bg-surface p-4 text-start shadow-xs transition-[transform,background-color,box-shadow] select-none hover:bg-surface-secondary focus-visible:status-focused active:scale-[0.97] motion-reduce:transition-none"

@@ -107,16 +107,16 @@ app.use(
 
 ## Styling Reference
 
-| `ui` key      | `data-slot`           | Element                                                                                           |
-| ------------- | --------------------- | ------------------------------------------------------------------------------------------------- |
-| `region`      | `toast-region`        | The positioned landmark region toasts are teleported into                                         |
-| `toast`       | `toast`               | Each toast's positioned, animated wrapper (Reka has no built-in equivalent; implemented directly) |
-| `content`     | `toast-content`       | Wrapper for the title and description                                                             |
-| `indicator`   | `toast-indicator`     | Icon/spinner container, rendered unless `indicator` is `null`                                     |
-| `title`       | `toast-title`         | The toast title                                                                                   |
-| `description` | `toast-description`   | The toast description                                                                             |
-| `close`       | `toast-close`         | The close button                                                                                  |
-| `action`      | `toast-action-button` | The optional action button                                                                        |
+| `ui` key      | `data-slot`           | Element                                                       |
+| ------------- | --------------------- | ------------------------------------------------------------- |
+| `region`      | `toast-region`        | The positioned landmark region toasts are teleported into     |
+| `toast`       | `toast`               | Each toast's positioned, animated wrapper                     |
+| `content`     | `toast-content`       | Wrapper for the title and description                         |
+| `indicator`   | `toast-indicator`     | Icon/spinner container, rendered unless `indicator` is `null` |
+| `title`       | `toast-title`         | The toast title                                               |
+| `description` | `toast-description`   | The toast description                                         |
+| `close`       | `toast-close`         | The close button                                              |
+| `action`      | `toast-action-button` | The optional action button                                    |
 
 ### Interactive States
 

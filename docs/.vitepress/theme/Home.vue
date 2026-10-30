@@ -10,7 +10,7 @@
           >
             <Icon icon="gravity-ui:rocket" class="size-3 shrink-0 text-accent-soft-foreground" />
             <span class="max-w-60 truncate sm:max-w-full"
-              >HareUI v{{ version }} — a Vue port of HeroUI v3</span
+              >HareUI v{{ version }} — the modern UI library for Vue</span
             >
           </a>
           <h1
@@ -29,7 +29,7 @@
           <section aria-labelledby="hareui-overview" class="sr-only">
             <h2 id="hareui-overview">Build accessible products with HareUI</h2>
             <p>
-              HareUI is an open-source Vue port of HeroUI v3. It combines Reka UI primitives with
+              HareUI is an open-source UI library for Vue. It combines headless primitives with
               Tailwind CSS v4 to provide accessible behavior, typed APIs, customizable composition,
               and polished defaults.
             </p>

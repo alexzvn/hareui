@@ -1,5 +1,5 @@
 <template>
-  <!-- HeroUI stacks the buttons in a wrapper <div>; HareUI renders the group itself, so the grid places them instead -->
+  <!-- The group's grid stacks the two buttons -->
   <NumberField
     class="w-full max-w-64"
     :default-value="99"

@@ -35,7 +35,7 @@ composed through props or named slots.
 | `ui` key  | `data-slot`      | Element                                                                                                        |
 | --------- | ---------------- | -------------------------------------------------------------------------------------------------------------- |
 | `base`    | `switch`         | `<div>` root                                                                                                   |
-| `content` | `switch-content` | The Reka `SwitchRoot` button                                                                                   |
+| `content` | `switch-content` | The switch button                                                                                              |
 | `control` | `switch-control` | The track                                                                                                      |
 | `thumb`   | `switch-thumb`   | The moving thumb                                                                                               |
 | `icon`    | `switch-icon`    | Icon container inside the thumb (iff `#icon`)                                                                  |
@@ -167,7 +167,7 @@ app.use(
 
 `SwitchGroup` is a layout-only wrapper: it renders no state of its own and shares no context with its
 `Switch` children — each switch keeps its own `name`/`value`/`v-model`. Use it purely to apply the grouped
-spacing/orientation styling HeroUI ships for stacks of switches.
+spacing/orientation styling for stacks of switches.
 
 ### Props
 

@@ -3,8 +3,8 @@
     <Button variant="secondary"> Open Drawer </Button>
     <template #body>
       <p>
-        This is a bottom drawer built with Reka UI's Dialog component. It slides up from the bottom
-        of the screen with a smooth CSS transition.
+        This drawer slides in from the right edge of the screen and keeps the page behind it in
+        view.
       </p>
     </template>
     <template #footer="{ close }">

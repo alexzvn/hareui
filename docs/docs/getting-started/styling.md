@@ -61,7 +61,7 @@ Classes are combined in this order — later layers win when they target the sam
 
 ## State-Based Styling
 
-HareUI components expose their state through `data-slot` and state data attributes, mirroring HeroUI's selectors:
+HareUI components expose their state through `data-slot` and state data attributes:
 
 ```css
 /* Target component state */
@@ -80,14 +80,14 @@ HareUI components expose their state through `data-slot` and state data attribut
 
 Common attributes:
 
-| Attribute                                    | Meaning                                                                 |
-| -------------------------------------------- | ----------------------------------------------------------------------- |
-| `data-slot="<name>"`                         | Identifies the rendered part, identical to HeroUI's `data-slot` strings |
-| `data-state="checked\|open\|closed\|active"` | Reka UI state (checkbox/switch/radio, overlays, tabs)                   |
-| `data-disabled`                              | Present when the part is disabled                                       |
-| `data-pending="true"`                        | Button is in a pending state                                            |
-| `data-invalid="true"`                        | Form field failed validation                                            |
-| `data-side="top\|right\|bottom\|left"`       | Floating content placement (popover, tooltip)                           |
+| Attribute                                    | Meaning                                                 |
+| -------------------------------------------- | ------------------------------------------------------- |
+| `data-slot="<name>"`                         | Identifies the rendered part                            |
+| `data-state="checked\|open\|closed\|active"` | Component state (checkbox/switch/radio, overlays, tabs) |
+| `data-disabled`                              | Present when the part is disabled                       |
+| `data-pending="true"`                        | Button is in a pending state                            |
+| `data-invalid="true"`                        | Form field failed validation                            |
+| `data-side="top\|right\|bottom\|left"`       | Floating content placement (popover, tooltip)           |
 
 See [Animation](/docs/getting-started/animation) for the full `data-state` → Tailwind variant mapping used in transitions.
 

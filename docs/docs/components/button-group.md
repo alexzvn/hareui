@@ -29,8 +29,7 @@ import { Button, ButtonGroup } from '@hareui/vue'
 
 > **ButtonGroup** wraps multiple Button components together, applying consistent styling, spacing, and automatic border radius handling. It passes `size`, `variant`, `disabled` and `fullWidth` to its Buttons through provide/inject.
 
-HeroUI's `ButtonGroup.Separator`, placed inside each Button except the first, becomes the `separator` prop:
-every Button in the group renders the divider and the first Button hides it.
+With the `separator` prop, every Button in the group renders the divider and the first Button hides it.
 
 `ui` keys: `base`, `separator`, plus `button` and `buttonOutline`, which are classes added to each grouped
 Button (`buttonOutline` only to `variant="outline"` Buttons).
@@ -93,7 +92,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
 | `ui` key        | `data-slot`              | Description                                  |
 | --------------- | ------------------------ | -------------------------------------------- |
@@ -128,7 +127,7 @@ The edge radii are set through CSS variables, so a `rounded-*` class on a Button
 ## Note
 
 - ButtonGroup passes `size`, `variant`, `disabled` and `fullWidth` to its Button components
-- **Only the group's own buttons receive the ButtonGroup props.** A Button nested inside another Button does not inherit them. Unlike HeroUI, a Button rendered by a component in the group's slot (a Dropdown trigger, for example) does inherit them
+- **Only the group's own buttons receive the ButtonGroup props.** A Button nested inside another Button does not inherit them. A Button rendered by a component in the group's slot (a Dropdown trigger, for example) does inherit them
 - Individual Button components can override the group's `disabled` prop by setting `:disabled="false"`
 - The component automatically handles border radius between buttons
 - Buttons in a group have their active/pressed scale transform removed for a more cohesive appearance

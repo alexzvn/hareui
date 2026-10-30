@@ -17,7 +17,7 @@
           <component :is="indicator" class="text-muted" />
         </Button>
       </template>
-      Reach us at help@heroui.com. Typical response time is under one business day.
+      Reach us at help@example.com. Typical response time is under one business day.
     </Disclosure>
   </DisclosureGroup>
 </template>

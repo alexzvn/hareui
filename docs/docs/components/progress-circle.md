@@ -18,9 +18,8 @@ import { ProgressCircle } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `ProgressCircle.Track`, `ProgressCircle.TrackCircle` and `ProgressCircle.FillCircle` parts are
-rendered by the component: an SVG with a background circle and a progress arc. It is built on Reka UI's
-`ProgressRoot`, with React Aria's `aria-value*` semantics.
+The track, track circle and fill circle are rendered by the component: an SVG with a background circle and a
+progress arc. The root carries `role="progressbar"` and `aria-value*` attributes.
 
 ```vue
 <ProgressCircle aria-label="Loading" :value="60" />
@@ -85,7 +84,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
 | `ui` key      | `data-slot`                    | Description       |
 | ------------- | ------------------------------ | ----------------- |
@@ -94,11 +93,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `trackCircle` | `progress-circle-track-circle` | Background circle |
 | `fillCircle`  | `progress-circle-fill-circle`  | Progress arc      |
 
-HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHareUI`):
+These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
 
-- `size`: `sm`, `md` (default), `lg` (`.progress-circle--{size}`)
-- `color`: `default`, `accent` (default), `success`, `warning`, `danger` (`.progress-circle--{color}`)
+- `size`: `sm`, `md` (default), `lg`
+- `color`: `default`, `accent` (default), `success`, `warning`, `danger`
 
 ## API Reference
 

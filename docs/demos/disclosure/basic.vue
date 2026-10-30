@@ -9,12 +9,12 @@
       <template #trigger="{ indicator }">
         <Button variant="secondary">
           <Icon icon="gravity-ui:qr-code" />
-          Preview HeroUI Native
+          Preview the mobile app
           <component :is="indicator" />
         </Button>
       </template>
       <p class="text-sm text-muted">
-        Scan this QR code with your camera app to preview the HeroUI native components.
+        Scan this QR code with your camera app to preview the mobile components.
       </p>
       <img
         alt="Expo Go QR Code"

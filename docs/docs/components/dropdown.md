@@ -157,16 +157,16 @@ app.use(
 
 ## Styling Reference
 
-| `ui` key           | `data-slot`           | Element                                                                                              |
-| ------------------ | --------------------- | ---------------------------------------------------------------------------------------------------- |
-| `popover`          | `dropdown-popover`    | The popover container (Reka `DropdownMenuContent`, which carries `role="menu"`); `class` merges here |
-| `menu`             | `dropdown-menu`       | The menu container inside the popover                                                                |
-| `item`             | `menu-item`           | Menu item; per-item classes go in `item.class`                                                       |
-| `indicator`        | `menu-item-indicator` | Selection indicator (`menu-item-indicator--checkmark` / `menu-item-indicator--dot` SVG)              |
-| `submenuIndicator` | `submenu-indicator`   | Submenu chevron                                                                                      |
-| `section`          | -                     | Section group (`<section role="group">`, labelled by its header)                                     |
-| `header`           | `header`              | Section header, labels the group                                                                     |
-| `separator`        | `separator`           | Divider between entries                                                                              |
+| `ui` key           | `data-slot`           | Element                                                                                 |
+| ------------------ | --------------------- | --------------------------------------------------------------------------------------- |
+| `popover`          | `dropdown-popover`    | The popover container, which carries `role="menu"`; `class` merges here                 |
+| `menu`             | `dropdown-menu`       | The menu container inside the popover                                                   |
+| `item`             | `menu-item`           | Menu item; per-item classes go in `item.class`                                          |
+| `indicator`        | `menu-item-indicator` | Selection indicator (`menu-item-indicator--checkmark` / `menu-item-indicator--dot` SVG) |
+| `submenuIndicator` | `submenu-indicator`   | Submenu chevron                                                                         |
+| `section`          | -                     | Section group (`<section role="group">`, labelled by its header)                        |
+| `header`           | `header`              | Section header, labels the group                                                        |
+| `separator`        | `separator`           | Divider between entries                                                                 |
 
 Item labels and descriptions render with the [Label](/docs/components/label) and
 [Description](/docs/components/description) components (`data-slot="label"` /
@@ -181,7 +181,7 @@ Item labels and descriptions render with the [Label](/docs/components/label) and
 
 The component supports both CSS pseudo-classes and data attributes for flexibility:
 
-- **Hover**: `:hover` or `[data-hovered="true"]` on items
+- **Highlighted**: `[data-highlighted]` on the item under the pointer or keyboard focus (one item at a time)
 - **Focus**: `[data-focused="true"]` on the focused item, `[data-focus-visible="true"]` for keyboard
   focus only
 - **Disabled**: `[data-disabled]` on items
@@ -189,8 +189,7 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 - **Selected**: `[data-selected="true"]` or `[aria-checked="true"]` on items
 - **Has submenu**: `[data-has-submenu="true"]` on submenu triggers
 - **Selection mode**: `[data-selection-mode="single|multiple"]` on the menu and its selectable items
-- **Entering / Exiting**: `[data-state="open"]` / `[data-state="closed"]` on the popover, mapped from
-  HeroUI's `[data-entering]` / `[data-exiting]`
+- **Entering / Exiting**: `[data-state="open"]` / `[data-state="closed"]` on the popover
 
 ## API Reference
 
@@ -212,8 +211,7 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 ## Accessibility
 
-Implements the [WAI-ARIA Menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/) via Reka
-UI's `DropdownMenu` primitive:
+Implements the [WAI-ARIA Menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/):
 
 - Full keyboard navigation (arrow keys, `Home` / `End`, typeahead using `textValue` or `label`)
 - Selectable items use `role="menuitemradio"` (single) or `role="menuitemcheckbox"` (multiple) with

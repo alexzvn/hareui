@@ -16,7 +16,7 @@ const favicon = { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }
 
 export default defineConfigWithTheme<ThemeConfig>({
   title: 'HareUI',
-  description: 'Beautiful, fast and modern Vue UI library — a Vue port of HeroUI v3',
+  description: 'Beautiful, fast and modern Vue UI library',
   cleanUrls: true,
   appearance: true,
   ignoreDeadLinks: [new RegExp(`^/docs/components/(${componentSlugs.join('|')})$`)],

@@ -19,7 +19,7 @@ import { Badge } from '@hareui/vue'
 
 ```vue
 <template>
-  <!-- the default slot is the anchored element (HeroUI's Badge.Anchor children) -->
+  <!-- the default slot is the anchored element -->
   <Badge content="5">
     <Avatar fallback="JD" />
   </Badge>
@@ -30,7 +30,7 @@ import { Badge } from '@hareui/vue'
 | -------- | ---------------------------- | ------------------------------------------------------- |
 | `anchor` | `[data-slot="badge-anchor"]` | Wraps the default slot; only rendered when it is filled |
 | `base`   | `[data-slot="badge"]`        | The badge (receives `class`)                            |
-| `label`  | `[data-slot="badge-label"]`  | Wraps `content` (HeroUI's `Badge.Label`)                |
+| `label`  | `[data-slot="badge-label"]`  | Wraps `content`                                         |
 
 ## Examples
 

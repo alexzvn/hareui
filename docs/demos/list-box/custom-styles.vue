@@ -23,13 +23,13 @@ const users: User[] = [
   {
     value: '1',
     label: 'Bob',
-    description: 'bob@heroui.com',
+    description: 'bob@example.com',
     avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',
   },
   {
     value: '2',
     label: 'Fred',
-    description: 'fred@heroui.com',
+    description: 'fred@example.com',
     avatar: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/green.jpg',
   },
 ]

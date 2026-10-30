@@ -20,7 +20,7 @@ import { Label } from '@hareui/vue'
 
 ## Anatomy
 
-Label renders a single `<label>` element (Reka UI `Label`).
+Label renders a single `<label>` element.
 
 | `ui` key | `data-slot` | Element   |
 | -------- | ----------- | --------- |

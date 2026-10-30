@@ -42,21 +42,21 @@ type Section = {
 const items: Section[] = [
   {
     content:
-      'Learn the basics of HeroUI and how to integrate it into your React project. This section covers installation, setup, and your first component.',
+      'Pack light layers, a rain shell and shoes you have already broken in. The trail is muddy after the first bridge.',
     value: 'getting-started',
-    label: 'Getting Started',
+    label: 'What to Bring',
   },
   {
     content:
-      'Understand the fundamental concepts behind HeroUI, including the compound component pattern, styling with Tailwind CSS, and accessibility features.',
+      'The loop climbs 600 metres over 14 kilometres. Most walkers finish in five to six hours, breaks included.',
     value: 'core-concepts',
-    label: 'Core Concepts',
+    label: 'Route and Distance',
   },
   {
     content:
-      'Explore advanced features like custom variants, theme customization, and integration with other libraries in your React ecosystem.',
+      'Buses leave the station every 40 minutes until 18:00. Parking at the trailhead fills up by nine on weekends.',
     value: 'advanced-usage',
-    label: 'Advanced Usage',
+    label: 'Getting There',
   },
 ]
 

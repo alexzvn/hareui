@@ -51,7 +51,7 @@ DateField renders a [Label](/docs/components/label), a group holding an optional
 | —         | `description`              | [Description](/docs/components/description) (iff `description` / `#description`)                               |
 | —         | `field-error`              | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
-> **DateField** combines a label, segmented date input, description, and error into a single accessible component. Values are [`@internationalized/date`](https://react-aria.adobe.com/internationalized/date/) objects (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`) — the same types HeroUI uses.
+> **DateField** combines a label, segmented date input, description, and error into a single accessible component. Values are [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) objects (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`).
 
 ## Examples
 
@@ -126,7 +126,7 @@ DateField supports validation with `min-value`, `max-value`, `is-date-unavailabl
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element and lets sub-parts render-prop their own markup. Option A has no compound parts to render-prop into; attributes you pass to `DateField` fall through to the root element instead.
+DateField has no `render` prop; attributes you pass to `DateField` fall through to the root element instead.
 
 <ComponentPreview name="date-field/render-function" />
 
@@ -195,7 +195,7 @@ DateField sets these data attributes:
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
 - `invalid` sets `aria-invalid="true"` on the field and every segment; the error is announced via `role="alert"`
 - Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments, <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
-- `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own, matching React Aria's `useDateFieldState` — no need to compute `invalid` yourself just for native-range feedback
+- `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own — no need to compute `invalid` yourself just for native-range feedback
 
 ## Related Components
 

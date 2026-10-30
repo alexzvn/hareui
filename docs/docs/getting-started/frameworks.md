@@ -175,7 +175,7 @@ The plugin step is optional, same as in Vite. Skip it unless you need `createHar
 
 ## Other Frameworks
 
-Unlike HeroUI, which ships a framework-agnostic `@heroui/styles` package usable from Vue, Svelte, Angular, or plain HTML, HareUI components are Vue single-file components with [Reka UI](https://reka-ui.com) as a hard dependency. There is no standalone BEM-class stylesheet to drop into a non-Vue project — HareUI requires Vue 3.5+.
+HareUI components are Vue single-file components. There is no standalone stylesheet to drop into a non-Vue project — HareUI requires Vue 3.5+.
 
 ## Next Steps
 

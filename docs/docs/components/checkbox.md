@@ -19,7 +19,7 @@ import { Checkbox } from '@hareui/vue'
 
 ## Anatomy
 
-Checkbox renders a Reka UI [`CheckboxRoot`](https://reka-ui.com/docs/components/checkbox), a control, an indicator and optional [Description](/docs/components/description) / [FieldError](/docs/components/field-error) — composed through props or slots.
+Checkbox renders a clickable label, a control, an indicator and optional [Description](/docs/components/description) / [FieldError](/docs/components/field-error) — composed through props or slots.
 
 ```vue
 <template>
@@ -39,7 +39,7 @@ Checkbox renders a Reka UI [`CheckboxRoot`](https://reka-ui.com/docs/components/
 | `ui` key    | `data-slot`          | Element                                                                                                        |
 | ----------- | -------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `base`      | `checkbox`           | `<div>` root                                                                                                   |
-| `content`   | `checkbox-content`   | Reka `CheckboxRoot` (clickable label + control)                                                                |
+| `content`   | `checkbox-content`   | `<button role="checkbox">` (clickable label + control)                                                         |
 | `control`   | `checkbox-control`   | Control box                                                                                                    |
 | `indicator` | `checkbox-indicator` | Checkmark / dash indicator                                                                                     |
 | —           | `description`        | [Description](/docs/components/description) (iff `description` / `#description`)                               |
@@ -161,7 +161,7 @@ Checkbox sets these data attributes on its root:
 
 ## Accessibility
 
-- The clickable label (`[data-slot="checkbox-content"]`) is a native `<button role="checkbox">` rendered by Reka UI, keyboard-operable with <kbd>Space</kbd>
+- The clickable label (`[data-slot="checkbox-content"]`) is a native `<button role="checkbox">`, keyboard-operable with <kbd>Space</kbd>
 - `invalid` sets `aria-invalid="true"`; `aria-describedby` lists the description (`<id>-description`) and error (`<id>-error`) ids
 - `required` and `disabled` set the matching native/ARIA attributes
 - For a checkbox without a visible label, pass an `aria-label` via `$attrs`

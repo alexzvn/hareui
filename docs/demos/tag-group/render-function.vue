@@ -1,5 +1,5 @@
 <template>
-  <!-- Attributes fall through to the root element (HeroUI's `render` prop) -->
+  <!-- Attributes fall through to the root element -->
   <TagGroup aria-label="Tags" data-custom="foo" selection-mode="single" :items="items">
     <template #item="{ item }">
       <Icon :icon="icons[item.id]!" />

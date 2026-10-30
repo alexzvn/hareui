@@ -33,7 +33,7 @@ const options: RadioGroupItem[] = [
   { description: '$120 billed once a year', label: 'Yearly', value: 'yearly' },
 ]
 
-// HeroUI's `data-[hovered|pressed|focus-visible=true]` render-state attributes map to `hover:` / `active:` / `focus-visible:`.
+// Hover, press and keyboard-focus styles use `hover:` / `active:` / `focus-visible:`.
 const contentClass =
   'group flex w-full items-start gap-3 rounded-xl border border-success/10 bg-success-soft/30 px-4 py-3 transition-colors focus-visible:ring-2 focus-visible:ring-success/15 hover:bg-success-soft-hover data-[selected=true]:border-success/30 data-[selected=true]:bg-success-soft data-[selected=true]:hover:bg-success-soft-hover'
 

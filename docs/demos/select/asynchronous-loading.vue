@@ -24,7 +24,7 @@ type Pokemon = {
   name: string
 }
 
-// HeroUI's `useAsyncList` equivalent: fetch the first page, then the next cursor on `load-more`
+// Fetch the first page, then the next cursor on `load-more`
 const pokemon = ref<Pokemon[]>([])
 const isLoading = ref(false)
 let cursor: string | null = 'https://pokeapi.co/api/v2/pokemon'

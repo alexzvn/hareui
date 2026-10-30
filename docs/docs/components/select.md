@@ -146,7 +146,7 @@ Because ARIA treats the children of a button as presentational, the clear contro
 
 ### Render Function
 
-HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom` fall through to the root.
+Attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="select/render-function" />
 

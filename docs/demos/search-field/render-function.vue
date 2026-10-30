@@ -1,5 +1,5 @@
 <template>
-  <!-- Attributes other than aria-label/aria-labelledby fall through to the root element (HeroUI's `render` prop) -->
+  <!-- Attributes other than aria-label/aria-labelledby fall through to the root element -->
   <SearchField
     class="w-[280px]"
     data-custom="foo"

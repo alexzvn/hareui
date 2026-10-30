@@ -18,8 +18,7 @@ import { ProgressBar } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `Label`, `ProgressBar.Output`, `ProgressBar.Track` and `ProgressBar.Fill` parts are
-rendered by the component, built on Reka UI's `ProgressRoot` / `ProgressIndicator`.
+The label, output, track and fill parts are rendered by the component.
 
 ```vue
 <ProgressBar :value="60" label="Loading">
@@ -91,7 +90,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
 | `ui` key | `data-slot`           | Description                                      |
 | -------- | --------------------- | ------------------------------------------------ |
@@ -101,11 +100,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `track`  | `progress-bar-track`  | Track background                                 |
 | `fill`   | `progress-bar-fill`   | Filled portion of the track                      |
 
-HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHareUI`):
+These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
 
-- `size`: `sm` (thinner track), `md` (default), `lg` (thicker track) (`.progress-bar--{size}`)
-- `color`: `default`, `accent` (default), `success`, `warning`, `danger` (`.progress-bar--{color}`)
+- `size`: `sm` (thinner track), `md` (default), `lg` (thicker track)
+- `color`: `default`, `accent` (default), `success`, `warning`, `danger`
 
 ## API Reference
 

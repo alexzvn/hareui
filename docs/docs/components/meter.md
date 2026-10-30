@@ -17,8 +17,7 @@ import { Meter } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `Label`, `Meter.Output`, `Meter.Track` and `Meter.Fill` parts are rendered by the component.
-Reka UI has no meter primitive, so the root carries React Aria's meter semantics
+The label, output, track and fill parts are rendered by the component. The root carries the meter semantics
 (`role="meter progressbar"`, `aria-valuenow`, `aria-valuetext`) itself.
 
 ```vue
@@ -85,7 +84,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
 | `ui` key | `data-slot`    | Description                                      |
 | -------- | -------------- | ------------------------------------------------ |
@@ -95,11 +94,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `track`  | `meter-track`  | Track background                                 |
 | `fill`   | `meter-fill`   | Filled portion of the track                      |
 
-HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHareUI`):
+These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
 
-- `size`: `sm` (thinner track), `md` (default), `lg` (thicker track) (`.meter--{size}`)
-- `color`: `default`, `accent` (default), `success`, `warning`, `danger` (`.meter--{color}`)
+- `size`: `sm` (thinner track), `md` (default), `lg` (thicker track)
+- `color`: `default`, `accent` (default), `success`, `warning`, `danger`
 
 ## API Reference
 

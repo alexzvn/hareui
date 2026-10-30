@@ -19,7 +19,7 @@ import { InputOtp } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `InputOTP` is a low-level anatomy component built on the [input-otp](https://github.com/guilhermerodz/input-otp) library: a single real `<input>` (invisible, but fully interactive) overlays a row of decorative slots, so typing, <kbd>Backspace</kbd>, arrow keys and paste are native browser text-editing behavior rather than custom per-slot focus management. `InputOtp` bundles that box together with a `Label`, `Description` and `FieldError`, following the same field convention as [SearchField](/docs/components/search-field) and [NumberField](/docs/components/number-field). Slots are laid out with `groups`, an array of slot counts per visual group; a separator is rendered between each group.
+The OTP box is built on the [input-otp](https://github.com/guilhermerodz/input-otp) library: a single real `<input>` (invisible, but fully interactive) overlays a row of decorative slots, so typing, <kbd>Backspace</kbd>, arrow keys and paste are native browser text-editing behavior rather than custom per-slot focus management. `InputOtp` bundles that box together with a `Label`, `Description` and `FieldError`, following the same field convention as [SearchField](/docs/components/search-field) and [NumberField](/docs/components/number-field). Slots are laid out with `groups`, an array of slot counts per visual group; a separator is rendered between each group.
 
 ```vue
 <template>
@@ -38,7 +38,7 @@ HeroUI's `InputOTP` is a low-level anatomy component built on the [input-otp](ht
 | ----------- | ---------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `base`      | —                      | root `<div>` (HareUI-only), stacks label/box/description/error                                                 |
 | —           | `label`                | [Label](/docs/components/label) (iff `label` / `#label`)                                                       |
-| `root`      | —                      | the box (`<div data-input-otp-container>`), HeroUI's `.input-otp`                                              |
+| `root`      | —                      | the box (`<div data-input-otp-container>`)                                                                     |
 | `group`     | `input-otp-group`      | one `<div>` per entry in `groups`                                                                              |
 | `slot`      | `input-otp-slot`       | one `<div>` per character                                                                                      |
 | `slotValue` | `input-otp-slot-value` | the character inside a filled slot                                                                             |
@@ -95,7 +95,7 @@ A complete two-factor authentication form with validation and submission.
 
 ### With Pattern
 
-Use the `pattern` prop to restrict input to specific characters: `'digits'`, `'chars'` or `'alphanumeric'`, mirroring HeroUI's exported `REGEXP_ONLY_DIGITS` / `REGEXP_ONLY_CHARS` / `REGEXP_ONLY_DIGITS_AND_CHARS` patterns.
+Use the `pattern` prop to restrict input to specific characters: `'digits'`, `'chars'` or `'alphanumeric'`.
 
 <ComponentPreview name="input-otp/with-pattern" />
 
@@ -132,7 +132,7 @@ app.use(
 - `slotValue` → `[data-slot="input-otp-slot-value"]` — the rendered character
 - `caret` → `[data-slot="input-otp-caret"]` — the blinking fake caret
 - `separator` → `[data-slot="input-otp-separator"]` — the dash between groups
-- `input` → `[data-slot="input-otp"]` — the real, invisible `<input>` (as in HeroUI, where `input-otp` passes `data-slot` to the input)
+- `input` → `[data-slot="input-otp"]` — the real, invisible `<input>`
 
 ### Interactive States
 

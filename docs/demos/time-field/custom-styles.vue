@@ -1,8 +1,7 @@
 <template>
   <!--
-    HeroUI's custom-styles demo places `<Description>` above `<TimeField.Group>` via its compound
-    children order; Option A's `description` prop always renders after the field's anatomy (same
-    position as every other description demo), so the description sits below the group here.
+    The `description` prop always renders after the field's anatomy, so the description sits
+    below the group here.
   -->
   <TimeField
     class="w-full max-w-48 gap-1.5"

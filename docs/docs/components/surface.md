@@ -61,14 +61,13 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
 | `ui` key | `data-slot` | Description            |
 | -------- | ----------- | ---------------------- |
 | `base`   | `surface`   | Base surface container |
 
-HeroUI's `.surface--*` modifier classes correspond to the `variant` prop (HareUI renders utilities,
-not BEM classes, so style through `class`, `ui` or `createHareUI`): `transparent`, `default`,
+The `variant` prop sets the background (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`): `transparent`, `default`,
 `secondary`, `tertiary`.
 
 ## API Reference

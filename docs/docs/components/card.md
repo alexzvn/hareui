@@ -17,8 +17,7 @@ import { Card } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's compound parts (`Card.Header`, `Card.Title`, `Card.Description`, `Card.Content`,
-`Card.Footer`) become props and named slots, rendered in a fixed order: `#leading`, header,
+Card is composed through props and named slots, rendered in a fixed order: `#leading`, header,
 content (default slot), then `#footer`.
 
 ```vue
@@ -34,7 +33,7 @@ content (default slot), then `#footer`.
 
 - The header renders only when the `title`/`description` props or the `#header`/`#title`/`#description` slots are provided.
 - The content wrapper renders only when the default slot is used; the footer only when `#footer` is used.
-- `#leading` renders its children directly inside the root, without a wrapper, so they become flex items of the card (like the plain children HeroUI places before `Card.Header`).
+- `#leading` renders its children directly inside the root, without a wrapper, so they become flex items of the card.
 
 `ui` keys: `base`, `header`, `title`, `description`, `content`, `footer`.
 
@@ -101,8 +100,7 @@ app.use(
 ### Title and description in custom wrappers
 
 When a layout puts the title or description inside your own markup (like the horizontal layout
-above), resolve the Card theme with `tv` to reuse its slot classes, the equivalent of HeroUI's
-`cardVariants()`:
+above), resolve the Card theme with `tv` to reuse its slot classes:
 
 ```vue
 <template>
@@ -129,7 +127,7 @@ don't apply to these classes.
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
 | `ui` key      | `data-slot`        | Description                                            |
 | ------------- | ------------------ | ------------------------------------------------------ |
@@ -140,9 +138,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `content`     | `card-content`     | Flexible content container (default slot)              |
 | `footer`      | `card-footer`      | Footer with row layout                                 |
 
-HeroUI's modifier classes correspond to the `variant` prop (HareUI renders utilities, not BEM
-classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`,
-`.card--default`, `.card--secondary`, `.card--tertiary`.
+The `variant` prop (`transparent`, `default`, `secondary`, `tertiary`) sets the surface. HareUI
+renders utility classes, so style through `class`, `ui` or `createHareUI`.
 
 ## API Reference
 

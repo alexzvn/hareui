@@ -1,6 +1,6 @@
 <template>
   <!--
-    HeroUI restyles the composed RangeCalendar's parts directly. Option A reaches the field parts through
+    The field parts are styled through
     `:ui`, and the `#calendar` slot replaces the embedded RangeCalendar; bind `value` and call `onSelect`
     to keep it wired to the picker.
   -->

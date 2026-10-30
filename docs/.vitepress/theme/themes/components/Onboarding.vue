@@ -1,7 +1,7 @@
 <template>
   <Modal
     v-model:open="isOpen"
-    title="Adapt HeroUI v3 to your brand"
+    title="Adapt HareUI to your brand"
     size="lg"
     class="max-w-[480px]"
     :close-button="false"
@@ -25,7 +25,7 @@
     </template>
     <template #body>
       <div class="flex flex-col gap-2">
-        <p class="text-base font-medium text-foreground">Adapt HeroUI v3 to your brand</p>
+        <p class="text-base font-medium text-foreground">Adapt HareUI to your brand</p>
         <p class="text-sm leading-5 text-muted">
           Customize colors, radius, and typography using a token system that keeps every component
           consistent and production-ready.

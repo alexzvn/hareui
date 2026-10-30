@@ -119,17 +119,17 @@ app.use(
 
 ## Styling Reference
 
-| `ui` key       | `data-slot`                  | Element                                                                                    |
-| -------------- | ---------------------------- | ------------------------------------------------------------------------------------------ |
-| `backdrop`     | `alert-dialog-backdrop`      | Overlay backdrop behind the dialog (Reka `DialogOverlay`)                                  |
-| `container`    | `alert-dialog-container`     | Positioning wrapper with placement support                                                 |
-| `dialog`       | `alert-dialog-dialog`        | Dialog content container (Reka `DialogContent`, `role="alertdialog"`); `class` merges here |
-| `header`       | `alert-dialog-header`        | Header section for the icon and title                                                      |
-| `heading`      | `alert-dialog-heading`       | Heading text (Reka `DialogTitle`)                                                          |
-| `body`         | `alert-dialog-body`          | Main content area, rendered when `#body` is present                                        |
-| `footer`       | `alert-dialog-footer`        | Footer section for actions, rendered when `#footer` is present                             |
-| `icon`         | `alert-dialog-icon`          | Icon container with status colors, rendered when `icon` is `true`                          |
-| `closeTrigger` | `alert-dialog-close-trigger` | Close button, rendered when `closeButton` is `true`                                        |
+| `ui` key       | `data-slot`                  | Element                                                                           |
+| -------------- | ---------------------------- | --------------------------------------------------------------------------------- |
+| `backdrop`     | `alert-dialog-backdrop`      | Overlay backdrop behind the dialog                                                |
+| `container`    | `alert-dialog-container`     | Positioning wrapper with placement support                                        |
+| `dialog`       | `alert-dialog-dialog`        | Dialog content container, which carries `role="alertdialog"`; `class` merges here |
+| `header`       | `alert-dialog-header`        | Header section for the icon and title                                             |
+| `heading`      | `alert-dialog-heading`       | Heading text, which labels the dialog                                             |
+| `body`         | `alert-dialog-body`          | Main content area, rendered when `#body` is present                               |
+| `footer`       | `alert-dialog-footer`        | Footer section for actions, rendered when `#footer` is present                    |
+| `icon`         | `alert-dialog-icon`          | Icon container with status colors, rendered when `icon` is `true`                 |
+| `closeTrigger` | `alert-dialog-close-trigger` | Close button, rendered when `closeButton` is `true`                               |
 
 The default status icon inside `icon` carries `data-slot="alert-dialog-default-icon"`.
 
@@ -153,8 +153,7 @@ The default status icon inside `icon` carries `data-slot="alert-dialog-default-i
 - **Hover**: `:hover` - applied to the close button on hover
 - **Active**: `:active` - applied to the close button when pressed
 - **Entering / Exiting**: `data-[state=open]` / `data-[state=closed]` on `backdrop` and
-  `container` during the enter/exit animation, mapped from HeroUI's `[data-entering]` /
-  `[data-exiting]`
+  `container` during the enter/exit animation
 - **Placement**: `data-placement="auto|top|center|bottom"` on `container` and `dialog`,
   mirroring the `placement` prop
 
@@ -179,11 +178,11 @@ The default status icon inside `icon` carries `data-slot="alert-dialog-default-i
 ## Accessibility
 
 Implements the [WAI-ARIA AlertDialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/)
-via Reka UI's `Dialog` primitive:
+with focus management, keyboard handling and scroll lock:
 
 - **Focus trap**: focus is locked within the alert dialog
 - **Keyboard**: `Escape` closes it only when `keyboardDismissible` is `true`, `Tab` cycles elements.
-  A scrollable body is not a tab stop of its own (as in HeroUI)
+  A scrollable body is not a tab stop of its own
 - **Screen readers**: the dialog has `role="alertdialog"` and always has an accessible name,
   either the rendered title or a visually hidden one
 - **Scroll lock**: body scroll is disabled while open

@@ -42,7 +42,7 @@ The Input component supports two visual variants:
 
 ### In Surface
 
-When used on a surface background (HeroUI's `Surface`, here a `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
+When used on a surface background (such as a `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
 
 <ComponentPreview name="input/on-surface" />
 
@@ -94,7 +94,7 @@ The input reads the field tokens `--field-border`, `--field-border-hover`, `--fi
 ### Interactive States
 
 - **Hover**: `:hover` (when not focused)
-- **Focus Visible**: `:focus` (focus styles apply on any focus, as in HeroUI's `input.css`)
+- **Focus Visible**: `:focus` (focus styles apply on any focus)
 - **Invalid**: `[data-invalid="true"]` (set with `aria-invalid` by the `invalid` prop)
 - **Disabled**: `:disabled`, `[data-disabled="true"]` or `[aria-disabled="true"]`
 - **Read Only**: `[readonly]` (set by the `readonly` prop)

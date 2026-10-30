@@ -90,7 +90,7 @@ const items: MyItem[] = [/* ... */]
 
 ### Virtualization
 
-`virtualize` renders only the visible rows through Reka's `ListboxVirtualizer`. The root must scroll (give it a height and `overflow-y-auto`), and `items` must be flat. Pass `{ estimateSize, overscan }` to tune the row height estimate.
+`virtualize` renders only the visible rows. The root must scroll (give it a height and `overflow-y-auto`), and `items` must be flat. Pass `{ estimateSize, overscan }` to tune the row height estimate.
 
 <ComponentPreview name="list-box/virtualization" />
 
@@ -100,7 +100,7 @@ const items: MyItem[] = [/* ... */]
 
 ### Render Function
 
-HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom` fall through to the root.
+ListBox has no `render` prop; attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="list-box/render-function" />
 
@@ -158,7 +158,7 @@ app.use(
 
 ## Accessibility
 
-Built on Reka's Listbox, which implements the ARIA listbox pattern:
+Implements the ARIA listbox pattern:
 
 - Arrow keys, Home/End, PageUp/PageDown and typeahead navigation (Space continues a typeahead search)
 - In `multiple` mode, Shift+Arrow/Home/End/Space and Shift+click select a range from the last selected item, and Meta/Ctrl+A selects every enabled item

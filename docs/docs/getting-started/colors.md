@@ -3,7 +3,7 @@ title: Colors
 description: Semantic color tokens and CSS variables that power HareUI's design system.
 ---
 
-HareUI's color system is built around semantic intent, not visual abundance. Instead of exposing large raw palettes, it defines a small, meaningful set of color roles that cover most interface needs. The tokens below are copied verbatim from HeroUI's own `variables.css`, so any existing HeroUI theme override applies unchanged.
+HareUI's color system is built around semantic intent, not visual abundance. Instead of exposing large raw palettes, it defines a small, meaningful set of color roles that cover most interface needs.
 
 Most colors are derived automatically from a limited number of base values using `color-mix()`. Colors without a suffix are backgrounds (e.g. `--accent`); colors with `-foreground` are text colors meant to sit on that background (e.g. `--accent-foreground`). Click any swatch to copy its resolved `oklch()` value.
 

@@ -1,7 +1,6 @@
 <template>
   <!--
-    HeroUI's render-function demo swaps the root element through a `render` prop. Option A has no
-    `render` prop; attributes passed to `DateRangePicker` fall through to the root element instead.
+    Attributes passed to `DateRangePicker` fall through to the root element.
   -->
   <DateRangePicker
     data-custom="foo"

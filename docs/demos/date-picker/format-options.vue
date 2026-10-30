@@ -109,7 +109,7 @@ const hasTime = (v: DateValue | null | undefined): v is CalendarDateTime | Zoned
   return !!v && 'hour' in v
 }
 
-// Reka's embedded Calendar only edits date fields and the TimeField below only edits time fields;
+// The embedded Calendar only edits date fields and the TimeField below only edits time fields;
 // each merges onto the other's current value instead of replacing it outright.
 const mergeDate = (picked: DateValue, current: DateValue | null | undefined): DateValue => {
   return hasTime(current)

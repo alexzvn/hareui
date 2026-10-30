@@ -3,7 +3,7 @@
     <Label for="workspace-slug">Workspace URL</Label>
     <Input id="workspace-slug" placeholder="acme" type="text" />
     <Description id="workspace-slug-hint" class="leading-relaxed tracking-wide">
-      Lowercase letters and hyphens only. Used in app.heroui.com/acme
+      Lowercase letters and hyphens only. Used in app.example.com/acme
     </Description>
   </div>
 </template>

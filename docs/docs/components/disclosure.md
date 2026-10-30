@@ -17,8 +17,7 @@ import { Disclosure } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's compound parts (`Disclosure.Heading`, `Disclosure.Trigger`, `Disclosure.Indicator`,
-`Disclosure.Content`, `Disclosure.Body`) become props and named slots:
+Disclosure is composed through props and named slots:
 
 ```vue
 <Disclosure title="…" v-model:open="open">
@@ -31,8 +30,7 @@ HeroUI's compound parts (`Disclosure.Heading`, `Disclosure.Trigger`, `Disclosure
 ```
 
 - Without `#trigger`, a `<button data-slot="disclosure-trigger">` renders `title` followed by the indicator.
-- With `#trigger`, the slotted element (e.g. `Button`) receives `aria-expanded`, `aria-controls` and the toggle handler, like HeroUI's `<Button slot="trigger">`.
-- `Disclosure.Body`'s `className` maps to the `bodyInner` `ui` key.
+- With `#trigger`, the slotted element (e.g. `Button`) receives `aria-expanded`, `aria-controls` and the toggle handler.
 
 `ui` keys: `base`, `heading`, `trigger`, `indicator`, `content`, `body`, `bodyInner`.
 
@@ -71,7 +69,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
 | `ui` key    | `data-slot`            | Description                       |
 | ----------- | ---------------------- | --------------------------------- |

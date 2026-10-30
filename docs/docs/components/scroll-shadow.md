@@ -80,8 +80,9 @@ app.use(
 - `hide-scroll-bar` – hides the native scrollbar
 
 The fade masks live in HareUI's stylesheet (`styles/scroll-shadow.css`) and key on
-`[data-slot="scroll-shadow"]` and `[data-orientation]`, so they apply to any element carrying
-those attributes (Tabs' scrolling list uses the same component).
+`[data-scroll-shadow-mode]` and `[data-orientation]`, so they apply to any element carrying
+those attributes, even when a parent renames its `data-slot` (Tabs' scrolling list and Carousel's
+thumbnail strip use the same component).
 
 ### CSS Variables
 

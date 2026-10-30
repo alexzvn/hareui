@@ -27,9 +27,8 @@ import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
 </template>
 ```
 
-HeroUI's `ToggleButtonGroup.Separator`, placed inside each ToggleButton except the first, becomes the
-`separator` prop: every ToggleButton renders the divider and the first one hides it. Each ToggleButton's
-`value` (HeroUI's `id`) is what the group's `v-model` holds.
+The `separator` prop draws dividers between buttons: every ToggleButton renders the divider and the first one hides it. Each ToggleButton's
+`value` is what the group's `v-model` holds.
 
 `ui` keys: `base`, `separator`, plus `button`, which is added to each ToggleButton in the group.
 
@@ -98,7 +97,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
 | `ui` key    | `data-slot`                     | Description                                |
 | ----------- | ------------------------------- | ------------------------------------------ |
@@ -128,10 +127,10 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 - ToggleButtonGroup passes `size` to all child ToggleButton components
 - Each ToggleButton needs a unique `value` that corresponds to the values in `v-model` / `default-value`
-- The `disabled` prop disables all child ToggleButtons. A button can't opt back in with `:disabled="false"`: as in React Aria, the group's `disabled` wins
+- The `disabled` prop disables all child ToggleButtons. A button can't opt back in with `:disabled="false"`: the group's `disabled` wins
 - The component automatically handles border radius between buttons
 - Use `disallow-empty-selection` with `selection-mode="single"` to ensure one option is always selected
-- **Difference from HeroUI:** pressing a disabled button moves focus to the group container (Reka's roving-focus root), where HeroUI leaves focus where it was. The next <kbd>Tab</kbd> then starts from the group
+- Pressing a disabled button moves focus to the group container. The next <kbd>Tab</kbd> then starts from the group
 
 ## Related Components
 

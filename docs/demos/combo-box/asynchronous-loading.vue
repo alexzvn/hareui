@@ -30,7 +30,7 @@ type Character = {
   name: string
 }
 
-// HeroUI's `useAsyncList` equivalent: refetch on every input change, follow the `next` cursor on `load-more`
+// Refetch on every input change, follow the `next` cursor on `load-more`
 const filterText = ref('')
 const characters = ref<Character[]>([])
 const isLoading = ref(false)

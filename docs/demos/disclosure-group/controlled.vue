@@ -2,7 +2,7 @@
   <div class="w-full max-w-md">
     <div class="flex flex-col gap-4 rounded-3xl p-4">
       <div class="mb-2 flex items-center justify-between">
-        <h3 class="text-lg font-semibold">HeroUI Native</h3>
+        <h3 class="text-lg font-semibold">Mobile app</h3>
         <div class="flex gap-2">
           <Button
             aria-label="Previous disclosure"
@@ -26,7 +26,7 @@
       </div>
       <DisclosureGroup v-model="expandedKeys">
         <Disclosure
-          aria-label="Preview HeroUI Native"
+          aria-label="Preview the mobile app"
           value="preview"
           :ui="{ bodyInner: 'mx-2 flex flex-col items-center gap-2 p-4 text-center' }"
         >
@@ -40,13 +40,13 @@
             >
               <div class="flex w-full items-center justify-start gap-2">
                 <Icon height="16" icon="gravity-ui:qr-code" width="16" />
-                Preview HeroUI Native
+                Preview the mobile app
               </div>
               <component :is="indicator" class="text-muted" />
             </Button>
           </template>
           <p class="text-sm text-muted">
-            Scan this QR code with your camera app to preview the HeroUI native components.
+            Scan this QR code with your camera app to preview the mobile components.
           </p>
           <img
             alt="Expo Go QR Code"
@@ -74,13 +74,13 @@
             >
               <div class="flex w-full items-center justify-start gap-2">
                 <Icon icon="tabler:brand-apple-filled" />
-                Download HeroUI Native
+                Download the mobile app
               </div>
               <component :is="indicator" class="text-muted" />
             </Button>
           </template>
           <p class="text-sm text-muted">
-            Scan this QR code with your camera app to preview the HeroUI native components.
+            Scan this QR code with your camera app to preview the mobile components.
           </p>
           <img
             alt="App Store QR Code"

@@ -79,7 +79,7 @@ You can also use RGB color space with red, green, and blue channels.
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to `ColorSlider` fall through to the root element.
+Attributes you pass to `ColorSlider` fall through to the root element.
 
 <ComponentPreview name="color-slider/render-function" />
 
@@ -138,7 +138,7 @@ app.use(
 
 - The thumb is a `role="slider"` labelled by the channel name, with a localised `aria-valuetext`
 - Keyboard: arrow keys, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PageUp</kbd> and <kbd>PageDown</kbd>
-- `name` submits the channel value through a hidden input (e.g. `200` for hue, `0.5` for alpha), as React Aria does; the alpha thumb's `aria-valuenow` uses the same 0–1 scale
+- `name` submits the channel value through a hidden input (e.g. `200` for hue, `0.5` for alpha); the alpha thumb's `aria-valuenow` uses the same 0–1 scale
 
 ## Related Components
 

@@ -46,7 +46,7 @@ import type { DropdownEntry, DropdownItem } from '@hareui/vue'
 import { Avatar, Dropdown, Label } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-// Equivalent of HeroUI's `Dropdown.Trigger` (a pressable wrapper styled by `.dropdown__trigger`)
+// A pressable wrapper styled like the dropdown trigger
 // around non-button content.
 const triggerClass = [
   'inline-block rounded-full outline-none transform-gpu cursor-(--cursor-interactive)',

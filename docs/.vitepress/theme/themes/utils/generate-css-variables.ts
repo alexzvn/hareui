@@ -171,10 +171,9 @@ export const generateMinimalCssVariables = (
     : ''
 
   return `/*
- * HeroUI Theme Customization
- * Add this to your global.css after importing @heroui/styles
+ * HareUI Theme Customization
+ * Add this to your global.css after importing @hareui/vue
  * Only includes variables users need to customize
- * @see https://heroui.com/docs/react/getting-started/theming
  */
 ${vibrantComment}
 :root,

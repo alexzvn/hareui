@@ -62,7 +62,7 @@ TextField renders a [Label](/docs/components/label), an [Input](/docs/components
 
 ### In Surface
 
-When used inside a surface (HeroUI's [Surface](https://heroui.com/en/docs/react/components/surface), here a `bg-surface` container), use `variant="secondary"` on the TextField or its Input to apply the lower emphasis variant suitable for surface backgrounds.
+When used inside a surface ([Surface](/docs/components/surface) or another `bg-surface` container), use `variant="secondary"` on the TextField or its Input to apply the lower emphasis variant suitable for surface backgrounds.
 
 <ComponentPreview name="textfield/on-surface" />
 
@@ -110,7 +110,7 @@ Use [TextArea](/docs/components/text-area) instead of [Input](/docs/components/i
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, input attributes you pass to `TextField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`; render your own markup through the default slot.
+Input attributes you pass to `TextField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`; render your own markup through the default slot.
 
 <ComponentPreview name="textfield/render-function" />
 
@@ -167,7 +167,7 @@ TextField sets these data attributes on its root:
 
 ### Render Props
 
-The default slot receives the field state, the Vue equivalent of HeroUI's render props:
+The default slot receives the field state:
 
 | Prop           | Type                  | Description                                     |
 | -------------- | --------------------- | ----------------------------------------------- |

@@ -31,7 +31,7 @@
 import { AlertDialog, Button } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-// HeroUI's `data-[entering]` / `data-[exiting]` map to Reka's `data-[state=open]` / `data-[state=closed]`.
+// Enter and exit animations key off `data-[state=open]` / `data-[state=closed]`.
 const animations = [
   {
     classNames: {

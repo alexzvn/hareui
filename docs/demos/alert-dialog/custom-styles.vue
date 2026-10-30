@@ -25,8 +25,7 @@
 <script setup lang="ts">
 import { AlertDialog, Button } from '@hareui/vue'
 
-// HeroUI draws the top glow and hairline with two absolutely positioned `aria-hidden` divs in the
-// dialog; the props API has no slot before the header, so they are the dialog's ::before/::after.
+// The top glow and hairline are decorative layers; the props API has no slot before the header, so they are the dialog's ::before/::after.
 const dialogClass = [
   'relative overflow-hidden border border-border/80 bg-surface shadow-2xl ring-1 ring-accent/10 sm:max-w-[400px] dark:border-border/90 dark:bg-surface dark:ring-accent/15',
   'before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-24 before:bg-linear-to-b before:from-accent/6 before:to-transparent dark:before:from-accent/10',

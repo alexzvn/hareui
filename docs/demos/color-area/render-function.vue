@@ -1,5 +1,5 @@
 <template>
-  <!-- Attributes fall through to the root element (HeroUI's `render` prop) -->
+  <!-- Attributes fall through to the root element -->
   <ColorArea default-value="rgb(116, 52, 255)" data-custom="slider" />
 </template>
 

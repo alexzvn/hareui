@@ -67,6 +67,6 @@ const scale = [
     sample: 'Captions, badges, helper text, and fine print.',
     type: 'body-xs' as const,
   },
-  { label: 'code', meta: '14px / mono', sample: 'pnpm add @heroui/react', type: 'code' as const },
+  { label: 'code', meta: '14px / mono', sample: 'bun add @hareui/vue', type: 'code' as const },
 ]
 </script>

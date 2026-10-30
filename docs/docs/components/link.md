@@ -19,7 +19,7 @@ import { Link } from '@hareui/vue'
 
 ```vue
 <template>
-  <!-- `icon` shows HeroUI's external-link arrow (Link.Icon); `#icon` replaces it -->
+  <!-- `icon` shows the external-link arrow; `#icon` replaces it -->
   <Link href="#" icon> Call to action </Link>
 </template>
 ```

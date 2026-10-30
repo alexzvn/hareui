@@ -24,11 +24,11 @@ import { Kbd } from '@hareui/vue'
 </template>
 ```
 
-| `ui` key  | Element  | Description                                                                    |
-| --------- | -------- | ------------------------------------------------------------------------------ |
-| `base`    | `<kbd>`  | The key container                                                              |
-| `abbr`    | `<abbr>` | One per entry in `keys`, e.g. `⌘` with `title="Command"` (HeroUI's `Kbd.Abbr`) |
-| `content` | `<span>` | Wraps the default slot (HeroUI's `Kbd.Content`)                                |
+| `ui` key  | Element  | Description                                              |
+| --------- | -------- | -------------------------------------------------------- |
+| `base`    | `<kbd>`  | The key container                                        |
+| `abbr`    | `<abbr>` | One per entry in `keys`, e.g. `⌘` with `title="Command"` |
+| `content` | `<span>` | Wraps the default slot                                   |
 
 ## Examples
 
@@ -80,7 +80,7 @@ app.use(
 
 ## Styling Reference
 
-HeroUI's Kbd renders no `data-slot` attributes; style it through `class`, `ui` or `createHareUI`.
+Kbd renders no `data-slot` attributes; style it through `class`, `ui` or `createHareUI`.
 
 - `base` – keyboard key styles with background and spacing (`variant="light"` makes the background transparent)
 - `abbr` – abbreviation element for modifier keys

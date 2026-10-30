@@ -176,7 +176,7 @@ app.use(
 
 ### Interactive States
 
-Tabs sets these data attributes (from Reka UI):
+Tabs sets these data attributes:
 
 - **Selected**: `[data-state="active"]` on `[data-slot="tabs-tab"]`
 - **Hover**: `:hover`

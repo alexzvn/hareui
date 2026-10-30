@@ -1,5 +1,5 @@
 <template>
-  <!-- Attributes fall through to the root element (HeroUI's `render` prop) -->
+  <!-- Attributes fall through to the root element -->
   <CheckboxGroup
     name="interests"
     data-custom="foo"

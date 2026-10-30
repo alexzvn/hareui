@@ -18,7 +18,7 @@ import { Button } from '@hareui/vue'
 ## Anatomy
 
 Button is a single component — no compound parts. Content is composed through named
-slots instead of HeroUI's render-prop children.
+slots.
 
 ```vue
 <Button>
@@ -112,7 +112,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
 | `ui` key  | `data-slot` | Description                        |
 | --------- | ----------- | ---------------------------------- |

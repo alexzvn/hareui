@@ -65,7 +65,7 @@ The NumberField component supports two visual variants:
 
 ### In Surface
 
-When used inside a surface (HeroUI's [Surface](https://heroui.com/en/docs/react/components/surface), here a `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
+When used inside a surface ([Surface](/docs/components/surface) or another `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
 
 <ComponentPreview name="number-field/on-surface" />
 
@@ -129,13 +129,13 @@ Customize the increment and decrement button icons with the `#increment` and `#d
 
 ### With Chevrons
 
-Use chevron icons in a vertical layout for a different visual style. HeroUI wraps the buttons in an extra `<div>`; here the `ui` classes place them in the group's grid.
+Use chevron icons in a vertical layout for a different visual style. The `ui` classes place the buttons in the group's grid.
 
 <ComponentPreview name="number-field/with-chevrons" />
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to `NumberField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`.
+Attributes you pass to `NumberField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`.
 
 <ComponentPreview name="number-field/render-function" />
 
@@ -205,7 +205,7 @@ NumberField sets these data attributes:
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)
 - The input's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
 - `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
-- Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> step by `step`, <kbd>PageUp</kbd>/<kbd>PageDown</kbd> also by one `step` (as in React Aria), <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`, <kbd>Enter</kbd> commits typed text
+- Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> step by `step`, <kbd>PageUp</kbd>/<kbd>PageDown</kbd> also by one `step`, <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`, <kbd>Enter</kbd> commits typed text
 - The buttons are labelled "Increase"/"Decrease", aren't in the tab order, and repeat while held
 
 ## Related Components

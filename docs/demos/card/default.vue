@@ -15,7 +15,7 @@
     <template #footer>
       <Link
         aria-label="Go to Acme Creator Hub (opens in new tab)"
-        href="https://heroui.com"
+        href="https://example.com"
         rel="noopener noreferrer"
         target="_blank"
         icon

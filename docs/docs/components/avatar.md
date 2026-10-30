@@ -18,8 +18,7 @@ import { Avatar } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `Avatar.Image` and `Avatar.Fallback` parts become props and slots on a single
-component, built on Reka UI's `AvatarRoot` / `AvatarImage` / `AvatarFallback`. The fallback
+Avatar is a single component: the image and the fallback are set through props and slots. The fallback
 shows until the image loads, or if it fails.
 
 ```vue
@@ -53,8 +52,8 @@ shows until the image loads, or if it fails.
 
 ### Custom Image Component
 
-Use the `#image` slot to compose with a custom image component, such as Nuxt's `<NuxtImg>`
-(the equivalent of `asChild` on `Avatar.Image`). Pass `src` on `Avatar` so it can track the
+Use the `#image` slot to compose with a custom image component, such as a framework's
+optimized image component. Pass `src` on `Avatar` so it can track the
 loading state and show the fallback until the image is ready; the slotted element receives
 `src`, the `image` classes and the loading-state visibility.
 
@@ -89,13 +88,12 @@ app.use(
 
 | `ui` key   | `data-slot`       | Description                                                         |
 | ---------- | ----------------- | ------------------------------------------------------------------- |
-| `base`     | —                 | Base container with default size (`size-10`), Reka `AvatarRoot`     |
+| `base`     | —                 | Base container with default size (`size-10`)                        |
 | `image`    | —                 | Image element with aspect-square sizing, rendered when `src` is set |
 | `fallback` | `avatar-fallback` | Fallback container with centered content (text or `#fallback` slot) |
 
-HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHareUI`): `.avatar--sm` / `--md` / `--lg` → `size`,
-`.avatar--soft` → `variant="soft"`, `.avatar__fallback--{color}` → `color`. `color` only
+Appearance is controlled by the `size`, `variant` and `color` props (HareUI renders utility
+classes, so style through `class`, `ui` or `createHareUI`). `color` only
 affects the fallback (it has no effect once an image has loaded).
 
 ## API Reference

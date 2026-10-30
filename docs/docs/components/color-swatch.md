@@ -70,7 +70,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
 | `ui` key | `data-slot`    | Description                                                   |
 | -------- | -------------- | ------------------------------------------------------------- |

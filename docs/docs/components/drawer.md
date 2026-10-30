@@ -104,11 +104,11 @@ app.use(
 
 | `ui` key       | `data-slot`            | Element                                                                                               |
 | -------------- | ---------------------- | ----------------------------------------------------------------------------------------------------- |
-| `backdrop`     | `drawer-backdrop`      | Overlay backdrop behind the drawer (Reka `DialogOverlay`)                                             |
+| `backdrop`     | `drawer-backdrop`      | Overlay backdrop behind the drawer                                                                    |
 | `content`      | `drawer-content`       | Positioning wrapper for the drawer panel                                                              |
-| `dialog`       | `drawer-dialog`        | The drawer panel itself (Reka `DialogContent`); `class` merges here                                   |
+| `dialog`       | `drawer-dialog`        | The drawer panel itself, which carries `role="dialog"`; `class` merges here                           |
 | `header`       | `drawer-header`        | Header section for titles                                                                             |
-| `heading`      | `drawer-heading`       | Main title text (Reka `DialogTitle`)                                                                  |
+| `heading`      | `drawer-heading`       | Main title text, which labels the drawer                                                              |
 | `body`         | `drawer-body`          | Main scrollable content area, rendered when `#body` is present                                        |
 | `footer`       | `drawer-footer`        | Footer section for actions, rendered when `#footer` is present                                        |
 | `handle`       | `drawer-handle`        | Visual drag handle indicator (bar: `data-slot="drawer-handle-bar"`), rendered when `handle` is `true` |
@@ -133,9 +133,9 @@ app.use(
 - **Hover**: `:hover` - applied to the close button on hover
 - **Active**: `:active` - applied to the trigger and close button when pressed
 - **Entering / Exiting**: `data-[state=open]` / `data-[state=closed]` on `backdrop`, `content`
-  and `dialog`, mapped from HeroUI's `[data-entering]` / `[data-exiting]`. The panel slide is a
-  CSS animation (Reka waits for animations, not transitions, before unmounting) with HeroUI's
-  distance, durations (250ms in, 200ms out) and easing
+  and `dialog`. The panel slide is a
+  CSS animation (the panel waits for animations, not transitions, before unmounting) with fixed
+  durations (250ms in, 200ms out) and easing
 - **Placement**: `data-placement="top|bottom|left|right"` on `content` and `dialog`
 
 ## API Reference
@@ -159,11 +159,11 @@ app.use(
 ## Accessibility
 
 Implements the [WAI-ARIA Dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/)
-via Reka UI's `Dialog` primitive:
+with focus management, keyboard handling and scroll lock:
 
 - **Focus trap**: focus is locked within the drawer while open
 - **Keyboard**: `Escape` closes it (unless `keyboardDismissible` is `false`), `Tab` cycles elements.
-  A scrollable body is not a tab stop of its own (as in HeroUI)
+  A scrollable body is not a tab stop of its own
 - **Screen readers**: the dialog always has an accessible name, either the rendered title or a
   visually hidden one
 - **Scroll lock**: body scroll is disabled while open

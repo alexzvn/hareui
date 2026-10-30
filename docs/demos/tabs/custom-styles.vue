@@ -22,8 +22,8 @@ const items: TabsItem[] = [
   { label: 'Yearly', value: 'yearly', content: 'Save 20% with annual billing.' },
 ]
 
-// HeroUI's `data-[hovered]` / `data-[pressed]` (React Aria) map to `hover:` / `active:`; the theme's
-// own hover dimming is a higher-specificity rule, so `opacity-100!` keeps HeroUI's "no dimming" look.
+// Hover and press styles use `hover:` / `active:`; the theme's own hover dimming is a
+// higher-specificity rule, so `opacity-100!` turns the dimming off.
 const tabClass = [
   'rounded-lg bg-transparent text-muted opacity-100! transition-colors shadow-none',
   'hover:not-data-[state=active]:bg-accent-soft',

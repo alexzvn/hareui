@@ -140,7 +140,7 @@ Pass `filter` to replace the default case- and accent-insensitive "contains" mat
 
 ### Render Function
 
-HeroUI's `render` prop has no HareUI equivalent; attributes such as `data-custom` fall through to the root.
+ComboBox has no `render` prop; attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="combo-box/render-function" />
 

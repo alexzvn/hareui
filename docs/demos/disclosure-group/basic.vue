@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-4 bg-transparent p-4">
       <DisclosureGroup v-model="expandedKeys">
         <Disclosure
-          aria-label="Preview HeroUI Native"
+          aria-label="Preview the mobile app"
           value="preview"
           :ui="{ bodyInner: 'mx-2 flex flex-col items-center gap-2 p-4 text-center' }"
         >
@@ -17,13 +17,13 @@
             >
               <div class="flex w-full items-center justify-start gap-2">
                 <Icon height="16" icon="gravity-ui:qr-code" width="16" />
-                Preview HeroUI Native
+                Preview the mobile app
               </div>
               <component :is="indicator" class="text-muted" />
             </Button>
           </template>
           <p class="text-sm text-muted">
-            Scan this QR code with your camera app to preview the HeroUI native components.
+            Scan this QR code with your camera app to preview the mobile components.
           </p>
           <img
             alt="Expo Go QR Code"
@@ -57,7 +57,7 @@
             </Button>
           </template>
           <p class="text-sm text-muted">
-            Download the HeroUI native app to explore our mobile components directly on your device.
+            Download the mobile app to explore our mobile components directly on your device.
           </p>
           <img
             alt="App Store QR Code"

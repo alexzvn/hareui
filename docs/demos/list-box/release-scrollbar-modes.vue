@@ -22,7 +22,7 @@ import type { ListBoxItem } from '@hareui/vue'
 import { ListBox, Surface } from '@hareui/vue'
 
 const modes = [
-  { id: 'heroui', label: 'HeroUI thin', scrollbar: 'thin' },
+  { id: 'thin', label: 'Thin', scrollbar: 'thin' },
   { id: 'browser', label: 'Browser default', scrollbar: 'default' },
   { id: 'hidden', label: 'Hidden', scrollbar: 'none' },
 ]

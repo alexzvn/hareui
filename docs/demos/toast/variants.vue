@@ -31,7 +31,7 @@ import { h } from 'vue'
 
 const showDefault = () => {
   const id = toast('You have been invited to join a team', {
-    description: 'Bob sent you an invitation to join HeroUI team',
+    description: 'Bob sent you an invitation to join the HareUI team',
     indicator: h(Icon, { icon: 'gravity-ui:persons' }),
     variant: 'default',
     action: { label: 'Dismiss', variant: 'tertiary', onClick: () => toast.close(id) },

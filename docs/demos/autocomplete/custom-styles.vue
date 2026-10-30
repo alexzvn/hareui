@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-sm pt-6">
-    <!-- HeroUI places the Description between the Label and the trigger; here both sit above the component -->
+    <!-- The label and description both sit above the component -->
     <div class="flex w-full flex-col gap-1.5">
       <Label id="assignees-label" class="font-medium text-foreground"> Assignees </Label>
       <Description id="assignees-description">

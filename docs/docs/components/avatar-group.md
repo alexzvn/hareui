@@ -17,8 +17,8 @@ import { Avatar, AvatarGroup } from '@hareui/vue'
 
 ## Anatomy
 
-`Avatar` components go in the default slot. HeroUI's `AvatarGroup.Count` part becomes the
-`#count` slot.
+`Avatar` components go in the default slot. Customize the overflow
+count with the `#count` slot.
 
 ```vue
 <AvatarGroup>
@@ -83,9 +83,8 @@ app.use(
 | `base`   | `avatar-group`       | Base avatar group container |
 | `count`  | `avatar-group-count` | Overflow count avatar       |
 
-HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHareUI`): `.avatar-group--grid` → `grid`,
-`.avatar-group--clip` / `.avatar-group--ring` → `overlap`.
+Layout is controlled by the `grid` and `overlap` props. HareUI renders utility classes, so style
+through `class`, `ui` or `createHareUI`.
 
 Stacked layout uses negative margin between siblings (`--avatar-group-overlap`, default `0.5rem`).
 Clip mode masks overlapped avatars (not the last child / count) and optically nudges fallback

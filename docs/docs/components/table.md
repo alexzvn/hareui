@@ -21,8 +21,7 @@ Table renders the rows you give it. To sort, filter, group, paginate or virtuali
 
 ## Anatomy
 
-HeroUI composes `Table.ScrollContainer`, `Table.Content`, `Table.Header`, `Table.Column`, `Table.Body`,
-`Table.Row` and `Table.Cell`. HareUI renders the same `<table>` structure from two arrays: `columns`
+Table renders its `<table>` structure from two arrays: `columns`
 (one entry per header) and `rows` (one object per row, looked up as `row[column.key]`). Per-column slots
 replace the default header or cell content.
 
@@ -81,7 +80,7 @@ Use `v-model:expanded-keys` to control which rows are expanded.
 
 ### Column Resizing
 
-Set `resizable` on a column to add a column resizer to its header. As with HeroUI's `ResizableContainer`, the columns of a resizable table share the container's width: `width` sets each column's initial size (pixels, `'25%'` or `'2fr'`, default `'1fr'`), clamped by `minWidth` (default 75) and `maxWidth`. Resizing a column fixes the columns to its left at their current width.
+Set `resizable` on a column to add a column resizer to its header. The columns of a resizable table share the container's width: `width` sets each column's initial size (pixels, `'25%'` or `'2fr'`, default `'1fr'`), clamped by `minWidth` (default 75) and `maxWidth`. Resizing a column fixes the columns to its left at their current width.
 
 <ComponentPreview name="table/column-resizing" minHeight="420px" />
 
@@ -126,7 +125,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute you can target in selectors.
 
 | `ui` key                  | `data-slot`                       | Description                                      |
 | ------------------------- | --------------------------------- | ------------------------------------------------ |
@@ -146,10 +145,9 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `loadMoreContent`         | `table-load-more-content`         | Content wrapper of the load-more row             |
 | `footer`                  | `table-footer`                    | Footer below the table                           |
 
-HeroUI's modifier classes correspond to props (HareUI renders utilities, not BEM classes, so
-style through `class`, `ui` or `createHareUI`):
+These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
 
-- `variant`: `primary` (default, rows on a secondary surface), `secondary` (`.table-root--{variant}`)
+- `variant`: `primary` (default, rows on a secondary surface), `secondary`
 
 ### Interactive States
 

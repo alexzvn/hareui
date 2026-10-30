@@ -1,5 +1,5 @@
 <template>
-  <TextField class="w-full max-w-[280px]" default-value="heroui" name="website" label="Website">
+  <TextField class="w-full max-w-[280px]" default-value="example" name="website" label="Website">
     <InputGroup :ui="{ input: 'w-full max-w-[280px]' }" suffix=".com">
       <template #prefix>
         <Icon icon="gravity-ui:globe" class="size-4 text-muted" />

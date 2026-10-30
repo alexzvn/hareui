@@ -63,7 +63,7 @@ DateRangePicker renders a [Label](/docs/components/label), a segmented [date-inp
 | —                  | `field-error`                         | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 | `popover`          | `date-range-picker-popover`           | the popover content wrapping the [RangeCalendar](/docs/components/range-calendar)                              |
 
-> **DateRangePicker** values are `{ start, end }` objects of [`@internationalized/date`](https://react-aria.adobe.com/internationalized/date/) values (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`) — the same types HeroUI uses. Like React Aria, `v-model` only emits complete ranges (or `null` once both ends are cleared).
+> **DateRangePicker** values are `{ start, end }` objects of [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) values (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`). `v-model` only emits complete ranges (or `null` once both ends are cleared).
 
 ## Examples
 
@@ -87,7 +87,7 @@ Control how DateRangePicker values are displayed with props such as `granularity
 
 ### Input Container
 
-`input-container` wraps the start and end inputs in a horizontally scrollable container (HeroUI's `DateField.InputContainer`), so long date-time ranges scroll inside the group instead of overflowing it.
+`input-container` wraps the start and end inputs in a horizontally scrollable container, so long date-time ranges scroll inside the group instead of overflowing it.
 
 <ComponentPreview name="date-range-picker/input-container" />
 
@@ -103,7 +103,7 @@ The `#indicator` slot replaces the default calendar icon rendered inside the tri
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. Option A has no `render` prop; attributes you pass to `DateRangePicker` fall through to the root element instead.
+DateRangePicker has no `render` prop; attributes you pass to `DateRangePicker` fall through to the root element instead.
 
 <ComponentPreview name="date-range-picker/render-function" />
 
@@ -163,20 +163,16 @@ app.use(
 - **Focus visible**: `:focus-visible` on the trigger
 - **Hover**: `:hover` on the trigger
 
-### Reka UI Limitations
+### Limitations
 
-- `shouldForceLeadingZeros` has no equivalent: Reka's `DateRangeFieldRoot` doesn't expose a flag to force leading
-  zeros, so the `format-options` demo drops the "Force leading zeros" switch.
-- `v-model` is driven through a local draft: Reka's `DateRangeFieldRoot` emits every partial edit
-  (`{ start, end: undefined }`) as its model value, while React Aria keeps an incomplete range as an internal
-  placeholder and only emits complete ranges. DateRangePicker feeds Reka the draft and emits only complete ranges
-  (or `null`), matching HeroUI.
-- Reka's `DateRangePickerRoot` reads `isDateUnavailable` once at setup, with a single argument. The field side
-  calls the matcher with a `null` anchor (as React Aria does outside the calendar); the anchor-aware form only
-  applies inside the embedded [RangeCalendar](/docs/components/range-calendar).
-- HeroUI's composed `RangeCalendar` passes its own 1900/2099 `minValue`/`maxValue` defaults, which override the
-  picker's bounds, so its popover never greys out-of-range days (the field still validates them). The embedded
-  RangeCalendar here matches that: `min-value`/`max-value` validate the field but don't disable calendar days.
+- There is no option to force leading zeros on numeric segments, so the `format-options` demo
+  drops the "Force leading zeros" switch.
+- `v-model` only receives complete ranges (or `null`). While a range is being typed, the partial
+  edit (`{ start, end: undefined }`) is held as a local draft and not emitted.
+- The field calls `is-date-unavailable` once per date with a `null` anchor; the anchor-aware form
+  only applies inside the embedded [RangeCalendar](/docs/components/range-calendar).
+- `min-value`/`max-value` validate the field but don't disable days in the popover's calendar, so
+  out-of-range days are not greyed out there.
 
 ## API Reference
 

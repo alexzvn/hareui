@@ -19,7 +19,7 @@ import { Breadcrumbs } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's `Breadcrumbs.Item` children become an `items` array. The last item is the current page.
+Pass the trail as an `items` array. The last item is the current page.
 
 ```vue
 <template>
@@ -78,7 +78,7 @@ const items: MyItem[] = [/* ... */]
 
 ### Custom Separator
 
-A single root element in `#separator` receives the separator classes, like HeroUI's `separator` element.
+A single root element in `#separator` receives the separator classes.
 
 <ComponentPreview name="breadcrumbs/custom-separator" />
 

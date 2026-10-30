@@ -1,5 +1,10 @@
 <template>
-  <TextField class="w-full max-w-[280px]" default-value="heroui.com" name="website" label="Website">
+  <TextField
+    class="w-full max-w-[280px]"
+    default-value="example.com"
+    name="website"
+    label="Website"
+  >
     <InputGroup :ui="{ input: 'w-full max-w-[280px]' }" prefix="https://" />
   </TextField>
 </template>

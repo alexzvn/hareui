@@ -198,7 +198,7 @@ The `--header-height` CSS variable holds the height of the header. While the men
 ## Accessibility
 
 - The toggle has `aria-expanded` and swaps its `aria-label` between `open-label` and `close-label`.
-- The menu is a `Dialog` (Reka UI): focus is trapped while it is open, Escape closes it and focus returns to the toggle.
+- The menu is a dialog: focus is trapped while it is open, Escape closes it and focus returns to the toggle.
   `menu-title` names the dialog.
 - The title link's `aria-label` is the `title` prop.
 - The bar reveals itself when it receives keyboard focus, and the slide transition is disabled for `prefers-reduced-motion`.

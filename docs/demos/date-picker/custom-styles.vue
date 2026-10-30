@@ -1,8 +1,6 @@
 <template>
   <!--
-    HeroUI's custom-styles demo restyles the embedded Calendar's own sub-parts directly. Option A's
-    DatePicker has no compound parts to reach into the embedded Calendar; the `#calendar` slot
-    replaces it wholesale instead — bind `value` and call `onSelect` to keep it wired to the picker.
+    The `#calendar` slot replaces the embedded Calendar wholesale; bind `value` and call `onSelect` to keep it wired to the picker.
   -->
   <DatePicker
     class="w-72"

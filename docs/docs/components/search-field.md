@@ -53,7 +53,7 @@ SearchField renders a [Label](/docs/components/label), a group holding a search 
 
 ### In Surface
 
-When used inside a surface (HeroUI's [Surface](/docs/components/surface), here a `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
+When used inside a surface ([Surface](/docs/components/surface) or another `bg-surface` container), use `variant="secondary"` to apply the lower emphasis variant suitable for surface backgrounds.
 
 <ComponentPreview name="search-field/on-surface" />
 
@@ -105,7 +105,7 @@ Add keyboard shortcuts to quickly focus the search field.
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, input attributes you pass to `SearchField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`.
+Input attributes you pass to `SearchField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`.
 
 <ComponentPreview name="search-field/render-function" />
 

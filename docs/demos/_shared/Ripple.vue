@@ -9,9 +9,8 @@
 
 <script setup lang="ts">
 /**
- * Vue port of `m3-ripple@1.1.3` (MIT, © 2025 saltyAom), the Material Design 3 ripple
- * used by heroui.com's "Adding Ripple Effect" Button demo. Place it as the first child of
- * a positioned element; it listens to pointer events on its parent.
+ * Vue port of `m3-ripple@1.1.3` (MIT, © 2025 saltyAom), the Material Design 3 ripple. Place it as
+ * the first child of a positioned element; it listens to pointer events on its parent.
  */
 import { onBeforeUnmount, onMounted, ref, useTemplateRef, watchEffect } from 'vue'
 

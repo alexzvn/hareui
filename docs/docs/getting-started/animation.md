@@ -7,7 +7,7 @@ HareUI ships [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) and
 
 ## Built-in Animations
 
-Overlay components (Modal, Popover, Tooltip) use Reka UI's `data-state` to drive enter/exit transitions:
+Overlay components (Modal, Popover, Tooltip) use the `data-state` attribute to drive enter/exit transitions:
 
 ```css
 /* Popover entrance/exit */
@@ -27,7 +27,7 @@ Overlay components (Modal, Popover, Tooltip) use Reka UI's `data-state` to drive
 
 **`data-state` → Tailwind variant mapping:**
 
-| Reka `data-state`           | Tailwind selector                                      | Used by                                                                            |
+| `data-state`                | Tailwind selector                                      | Used by                                                                            |
 | --------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
 | `checked` / `indeterminate` | `data-[state=checked]:`, `data-[state=indeterminate]:` | Checkbox, Switch, Radio                                                            |
 | `active`                    | `data-[state=active]:`                                 | Tabs trigger                                                                       |

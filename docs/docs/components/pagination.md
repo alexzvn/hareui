@@ -19,9 +19,7 @@ import { Pagination } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI composes `Pagination.Summary`, `Pagination.Content`, `Pagination.Item`, `Pagination.Link`,
-`Pagination.Previous` / `Pagination.Next` (with `PreviousIcon` / `NextIcon`) and
-`Pagination.Ellipsis` by hand. HareUI renders the same markup from `total` and `v-model:page`:
+Pagination renders its summary, page items, previous/next buttons and ellipses from `total` and `v-model:page`:
 
 ```vue
 <template>
@@ -37,21 +35,21 @@ HeroUI composes `Pagination.Summary`, `Pagination.Content`, `Pagination.Item`, `
 </template>
 ```
 
-- `ellipsis` collapses distant pages (first, last, current ± 1), the pattern HeroUI's demos build;
+- `ellipsis` collapses distant pages (first, last, current ± 1);
   `pages` takes any exact list of numbers and `'ellipsis'` entries.
 - `prev` / `next` configure the buttons: `label` sets the text (empty = icon only) and `disabled`
   overrides the first/last-page default.
 
-| `ui` key   | `data-slot`                                                 | Element                                                            |
-| ---------- | ----------------------------------------------------------- | ------------------------------------------------------------------ |
-| `base`     | `pagination`                                                | `<nav>` root                                                       |
-| `summary`  | `pagination-summary`                                        | info text (only with `#summary`)                                   |
-| `content`  | `pagination-content`                                        | `<ul>` of items                                                    |
-| `item`     | `pagination-item`                                           | `<li>` per entry                                                   |
-| `link`     | `pagination-link`, `pagination-previous`, `pagination-next` | page and previous/next buttons                                     |
-| `nav`      | `pagination-previous`, `pagination-next`                    | extra classes for previous/next (HeroUI's `pagination__link--nav`) |
-| `icon`     | `pagination-previous-icon`, `pagination-next-icon`          | icon wrappers                                                      |
-| `ellipsis` | `pagination-ellipsis`                                       | ellipsis indicator                                                 |
+| `ui` key   | `data-slot`                                                 | Element                          |
+| ---------- | ----------------------------------------------------------- | -------------------------------- |
+| `base`     | `pagination`                                                | `<nav>` root                     |
+| `summary`  | `pagination-summary`                                        | info text (only with `#summary`) |
+| `content`  | `pagination-content`                                        | `<ul>` of items                  |
+| `item`     | `pagination-item`                                           | `<li>` per entry                 |
+| `link`     | `pagination-link`, `pagination-previous`, `pagination-next` | page and previous/next buttons   |
+| `nav`      | `pagination-previous`, `pagination-next`                    | extra classes for previous/next  |
+| `icon`     | `pagination-previous-icon`, `pagination-next-icon`          | icon wrappers                    |
+| `ellipsis` | `pagination-ellipsis`                                       | ellipsis indicator               |
 
 ## Examples
 

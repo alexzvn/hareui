@@ -30,7 +30,7 @@ import { DisclosureGroup } from '@hareui/vue'
 </template>
 ```
 
-Each `Disclosure` inside the group is identified by its `value` (HeroUI's `id`); the group's
+Each `Disclosure` inside the group is identified by its `value`; the group's
 `v-model` holds the expanded values. Anything else can sit between the disclosures (e.g. a
 `Separator`).
 

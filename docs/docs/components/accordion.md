@@ -20,9 +20,8 @@ import { Accordion } from '@hareui/vue'
 ## Anatomy
 
 Accordion renders one item per `items` entry: a heading with a trigger button (leading content,
-label, indicator) and a collapsible panel holding the body. HeroUI's compound parts
-(`Accordion.Item`, `Accordion.Heading`, `Accordion.Trigger`, `Accordion.Indicator`,
-`Accordion.Panel`, `Accordion.Body`) become `items`, slots and `ui` keys:
+label, indicator) and a collapsible panel holding the body. Customize it through `items`, slots and
+`ui` keys:
 
 ```vue
 <template>
@@ -41,21 +40,20 @@ label, indicator) and a collapsible panel holding the body. HeroUI's compound pa
 </template>
 ```
 
-- A single root element in `#indicator` receives the indicator classes and `data-expanded`, like
-  HeroUI's `Accordion.Indicator` children, so any icon rotates when its item expands.
+- A single root element in `#indicator` receives the indicator classes and `data-expanded`, so
+  any icon rotates when its item expands.
 - Extra fields on an item (icons, subtitles, …) are passed through to the slots as `item`.
-- `Accordion.Body`'s `className` maps to the `bodyInner` `ui` key.
 
-| `ui` key    | `data-slot`           | Element                                                                       |
-| ----------- | --------------------- | ----------------------------------------------------------------------------- |
-| `base`      | `accordion`           | root element                                                                  |
-| `item`      | `accordion-item`      | one per item                                                                  |
-| `heading`   | `accordion-heading`   | `<h3>` around the trigger                                                     |
-| `trigger`   | `accordion-trigger`   | the expand/collapse button                                                    |
-| `indicator` | `accordion-indicator` | chevron (or `#indicator` content)                                             |
-| `panel`     | `accordion-panel`     | collapsible panel                                                             |
-| `body`      | `accordion-body`      | content body container                                                        |
-| `bodyInner` | –                     | padded wrapper inside the body (HeroUI's `Accordion.Body` `className` target) |
+| `ui` key    | `data-slot`           | Element                           |
+| ----------- | --------------------- | --------------------------------- |
+| `base`      | `accordion`           | root element                      |
+| `item`      | `accordion-item`      | one per item                      |
+| `heading`   | `accordion-heading`   | `<h3>` around the trigger         |
+| `trigger`   | `accordion-trigger`   | the expand/collapse button        |
+| `indicator` | `accordion-indicator` | chevron (or `#indicator` content) |
+| `panel`     | `accordion-panel`     | collapsible panel                 |
+| `body`      | `accordion-body`      | content body container            |
+| `bodyInner` | –                     | padded wrapper inside the body    |
 
 ### Typing items
 

@@ -78,7 +78,7 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 <ComponentPreview name="color-field/required" />
 
 ::: warning Empty value and forms
-Without `v-model`/`default-value`, or with a `null` model, the input is empty and shows its `placeholder`, as in HeroUI. Reka's ColorField always holds a colour internally, so an empty field still **submits `#000000`** as its form value, and `required` can't block submitting an empty field. Validate with `validate` or check for a `null` model if you need to tell them apart.
+Without `v-model`/`default-value`, or with a `null` model, the input is empty and shows its `placeholder`. The field always holds a colour internally, so an empty field still **submits `#000000`** as its form value, and `required` can't block submitting an empty field. Validate with `validate` or check for a `null` model if you need to tell them apart.
 :::
 
 ### Disabled State
@@ -115,7 +115,7 @@ Complete form example with validation and submission handling.
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to `ColorField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`.
+Attributes you pass to `ColorField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`.
 
 <ComponentPreview name="color-field/render-function" />
 
@@ -183,7 +183,7 @@ ColorField sets these data attributes:
 - `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
 - Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> (and <kbd>PageUp</kbd>/<kbd>PageDown</kbd>) step the hex value or the active channel by one step, <kbd>Home</kbd>/<kbd>End</kbd> jump a channel to its minimum/maximum, <kbd>Enter</kbd> commits typed text and then submits an enclosing form, mouse wheel steps the value unless `disableWheelChange` is set
 - Channel values show their unit (`213°`, `50%`) and are clamped to the channel range on commit
-- `name` submits the lowercase hex (`#0485f7`; HeroUI submits it uppercase), or the channel value in channel mode (alpha on a 0–1 scale)
+- `name` submits the lowercase hex (`#0485f7`), or the channel value in channel mode (alpha on a 0–1 scale)
 
 ## Related Components
 

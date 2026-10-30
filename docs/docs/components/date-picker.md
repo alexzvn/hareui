@@ -52,7 +52,7 @@ DatePicker renders a [Label](/docs/components/label), a segmented [date-input-gr
 | —                  | `field-error`                   | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 | `popover`          | `date-picker-popover`           | the popover content wrapping the [Calendar](/docs/components/calendar)                                         |
 
-> **DatePicker** combines a segmented date field and a calendar popover into a single accessible component. Values are [`@internationalized/date`](https://react-aria.adobe.com/internationalized/date/) objects (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`) — the same types HeroUI uses.
+> **DatePicker** combines a segmented date field and a calendar popover into a single accessible component. Values are [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) objects (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`).
 
 ## Examples
 
@@ -92,7 +92,7 @@ The `#indicator` slot replaces the default calendar icon rendered inside the tri
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element and lets sub-parts render-prop their own markup. Option A has no compound parts to render-prop into; attributes you pass to `DatePicker` fall through to the root element instead.
+DatePicker has no `render` prop; attributes you pass to `DatePicker` fall through to the root element instead.
 
 <ComponentPreview name="date-picker/render-function" />
 
@@ -144,15 +144,12 @@ DatePicker sets these data attributes:
 - **Open**: `[data-state="open"|"closed"]` on the trigger and the popover
 - **Focus Visible**: `[data-focus-visible="true"]` on the trigger
 
-### Reka UI Limitations
+### Limitations
 
-- `shouldForceLeadingZeros` has no equivalent: Reka's `DateFieldRoot` doesn't expose a flag to force
-  leading zeros on numeric segments the way React Aria's `useDateFormatter` does, so the
-  `format-options` demo drops that control.
-- Selecting a calendar day always closes the popover (`shouldCloseOnSelect`-style behavior is
-  built into Reka's `PopoverRoot`/`Calendar` wiring, not configurable), matching HeroUI's own
-  default — this is also why the `format-options` demo's inline time field only stays reachable
-  before a date is picked.
+- There is no option to force leading zeros on numeric segments, so the `format-options` demo
+  drops that control.
+- Selecting a calendar day always closes the popover; this is not configurable. It is also why
+  the `format-options` demo's inline time field only stays reachable before a date is picked.
 
 ## API Reference
 
@@ -178,7 +175,7 @@ DatePicker sets these data attributes:
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
 - `invalid` sets `aria-invalid="true"` on the field and every segment; the error is announced via `role="alert"`
 - Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments, <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
-- `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own, matching React Aria's `useDateFieldState` — no need to compute `invalid` yourself just for native-range feedback
+- `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own — no need to compute `invalid` yourself just for native-range feedback
 - The popover's calendar is reachable via the trigger button (named "Calendar") or <kbd>Alt</kbd>+<kbd>↓</kbd> on a segment, and focuses the selected date on open; it closes on <kbd>Esc</kbd> (even with the year picker open), an outside click or picking a date, and focus returns to the trigger
 
 ## Related Components

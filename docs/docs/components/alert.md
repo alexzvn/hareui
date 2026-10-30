@@ -17,8 +17,7 @@ import { Alert } from '@hareui/vue'
 
 ## Anatomy
 
-HeroUI's compound parts (`Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`)
-become props and named slots, rendered in a fixed order: `#leading`, indicator, content, then `#trailing`.
+Alert is composed through props and named slots, rendered in a fixed order: `#leading`, indicator, content, then `#trailing`.
 
 ```vue
 <Alert status="…" title="…" description="…">
@@ -63,7 +62,7 @@ app.use(
 
 ## Styling Reference
 
-Each rendered element carries the same `data-slot` string as HeroUI, so selectors translate 1:1.
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
 | `ui` key      | `data-slot`         | Description                                |
 | ------------- | ------------------- | ------------------------------------------ |
@@ -73,9 +72,8 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 | `title`       | `alert-title`       | Alert title text (renders as `p`)          |
 | `description` | `alert-description` | Alert description text (renders as `span`) |
 
-HeroUI's status modifier classes correspond to the `status` prop (HareUI renders utilities, not BEM
-classes, so style through `class`, `ui` or `createHareUI`): `.alert--default`, `.alert--accent`,
-`.alert--success`, `.alert--warning`, `.alert--danger`.
+The `status` prop (`default`, `accent`, `success`, `warning`, `danger`) sets the colors. HareUI
+renders utility classes, so style through `class`, `ui` or `createHareUI`.
 
 ### Interactive States
 

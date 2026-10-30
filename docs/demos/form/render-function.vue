@@ -1,5 +1,5 @@
 <template>
-  <!-- Attributes fall through to the native <form> element (HeroUI's `render` prop) -->
+  <!-- Attributes fall through to the native <form> element -->
   <Form class="flex w-96 flex-col gap-4" data-custom="foo" @submit="onSubmit">
     <TextField
       required

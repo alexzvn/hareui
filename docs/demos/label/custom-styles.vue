@@ -3,7 +3,7 @@
     <Label class="text-xs font-semibold tracking-wide text-accent uppercase" for="repo">
       Repository
     </Label>
-    <Input id="repo" class="w-64 bg-field" placeholder="heroui/react" />
+    <Input id="repo" class="w-64 bg-field" placeholder="hareui/vue" />
   </div>
 </template>
 

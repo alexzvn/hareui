@@ -7,7 +7,7 @@ links:
 
 ## Usage
 
-Wrap your whole application with the `App` component. It sets the reading direction, locale and default [portal](#portal) for every component inside it, and renders a [`ToastProvider`](/docs/components/toast) so `toast()` works anywhere.
+Wrap your whole application with the `App` component. It sets the reading direction, locale and default [portal](#portal) for every component inside it, renders a [`ToastProvider`](/docs/components/toast) so `toast()` works anywhere, and renders the overlays opened with [`useOverlay()`](/docs/getting-started/overlays).
 
 ```ts
 import { App } from '@hareui/vue'

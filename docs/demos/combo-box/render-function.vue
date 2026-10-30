@@ -1,5 +1,5 @@
 <template>
-  <!-- HeroUI's `render` prop has no Vue equivalent (plan drop: render functions); attributes fall through to the root instead. -->
+  <!-- Attributes fall through to the root element -->
   <ComboBox
     class="w-[256px]"
     data-custom="foo"

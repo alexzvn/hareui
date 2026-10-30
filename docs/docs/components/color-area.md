@@ -20,7 +20,7 @@ import { ColorArea } from '@hareui/vue'
 
 ## Anatomy
 
-ColorArea renders the gradient area with its draggable thumb built in (HeroUI's `ColorArea.Thumb` child). Style the parts with `class` and `ui`.
+ColorArea renders the gradient area with its draggable thumb built in. Style the parts with `class` and `ui`.
 
 ```vue
 <template>
@@ -57,7 +57,7 @@ Bind the value with `v-model`. The committed value is always a `Color` object; u
 
 ### Render Function
 
-HeroUI's `render` prop replaces the root element. In Vue, attributes you pass to `ColorArea` fall through to the root element.
+Attributes you pass to `ColorArea` fall through to the root element.
 
 <ComponentPreview name="color-area/render-function" />
 

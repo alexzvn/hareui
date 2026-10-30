@@ -53,14 +53,14 @@ app.use(
 
 ## Styling Reference
 
-The root carries `data-slot="toolbar"` and `data-orientation`, as in HeroUI.
+The root carries `data-slot="toolbar"` and `data-orientation`.
 
-| `ui` key              | HeroUI selector                    | Description                                                   |
-| --------------------- | ---------------------------------- | ------------------------------------------------------------- |
-| `base`                | `.toolbar`                         | Base container                                                |
-| `separatorVertical`   | `.toolbar .separator--vertical`    | Classes added to each vertical Separator inside the toolbar   |
-| `separatorHorizontal` | `.toolbar .separator--horizontal`  | Classes added to each horizontal Separator inside the toolbar |
-| `buttonGroup`         | `.toolbar--vertical .button-group` | Classes added to each ButtonGroup inside the toolbar          |
+| `ui` key              | Description                                                   |
+| --------------------- | ------------------------------------------------------------- |
+| `base`                | Base container                                                |
+| `separatorVertical`   | Classes added to each vertical Separator inside the toolbar   |
+| `separatorHorizontal` | Classes added to each horizontal Separator inside the toolbar |
+| `buttonGroup`         | Classes added to each ButtonGroup inside the toolbar          |
 
 Variants: `orientation` (`horizontal`, `vertical`) and `attached` (surface background with full rounding).
 

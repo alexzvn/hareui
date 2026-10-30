@@ -66,6 +66,6 @@
 import { Avatar, Chip, Tooltip } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
-// Equivalent of HeroUI's `Tooltip.Trigger`: a focusable inline-block wrapper around non-button content.
+// A focusable inline-block wrapper around non-button content.
 const triggerClass = 'inline-block outline-none focus-visible:status-focused'
 </script>

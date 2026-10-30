@@ -35,7 +35,7 @@ import { ToggleButton } from '@hareui/vue'
 
 ### Controlled
 
-Bind the selected state with `v-model`. The default slot receives `{ selected, disabled }` (HeroUI's render props).
+Bind the selected state with `v-model`. The default slot receives `{ selected, disabled }`.
 
 <ComponentPreview name="toggle-button/controlled" />
 
@@ -64,7 +64,7 @@ app.use(
 
 ## Styling Reference
 
-The root carries `data-slot="toggle-button"`, as in HeroUI. `ui` key: `base`.
+The root carries `data-slot="toggle-button"`. `ui` key: `base`.
 
 ### Interactive States
 

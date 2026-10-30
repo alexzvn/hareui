@@ -35,7 +35,7 @@ type Character = {
   name: string
 }
 
-// HeroUI's `useAsyncList`: refetch whenever the search text changes, abort the previous request
+// Refetch whenever the search text changes, abort the previous request
 const filterText = ref('')
 const characters = ref<Character[]>([])
 const isLoading = ref(false)
