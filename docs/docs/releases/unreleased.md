@@ -7,6 +7,7 @@ Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 
 ## New components
 
+- `Timeline`: an ordered list of events with icon or avatar markers, per-item status tones, `v-model` progress, vertical or horizontal orientation, a centred axis with alternate placement, and per-item slots.
 - `Splitter`: resizable panels from an `items` prop, with line, drag, pill and handle grips, collapsible panels, keyboard resizing and layout persistence (`auto-save-id`).
 
 ## Changes

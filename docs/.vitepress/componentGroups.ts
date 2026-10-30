@@ -33,6 +33,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'dashboard-sidebar-toggle',
     'dashboard-toolbar',
   ],
+  'Data Display': ['badge', 'chip', 'rich-table', 'table', 'timeline'],
   'Date and Time': [
     'calendar',
     'date-field',
@@ -98,7 +99,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
 }
 
 // Pages that get a "New" badge in the sidebar. Clear entries once they stop being new.
-export const NEW_COMPONENTS: ReadonlySet<string> = new Set(['splitter'])
+export const NEW_COMPONENTS: ReadonlySet<string> = new Set(['splitter', 'timeline'])
 
 // Pages that get an "Updated" badge in the sidebar. Clear entries after the next release.
 export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>()
