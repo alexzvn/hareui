@@ -13,6 +13,7 @@ const entries = {
   'charts.ts': '@hareui/vue/charts',
   'carousel.ts': '@hareui/vue/carousel',
   'code-block.ts': '@hareui/vue/code-block',
+  'command-palette.ts': '@hareui/vue/command-palette',
 }
 
 /**

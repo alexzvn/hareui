@@ -53,6 +53,10 @@
       "types": "./dist/code-block.d.ts",
       "import": "./dist/code-block.js"
     },
+    "./command-palette": {
+      "types": "./dist/command-palette.d.ts",
+      "import": "./dist/command-palette.js"
+    },
     "./vite": {
       "types": "./dist/vite.d.ts",
       "import": "./dist/vite.js"

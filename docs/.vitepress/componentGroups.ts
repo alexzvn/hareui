@@ -13,7 +13,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'radar-chart',
     'radial-chart',
   ],
-  Collections: ['context-menu', 'dropdown', 'list-box', 'tag-group', 'tree'],
+  Collections: ['command-palette', 'context-menu', 'dropdown', 'list-box', 'tag-group', 'tree'],
   Colors: [
     'color-area',
     'color-field',
@@ -108,6 +108,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
 export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'carousel',
   'code-block',
+  'command-palette',
   'context-menu',
   'rating',
   'sidebar',
