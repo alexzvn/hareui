@@ -8,5 +8,5 @@ import { componentNamesPlugin } from './build/componentNames.ts'
 export default defineConfig({
   plugins: [vue(), componentNamesPlugin()],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
-  test: { environment: 'happy-dom', include: ['test/**/*.spec.ts'] },
+  test: { environment: 'happy-dom', include: ['test/**/*.spec.ts'], isolate: true },
 })
