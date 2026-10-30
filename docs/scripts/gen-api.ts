@@ -267,11 +267,14 @@ const toProp = (prop: PropertyMeta, format: FormatType): ApiProp => {
   }
 }
 
-// Only public components: the package entries (`index.ts`, and `charts.ts` for the `@hareui/vue/charts` subpath) re-export
-// each folder's index.ts, which lists that folder's public parts (internal parts like ListBoxOption or ToastItem aren't in it).
+// Only public components: the package entries (`index.ts` plus the subpath entries such as `charts.ts` for
+// `@hareui/vue/charts`) re-export each folder's index.ts, which lists that folder's public parts (internal parts like
+// ListBoxOption or ToastItem aren't in it).
 const entry = (
   await Promise.all(
-    ['index.ts', 'charts.ts'].map((file) => Bun.file(join(componentsDir, '..', file)).text()),
+    ['index.ts', 'charts.ts', 'carousel.ts'].map((file) =>
+      Bun.file(join(componentsDir, '..', file)).text(),
+    ),
   )
 ).join('\n')
 

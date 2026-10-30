@@ -8,7 +8,11 @@ const RESOLVED_ID = `\0${VIRTUAL_ID}`
 const srcDir = fileURLToPath(new URL('../src/', import.meta.url))
 
 /** Package entries and the import path they are published under. */
-const entries = { 'index.ts': '@hareui/vue', 'charts.ts': '@hareui/vue/charts' }
+const entries = {
+  'index.ts': '@hareui/vue',
+  'charts.ts': '@hareui/vue/charts',
+  'carousel.ts': '@hareui/vue/carousel',
+}
 
 /**
  * Component name → import path, for the components each entry re-exports

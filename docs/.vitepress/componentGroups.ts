@@ -85,6 +85,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'surface',
     'toolbar',
   ],
+  Media: ['avatar', 'avatar-group', 'carousel'],
   Navigation: [
     'accordion',
     'breadcrumbs',
@@ -104,6 +105,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
 
 // Pages that get a "New" badge in the sidebar. Clear entries once they stop being new.
 export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
+  'carousel',
   'context-menu',
   'rating',
   'sidebar',
