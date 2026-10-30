@@ -43,9 +43,10 @@
 
 <script setup lang="ts">
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, ref, useId, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, useId, useSlots, useTemplateRef, watch } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useControllableOpen } from '@/composables/useControllableOpen'
 import { useInertOutside } from '@/composables/useInertOutside'
 import { useLayerDismiss } from '@/composables/useLayerDismiss'
 import { usePortal } from '@/composables/usePortal'
@@ -79,13 +80,11 @@ const hasHeading = computed(() => !!(props.title || slots.title))
 // React Aria labels the dialog by its title heading (Reka labels it by the trigger).
 const headingId = useId()
 
-const openState = ref(props.defaultOpen ?? false)
-const isOpen = computed(() => props.open ?? openState.value)
-
-const setOpen = (value: boolean) => {
-  openState.value = value
-  emit('update:open', value)
-}
+const { isOpen, setOpen } = useControllableOpen({
+  open: () => props.open,
+  defaultOpen: props.defaultOpen,
+  onUpdate: (value) => emit('update:open', value),
+})
 
 // `isOpen` turns false synchronously in `setOpen` (Reka's `update:open`) and with the `open` prop. The
 // content instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
