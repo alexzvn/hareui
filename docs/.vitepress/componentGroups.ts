@@ -13,7 +13,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'radar-chart',
     'radial-chart',
   ],
-  Collections: ['dropdown', 'list-box', 'tag-group', 'tree'],
+  Collections: ['context-menu', 'dropdown', 'list-box', 'tag-group', 'tree'],
   Colors: [
     'color-area',
     'color-field',
@@ -103,6 +103,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
 
 // Pages that get a "New" badge in the sidebar. Clear entries once they stop being new.
 export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
+  'context-menu',
   'rating',
   'splitter',
   'stepper',
