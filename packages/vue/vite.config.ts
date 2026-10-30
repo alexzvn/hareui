@@ -14,7 +14,7 @@ export default defineConfig({
     cssCodeSplit: false,
     rolldownOptions: {
       external:
-        /^(vue|reka-ui|tailwind-variants|tailwind-merge|unplugin-vue-components|@tanstack\/vue-table|@tanstack\/vue-virtual|@internationalized\/date|@number-flow\/vue|d3-[\w-]+)(\/|$)/,
+        /^(vue|reka-ui|tailwind-variants|tailwind-merge|unplugin-vue-components|defu|@tanstack\/vue-table|@tanstack\/vue-virtual|@internationalized\/date|@number-flow\/vue|d3-[\w-]+|embla-carousel[\w-]*|@tiptap\/[\w-]+|fuse\.js|shiki)(\/|$)/,
       output: { preserveModules: true, preserveModulesRoot: 'src', entryFileNames: '[name].js' },
     },
   },
