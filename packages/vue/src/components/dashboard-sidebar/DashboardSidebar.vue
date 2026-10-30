@@ -78,15 +78,12 @@ import { computed, h, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 
 
 import Button from '@/components/button/Button.vue'
 import DashboardResizeHandle from '@/components/dashboard-resize-handle/DashboardResizeHandle.vue'
-import Drawer from '@/components/drawer/Drawer.vue'
-import Modal from '@/components/modal/Modal.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { createDashboardSidebarState, useDashboard } from '@/composables/useDashboard'
 import { useResizable } from '@/composables/useResizable'
-import type { ClassValue } from '@/utils/tv'
+import { useSidebarMenu } from '@/composables/useSidebarMenu'
 
 import type {
-  DashboardSidebarMode,
   DashboardSidebarProps,
   DashboardSidebarResizeHandleSlotProps,
   DashboardSidebarSlots,
@@ -218,31 +215,12 @@ const ui = useComponentUI('dashboardSidebar', {
 
 const menuTitle = computed(() => (props.menu as { title?: string } | undefined)?.title ?? 'Sidebar')
 
-const Menu = computed(() => (props.mode === 'modal' ? Modal : Drawer))
-
-const menuProps = computed(() => {
-  const { title: _title, ui: _ui, ...rest } = (props.menu ?? {}) as Record<string, unknown>
-
-  const defaultsByMode = {
-    modal: { size: 'full' },
-    slideover: { placement: props.side, variant: 'blur' },
-    drawer: { placement: 'bottom', variant: 'blur' },
-  } satisfies Record<DashboardSidebarMode, Record<string, unknown>>
-
-  const defaults: Record<string, unknown> = defaultsByMode[props.mode]
-
-  return { ...defaults, ...rest }
-})
-
-// The user's `menu.ui` is forwarded as is; `backdrop` / `dialog` are merged with the sidebar's `overlay` / `content` slots.
-const menuClasses = computed(() => {
-  const user: Partial<Record<string, ClassValue>> = props.menu?.ui ?? {}
-  return {
-    ...user,
-    backdrop: [ui.value.overlay(), user.backdrop],
-    dialog: ['p-0 gap-0', ui.value.content(), user.dialog],
-  }
-})
+const { Menu, menuProps, menuClasses } = useSidebarMenu(() => ({
+  mode: props.mode,
+  side: props.side,
+  menu: props.menu,
+  classes: { backdrop: ui.value.overlay(), dialog: ['p-0 gap-0', ui.value.content()] },
+}))
 
 const toggleOpen = () => {
   open.value = !open.value

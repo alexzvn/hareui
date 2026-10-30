@@ -80,6 +80,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'header',
     'main',
     'separator',
+    'sidebar',
     'splitter',
     'surface',
     'toolbar',
@@ -105,6 +106,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
 export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'context-menu',
   'rating',
+  'sidebar',
   'splitter',
   'stepper',
   'timeline',

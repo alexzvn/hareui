@@ -13,6 +13,7 @@ Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 - `Rating`: a row of icons to show or collect a score, with `v-model`, half and fractional steps, clearable, hoverable, read-only, custom icons or an `#item` slot, and Form validation.
 - `Tree`: expandable folders and files with indent guides, single, multiple and checkbox-style selection, controlled expansion, per-item slots and virtualization.
 - `Splitter`: resizable panels from an `items` prop, with line, drag, pill and handle grips, collapsible panels, keyboard resizing and layout persistence (`auto-save-id`).
+- `Sidebar`: a standalone collapsible sidebar with `offcanvas`, `icon` or `none` collapse, `sidebar`, `floating` or `inset` variants, a rail, and a slideover, drawer or modal menu on mobile that closes when a link inside it is clicked (`auto-close`).
 - `Toc`: a table of contents that follows the heading in view, as a sticky list (collapsible below `lg`, with an optional straight or circuit highlight) or as floating marks that open the links on hover or press.
 
 ## Changes
