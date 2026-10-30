@@ -67,7 +67,7 @@ export type InputGroupProps = {
   /** Text content rendered after the input. Replaced by the `#suffix` slot. */
   suffix?: string
   /**
-   * Renders a multiline `<textarea>` (`data-slot="input-group-textarea"`) instead of the input, like HeroUI's `InputGroup.TextArea`.
+   * Renders a multiline `<textarea>` (`data-slot="input-group-textarea"`) instead of the input.
    * The group then grows with the content and aligns the prefix/suffix to the top.
    * @defaultValue false
    */

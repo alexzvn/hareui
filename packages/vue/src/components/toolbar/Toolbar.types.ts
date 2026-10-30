@@ -22,7 +22,7 @@ export type ToolbarProps = {
    */
   orientation?: ComponentVariants<Toolbar>['orientation']
   /**
-   * Whether the toolbar has a surface background with full rounding (HeroUI's `isAttached`).
+   * Whether the toolbar has a surface background with full rounding.
    * @defaultValue false
    */
   attached?: boolean
@@ -34,6 +34,6 @@ export type ToolbarProps = {
 
 /** Slots of the `Toolbar` component. */
 export type ToolbarSlots = {
-  /** Toolbar controls; receives HeroUI's render props. */
+  /** Toolbar controls; receives the toolbar `orientation`. */
   default?: (props: { orientation: 'horizontal' | 'vertical' }) => VNode[]
 }

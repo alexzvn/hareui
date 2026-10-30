@@ -53,8 +53,7 @@ export type TabsProps<T extends TabsItem = TabsItem> = {
    */
   content?: boolean
   /**
-   * Whether to render a separator between tabs. HeroUI separators are opt-in
-   * via `<Tabs.Separator/>`.
+   * Whether to render a separator between tabs.
    * @defaultValue false
    */
   separator?: boolean

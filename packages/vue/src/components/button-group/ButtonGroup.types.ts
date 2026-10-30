@@ -36,7 +36,7 @@ export type ButtonGroupProps = {
    */
   fullWidth?: boolean
   /**
-   * Draws a divider at the start of every Button except the first (HeroUI's `ButtonGroup.Separator`).
+   * Draws a divider at the start of every Button except the first.
    * @defaultValue false
    */
   separator?: boolean

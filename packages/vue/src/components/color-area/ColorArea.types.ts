@@ -11,7 +11,7 @@ type ColorArea = typeof theme
 export type ColorAreaAxis = {
   /**
    * Colour channel of the axis. Defaults to the first channel of the colour space the other axis
-   * doesn't use: `hue` then `saturation` for HSL/HSB, `red` then `green` for RGB, as in React Aria.
+   * doesn't use: `hue` then `saturation` for HSL/HSB, `red` then `green` for RGB.
    */
   channel?: ColorChannel
   /** The name of the axis's hidden input, for form submission. */
@@ -31,12 +31,12 @@ export type ColorAreaProps = {
   colorSpace?: ColorSpace
   /**
    * The horizontal (x) axis. Its channel defaults to the first channel of the colour space that
-   * isn't the y channel (`hue` for HSL/HSB, `red` for RGB), as in React Aria.
+   * isn't the y channel (`hue` for HSL/HSB, `red` for RGB).
    */
   x?: ColorAreaAxis
   /**
    * The vertical (y) axis. Its channel defaults to the first channel of the colour space that
-   * isn't the x channel (`saturation` for HSL/HSB, `green` for RGB), as in React Aria.
+   * isn't the x channel (`saturation` for HSL/HSB, `green` for RGB).
    */
   y?: ColorAreaAxis
   /** Whether the colour area is disabled. */
@@ -51,8 +51,8 @@ export type ColorAreaProps = {
 
 /** Events emitted by `ColorArea`. */
 export type ColorAreaEmits = {
-  /** Emitted on every colour change, mirroring HeroUI's `onChange` (fired while dragging/typing). */
+  /** Emitted on every colour change (fired while dragging/typing). */
   change: [value: Color]
-  /** Emitted when the user stops interacting (pointer up / key up), mirroring HeroUI's `onChangeEnd`. */
+  /** Emitted when the user stops interacting (pointer up / key up). */
   changeEnd: [value: Color]
 }

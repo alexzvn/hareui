@@ -16,7 +16,7 @@ export type KbdProps = {
    * @defaultValue 'kbd'
    */
   as?: PrimitiveProps['as']
-  /** Modifier or special keys rendered as symbols before the content (HeroUI's `Kbd.Abbr keyValue`), each with its name as `title`. */
+  /** Modifier or special keys rendered as symbols before the content, each with its name as `title`. */
   keys?: KbdKey | KbdKey[]
   /** Visual variant. */
   variant?: ComponentVariants<Kbd>['variant']
@@ -28,6 +28,6 @@ export type KbdProps = {
 
 /** Slots for `Kbd`. */
 export type KbdSlots = {
-  /** The key text after the symbols, wrapped in the `content` element (HeroUI's `Kbd.Content`). */
+  /** The key text after the symbols, wrapped in the `content` element. */
   default?: () => VNode[]
 }

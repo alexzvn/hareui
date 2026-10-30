@@ -42,7 +42,7 @@ export type RangeCalendarProps = {
   /**
    * Callback returning whether a given date is unavailable for selection. During an
    * in-progress range selection, `anchorDate` is the already-picked start date (or `null`
-   * before any date is picked), matching React Aria's `isDateUnavailable(date, anchorDate)`.
+   * before any date is picked).
    */
   isDateUnavailable?: (date: DateValue, anchorDate: DateValue | null) => boolean
   /**
@@ -69,8 +69,6 @@ export type RangeCalendarProps = {
   firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
   /**
    * Whether to always display 6 weeks, avoiding layout shift between months.
-   * Reka UI only supports a fixed 6-week grid (HeroUI's React `weeksInMonth` accepts
-   * any count up to 6; see reka-limitations in the RangeCalendar report).
    * @defaultValue false
    */
   fixedWeeks?: boolean
@@ -89,20 +87,14 @@ export type RangeCalendarProps = {
   pagedNavigation?: boolean
   /**
    * Shows this many months side by side. Navigating with the prev/next buttons always pages
-   * by the full visible width (Reka's `pagedNavigation`, forced on regardless of the
-   * `pagedNavigation` prop, matching React Aria's default `pageBehavior: "visible"`).
-   * Reka's heading only formats the combined range, so each panel renders its own
-   * "<Month> <Year>" label derived from that panel's `Grid.value` (see reka-limitations in
-   * the RangeCalendar report).
+   * by the full visible width, regardless of the `pagedNavigation` prop. Each panel renders its
+   * own "<Month> <Year>" label.
    * @defaultValue 1
    */
   numberOfMonths?: number
   /**
    * Marks the calendar as invalid for consumer-driven validation (e.g. a selected range that's
-   * too long). Reka's own `isInvalid` is a read-only computed derived from `isDateUnavailable`/
-   * `minValue`/`maxValue`, with no input prop to override it (see reka-limitations in the
-   * RangeCalendar report), so this sets `aria-invalid`/`data-invalid` directly instead. HeroUI's
-   * styles don't key off it either, so it has no visual effect by itself.
+   * too long). Sets `aria-invalid`/`data-invalid`; it has no visual effect by itself.
    * @defaultValue false
    */
   invalid?: boolean

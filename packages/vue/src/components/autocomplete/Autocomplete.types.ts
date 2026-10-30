@@ -65,7 +65,7 @@ export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
    */
   defaultOpen?: boolean
   /**
-   * Whether the popover has a search field that filters the options (HeroUI `Autocomplete.Filter` + `SearchField`).
+   * Whether the popover has a search field that filters the options.
    * Without it, the list takes focus as in Select.
    * @defaultValue true
    */
@@ -100,7 +100,7 @@ export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
   /** Async options: shows the `#loading` slot after the last option and emits `load-more` at the end of the list. */
   loading?: boolean
   /**
-   * Render only the visible rows (Reka `ListboxVirtualizer`), for long lists. Sections and separators are skipped.
+   * Render only the visible rows, for long lists. Sections and separators are skipped.
    * Pass `{ estimateSize, overscan }` to tune; rows are `estimateSize` (default 50) px apart.
    * @defaultValue false
    */
@@ -180,7 +180,7 @@ export type AutocompleteSlots<T extends ListBoxItem = ListBoxItem> = {
   'item-indicator'?: (props: ListBoxItemSlotProps<T>) => VNode[]
   /** Section heading (ListBox `#section-label`). */
   'section-label'?: (props: { section: ListBoxSection<T> }) => VNode[]
-  /** Empty-state content, rendered when no option matches (HeroUI `renderEmptyState`). */
+  /** Empty-state content, rendered when no option matches. */
   empty?: () => VNode[]
   /** Shown after the last option while `loading` is true. */
   loading?: () => VNode[]

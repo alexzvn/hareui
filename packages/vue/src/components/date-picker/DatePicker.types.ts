@@ -29,7 +29,7 @@ export type DatePickerProps = {
   portal?: PortalTarget
   /** Label text rendered above the group. */
   label?: string
-  /** Accessible label for the calendar inside the popover. HeroUI's demos set this independently of `label`. */
+  /** Accessible label for the calendar inside the popover. Set independently of `label`. */
   calendarLabel?: string
   /** Helper text rendered below the group. Hidden while the field is invalid. */
   description?: string

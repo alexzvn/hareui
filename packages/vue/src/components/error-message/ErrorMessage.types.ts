@@ -19,6 +19,6 @@ export type ErrorMessageProps = {
 
 /** Slots of `ErrorMessage`. */
 export type ErrorMessageSlots = {
-  /** The error message content. The element stays rendered while empty, like HeroUI's. */
+  /** The error message content. The element stays rendered while empty. */
   default?: () => VNode[]
 }

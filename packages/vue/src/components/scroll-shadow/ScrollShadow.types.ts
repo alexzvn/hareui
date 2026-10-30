@@ -53,7 +53,7 @@ export type ScrollShadowProps = {
    */
   visibility?: ScrollShadowVisibility
   /**
-   * Whether scroll detection is enabled (HeroUI's `isEnabled`).
+   * Whether scroll detection is enabled.
    * @defaultValue true
    */
   enabled?: boolean

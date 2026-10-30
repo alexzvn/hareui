@@ -20,7 +20,7 @@ export type LinkProps = {
   /** Whether the link is disabled: sets `aria-disabled` and blocks navigation. */
   disabled?: boolean
   /**
-   * Show the icon (HeroUI's `Link.Icon`). Defaults to the external-link arrow; fill `#icon` to replace it.
+   * Show the icon. Defaults to the external-link arrow; fill `#icon` to replace it.
    * @defaultValue false
    */
   icon?: boolean

@@ -17,8 +17,8 @@ export type CalendarProps = {
   modelValue?: DateValue | DateValue[] | null
   /**
    * The selected date(s) when initially rendered (uncontrolled).
-   * Reka UI's `defaultValue` prop type only accepts a single `DateValue`, not an array, even in
-   * multiple-selection mode (see reka-limitations in the Calendar report); cast at the call site.
+   * In multiple-selection mode, cast an array of dates at the call site: the underlying prop type
+   * only accepts a single `DateValue`.
    */
   defaultValue?: DateValue | DateValue[]
   /** The currently displayed month/year. Use `v-model:placeholder` to control it. */
@@ -53,8 +53,6 @@ export type CalendarProps = {
   firstDayOfWeek?: 'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'
   /**
    * Whether to always display 6 weeks, avoiding layout shift between months.
-   * Reka UI only supports a fixed 6-week grid (HeroUI's React `weeksInMonth` accepts
-   * any count up to 6; see reka-limitations in the Calendar report).
    * @defaultValue false
    */
   fixedWeeks?: boolean
@@ -78,20 +76,13 @@ export type CalendarProps = {
   pagedNavigation?: boolean
   /**
    * Shows this many months side by side. Navigating with the prev/next buttons always pages
-   * by the full visible width (Reka's `pagedNavigation`, forced on regardless of the
-   * `pagedNavigation` prop, matching React Aria's default `pageBehavior: "visible"`).
-   * Reka's heading only formats the combined range, so each panel renders its own
-   * "<Month> <Year>" label derived from that panel's `Grid.value` (see reka-limitations in
-   * the Calendar report).
+   * by the full visible width. Each panel shows its own "<Month> <Year>" label.
    * @defaultValue 1
    */
   numberOfMonths?: number
   /**
-   * Marks the calendar as invalid for consumer-driven validation. Reka's own `isInvalid` is a
-   * read-only computed derived from `isDateUnavailable`/`minValue`/`maxValue`, with no input prop
-   * to override it (see reka-limitations in the Calendar report), so this sets
-   * `aria-invalid`/`data-invalid` directly instead. HeroUI's styles don't key off it either, so
-   * it has no visual effect by itself.
+   * Marks the calendar as invalid for consumer-driven validation by setting `aria-invalid`/`data-invalid`.
+   * The theme doesn't key off it, so it has no visual effect by itself.
    * @defaultValue false
    */
   invalid?: boolean

@@ -14,7 +14,7 @@ export type BreadcrumbsItem = {
   label?: string
   /** The URL to link to. The last item is always the current page and renders without a link. */
   href?: string
-  /** Additional classes merged into this item's `<li>` (HeroUI's `Breadcrumbs.Item` `className`). */
+  /** Additional classes merged into this item's `<li>`. */
   class?: ClassValue
   /** Extra fields are passed through to the slots as `item`. */
   [key: string]: unknown
@@ -55,7 +55,7 @@ export type BreadcrumbsSlots<T extends BreadcrumbsItem = BreadcrumbsItem> = {
   /** Replaces an item's label. */
   item?: (props: ItemSlotProps<T>) => VNode[]
   /**
-   * Custom separator between items (HeroUI's `separator` prop). A single root element receives
+   * Custom separator between items. A single root element receives
    * the themed separator classes and `data-slot="breadcrumbs-separator"`.
    */
   separator?: (props: ItemSlotProps<T>) => VNode[]

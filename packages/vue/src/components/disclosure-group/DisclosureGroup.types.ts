@@ -21,7 +21,7 @@ export type DisclosureGroupProps = {
   /** The disclosures expanded on first render (uncontrolled). */
   defaultValue?: ExpandedValue[]
   /**
-   * Whether multiple disclosures can be expanded at once (HeroUI's `allowsMultipleExpanded`).
+   * Whether multiple disclosures can be expanded at once.
    * @defaultValue false
    */
   multiple?: boolean

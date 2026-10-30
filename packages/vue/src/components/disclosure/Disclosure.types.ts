@@ -18,7 +18,7 @@ export type DisclosureProps = {
   /** Text rendered by the default trigger. Ignored when `#trigger` is used. */
   title?: string
   /**
-   * Identifies this disclosure inside a `DisclosureGroup` (HeroUI's `id`): the group's
+   * Identifies this disclosure inside a `DisclosureGroup`: the group's
    * `v-model` holds these values. Defaults to a generated id.
    */
   value?: string | number
@@ -50,7 +50,7 @@ export type DisclosureSlots = {
    */
   trigger?: (props: {
     open: boolean
-    /** The themed chevron (HeroUI's `Disclosure.Indicator`): render it with `<component :is="indicator" />`. */
+    /** The themed chevron: render it with `<component :is="indicator" />`. */
     indicator: Component
   }) => VNode[]
   /** Replaces the chevron indicator rendered inside the default trigger. */

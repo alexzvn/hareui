@@ -42,7 +42,7 @@ export type ToggleButtonProps = {
    * @defaultValue false
    */
   defaultValue?: boolean
-  /** Identifies the button inside a `ToggleButtonGroup` (HeroUI's `id`); the group's `v-model` holds these values. */
+  /** Identifies the button inside a `ToggleButtonGroup`; the group's `v-model` holds these values. */
   value?: string
   /** Additional classes merged into the root element. */
   class?: ClassValue

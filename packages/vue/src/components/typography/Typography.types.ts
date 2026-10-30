@@ -11,8 +11,7 @@ type Typography = typeof theme
 /** Props of `Typography`: text in one of the theme's semantic `type` styles, rendered as its element. */
 export type TypographyProps = {
   /**
-   * The element or component to render as, overriding the element implied by `type`
-   * (equivalent to HeroUI's `render` prop).
+   * The element or component to render as, overriding the element implied by `type`.
    */
   as?: PrimitiveProps['as']
   /**
@@ -39,7 +38,7 @@ export type TypographyProps = {
   truncate?: boolean
   /**
    * Renders a rich prose container instead: children are plain HTML (headings, paragraphs,
-   * links, lists, code, …) and receive HeroUI's default typography rhythm. `type`, `align`,
+   * links, lists, code, …) and receive a default typography rhythm. `type`, `align`,
    * `color`, `weight` and `truncate` are ignored in this mode.
    * @defaultValue false
    */

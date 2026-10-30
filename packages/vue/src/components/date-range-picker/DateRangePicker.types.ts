@@ -75,7 +75,7 @@ export type DateRangePickerProps = {
   locale?: string
   /**
    * Callback returning whether a date is unavailable. Inside the calendar, `anchorDate` is the already-picked
-   * start of an in-progress selection (`null` otherwise), matching React Aria's `isDateUnavailable(date, anchorDate)`.
+   * start of an in-progress selection (`null` otherwise).
    */
   isDateUnavailable?: (date: DateValue, anchorDate: DateValue | null) => boolean
   /**
@@ -94,7 +94,7 @@ export type DateRangePickerProps = {
    */
   fullWidth?: boolean
   /**
-   * Wraps the start/end inputs in a horizontally scrollable container (HeroUI's `DateField.InputContainer`),
+   * Wraps the start/end inputs in a horizontally scrollable container,
    * for long time ranges that overflow the group.
    * @defaultValue false
    */

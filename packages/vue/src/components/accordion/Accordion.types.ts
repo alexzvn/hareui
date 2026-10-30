@@ -12,7 +12,7 @@ type Accordion = typeof theme
 export type AccordionItem = {
   /** The trigger text, shown unless `#label` is used. */
   label?: string
-  /** The value identifying this item (HeroUI's `id`). Defaults to the item's index. */
+  /** The value identifying this item. Defaults to the item's index. */
   value?: ExpandedValue
   /** Whether this item is disabled. */
   disabled?: boolean
@@ -33,7 +33,7 @@ export type AccordionProps<T extends AccordionItem = AccordionItem> = {
   /** The values expanded on first render (uncontrolled). */
   defaultValue?: ExpandedValue[]
   /**
-   * Whether multiple items can be expanded at once (HeroUI's `allowsMultipleExpanded`).
+   * Whether multiple items can be expanded at once.
    * @defaultValue false
    */
   multiple?: boolean
@@ -75,7 +75,7 @@ export type AccordionSlots<T extends AccordionItem = AccordionItem> = {
   /** Replaces the trigger's label text. */
   label?: (props: ItemSlotProps<T>) => VNode[]
   /**
-   * Replaces the chevron (HeroUI's `Accordion.Indicator` children). A single root element
+   * Replaces the chevron. A single root element
    * receives the themed indicator classes and `data-expanded`, so it rotates like the default.
    */
   indicator?: (props: ItemSlotProps<T>) => VNode[]

@@ -25,7 +25,7 @@ export type ColorPickerProps = {
    */
   side?: 'top' | 'right' | 'bottom' | 'left'
   /**
-   * Alignment of the popover against the trigger. HeroUI's default placement is `bottom left`, i.e. `start` in LTR.
+   * Alignment of the popover against the trigger. Defaults to `start`, i.e. bottom left in LTR.
    * @defaultValue 'start'
    */
   align?: 'start' | 'center' | 'end'

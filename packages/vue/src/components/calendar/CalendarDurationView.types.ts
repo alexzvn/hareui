@@ -25,7 +25,7 @@ export type CalendarDurationCellSlotProps = {
 /**
  * Internal: the `visibleDuration={{ weeks }}` / `{{ days }}` grid shared by `Calendar` and `RangeCalendar`
  * (decision #11). Reka's calendar roots always build full month grids, so these views use their own state
- * (`useCalendarDurationView`, a port of react-stately's `useCalendarState`) and mirror the month view's DOM,
+ * (`useCalendarDurationView`) and mirror the month view's DOM,
  * `data-slot`s and Reka-style data attributes so the same theme applies.
  */
 export type CalendarDurationViewProps = {

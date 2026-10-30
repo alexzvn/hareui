@@ -57,7 +57,7 @@ export type TagGroupProps<T extends TagGroupItem = TagGroupItem> = {
   description?: string
   /**
    * Error message rendered below the description. Rendered whenever this is given (even `''`) or
-   * `#errorMessage` is, matching HeroUI's always-mounted `<ErrorMessage>`.
+   * `#errorMessage` is.
    */
   errorMessage?: string
   /**
@@ -93,7 +93,7 @@ export type TagGroupSlots<T extends TagGroupItem = TagGroupItem> = {
   /** Content of each tag's remove button (shown when `removable`). Replaces the default close icon. */
   removeButton?: (props: { item: T; index: number }) => VNode[]
   /**
-   * Content rendered inside the list when `items` is empty (HeroUI's `renderEmptyState`), usually an
+   * Content rendered inside the list when `items` is empty, usually an
    * `<EmptyState>`. Nothing is rendered when omitted.
    */
   empty?: () => VNode[]

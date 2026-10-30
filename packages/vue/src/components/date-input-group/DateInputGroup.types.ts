@@ -14,7 +14,7 @@ export type DateInputGroupSegment = {
 
 /**
  * Internal part shared by `DateField` and `TimeField` (and later `DatePicker` / `DateRangePicker`).
- * Not exported from the package: HeroUI's docs don't show `DateInputGroup` standalone.
+ * Not exported from the package.
  */
 export type DateInputGroupProps = {
   /** Segment contents from the parent `DateFieldRoot` / `TimeFieldRoot` default slot. */
@@ -27,8 +27,7 @@ export type DateInputGroupProps = {
    */
   endSegments?: DateInputGroupSegment[]
   /**
-   * Wraps the input(s) in a horizontally scrollable `date-input-group-input-container`
-   * (HeroUI's `DateField.InputContainer`), for long ranges that overflow the group.
+   * Wraps the input(s) in a horizontally scrollable `date-input-group-input-container` for long ranges that overflow the group.
    * @defaultValue false
    */
   inputContainer?: boolean
@@ -48,17 +47,17 @@ export type DateInputGroupProps = {
   invalid?: boolean
   /**
    * The field's `aria-label` (fields without a visible label). Names the group and is appended to every segment's
-   * own name, as React Aria does.
+   * own name.
    */
   ariaLabel?: string
   /**
-   * Id(s) of the field's label. Names the group, and is appended to every segment's own name, as React Aria does
+   * Id(s) of the field's label. Names the group, and is appended to every segment's own name
    * (VoiceOver on iOS doesn't announce groups).
    */
   labelledby?: string
   /**
    * Id(s) of the field's description/error. Describes the first segment of each input, or every segment while
-   * invalid, as React Aria does (so it isn't re-read on every segment).
+   * invalid (so it isn't re-read on every segment).
    */
   describedby?: string
   /** Additional classes merged into the root element. */

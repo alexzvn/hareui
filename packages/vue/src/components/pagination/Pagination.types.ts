@@ -31,7 +31,7 @@ export type PaginationProps = {
   total: number
   /**
    * Collapse distant pages into ellipses: the first and last page, the current page and its
-   * neighbours (HeroUI's demo pattern). Ignored when `pages` is set.
+   * neighbours. Ignored when `pages` is set.
    * @defaultValue false
    */
   ellipsis?: boolean
@@ -70,13 +70,13 @@ export type PaginationProps = {
 
 /** Slots of the `Pagination` component. */
 export type PaginationSlots = {
-  /** Info shown before the links (HeroUI's `Pagination.Summary`). */
+  /** Info shown before the links. */
   summary?: (props: { page: number; total: number }) => VNode[]
   /** Replaces a page link's number. */
   link?: (props: { page: number; active: boolean }) => VNode[]
-  /** Replaces the previous icon (HeroUI's `Pagination.PreviousIcon` children). */
+  /** Replaces the previous icon. */
   prevIcon?: () => VNode[]
-  /** Replaces the next icon (HeroUI's `Pagination.NextIcon` children). */
+  /** Replaces the next icon. */
   nextIcon?: () => VNode[]
 }
 

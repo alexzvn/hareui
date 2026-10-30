@@ -51,7 +51,7 @@ export type ToastProviderProps = {
   /** Custom toast queue instance; defaults to the shared default queue used by `toast()`. */
   queue?: ToastQueue<ToastContentValueType>
   /**
-   * Accessible label for the region landmark. Defaults to the toast count, as React Aria does
+   * Accessible label for the region landmark. Defaults to the toast count
    * (e.g. "2 notifications.").
    */
   ariaLabel?: string

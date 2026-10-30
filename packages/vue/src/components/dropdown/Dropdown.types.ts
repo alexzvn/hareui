@@ -45,8 +45,7 @@ export type DropdownSection<T extends DropdownItem = DropdownItem> = {
   /** The items of the section. */
   items: T[]
   /**
-   * Section-level selection, independent of the rest of the menu (React Aria's section
-   * `selectionMode`). Selected values still live in the Dropdown's `v-model`.
+   * Section-level selection, independent of the rest of the menu. Selected values still live in the Dropdown's `v-model`.
    */
   selectionMode?: 'none' | 'single' | 'multiple'
   /** Indicator for this section's selectable items. @defaultValue 'checkmark' */

@@ -23,8 +23,7 @@ export type TooltipProps = {
   delay?: number
   /**
    * Delay in milliseconds before the tooltip closes after the pointer leaves the trigger (and the
-   * tooltip). Blur, press, Escape and opening another tooltip still close it immediately, as in
-   * React Aria.
+   * tooltip). Blur, press, Escape and opening another tooltip still close it immediately.
    * @defaultValue 500
    */
   closeDelay?: number

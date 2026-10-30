@@ -27,9 +27,9 @@ export type InputOtpProps = {
    */
   groups?: number[]
   /**
-   * Restricts which characters can be entered, mirroring HeroUI's exported `REGEXP_ONLY_*` patterns:
+   * Restricts which characters can be entered:
    * `'digits'` only allows `0-9`, `'chars'` only allows `a-z`/`A-Z`, `'alphanumeric'` allows both.
-   * Unset allows any character, matching HeroUI's default since `input-otp` 1.4.
+   * Unset allows any character.
    */
   pattern?: 'digits' | 'chars' | 'alphanumeric'
   /**

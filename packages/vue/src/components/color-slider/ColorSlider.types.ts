@@ -47,7 +47,7 @@ export type ColorSliderProps = {
    * @defaultValue true when there's a label
    */
   showOutput?: boolean
-  /** The name of the hidden input, used for form submission. Submits the channel value (e.g. `200` for hue, `0.5` for alpha), as React Aria does. */
+  /** The name of the hidden input, used for form submission. Submits the channel value (e.g. `200` for hue, `0.5` for alpha). */
   name?: string
   /** Additional classes merged into the root element. */
   class?: ClassValue

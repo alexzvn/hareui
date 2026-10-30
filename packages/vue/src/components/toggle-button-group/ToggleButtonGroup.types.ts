@@ -56,7 +56,7 @@ export type ToggleButtonGroupProps = {
    */
   detached?: boolean
   /**
-   * Draws a divider at the start of every button except the first (HeroUI's `ToggleButtonGroup.Separator`).
+   * Draws a divider at the start of every button except the first.
    * Hidden when `detached`.
    * @defaultValue false
    */

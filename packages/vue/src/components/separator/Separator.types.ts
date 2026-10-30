@@ -33,6 +33,6 @@ export type SeparatorProps = {
 
 /** Slots of `Separator`. */
 export type SeparatorSlots = {
-  /** Content rendered inside the separator (uncommon; HeroUI's separator is normally empty). */
+  /** Content rendered inside the separator (uncommon; a separator is normally empty). */
   default?: () => VNode[]
 }

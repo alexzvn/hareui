@@ -39,7 +39,7 @@ export type BadgeProps = {
 
 /** Slots of `Badge`. */
 export type BadgeSlots = {
-  /** The element the badge is anchored to (HeroUI's `Badge.Anchor` children). Without it the badge renders on its own. */
+  /** The element the badge is anchored to. Without it the badge renders on its own. */
   default?: () => VNode[]
   /** Custom badge content such as an icon, rendered without the `label` wrapper. */
   content?: () => VNode[]
