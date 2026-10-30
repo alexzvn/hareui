@@ -10,6 +10,7 @@ Changes merged since [v0.3.0](./v0-3-0) that are not in a published release yet.
 - `Stepper`: a horizontal or vertical step indicator with `v-model`, linear navigation, `next()` / `prev()`, item icons, partial line progress, colors and sizes.
 - `Timeline`: an ordered list of events with icon or avatar markers, per-item status tones, `v-model` progress, vertical or horizontal orientation, a centred axis with alternate placement, and per-item slots.
 - `Rating`: a row of icons to show or collect a score, with `v-model`, half and fractional steps, clearable, hoverable, read-only, custom icons or an `#item` slot, and Form validation.
+- `Tree`: expandable folders and files with indent guides, single, multiple and checkbox-style selection, controlled expansion, per-item slots and virtualization.
 - `Splitter`: resizable panels from an `items` prop, with line, drag, pill and handle grips, collapsible panels, keyboard resizing and layout persistence (`auto-save-id`).
 
 ## Changes

@@ -13,7 +13,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'radar-chart',
     'radial-chart',
   ],
-  Collections: ['dropdown', 'list-box', 'tag-group'],
+  Collections: ['dropdown', 'list-box', 'tag-group', 'tree'],
   Colors: [
     'color-area',
     'color-field',
@@ -106,6 +106,7 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'splitter',
   'stepper',
   'timeline',
+  'tree',
 ])
 
 // Pages that get an "Updated" badge in the sidebar. Clear entries after the next release.
