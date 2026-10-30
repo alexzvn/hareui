@@ -10,10 +10,7 @@ import type { DashboardContext, DashboardStorageAdapter } from '@/composables/us
 import { useDashboard } from '@/composables/useDashboard'
 
 import { expectAccessible } from './a11y'
-
-const settle = async () => {
-  for (let i = 0; i < 4; i++) await nextTick()
-}
+import { settle } from './settle'
 
 const clearCookies = () => {
   for (const part of document.cookie.split(';')) {

@@ -1,16 +1,13 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
-import { h, nextTick } from 'vue'
+import { h } from 'vue'
 
 import DashboardGroup from '@/components/dashboard-group/DashboardGroup.vue'
 import DashboardSidebarToggle from '@/components/dashboard-sidebar-toggle/DashboardSidebarToggle.vue'
 import DashboardSidebar from '@/components/dashboard-sidebar/DashboardSidebar.vue'
 
 import { expectAccessible } from './a11y'
-
-const settle = async () => {
-  for (let i = 0; i < 4; i++) await nextTick()
-}
+import { settle } from './settle'
 
 /** Clicks like a user, past the millisecond Vue attached the listener in (it drops a click fired within it), then settles. */
 const click = async (el: HTMLElement) => {

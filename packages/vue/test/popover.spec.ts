@@ -1,10 +1,11 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
-import { h, nextTick } from 'vue'
+import { h } from 'vue'
 
 import Popover from '@/components/popover/Popover.vue'
 
 import { expectAccessible } from './a11y'
+import { settle } from './settle'
 
 let wrapper: ReturnType<typeof mount> | undefined
 let outside: HTMLButtonElement | undefined
@@ -36,10 +37,6 @@ afterEach(() => {
 
 const content = () => document.querySelector<HTMLElement>('[data-slot=popover]')
 const triggerEl = () => document.querySelector<HTMLElement>('[data-testid=trigger]')!
-
-const settle = async () => {
-  for (let i = 0; i < 4; i++) await nextTick()
-}
 
 const hiddenFromAT = (el: HTMLElement): boolean => {
   for (let node: HTMLElement | null = el; node; node = node.parentElement) {

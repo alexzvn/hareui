@@ -7,11 +7,7 @@ import type { HeaderProps } from '@/components/header/Header.types'
 import Header from '@/components/header/Header.vue'
 
 import { expectAccessible } from './a11y'
-
-// Reka's Presence needs three ticks before a closed dialog leaves the DOM (see modal.spec.ts).
-const settle = async () => {
-  for (let i = 0; i < 4; i++) await nextTick()
-}
+import { settle } from './settle'
 
 const toggle = () => document.querySelector<HTMLButtonElement>('[data-slot=header-toggle]')!
 
