@@ -94,6 +94,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'pagination',
     'stepper',
     'tabs',
+    'toc',
   ],
   Overlays: ['alert-dialog', 'drawer', 'modal', 'popover', 'toast', 'tooltip'],
   Pickers: ['autocomplete', 'combo-box', 'select'],
@@ -106,6 +107,7 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'splitter',
   'stepper',
   'timeline',
+  'toc',
   'tree',
 ])
 
