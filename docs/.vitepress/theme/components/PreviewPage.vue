@@ -93,6 +93,8 @@ const announceReady = () => {
 
 let observer: MutationObserver | undefined
 onMounted(() => {
+  // The page is only the demo, overlays included, so its links keep their own click handling instead of the router's.
+  document.body.classList.add('vp-raw')
   syncTheme()
   observer = new MutationObserver(syncTheme)
 
@@ -114,5 +116,8 @@ onMounted(() => {
   if (!demo.value) announceReady()
 })
 
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  document.body.classList.remove('vp-raw')
+})
 </script>

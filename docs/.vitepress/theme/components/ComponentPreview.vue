@@ -2,7 +2,7 @@
   <p v-if="!demo" class="text-danger">Demo not found: {{ name }}</p>
   <div
     v-else
-    class="component-preview-container group relative my-4 w-full"
+    class="component-preview-container vp-raw group relative my-4 w-full"
     :data-name="dataName"
     style="contain: content"
   >
@@ -297,23 +297,27 @@ const displayWidth = computed(() =>
   isFrameShown.value || isDragging.value ? viewport.value : undefined,
 )
 
-// Overlays opened from an inline preview pinned to the other theme portal into a body-level element scoped like the
-// box; the docs-wide toast region (Layout.vue) follows the preview last interacted with.
+// Overlays opened from an inline preview portal into a body-level host of their own. Like the box, it carries `vp-raw`:
+// VitePress's router intercepts clicks on same-page `#hash` links outside it in the capture phase, before a demo can
+// cancel them, and scrolls the page to the hash (a floating Toc's panel links). Pinned to the other theme, the host is
+// scoped like the box; the docs-wide toast region (Layout.vue) follows the preview last interacted with.
 const isOverlayScoped = computed(() => !isPaged && pinnedTheme.value !== undefined)
 const portalTarget = shallowRef<HTMLElement>()
-watchEffect(() => {
-  if (!portalTarget.value && isOverlayScoped.value) {
-    const target = markRaw(document.createElement('div'))
-    target.dataset.previewPortal = props.name
-    document.body.append(target)
-    portalTarget.value = target
-  }
+onMounted(() => {
+  if (isPaged) return
 
+  const target = markRaw(document.createElement('div'))
+  target.dataset.previewPortal = props.name
+  document.body.append(target)
+  portalTarget.value = target
+})
+
+watchEffect(() => {
   const target = portalTarget.value
   if (!target) return
 
   // `text-foreground`: overlays inherit their text colour, which body sets from the docs theme.
-  target.className = `${theme.value} text-foreground`
+  target.className = isOverlayScoped.value ? `vp-raw ${theme.value} text-foreground` : 'vp-raw'
 
   for (const name of DESIGN_ATTRIBUTES) {
     const value = scopeAttributes.value[name]
@@ -333,7 +337,7 @@ provide(hareUIConfigKey, {
     return parentConfig.ui
   },
   get portal() {
-    return isOverlayScoped.value ? portalTarget.value : parentConfig.portal
+    return isOverlayScoped.value ? portalTarget.value : (parentConfig.portal ?? portalTarget.value)
   },
 } satisfies HareUIConfig)
 
