@@ -21,7 +21,7 @@ const precisionOf = (value: number) => {
 }
 
 /** Rounds away floating-point noise (`0.1 + 0.2`); a precision of 0 leaves the value untouched. */
-const roundToPrecision = (value: number, precision: number) => {
+export const roundToPrecision = (value: number, precision: number) => {
   if (precision <= 0) return value
   const pow = 10 ** precision
 
