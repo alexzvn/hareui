@@ -50,12 +50,12 @@ export default defineConfigWithTheme<ThemeConfig>({
     // (`motion-reduce:before:*`); esbuild's minifier flags that valid selector as a syntax error, lightningcss doesn't.
     build: { cssMinify: 'lightningcss' },
     resolve: {
-      // Exact matches: the `@hareui/vue/charts` subpath must not resolve as a path inside `@hareui/vue`.
+      // Exact matches: the `@hareui/vue/<entry>` subpaths must not resolve as paths inside `@hareui/vue`.
       // `@/` is the library's internal alias for packages/vue/src, needed because the docs compile the library from source.
       alias: [
         {
-          find: /^@hareui\/vue\/charts$/,
-          replacement: fileURLToPath(new URL('../../packages/vue/src/charts.ts', import.meta.url)),
+          find: /^@hareui\/vue\/(charts|carousel|code-block|command-palette|editor)$/,
+          replacement: fileURLToPath(new URL('../../packages/vue/src/$1.ts', import.meta.url)),
         },
         {
           find: /^@hareui\/vue$/,
