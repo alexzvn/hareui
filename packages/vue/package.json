@@ -81,6 +81,17 @@
   },
   "peerDependencies": {
     "@internationalized/date": "^3.12.4",
+    "@tiptap/core": "^3.32.0",
+    "@tiptap/extension-bubble-menu": "^3.32.0",
+    "@tiptap/extension-code": "^3.32.0",
+    "@tiptap/extension-floating-menu": "^3.32.0",
+    "@tiptap/extension-horizontal-rule": "^3.32.0",
+    "@tiptap/extension-image": "^3.32.0",
+    "@tiptap/extension-placeholder": "^3.32.0",
+    "@tiptap/markdown": "^3.32.0",
+    "@tiptap/pm": "^3.32.0",
+    "@tiptap/starter-kit": "^3.32.0",
+    "@tiptap/vue-3": "^3.32.0",
     "d3-scale": "^4.0.0",
     "d3-shape": "^3.0.0",
     "embla-carousel": "^8.6.0",
@@ -98,6 +109,39 @@
     "vue": "^3.5.0"
   },
   "peerDependenciesMeta": {
+    "@tiptap/core": {
+      "optional": true
+    },
+    "@tiptap/extension-bubble-menu": {
+      "optional": true
+    },
+    "@tiptap/extension-code": {
+      "optional": true
+    },
+    "@tiptap/extension-floating-menu": {
+      "optional": true
+    },
+    "@tiptap/extension-horizontal-rule": {
+      "optional": true
+    },
+    "@tiptap/extension-image": {
+      "optional": true
+    },
+    "@tiptap/extension-placeholder": {
+      "optional": true
+    },
+    "@tiptap/markdown": {
+      "optional": true
+    },
+    "@tiptap/pm": {
+      "optional": true
+    },
+    "@tiptap/starter-kit": {
+      "optional": true
+    },
+    "@tiptap/vue-3": {
+      "optional": true
+    },
     "d3-scale": {
       "optional": true
     },
@@ -142,6 +186,17 @@
     "@internationalized/date": "^3.12.4",
     "@sinclair/typebox": "^0.34",
     "@sinclair/typemap": "^0.10.1",
+    "@tiptap/core": "^3.32.0",
+    "@tiptap/extension-bubble-menu": "^3.32.0",
+    "@tiptap/extension-code": "^3.32.0",
+    "@tiptap/extension-floating-menu": "^3.32.0",
+    "@tiptap/extension-horizontal-rule": "^3.32.0",
+    "@tiptap/extension-image": "^3.32.0",
+    "@tiptap/extension-placeholder": "^3.32.0",
+    "@tiptap/markdown": "^3.32.0",
+    "@tiptap/pm": "^3.32.0",
+    "@tiptap/starter-kit": "^3.32.0",
+    "@tiptap/vue-3": "^3.32.0",
     "@types/d3-scale": "^4.0.9",
     "@types/d3-shape": "^3.2.0",
     "@vitejs/plugin-vue": "^6.0.9",
