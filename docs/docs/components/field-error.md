@@ -128,7 +128,7 @@ Inside toggle fields (`[data-slot="checkbox"]`, `[data-slot="switch"]`, `[data-s
 
 <ApiTable component="FieldError" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="FieldError" />
 

@@ -211,7 +211,7 @@ A ring's color comes from a `ChartCell`, a `fill` field in its row, or the bar's
 
 <ApiTable component="ChartTooltip" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RadialChart" />
 

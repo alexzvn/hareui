@@ -201,7 +201,7 @@ The default indicator uses the [Checkbox](/docs/components/checkbox) theme's `co
 
 <ApiTable component="CheckboxButtonGroupItem" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CheckboxButtonGroup" />
 

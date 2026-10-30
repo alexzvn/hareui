@@ -256,7 +256,7 @@ app.use(
 
 <ApiTable component="InputGroup" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="InputGroup" />
 

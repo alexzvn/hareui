@@ -226,7 +226,7 @@ Items fade in when added and fade out when removed; the other items slide into p
 
 <ApiTable component="DropZoneFileItem" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DropZone" />
 

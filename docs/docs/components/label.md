@@ -106,7 +106,7 @@ app.use(
 
 <ApiTable component="Label" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Label" />
 

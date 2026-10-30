@@ -120,7 +120,7 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="ToggleButtonGroup" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ToggleButtonGroup" />
 

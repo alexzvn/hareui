@@ -191,7 +191,7 @@ The `--header-height` CSS variable holds the height of the header. While the men
 
 <ApiTable component="Header" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Header" />
 

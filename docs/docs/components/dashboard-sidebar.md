@@ -156,7 +156,7 @@ The width transition is disabled while `data-dragging="true"` and when the user 
 
 <ApiTable component="DashboardSidebar" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DashboardSidebar" />
 

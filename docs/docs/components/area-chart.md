@@ -263,7 +263,7 @@ Parts always draw in the same order (grid, series, axes, cursor), so template or
 
 <ApiTable component="ChartLabel" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="AreaChart" />
 

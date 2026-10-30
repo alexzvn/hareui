@@ -218,7 +218,7 @@ Without `index`, the chart draws only the parts you put in its default slot. Use
 
 <ApiTable component="ChartTooltip" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="PieChart" />
 

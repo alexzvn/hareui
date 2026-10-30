@@ -65,3 +65,7 @@ app.use(
 ### DashboardToolbar Slots
 
 <ApiTable component="DashboardToolbar" kind="slots" />
+
+## Theme
+
+<ApiTheme component="DashboardToolbar" />

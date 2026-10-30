@@ -155,7 +155,7 @@ Checkbox sets these data attributes on its root:
 
 <ApiTable component="Checkbox" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Checkbox" />
 

@@ -105,3 +105,7 @@ app.use(
 ### DashboardNavbar Slots
 
 <ApiTable component="DashboardNavbar" kind="slots" />
+
+## Theme
+
+<ApiTheme component="DashboardNavbar" />

@@ -166,7 +166,7 @@ SearchField sets these data attributes:
 
 <ApiTable component="SearchField" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="SearchField" />
 

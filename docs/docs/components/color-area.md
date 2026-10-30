@@ -104,7 +104,7 @@ app.use(
 
 <ApiTable component="ColorArea" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ColorArea" />
 

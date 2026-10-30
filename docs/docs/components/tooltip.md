@@ -127,7 +127,7 @@ app.use(
 
 <ApiTable component="Tooltip" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Tooltip" />
 

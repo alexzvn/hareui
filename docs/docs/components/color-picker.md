@@ -107,7 +107,7 @@ app.use(
 
 <ApiTable component="ColorPicker" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ColorPicker" />
 

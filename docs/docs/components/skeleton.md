@@ -172,7 +172,7 @@ The pulse animation uses Tailwind's built-in `animate-pulse` utility.
 
 <ApiTable component="Skeleton" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Skeleton" />
 

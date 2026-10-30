@@ -112,7 +112,7 @@ affects the fallback (it has no effect once an image has loaded).
 
 <ApiTable component="Avatar" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Avatar" />
 

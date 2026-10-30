@@ -138,10 +138,6 @@ app.use(
 
 <ApiTable component="ToastProvider" kind="slots" />
 
-### Theme
-
-<ApiTheme component="ToastProvider" />
-
 ### ToastQueue
 
 Manages toast state outside any component, so toasts can be triggered from anywhere —
@@ -243,6 +239,10 @@ toast.resumeAll()
 | `loading` | `VNodeChild`                                   | -       | Message shown while the promise is pending |
 | `success` | `VNodeChild \| ((data: T) => VNodeChild)`      | -       | Message shown on success                   |
 | `error`   | `VNodeChild \| ((error: Error) => VNodeChild)` | -       | Message shown on error                     |
+
+## Theme
+
+<ApiTheme component="ToastProvider" />
 
 ## Accessibility
 

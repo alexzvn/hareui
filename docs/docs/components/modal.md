@@ -146,7 +146,7 @@ app.use(
 
 <ApiTable component="Modal" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Modal" />
 

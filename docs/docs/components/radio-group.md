@@ -173,7 +173,7 @@ RadioGroup sets these data attributes:
 
 <ApiTable component="RadioGroup" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RadioGroup" />
 

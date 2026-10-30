@@ -81,7 +81,7 @@ not BEM classes, so style through `class`, `ui` or `createHareUI`): `transparent
 
 <ApiTable component="Surface" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Surface" />
 

@@ -62,3 +62,7 @@ When the target is a container rather than the page, give it `position: relative
 ### App Slots
 
 <ApiTable component="App" kind="slots" />
+
+## Theme
+
+`App` renders no element of its own, so it has no theme. Style the components inside it through their own `ui` and `class` props.

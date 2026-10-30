@@ -165,10 +165,6 @@ TextField sets these data attributes on its root:
 
 <ApiTable component="TextField" kind="emits" />
 
-### Theme
-
-<ApiTheme component="TextField" />
-
 ### Render Props
 
 The default slot receives the field state, the Vue equivalent of HeroUI's render props:
@@ -183,6 +179,10 @@ The default slot receives the field state, the Vue equivalent of HeroUI's render
 | `required`     | `boolean`             | Whether the field is required.                  |
 | `focusWithin`  | `boolean`             | Whether any child element is focused.           |
 | `focusVisible` | `boolean`             | Whether focus is visible (keyboard navigation). |
+
+## Theme
+
+<ApiTheme component="TextField" />
 
 ## Accessibility
 

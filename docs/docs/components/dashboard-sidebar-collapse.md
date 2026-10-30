@@ -74,3 +74,7 @@ app.use(
 ### DashboardSidebarCollapse Slots
 
 <ApiTable component="DashboardSidebarCollapse" kind="slots" />
+
+## Theme
+
+<ApiTheme component="DashboardSidebarCollapse" />

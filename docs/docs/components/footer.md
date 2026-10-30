@@ -80,6 +80,6 @@ app.use(
 
 <ApiTable component="Footer" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Footer" />

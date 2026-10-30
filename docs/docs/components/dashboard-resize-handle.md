@@ -50,7 +50,7 @@ The `resize-handle` slot of DashboardSidebar and DashboardPanel receives:
 
 <ApiTable component="DashboardResizeHandle" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DashboardResizeHandle" />
 

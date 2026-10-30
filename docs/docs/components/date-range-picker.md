@@ -192,7 +192,7 @@ app.use(
 
 <ApiTable component="DateRangePicker" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DateRangePicker" />
 

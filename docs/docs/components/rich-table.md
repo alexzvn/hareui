@@ -225,6 +225,10 @@ app.use(
 
 `tableApi` is the TanStack Table instance (sorting, filtering, pagination, selection and visibility methods), `tableRef` the `<table>` element and `$el` the root element.
 
+## Theme
+
+<ApiTheme component="RichTable" />
+
 ## Styling Reference
 
 | `ui` key  | `data-slot`                                                                                   | Description                           |

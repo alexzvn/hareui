@@ -121,7 +121,7 @@ The edge radii are set through CSS variables, so a `rounded-*` class on a Button
 
 <ApiTable component="ButtonGroup" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ButtonGroup" />
 

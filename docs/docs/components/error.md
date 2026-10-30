@@ -106,3 +106,7 @@ app.use(
 ### Error Emits
 
 <ApiTable component="Error" kind="emits" />
+
+## Theme
+
+<ApiTheme component="Error" />

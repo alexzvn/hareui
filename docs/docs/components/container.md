@@ -45,3 +45,7 @@ app.use(
 ### Container Slots
 
 <ApiTable component="Container" kind="slots" />
+
+## Theme
+
+<ApiTheme component="Container" />

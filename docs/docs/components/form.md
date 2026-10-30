@@ -258,6 +258,10 @@ function onSubmit(e: Event) {
 
 A `reset` button (or `form.reset()`) restores every field's `defaultValue` and clears displayed errors.
 
+## Theme
+
+`Form` renders a plain `<form>` (a `<div>` when nested) with no theme classes; style it with `class`.
+
 ## Accessibility
 
 - Native `<form>` element semantics

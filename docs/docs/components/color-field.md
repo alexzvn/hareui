@@ -172,7 +172,7 @@ ColorField sets these data attributes:
 
 <ApiTable component="ColorField" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ColorField" />
 

@@ -132,10 +132,6 @@ import { EmptyState } from '@hareui/vue'
 
 <ApiTable component="EmptyState" kind="props" />
 
-### EmptyState Theme
-
-<ApiTheme component="EmptyState" />
-
 ## Customization
 
 ### Tailwind CSS
@@ -182,6 +178,12 @@ app.use(
 ### Emits
 
 <ApiTable component="TagGroup" kind="emits" />
+
+## Theme
+
+### EmptyState Theme
+
+<ApiTheme component="EmptyState" />
 
 ### TagGroup Theme
 

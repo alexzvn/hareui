@@ -172,7 +172,7 @@ The default status icon inside `icon` carries `data-slot="alert-dialog-default-i
 
 <ApiTable component="AlertDialog" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="AlertDialog" />
 

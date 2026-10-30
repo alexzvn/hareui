@@ -71,7 +71,7 @@ app.use(
 
 <ApiTable component="Spinner" kind="props" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Spinner" />
 

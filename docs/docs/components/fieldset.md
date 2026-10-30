@@ -92,7 +92,7 @@ Each rendered element carries the same `data-slot` string as HeroUI, so selector
 
 <ApiTable component="Fieldset" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Fieldset" />
 

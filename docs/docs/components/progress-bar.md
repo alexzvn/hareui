@@ -117,10 +117,6 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="ProgressBar" kind="slots" />
 
-### Theme
-
-<ApiTheme component="ProgressBar" />
-
 `#label` and `#output` receive:
 
 | Prop            | Type                  | Description                            |
@@ -128,3 +124,7 @@ style through `class`, `ui` or `createHareUI`):
 | `percentage`    | `number \| undefined` | The percentage of the progress (0-100) |
 | `valueText`     | `string \| undefined` | The formatted value text               |
 | `indeterminate` | `boolean`             | Whether progress is indeterminate      |
+
+## Theme
+
+<ApiTheme component="ProgressBar" />

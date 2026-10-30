@@ -206,7 +206,7 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Dropdown" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Dropdown" />
 

@@ -88,7 +88,7 @@ The root carries `data-slot="toggle-button"`, as in HeroUI. `ui` key: `base`.
 
 <ApiTable component="ToggleButton" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ToggleButton" />
 

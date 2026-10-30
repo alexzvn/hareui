@@ -167,7 +167,7 @@ The select's background follows `--native-select-bg-current`, so a plain `bg-*` 
 
 <ApiTable component="NativeSelect" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="NativeSelect" />
 

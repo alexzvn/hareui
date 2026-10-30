@@ -168,7 +168,7 @@ DatePicker sets these data attributes:
 
 <ApiTable component="DatePicker" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DatePicker" />
 

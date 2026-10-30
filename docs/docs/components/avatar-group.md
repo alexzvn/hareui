@@ -101,7 +101,7 @@ glyphs; ring mode uses a thin box-shadow outline via `--background`.
 
 <ApiTable component="AvatarGroup" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="AvatarGroup" />
 

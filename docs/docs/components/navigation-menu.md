@@ -244,6 +244,6 @@ Hovered items get a `bg-default` background with the `pill` variant and `text-fo
 
 <ApiTable component="NavigationMenu" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="NavigationMenu" />

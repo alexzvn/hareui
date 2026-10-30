@@ -196,7 +196,7 @@ app.use(
 
 <ApiTable component="Select" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Select" />
 

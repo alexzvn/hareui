@@ -190,7 +190,7 @@ The panel sets `[data-indicator="dot"]` or `[data-indicator="line"]`, so you can
 
 <ApiTable component="ChartTooltipValue" kind="props" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ChartTooltipContent" />
 

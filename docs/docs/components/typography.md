@@ -115,7 +115,7 @@ not BEM classes, so style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Typography" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Typography" />
 

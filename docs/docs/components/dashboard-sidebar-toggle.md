@@ -79,3 +79,7 @@ app.use(
 ### DashboardSidebarToggle Slots
 
 <ApiTable component="DashboardSidebarToggle" kind="slots" />
+
+## Theme
+
+<ApiTheme component="DashboardSidebarToggle" />

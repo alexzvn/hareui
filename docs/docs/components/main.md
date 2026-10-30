@@ -68,3 +68,7 @@ app.use(
 ### Main Slots
 
 <ApiTable component="Main" kind="slots" />
+
+## Theme
+
+<ApiTheme component="Main" />

@@ -195,7 +195,7 @@ NumberField sets these data attributes:
 
 <ApiTable component="NumberField" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="NumberField" />
 

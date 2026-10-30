@@ -154,7 +154,7 @@ classes, so style through `class`, `ui` or `createHareUI`): `.card--transparent`
 
 <ApiTable component="Card" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Card" />
 

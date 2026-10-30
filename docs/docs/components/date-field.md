@@ -185,7 +185,7 @@ DateField sets these data attributes:
 
 <ApiTable component="DateField" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DateField" />
 

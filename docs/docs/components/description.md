@@ -90,7 +90,7 @@ Inside a [TextField](/docs/components/text-field) with `[data-invalid="true"]`, 
 
 <ApiTable component="Description" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Description" />
 

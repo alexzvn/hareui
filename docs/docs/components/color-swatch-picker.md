@@ -119,7 +119,7 @@ app.use(
 
 <ApiTable component="ColorSwatchPicker" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ColorSwatchPicker" />
 

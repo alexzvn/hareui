@@ -139,7 +139,7 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Breadcrumbs" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Breadcrumbs" />
 

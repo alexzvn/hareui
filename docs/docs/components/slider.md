@@ -127,7 +127,7 @@ app.use(
 
 <ApiTable component="Slider" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Slider" />
 

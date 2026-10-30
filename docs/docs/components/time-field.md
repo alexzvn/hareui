@@ -170,7 +170,7 @@ TimeField sets these data attributes:
 
 <ApiTable component="TimeField" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="TimeField" />
 

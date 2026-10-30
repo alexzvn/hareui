@@ -131,6 +131,6 @@ mount. Two things to keep in mind when customizing:
 
 <ApiTable component="ScrollShadow" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ScrollShadow" />

@@ -108,7 +108,7 @@ app.use(
 
 <ApiTable component="Badge" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Badge" />
 

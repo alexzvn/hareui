@@ -77,7 +77,7 @@ app.use(
 
 <ApiTable component="DashboardPanel" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DashboardPanel" />
 

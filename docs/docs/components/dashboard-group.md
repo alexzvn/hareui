@@ -182,7 +182,7 @@ app.use(
 
 <ApiTable component="DashboardGroup" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="DashboardGroup" />
 

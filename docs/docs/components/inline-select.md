@@ -157,7 +157,7 @@ The InlineSelect classes are merged over the Select theme, so `ui.select` overri
 
 <ApiTable component="InlineSelect" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="InlineSelect" />
 

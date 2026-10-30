@@ -139,7 +139,7 @@ The row background reads `--cell-bg-current`, so a plain `bg-*` class in `ui.tra
 
 <ApiTable component="CellSlider" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CellSlider" />
 

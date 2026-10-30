@@ -240,7 +240,7 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 <ApiTable component="ChartTooltip" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RadarChart" />
 

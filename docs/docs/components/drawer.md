@@ -152,7 +152,7 @@ app.use(
 
 <ApiTable component="Drawer" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Drawer" />
 

@@ -153,7 +153,7 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="Pagination" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Pagination" />
 

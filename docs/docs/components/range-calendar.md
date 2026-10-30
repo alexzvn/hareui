@@ -254,6 +254,6 @@ RangeCalendar sets these data attributes on `[data-slot="range-calendar-cell"]`:
 
 <ApiTable component="RangeCalendar" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RangeCalendar" />

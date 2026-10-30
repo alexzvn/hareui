@@ -165,7 +165,7 @@ The list sets `[data-orientation="horizontal"]` or `[data-orientation="vertical"
 
 <ApiTable component="ChartLegend" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ChartLegend" />
 

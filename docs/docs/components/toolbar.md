@@ -77,7 +77,7 @@ one, unless they set `orientation` themselves.
 
 <ApiTable component="Toolbar" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Toolbar" />
 

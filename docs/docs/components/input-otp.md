@@ -155,7 +155,7 @@ app.use(
 
 <ApiTable component="InputOtp" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="InputOtp" />
 

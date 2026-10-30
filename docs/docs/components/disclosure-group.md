@@ -98,10 +98,6 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 <ApiTable component="DisclosureGroup" kind="emits" />
 
-### Theme
-
-<ApiTheme component="DisclosureGroup" />
-
 ### useDisclosureGroupNavigation
 
 | Option             | Type                                | Default | Description                                                |
@@ -112,6 +108,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 | `multiple`         | `MaybeRefOrGetter<boolean>`         | `false` | Keep previously expanded disclosures open while navigating |
 
 Returns `currentIndex`, `isPrevDisabled`, `isNextDisabled` (computed refs) and `onPrevious`, `onNext`.
+
+## Theme
+
+<ApiTheme component="DisclosureGroup" />
 
 ## Related Components
 

@@ -142,7 +142,7 @@ The root is named `cell-select`; the other parts keep the [Select](/docs/compone
 
 <ApiTable component="CellSelect" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CellSelect" />
 

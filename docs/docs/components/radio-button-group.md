@@ -205,7 +205,7 @@ The card radius comes from `--radio-button-group-item-radius` (default `var(--ra
 
 <ApiTable component="RadioButtonGroupItem" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="RadioButtonGroup" />
 

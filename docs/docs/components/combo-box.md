@@ -241,7 +241,7 @@ app.use(
 
 <ApiTable component="ComboBox" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ComboBox" />
 

@@ -142,7 +142,7 @@ The root is named `cell-color-picker`; the other parts keep the [ColorPicker](/d
 
 <ApiTable component="CellColorPicker" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CellColorPicker" />
 

@@ -81,7 +81,7 @@ app.use(
 
 <ApiTable component="CloseButton" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CloseButton" />
 

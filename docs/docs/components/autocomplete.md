@@ -243,7 +243,7 @@ app.use(
 
 <ApiTable component="Autocomplete" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Autocomplete" />
 

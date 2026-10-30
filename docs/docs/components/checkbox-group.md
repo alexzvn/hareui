@@ -135,7 +135,7 @@ app.use(
 
 <ApiTable component="CheckboxGroup" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="CheckboxGroup" />
 

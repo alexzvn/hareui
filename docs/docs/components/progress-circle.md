@@ -106,6 +106,6 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="ProgressCircle" kind="props" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ProgressCircle" />

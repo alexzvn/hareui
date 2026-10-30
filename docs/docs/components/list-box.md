@@ -152,7 +152,7 @@ app.use(
 
 <ApiTable component="ListBox" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ListBox" />
 

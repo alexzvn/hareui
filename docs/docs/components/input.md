@@ -109,11 +109,11 @@ The input reads the field tokens `--field-border`, `--field-border-hover`, `--fi
 
 <ApiTable component="Input" kind="emits" />
 
-### Theme
+> For labels, descriptions and error messages, use **[TextField](/docs/components/text-field)**; an `Input` placed in its default slot inherits the field's id, `aria-describedby`, `invalid`, `disabled`, `required`, `variant` and `fullWidth`.
+
+## Theme
 
 <ApiTheme component="Input" />
-
-> For labels, descriptions and error messages, use **[TextField](/docs/components/text-field)**; an `Input` placed in its default slot inherits the field's id, `aria-describedby`, `invalid`, `disabled`, `required`, `variant` and `fullWidth`.
 
 ## Related Components
 

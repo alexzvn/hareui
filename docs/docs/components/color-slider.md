@@ -130,7 +130,7 @@ app.use(
 
 <ApiTable component="ColorSlider" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="ColorSlider" />
 

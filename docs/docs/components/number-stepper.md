@@ -200,7 +200,7 @@ app.use(
 
 <ApiTable component="NumberStepper" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="NumberStepper" />
 

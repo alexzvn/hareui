@@ -111,13 +111,13 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Meter" kind="slots" />
 
-### Theme
-
-<ApiTheme component="Meter" />
-
 `#label` and `#output` receive:
 
 | Prop         | Type     | Description                         |
 | ------------ | -------- | ----------------------------------- |
 | `percentage` | `number` | The percentage of the meter (0-100) |
 | `valueText`  | `string` | The formatted value text            |
+
+## Theme
+
+<ApiTheme component="Meter" />

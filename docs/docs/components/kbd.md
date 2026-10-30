@@ -96,10 +96,6 @@ HeroUI's Kbd renders no `data-slot` attributes; style it through `class`, `ui` o
 
 <ApiTable component="Kbd" kind="slots" />
 
-### Theme
-
-<ApiTheme component="Kbd" />
-
 ### KbdKey
 
 Available values for `keys`, with the symbol and `title` each renders. `kbdKeysMap` and `kbdKeysLabelMap` are exported.
@@ -128,6 +124,10 @@ Available values for `keys`, with the symbol and `title` each renders. `kbdKeysM
 | `fn`       | Fn     | Fn        |
 | `win`      | ⌘      | Win       |
 | `alt`      | ⌥      | Alt       |
+
+## Theme
+
+<ApiTheme component="Kbd" />
 
 ## Related Components
 

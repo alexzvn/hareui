@@ -89,7 +89,7 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Separator" kind="slots" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Separator" />
 

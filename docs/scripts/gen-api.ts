@@ -291,36 +291,6 @@ for (const f of (await readdir(componentsDir, { recursive: true })).sort()) {
 await rm(outDir, { recursive: true, force: true })
 await mkdir(join(outDir, 'theme'), { recursive: true })
 
-// Blank out comments (keeping newlines), then drop lines that held only a comment.
-const stripComments = (source: string): string => {
-  const scanner = ts.createScanner(
-    ts.ScriptTarget.Latest,
-    false,
-    ts.LanguageVariant.Standard,
-    source,
-  )
-
-  let text = source
-  for (let kind = scanner.scan(); kind !== ts.SyntaxKind.EndOfFileToken; kind = scanner.scan()) {
-    if (
-      kind !== ts.SyntaxKind.SingleLineCommentTrivia &&
-      kind !== ts.SyntaxKind.MultiLineCommentTrivia
-    )
-      continue
-
-    const start = scanner.getTokenStart()
-    const end = scanner.getTokenEnd()
-    text = text.slice(0, start) + text.slice(start, end).replace(/[^\n]/g, '\0') + text.slice(end)
-  }
-
-  return `${text
-    .split('\n')
-    .filter((line) => !line.includes('\0') || line.replaceAll('\0', '').trim() !== '')
-    .map((line) => line.replaceAll('\0', '').trimEnd())
-    .join('\n')
-    .trim()}\n`
-}
-
 // Generic components (`generic="T extends ListBoxItem = ListBoxItem"`) print `T` in their types; show the item type instead
 const ungeneric = (source: string): ((type: string) => string) => {
   const constraint = source.match(/<script setup[^>]*\sgeneric="T extends (\w+)/)?.[1]
@@ -328,6 +298,51 @@ const ungeneric = (source: string): ((type: string) => string) => {
     ? (type) => type.replace(/<T>/g, '').replace(/\bT\b/g, constraint)
     : (type) => type
 }
+
+// The `createHareUI({ ui })` key of each component folder's theme, as `themes.ts` names it (e.g. `commandPalette`).
+const themeKeys = new Map(
+  [
+    ...(await Bun.file(join(componentsDir, 'themes.ts')).text()).matchAll(
+      /default as (\w+)\s*\}\s*from '\.\/([\w-]+)\/theme'/g,
+    ),
+  ].map(([, key, dir]) => [dir, key]),
+)
+
+// A theme value as TypeScript source: plain keys unquoted, strings single-quoted, short lists on one line.
+const toCode = (value: unknown, indent: string): string => {
+  if (typeof value === 'string') return `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
+  if (typeof value !== 'object' || value === null) return String(value)
+
+  const inner = `${indent}  `
+  if (Array.isArray(value)) {
+    const items = value.map((item) => toCode(item, inner))
+    const line = `[${items.join(', ')}]`
+    if (line.length <= 80 && !line.includes('\n')) return line
+
+    return `[\n${items.map((item) => `${inner}${item},`).join('\n')}\n${indent}]`
+  }
+
+  const entries = Object.entries(value)
+  if (entries.length === 0) return '{}'
+
+  const key = (name: string) => (/^[A-Za-z_$][\w$]*$/.test(name) ? name : toCode(name, inner))
+
+  return `{\n${entries.map(([name, v]) => `${inner}${key(name)}: ${toCode(v, inner)},`).join('\n')}\n${indent}}`
+}
+
+// The Theme section: the default theme in the shape `createHareUI({ ui })` takes, as a plugin module `main.ts` passes
+// to `app.use`. Overrides add to the defaults, so readers copy only the keys they change.
+const themeSnippet = (key: string, theme: unknown): string =>
+  [
+    "import { createHareUI } from '@hareui/vue'",
+    '',
+    'export default createHareUI({',
+    '  ui: {',
+    `    ${key}: ${toCode(theme, '    ')},`,
+    '  },',
+    '})',
+    '',
+  ].join('\n')
 
 for (const file of files) {
   const name = basename(file, '.vue')
@@ -357,26 +372,19 @@ for (const file of files) {
     })),
   }
 
-  // `ui?: ComponentSlots<typeof theme>` prints the whole theme; show the slot keys and publish the theme source instead.
+  // `ui?: ComponentSlots<typeof theme>` prints the whole theme; the Theme section shows the theme instead.
   const ui = api.props.find((p) => p.name === 'ui')
   if (ui && /^import theme from '\.\/theme'$/m.test(source)) {
-    const themePath = join(dirname(path), 'theme.ts')
-    const theme: { slots: Record<string, unknown> } = (await import(themePath)).default
-    ui.type = `{ ${Object.keys(theme.slots)
-      .map((k) => `${/^\w+$/.test(k) ? k : `'${k}'`}?: ClassValue`)
-      .join('; ')} }`
+    const key = themeKeys.get(dirname(file))
+    if (key === undefined)
+      throw new Error(`gen-api: ${dirname(file)}/theme.ts is not exported from themes.ts`)
 
-    ui.description = `${ui.description} Keys are the theme slots; see Theme below.`
+    // Evaluated, so spread shared slots (e.g. chart roots' `chartSlots`) show every class.
+    const theme: unknown = (await import(join(dirname(path), 'theme.ts'))).default
+    ui.type = '{ [slot]?: ClassValue }'
+    ui.description = 'Classes for each theme slot; see [Theme](#theme).'
 
-    // Chart roots spread the shared `chartSlots`; publish the resolved slots so the page shows every class.
-    const themeSource = await Bun.file(themePath).text()
-    const published = /^\s*\.\.\.\w+,?$/m.test(themeSource)
-      ? `export default ${JSON.stringify(theme, null, 2)
-          .replace(/"(\w+)":/g, '$1:')
-          .replace(/"/g, "'")}\n`
-      : stripComments(themeSource)
-
-    await writeFile(join(outDir, 'theme', `${name}.ts`), published)
+    await writeFile(join(outDir, 'theme', `${name}.ts`), themeSnippet(key, theme))
   }
 
   await writeFile(join(outDir, `${name}.json`), `${JSON.stringify(api, null, 2)}\n`)

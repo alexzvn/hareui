@@ -220,6 +220,6 @@ Calendar sets these data attributes (from Reka UI):
 
 <ApiTable component="Calendar" kind="emits" />
 
-### Theme
+## Theme
 
 <ApiTheme component="Calendar" />

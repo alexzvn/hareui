@@ -173,10 +173,6 @@ style through `class`, `ui` or `createHareUI`):
 
 <ApiTable component="Table" kind="emits" />
 
-### Theme
-
-<ApiTheme component="Table" />
-
 ### TableColumn
 
 | Prop                    | Type                                      | Description                                                            |
@@ -198,3 +194,7 @@ style through `class`, `ui` or `createHareUI`):
 | `id`       | `string \| number` | Row key used by selection and expansion (defaults to the row index) |
 | `children` | `TableRow[]`       | Nested rows (with `tree-column`)                                    |
 | `disabled` | `boolean`          | Excludes the row from selection                                     |
+
+## Theme
+
+<ApiTheme component="Table" />
