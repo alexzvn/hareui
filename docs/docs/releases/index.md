@@ -3,10 +3,11 @@ title: All Releases
 description: Every @hareui/vue release, newest first.
 ---
 
-Release notes for `@hareui/vue`, newest first. Changes merged since the last release are listed under [Unreleased](./unreleased); the ones that need code changes when you upgrade are in the [migration guides](./migrations/v0.3.0-v0.4.0.md).
+Release notes for `@hareui/vue`, newest first. Upgrades that need code changes have a [migration guide](./migrations/v0.3.0-v0.4.0.md).
 
 | Version            | Date       | Highlights                                                                                                                                                                                                                                    |
 | ------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [v0.4.0](./v0-4-0) | 2026-10-30 | ContextMenu, Stepper, Timeline, Rating, Tree, Splitter, Sidebar, Toc; CommandPalette, Carousel, CodeBlock and Editor in their own entries; `useOverlay()`; grouped object props                                                               |
 | [v0.3.0](./v0-3-0) | 2026-10-24 | Charts in `@hareui/vue/charts`; CellSwitch, CellSlider, CellSelect, CellColorPicker, CheckboxButtonGroup, RadioButtonGroup, DropZone, InlineSelect, NativeSelect, NumberStepper; axe audit of every component and docs demo; faster rendering |
 | [v0.2.0](./v0-2-0) | 2026-10-21 | Dashboard and layout components, RichTable, NavigationMenu; `@hareui/vue/vite` plugin: component auto import with an optional prefix, build-time theme overrides; Form schema validation                                                      |
 | [v0.1.3](./v0-1-3) | 2026-10-04 | Keyboard, focus and selection parity with React Aria; ColorSlider submits the channel value; modal Popover                                                                                                                                    |
