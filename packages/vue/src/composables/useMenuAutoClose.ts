@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import { onBeforeUnmount, onMounted, watch } from 'vue'
 
-export type UseHeaderAutoCloseOptions = {
+export type UseMenuAutoCloseOptions = {
   /** Whether the menu is open. Set to `false` to close it. */
   open: Ref<boolean>
   /** The `autoClose` prop. */
@@ -11,7 +11,7 @@ export type UseHeaderAutoCloseOptions = {
 }
 
 /** Closes the menu when a link inside it is clicked or the page navigates (`autoClose`). */
-export const useHeaderAutoClose = (options: UseHeaderAutoCloseOptions) => {
+export const useMenuAutoClose = (options: UseMenuAutoCloseOptions) => {
   const { open, isEnabled, routePath } = options
 
   const closeOnNavigation = () => {

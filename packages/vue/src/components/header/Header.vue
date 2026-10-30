@@ -52,11 +52,11 @@ import Button from '@/components/button/Button.vue'
 import Drawer from '@/components/drawer/Drawer.vue'
 import Modal from '@/components/modal/Modal.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useMenuAutoClose } from '@/composables/useMenuAutoClose'
 import { usePortal } from '@/composables/usePortal'
 
 import type { DrawerMenuProps, HeaderProps, HeaderSlots, ModalMenuProps } from './Header.types'
 import theme from './theme'
-import { useHeaderAutoClose } from './useHeaderAutoClose'
 import { useHeaderHideOnScroll } from './useHeaderHideOnScroll'
 import { useHeaderMenuAnchor } from './useHeaderMenuAnchor'
 import { useHeaderScrollUnlock } from './useHeaderScrollUnlock'
@@ -230,7 +230,7 @@ const drawerProps = computed((): DrawerMenuProps => {
   }
 })
 
-const { onMenuClick } = useHeaderAutoClose({
+const { onMenuClick } = useMenuAutoClose({
   open,
   isEnabled: () => props.autoClose,
   routePath: () => instance?.appContext.config.globalProperties.$route?.fullPath,
