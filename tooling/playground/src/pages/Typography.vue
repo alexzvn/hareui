@@ -65,7 +65,7 @@ const weights = ['normal', 'medium', 'semibold', 'bold'] as const
       <h2 class="mb-2 text-sm font-medium text-muted">Prose</h2>
       <Typography class="max-w-xl flex flex-col gap-3" prose>
         <h1>Prose title</h1>
-        <p>Prose is for authored content where the markup is already semantic and HeroUI applies the default typography rhythm.</p>
+        <p>Prose is for authored content where the markup is already semantic and HareUI applies the default typography rhythm.</p>
         <h2>Section title</h2>
         <p>Inline code like <code>render</code> receives the same code treatment as the Typography primitive.</p>
         <ul>

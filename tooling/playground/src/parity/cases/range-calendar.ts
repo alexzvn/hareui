@@ -32,7 +32,7 @@ cases['range-calendar-anchor-unavailable'] = () => h(defineComponent({
     onMounted(() => nextTick(() => {
       const cell = root.value?.$el.querySelector<HTMLElement>('[data-value="2025-01-10"]')
       cell?.click()
-      // RAC focuses the pressed cell (focus-visible after a virtual click); Reka doesn't move focus on click
+      // RAC focuses the pressed cell (focus-visible after a virtual click); ours doesn't move focus on click
       cell?.focus()
     }))
     return () => h(RangeCalendar, {

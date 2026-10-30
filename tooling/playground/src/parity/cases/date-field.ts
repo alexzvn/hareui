@@ -26,6 +26,6 @@ export const cases: Record<string, () => VNode> = {
   'date-field-with-prefix-icon': () => h(DateField, base, { prefix: icon }),
   'date-field-with-suffix-icon': () => h(DateField, base, { suffix: icon }),
   'date-field-with-prefix-and-suffix': () => h(DateField, base, { prefix: icon, suffix: icon }),
-  // user utilities beat the theme (HeroUI styles live in @layer components)
+  // user utilities beat the theme (theme styles live in @layer components)
   'date-field-user-overrides': () => h(DateField, { ...base, variant: 'secondary', ui: { group: 'rounded-xl bg-default', segment: 'text-foreground' } }),
 }

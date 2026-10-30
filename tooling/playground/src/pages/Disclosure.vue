@@ -52,7 +52,7 @@ const controlledOpen = ref(false)
         <template #trigger="{ open }">
           <Button variant="secondary">
             <Icon icon="gravity-ui:qr-code" />
-            Preview HeroUI Native
+            Preview the mobile app
             <Icon
               class="ms-auto size-4 shrink-0 transition duration-250 motion-reduce:transition-none"
               :class="open ? '-rotate-180' : ''"
@@ -61,7 +61,7 @@ const controlledOpen = ref(false)
           </Button>
         </template>
         <div class="flex flex-col items-center gap-2 rounded-3xl bg-surface p-4 text-center shadow-surface">
-          <p class="text-sm text-muted">Scan this QR code with your camera app to preview the HeroUI native components.</p>
+          <p class="text-sm text-muted">Scan this QR code with your camera app to preview the mobile components.</p>
           <div class="aspect-square w-full max-w-54 rounded-xl bg-surface-secondary" />
           <p class="text-sm text-muted">Expo must be installed on your device.</p>
           <Button class="mt-2">

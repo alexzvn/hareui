@@ -22,11 +22,11 @@ cases['disclosure-disabled'] = () => h(Disclosure, { title: 'Toggle content', di
 cases['disclosure-basic'] = () => h(Disclosure, { defaultOpen: true, class: 'w-full max-w-md text-center' }, {
   trigger: ({ indicator }: TriggerProps) => h(Button, { variant: 'secondary' }, () => [
     h('div', { class: 'size-4' }, gear()),
-    ' Preview HeroUI Native ',
+    ' Preview the mobile app ',
     h(indicator),
   ]),
   default: () => [
-    h('p', { class: 'text-sm text-muted' }, 'Scan this QR code with your camera app to preview the HeroUI native components.'),
+    h('p', { class: 'text-sm text-muted' }, 'Scan this QR code with your camera app to preview the mobile components.'),
     h('div', { class: 'aspect-square w-full max-w-54 bg-surface-secondary' }),
     h('p', { class: 'text-sm text-muted' }, 'Expo must be installed on your device.'),
     h(Button, { class: 'mt-4', variant: 'primary' }, () => 'Download on App Store'),

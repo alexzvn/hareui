@@ -16,10 +16,10 @@ const headings = {
 for (const [type, text] of Object.entries(headings))
   cases[`typography-${type}`] = () => h(Typography, { type: type as keyof typeof headings, class: 'w-[420px]' }, () => text)
 
-cases['typography-body'] = () => h(Typography, { class: 'w-[420px]' }, () => 'HeroUI Typography uses React Aria Components Text as the primitive, with semantic typography types and render-prop polymorphism.')
+cases['typography-body'] = () => h(Typography, { class: 'w-[420px]' }, () => 'HareUI Typography renders semantic text elements, with typography types and an `as` prop for polymorphism.')
 cases['typography-body-sm'] = () => h(Typography, { type: 'body-sm', color: 'muted', class: 'w-[420px]' }, () => 'Smaller muted body copy for secondary descriptions.')
 cases['typography-body-xs'] = () => h(Typography, { type: 'body-xs', class: 'w-[420px]' }, () => 'Captions, badges, helper text, and fine print.')
-cases['typography-code'] = () => h(Typography, { type: 'code' }, () => 'pnpm add @heroui/react')
+cases['typography-code'] = () => h(Typography, { type: 'code' }, () => 'bun add @hareui/vue')
 
 cases['typography-align-center'] = () => h(Typography, { align: 'center', class: 'w-[420px]' }, () => 'Centered body copy.')
 cases['typography-align-end'] = () => h(Typography, { align: 'end', class: 'w-[420px]' }, () => 'End-aligned body copy.')
@@ -38,7 +38,7 @@ cases['typography-as-override'] = () => h(Typography, { as: 'h2', type: 'h1', cl
 
 cases['typography-prose'] = () => h(Typography, { prose: true, class: 'w-[420px] flex flex-col gap-3' }, () => [
   h('h1', 'Prose title'),
-  h('p', ['Prose is for authored content where the markup is already semantic and HeroUI applies the default typography rhythm.']),
+  h('p', ['Prose is for authored content where the markup is already semantic and HareUI applies the default typography rhythm.']),
   h('h2', 'Section title'),
   h('p', ['Inline code like ', h('code', 'render'), ' receives the same code treatment as the Typography primitive.']),
 ])

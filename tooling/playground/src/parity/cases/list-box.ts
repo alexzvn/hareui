@@ -3,9 +3,9 @@ import { ListBox } from '@hareui/vue'
 import { h } from 'vue'
 
 const users = [
-  { value: '1', label: 'Bob', description: 'bob@heroui.com' },
-  { value: '2', label: 'Fred', description: 'fred@heroui.com' },
-  { value: '3', label: 'Martha', description: 'martha@heroui.com' },
+  { value: '1', label: 'Bob', description: 'bob@example.com' },
+  { value: '2', label: 'Fred', description: 'fred@example.com' },
+  { value: '3', label: 'Martha', description: 'martha@example.com' },
 ]
 const base = { 'aria-label': 'Users', 'class': 'w-[220px]', 'items': users }
 

@@ -12,7 +12,7 @@ const bio = ref('')
 
     <section class="flex flex-wrap items-start gap-6">
       <h2 class="w-24 text-sm text-muted">Prefix / suffix</h2>
-      <TextField class="w-[280px]" name="website" label="Website" default-value="heroui">
+      <TextField class="w-[280px]" name="website" label="Website" default-value="example">
         <InputGroup prefix="https://" suffix=".com" />
       </TextField>
       <TextField class="w-[280px]" name="price" label="Price" type="number" default-value="10">

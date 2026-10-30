@@ -2,7 +2,7 @@
 import { Input } from '@hareui/vue'
 import { ref } from 'vue'
 
-const value = ref('heroui.com')
+const value = ref('example.com')
 const variants = ['primary', 'secondary'] as const
 </script>
 

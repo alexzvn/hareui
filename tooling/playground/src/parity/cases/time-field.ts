@@ -28,6 +28,6 @@ export const cases: Record<string, () => VNode> = {
   'time-field-with-prefix-icon': () => h(TimeField, base, { prefix: icon }),
   'time-field-with-suffix-icon': () => h(TimeField, base, { suffix: icon }),
   'time-field-with-prefix-and-suffix': () => h(TimeField, base, { prefix: icon, suffix: icon }),
-  // user utilities beat the theme (HeroUI styles live in @layer components)
+  // user utilities beat the theme (theme styles live in @layer components)
   'time-field-user-overrides': () => h(TimeField, { ...base, variant: 'secondary', ui: { group: 'rounded-xl bg-default', segment: 'text-foreground' } }),
 }

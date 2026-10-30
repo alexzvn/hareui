@@ -4,7 +4,7 @@ import App from './App.vue'
 import { router } from './router'
 import './main.css'
 
-// No theme overrides: the playground must render exactly like HeroUI (config precedence is covered by test/theme/ui.spec.ts).
+// No theme overrides: the playground must render the default theme (config precedence is covered by test/theme/ui.spec.ts).
 createApp(App)
   .use(router)
   .use(createHareUI())
