@@ -166,10 +166,10 @@ import type { DatePickerEmits, DatePickerProps, DatePickerSlots } from './DatePi
 import PopoverLabelledBy from './PopoverLabelledBy'
 import theme from './theme'
 
-// `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
-// controlled-valid/controlled-closed and hide validation errors / force the popover shut
 const { t } = useLocale()
 
+// `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
+// controlled-valid/controlled-closed and hide validation errors / force the popover shut
 const props = withDefaults(defineProps<DatePickerProps>(), {
   invalid: undefined,
   open: undefined,

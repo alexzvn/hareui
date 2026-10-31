@@ -138,9 +138,9 @@ import DropZoneFileList from './DropZoneFileList.vue'
 import theme from './theme'
 import { dragMatchesAccept, matchesAccept } from './utils'
 
-// `undefined` defaults keep uncontrolled mode and leave validation in charge of an unset `invalid`
 const { t } = useLocale()
 
+// `undefined` defaults keep uncontrolled mode and leave validation in charge of an unset `invalid`
 const props = withDefaults(defineProps<DropZoneProps>(), {
   modelValue: undefined,
   invalid: undefined,

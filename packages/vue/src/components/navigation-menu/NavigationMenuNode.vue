@@ -216,8 +216,6 @@ import NavigationMenuPopover from './NavigationMenuPopover.vue'
 import NavigationMenuTabBridge from './NavigationMenuTabBridge'
 
 // One item of the menu (recursive for vertical children).
-const { t } = useLocale()
-
 const props = withDefaults(
   defineProps<{
     item: NavigationMenuItem
@@ -229,6 +227,8 @@ const props = withDefaults(
   }>(),
   { level: 0, listIndex: 0 },
 )
+
+const { t } = useLocale()
 
 const ctx = useNavigationMenu()
 const { ui } = ctx

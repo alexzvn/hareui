@@ -88,7 +88,7 @@ export type RatingProps = {
   emptyIcon?: IconValue
   /**
    * The accessible name of each selectable value.
-   * @defaultValue (value, length) => `${value} out of ${length}`
+   * @defaultValue the `App` locale's label, then 'en' (`{value} out of {length}`)
    */
   itemLabel?: (value: number, length: number) => string
   /**

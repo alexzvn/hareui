@@ -84,9 +84,9 @@ import type {
 } from './CellColorPicker.types'
 import theme from './theme'
 
-// `open: undefined` keeps an absent `open` uncontrolled
 const { t } = useLocale()
 
+// `open: undefined` keeps an absent `open` uncontrolled
 const props = withDefaults(defineProps<CellColorPickerProps>(), {
   modelValue: undefined,
   defaultValue: undefined,

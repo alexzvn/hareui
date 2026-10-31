@@ -67,8 +67,6 @@ import type {
 } from './Sidebar.types'
 
 // The header, body and footer of a `Sidebar`, rendered in the desktop panel and again inside the mobile menu.
-const { t } = useLocale()
-
 const props = defineProps<{
   ui: SidebarUI
   state: SidebarState
@@ -82,6 +80,7 @@ const props = defineProps<{
 const emit = defineEmits<{ close: [] }>()
 
 const slots = defineSlots<Omit<SidebarSlots, 'rail' | 'content'>>()
+const { t } = useLocale()
 
 const hasTitle = computed(() => !!props.title || !!slots.title)
 const hasDescription = computed(() => !!props.description || !!slots.description)

@@ -75,9 +75,9 @@ import { useLocale } from '@/composables/useLocale'
 import theme from './theme'
 import type { TimeFieldEmits, TimeFieldProps, TimeFieldSlots } from './TimeField.types'
 
-// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const { t } = useLocale()
 
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<TimeFieldProps>(), { invalid: undefined })
 const emit = defineEmits<TimeFieldEmits>()
 const slots = defineSlots<TimeFieldSlots>()

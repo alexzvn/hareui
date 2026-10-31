@@ -40,7 +40,7 @@ export type DropZoneProps = {
   description?: string
   /**
    * The text of the button that opens the file picker.
-   * @defaultValue 'Select files'
+   * @defaultValue the `App` locale's label, then 'en' ('Select files')
    */
   triggerLabel?: string
   /** Error message rendered below the area while invalid. Defaults to the validation errors. */

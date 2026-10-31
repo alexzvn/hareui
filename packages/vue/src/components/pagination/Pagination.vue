@@ -126,8 +126,6 @@ import type {
 import theme from './theme'
 
 // `page: undefined` keeps the uncontrolled page when unbound.
-const { t } = useLocale()
-
 const props = withDefaults(defineProps<PaginationProps>(), {
   page: undefined,
   defaultPage: 1,
@@ -135,6 +133,7 @@ const props = withDefaults(defineProps<PaginationProps>(), {
 
 const emit = defineEmits<PaginationEmits>()
 defineSlots<PaginationSlots>()
+const { t } = useLocale()
 
 const ui = useComponentUI('pagination', {
   theme,

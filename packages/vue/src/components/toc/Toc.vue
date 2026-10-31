@@ -166,8 +166,6 @@ import { useTocScrollspy } from './useTocScrollspy'
 defineOptions({ inheritAttrs: false })
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply.
-const { t } = useLocale()
-
 const props = withDefaults(defineProps<TocProps<T>>(), {
   as: 'nav',
   links: () => [],
@@ -183,6 +181,8 @@ const props = withDefaults(defineProps<TocProps<T>>(), {
   defaultOpen: false,
   portal: undefined,
 })
+
+const { t } = useLocale()
 
 const emit = defineEmits<TocEmits>()
 const slots = defineSlots<TocSlots<T>>()

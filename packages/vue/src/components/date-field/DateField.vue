@@ -76,9 +76,9 @@ import { useLocale } from '@/composables/useLocale'
 import type { DateFieldEmits, DateFieldProps, DateFieldSlots } from './DateField.types'
 import theme from './theme'
 
-// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const { t } = useLocale()
 
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<DateFieldProps>(), { invalid: undefined })
 const emit = defineEmits<DateFieldEmits>()
 const slots = defineSlots<DateFieldSlots>()
