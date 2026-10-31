@@ -70,5 +70,6 @@ export const textModelDirective = (
   mounted: forwardHook('mounted', modifiers),
   beforeUpdate: forwardHook('beforeUpdate', modifiers),
   updated: forwardHook('updated', modifiers),
-  getSSRProps: (binding, vnode) => vModelDynamic.getSSRProps?.(binding, vnode),
+  // SSR calls this without a vnode, which `vModelDynamic` needs; text controls render their value as `v-model` does
+  getSSRProps: ({ value }) => ({ value }),
 })
