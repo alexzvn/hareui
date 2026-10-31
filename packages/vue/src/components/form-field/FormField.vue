@@ -72,6 +72,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 
 import type { FormFieldControl } from './context'
 import { formFieldContextKey } from './context'
+import { getFormError } from './formError'
 import type { FormFieldProps, FormFieldSlots } from './FormField.types'
 import theme from './theme'
 
@@ -134,14 +135,11 @@ watch(
 
 // The first `Form` error for `name` or `errorPattern`, for controls that don't report their own validation
 const formError = computed(() => {
-  const { name, errorPattern } = props
-  if (!form || (!name && !errorPattern)) return undefined
+  if (!form) return undefined
 
-  return form.errors.value.find(
-    (error) =>
-      (!!name && error.name === name) ||
-      (!!errorPattern && error.name !== undefined && errorPattern.test(error.name)),
-  )?.message
+  const owner = { name: props.name, pattern: props.errorPattern }
+
+  return getFormError(form.errors.value, owner)?.message
 })
 
 const controlError = computed<string | true | undefined>(() => {

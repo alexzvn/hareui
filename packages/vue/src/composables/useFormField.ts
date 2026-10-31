@@ -2,10 +2,9 @@ import type { ComputedRef, MaybeRefOrGetter } from 'vue'
 import { computed, inject, onScopeDispose, provide, toValue } from 'vue'
 
 import { formFieldContextKey } from '@/components/form-field/context'
-import { formContextKey } from '@/components/form/context'
-import type { FormInputEvents } from '@/components/form/types'
 
 import type { ValidationResult } from './useFieldValidation'
+import { useFormEvents } from './useFormEvents'
 
 /** Options of {@link useFormField}. */
 export type UseFormFieldOptions = {
@@ -79,7 +78,6 @@ export type UseFormFieldReturn = {
  */
 export const useFormField = (options: UseFormFieldOptions = {}): UseFormFieldReturn => {
   const field = inject(formFieldContextKey, null)
-  const form = inject(formContextKey, null)
 
   // Controls nested inside this one (a group's items, a field's input) neither claim the field nor duplicate its events
   provide(formFieldContextKey, null)
@@ -99,23 +97,10 @@ export const useFormField = (options: UseFormFieldOptions = {}): UseFormFieldRet
   const describedBy = computed(() => field?.describedBy.value)
   const isInvalid = computed(() => !!field?.invalid.value)
 
-  const emitFormEvent = (
-    type: FormInputEvents,
-    flags?: { eager?: boolean; track?: boolean; validate?: boolean },
-  ) => {
-    if (form && field && name.value) form.emit({ type, name: name.value, ...flags })
-  }
-
-  let inputTimer: ReturnType<typeof setTimeout> | undefined
-  onScopeDispose(() => clearTimeout(inputTimer))
-
-  const emitFormInput = () => {
-    emitFormEvent('input', { validate: false })
-    clearTimeout(inputTimer)
-    const delay = field?.validateOnInputDelay.value ?? form?.validateOnInputDelay.value ?? 0
-    const isEager = !!field?.eagerValidation.value
-    inputTimer = setTimeout(() => emitFormEvent('input', { eager: isEager, track: false }), delay)
-  }
+  // Outside a `FormField` this reports nothing: HareUI fields report through their own validation
+  const { emitFormEvent, emitFormInput } = useFormEvents({
+    name: () => (field ? name.value : undefined),
+  })
 
   return {
     isInFormField: !!field,
@@ -135,6 +120,6 @@ export const useFormField = (options: UseFormFieldOptions = {}): UseFormFieldRet
     emitFormBlur: () => emitFormEvent('blur'),
     emitFormFocus: () => emitFormEvent('focus'),
     emitFormChange: () => emitFormEvent('change'),
-    emitFormInput,
+    emitFormInput: () => emitFormInput(!!field?.eagerValidation.value),
   }
 }

@@ -12,7 +12,7 @@ describe('InputGroup', () => {
     const wrapper = mount(InputGroup, {
       props: {
         modelValue: 'a',
-        'onUpdate:modelValue': (v: string | number | undefined) =>
+        'onUpdate:modelValue': (v: string | number | null | undefined): Promise<void> =>
           wrapper.setProps({ modelValue: v }),
       },
     })

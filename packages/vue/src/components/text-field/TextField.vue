@@ -51,7 +51,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import type { ModelModifier } from '@/utils/modelModifiers'
-import { emptyModelValue } from '@/utils/modelModifiers'
+import { toEmptyModelValue } from '@/utils/modelModifiers'
 
 import { splitInputAttrs, textFieldContextKey } from './context'
 import type { TextFieldProps, TextFieldSlots } from './TextField.types'
@@ -65,7 +65,7 @@ const slots = defineSlots<TextFieldSlots>()
 
 /** The input value. */
 const [modelValue, modifiers] = defineModel<string | number | null, ModelModifier>({
-  set: (v) => emptyModelValue(v, modifiers),
+  set: (v) => toEmptyModelValue(v, modifiers),
 })
 
 // `defaultValue` seeds the field without emitting `update:modelValue` on mount (RAC's `onChange` only reports

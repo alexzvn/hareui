@@ -18,19 +18,21 @@
       v-if="textarea"
       v-bind="controlAttrs"
       ref="input"
-      v-model="value"
+      v-text-model="value"
       :rows="rows"
       data-slot="input-group-textarea"
       :class="ui.input()"
+      @update:model-value="value = $event"
     />
     <input
       v-else
       v-bind="controlAttrs"
       ref="input"
-      v-model="value"
+      v-text-model="value"
       :type="type"
       data-slot="input-group-input"
       :class="ui.input()"
+      @update:model-value="value = $event"
     />
     <div v-if="hasSuffix" data-slot="input-group-suffix" :class="ui.suffix()">
       <slot name="suffix">
@@ -41,13 +43,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, useAttrs, useTemplateRef, watch } from 'vue'
+import { computed, useAttrs, useTemplateRef } from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
-import { splitInputAttrs, textFieldContextKey } from '@/components/text-field/context'
+import { splitInputAttrs } from '@/components/text-field/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useFormField } from '@/composables/useFormField'
+import { useTextControlModel } from '@/composables/useTextControlModel'
+import type { ModelModifier } from '@/utils/modelModifiers'
+import { toEmptyModelValue } from '@/utils/modelModifiers'
 
 import type { InputGroupProps, InputGroupSlots } from './InputGroup.types'
 import theme from './theme'
@@ -72,40 +77,15 @@ const props = withDefaults(defineProps<InputGroupProps>(), {
 const slots = defineSlots<InputGroupSlots>()
 
 /** The input value. */
-const modelValue = defineModel<string | number>()
-
-const field = inject(textFieldContextKey, null)
-
-// Inside a TextField, the input without its own v-model uses the field's value; with one, it mirrors into the field
-// so the field's `validate` and form reset see what the user typed
-const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
-const ownModel =
-  !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some((key) => key in vnodeProps)
-
-const value = computed({
-  get: () => (ownModel ? modelValue.value : field!.model.value),
-  set: (v) => {
-    if (ownModel) modelValue.value = v
-    if (field) field.model.value = v
-  },
+const [modelValue, ownModifiers] = defineModel<string | number | null, ModelModifier>({
+  set: (v) => toEmptyModelValue(v, ownModifiers),
 })
 
-if (value.value === undefined && props.defaultValue !== undefined) value.value = props.defaultValue
-
-if (field && ownModel) {
-  watch(
-    modelValue,
-    (v) => {
-      field.model.value = v
-    },
-    { immediate: true },
-  )
-
-  // The field writes its model on form reset; pass that back to the parent's v-model
-  watch(field.model, (v) => {
-    if (v !== modelValue.value) modelValue.value = v
-  })
-}
+const { field, value, vTextModel } = useTextControlModel({
+  model: modelValue,
+  modifiers: ownModifiers,
+  defaultValue: props.defaultValue,
+})
 
 // A bare InputGroup inside a FormField takes its id, name and description ids, and shows its errors there
 const formField = useFormField({

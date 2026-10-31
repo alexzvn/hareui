@@ -212,9 +212,9 @@ import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
 
-// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const { t } = useLocale()
 
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<NumberStepperProps>(), {
   increment: true,
   decrement: true,

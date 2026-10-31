@@ -250,20 +250,38 @@ describe('FormField', () => {
     expect(w.get('label').attributes('for')).toBeUndefined()
   })
 
-  it('a Slider inside is named and described by the field, and marked invalid by its error', async () => {
-    const w = mountAttached(() =>
-      h(FormField, { label: 'Volume', description: 'Speaker level', error: 'Too loud' }, () =>
-        h(Slider, { label: 'Own label', defaultValue: 30 }),
-      ),
-    )
+  describe('a Slider inside', () => {
+    const mountSlider = async () => {
+      const w = mountAttached(() =>
+        h(FormField, { label: 'Volume', description: 'Speaker level', error: 'Too loud' }, () =>
+          h(Slider, { label: 'Own label', defaultValue: 30 }),
+        ),
+      )
 
-    await nextTick()
-    const thumb = w.get('[role=slider]').element
-    expect(labelText(thumb)).toBe('Volume')
-    expect(descriptions(thumb)).toEqual(['Speaker level', 'Too loud'])
-    expect(thumb.getAttribute('aria-invalid')).toBe('true')
-    expect(w.text()).not.toContain('Own label')
-    expect(w.get('label').attributes('for')).toBeUndefined()
+      await nextTick()
+
+      return { w, thumb: w.get('[role=slider]').element }
+    }
+
+    it('is named by the field label instead of its own', async () => {
+      const { w, thumb } = await mountSlider()
+
+      expect(labelText(thumb)).toBe('Volume')
+      expect(w.text()).not.toContain('Own label')
+      expect(w.get('label').attributes('for')).toBeUndefined()
+    })
+
+    it('is described by the field description and error', async () => {
+      const { thumb } = await mountSlider()
+
+      expect(descriptions(thumb)).toEqual(['Speaker level', 'Too loud'])
+    })
+
+    it('is marked invalid by the field error', async () => {
+      const { thumb } = await mountSlider()
+
+      expect(thumb.getAttribute('aria-invalid')).toBe('true')
+    })
   })
 
   it('a Form error for the field name shows in the field and marks the inner field invalid', async () => {

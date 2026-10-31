@@ -22,15 +22,15 @@ export type ModelModifiers = {
 export type ModelModifier = keyof ModelModifiers
 
 // `0` and `false` are values of their own; whitespace-only text counts as empty, with or without `trim`
-const isEmpty = (value: unknown) =>
+const isBlankText = (value: unknown) =>
   value === null || value === undefined || (typeof value === 'string' && value.trim() === '')
 
 /**
  * Applies `nullable` / `optional`: an empty value (`null`, `undefined`, whitespace-only text) becomes `null` or
  * `undefined`; any other value passes through. Pass it as `defineModel`'s `set`.
  */
-export const emptyModelValue = <T>(value: T, modifiers: ModelModifiers): T | null | undefined => {
-  if (!isEmpty(value)) return value
+export const toEmptyModelValue = <T>(value: T, modifiers: ModelModifiers): T | null | undefined => {
+  if (!isBlankText(value)) return value
   if (modifiers.nullable) return null
   if (modifiers.optional) return undefined
 
@@ -63,7 +63,7 @@ const forwardHook = (hook: ModelHook, modifiers: () => ModelModifiers) => {
  * text while it differs from the model only by surrounding whitespace or number formatting. It writes through the
  * element's `@update:model-value` listener, the one `v-model` generates.
  */
-export const textModelDirective = (
+export const createTextModelDirective = (
   modifiers: () => ModelModifiers,
 ): ObjectDirective<TextControl> => ({
   created: forwardHook('created', modifiers),

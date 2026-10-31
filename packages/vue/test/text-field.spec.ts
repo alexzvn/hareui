@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
+import InputGroup from '@/components/input-group/InputGroup.vue'
 import Input from '@/components/input/Input.vue'
 import TextArea from '@/components/text-area/TextArea.vue'
 import TextField from '@/components/text-field/TextField.vue'
@@ -294,6 +295,40 @@ describe('TextField v-model modifiers', () => {
     await wrapper.get('textarea').setValue('  Hello  ')
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['Hello'])
     wrapper.unmount()
+  })
+
+  describe('an InputGroup in the field', () => {
+    const mountGroup = (modelModifiers: ModelModifiers) =>
+      mount(TextField, {
+        props: { label: 'Price', modelValue: '', modelModifiers },
+        slots: { default: () => h(InputGroup, { prefix: '$' }) },
+      })
+
+    it('applies lazy: emits on change, not on input', async () => {
+      const wrapper = mountGroup({ lazy: true })
+      const input = wrapper.get('input')
+      input.element.value = 'abc'
+      await input.trigger('input')
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+      await input.trigger('change')
+      expect(wrapper.emitted('update:modelValue')).toEqual([['abc']])
+      wrapper.unmount()
+    })
+
+    it('applies trim', async () => {
+      const wrapper = mountGroup({ trim: true })
+      await wrapper.get('input').setValue('  9.99  ')
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['9.99'])
+      wrapper.unmount()
+    })
+
+    it('applies number', async () => {
+      const wrapper = mountGroup({ number: true })
+      await wrapper.get('input').setValue('9.99')
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([9.99])
+      wrapper.unmount()
+    })
   })
 
   it('a parent setting the value to null clears the typed text', async () => {

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
 import Input from '@/components/input/Input.vue'
@@ -165,5 +165,47 @@ describe('Input v-model modifiers', () => {
     await input.trigger('change')
     expect(wrapper.emitted('update:modelValue')).toEqual([['Ada']])
     wrapper.unmount()
+  })
+
+  describe('a focused input keeps its typed text while the model holds the normalised value', () => {
+    // Vue skips a focused control by checking `getRootNode() instanceof Document`; happy-dom's `document` isn't one
+    beforeEach(() => vi.stubGlobal('Document', document.constructor))
+    afterEach(() => vi.unstubAllGlobals())
+
+    // A parent bound with v-model, so the normalised value comes back as a prop. Only `input` fires: like the native
+    // `v-model`, a `change` (blur, Enter) writes the normalised value back to the control
+    const typeFocused = async (modelModifiers: ModelModifiers, text: string) => {
+      const wrapper = mount(Input, {
+        props: {
+          modelValue: '',
+          modelModifiers,
+          'onUpdate:modelValue': (v: string | number | null | undefined): Promise<void> =>
+            wrapper.setProps({ modelValue: v }),
+        },
+        attrs: { 'aria-label': 'Amount' },
+        attachTo: document.body,
+      })
+
+      const input = wrapper.get<HTMLInputElement>('input')
+      input.element.focus()
+      input.element.value = text
+      await input.trigger('input')
+
+      return { wrapper, input: input.element }
+    }
+
+    it('with trim', async () => {
+      const { wrapper, input } = await typeFocused({ trim: true }, '  Grace  ')
+      expect(wrapper.props('modelValue')).toBe('Grace')
+      expect(input.value).toBe('  Grace  ')
+      wrapper.unmount()
+    })
+
+    it('with number', async () => {
+      const { wrapper, input } = await typeFocused({ number: true }, '3.50')
+      expect(wrapper.props('modelValue')).toBe(3.5)
+      expect(input.value).toBe('3.50')
+      wrapper.unmount()
+    })
   })
 })

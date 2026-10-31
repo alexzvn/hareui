@@ -19,9 +19,11 @@ import {
 } from 'vue'
 
 import { formFieldContextKey } from '@/components/form-field/context'
-import type { FormInputEvent, ValidationBehavior, ValidationError } from '@/components/form/context'
+import { getFormError } from '@/components/form-field/formError'
+import type { ValidationBehavior, ValidationError } from '@/components/form/context'
 import { formContextKey } from '@/components/form/context'
-import type { FormFieldValidationProps, FormInputEvents } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
+import { useFormEvents } from '@/composables/useFormEvents'
 import { useLocale } from '@/composables/useLocale'
 
 /** Snapshot of the native `ValidityState` flags. */
@@ -185,15 +187,9 @@ export const useFieldValidation = <T>(
 
   // The first form error for this field, by name or `errorPattern`
   const formError = computed(() => {
-    const name = getName()
-    const pattern = getErrorPattern()
-    if (!form || (!name && !pattern)) return null
+    if (!form) return null
 
-    const match = form.errors.value.find(
-      (error) =>
-        (!!name && error.name === name) ||
-        (!!pattern && error.name !== undefined && pattern.test(error.name)),
-    )
+    const match = getFormError(form.errors.value, { name: getName(), pattern: getErrorPattern() })
 
     return match ? errorResult([match.message]) : null
   })
@@ -267,29 +263,10 @@ export const useFieldValidation = <T>(
 
   watch([realtime, () => options.value(), behavior], sync, { flush: 'post' })
 
-  // Reports a field event to the surrounding `Form`, which tracks it and validates the field per its `validateOn`
-  const emitFormEvent = (type: FormInputEvents, flags?: Omit<FormInputEvent, 'type' | 'name'>) => {
-    const name = getName()
-    if (form && name) form.emit({ type, name, ...flags })
-  }
-
-  let inputTimer: ReturnType<typeof setTimeout> | undefined
-
-  // Tracked right away so a submit within the delay isn't followed by a late dirty mark or validation
-  const emitFormInput = (eager: boolean) => {
-    emitFormEvent('input', { validate: false })
-    clearTimeout(inputTimer)
-
-    const delay =
-      options.formField?.validateOnInputDelay ??
-      wrapper?.validateOnInputDelay.value ??
-      form?.validateOnInputDelay.value ??
-      0
-
-    inputTimer = setTimeout(() => emitFormEvent('input', { eager, track: false }), delay)
-  }
-
-  onBeforeUnmount(() => clearTimeout(inputTimer))
+  const { emitFormEvent, emitFormInput } = useFormEvents({
+    name: getName,
+    validateOnInputDelay: () => options.formField?.validateOnInputDelay,
+  })
 
   const commit = () => {
     isServerErrorCleared.value = true

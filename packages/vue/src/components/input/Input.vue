@@ -21,15 +21,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, inject, useTemplateRef, watch } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
-import { textFieldContextKey } from '@/components/text-field/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useFormField } from '@/composables/useFormField'
+import { useTextControlModel } from '@/composables/useTextControlModel'
 import type { ModelModifier } from '@/utils/modelModifiers'
-import { emptyModelValue, textModelDirective } from '@/utils/modelModifiers'
+import { toEmptyModelValue } from '@/utils/modelModifiers'
 
 import type { InputProps } from './Input.types'
 import theme from './theme'
@@ -45,44 +45,14 @@ const props = withDefaults(defineProps<InputProps>(), {
 
 /** The input value. */
 const [modelValue, ownModifiers] = defineModel<string | number | null, ModelModifier>({
-  set: (v) => emptyModelValue(v, ownModifiers),
+  set: (v) => toEmptyModelValue(v, ownModifiers),
 })
 
-const field = inject(textFieldContextKey, null)
-
-// Inside a TextField, an Input without its own v-model uses the field's value; with one, it mirrors into the field
-// so the field's `validate` and form reset see what the user typed
-const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
-const ownModel =
-  !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some((key) => key in vnodeProps)
-
-// `lazy` / `trim` / `number` act on the native input, so without its own v-model the Input takes the field's
-const vTextModel = textModelDirective(() => (ownModel ? ownModifiers : field!.modelModifiers))
-
-const value = computed<string | number | null | undefined>({
-  get: () => (ownModel ? modelValue.value : field!.model.value),
-  set: (v) => {
-    if (ownModel) modelValue.value = v
-    if (field) field.model.value = v ?? undefined
-  },
+const { field, value, vTextModel } = useTextControlModel({
+  model: modelValue,
+  modifiers: ownModifiers,
+  defaultValue: props.defaultValue,
 })
-
-if (value.value === undefined && props.defaultValue !== undefined) value.value = props.defaultValue
-
-if (field && ownModel) {
-  watch(
-    modelValue,
-    (v) => {
-      field.model.value = v ?? undefined
-    },
-    { immediate: true },
-  )
-
-  // The field writes its model on form reset; pass that back to the parent's v-model
-  watch(field.model, (v) => {
-    if (v !== modelValue.value) modelValue.value = v
-  })
-}
 
 // A bare Input inside a FormField takes its id, name and description ids, and shows its errors there
 const formField = useFormField({

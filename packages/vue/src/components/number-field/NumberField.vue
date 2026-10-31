@@ -133,16 +133,16 @@ import { useNumberValue } from '@/composables/useNumberValue'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
 import { splitFocusListeners } from '@/utils/formControlEvents'
 import type { ModelModifier } from '@/utils/modelModifiers'
-import { emptyModelValue } from '@/utils/modelModifiers'
+import { toEmptyModelValue } from '@/utils/modelModifiers'
 
 import type { NumberFieldProps, NumberFieldSlots } from './NumberField.types'
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
 
-// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const { t } = useLocale()
 
+// `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<NumberFieldProps>(), {
   increment: true,
   decrement: true,
@@ -157,7 +157,7 @@ type NumberModifier = Extract<ModelModifier, 'nullable' | 'optional'>
 
 /** The numeric value; `undefined` while the input is empty (`null` with `v-model.nullable`). */
 const [modelValue, modifiers] = defineModel<number | null, NumberModifier>({
-  set: (v) => emptyModelValue(v, modifiers),
+  set: (v) => toEmptyModelValue(v, modifiers),
 })
 
 const {
@@ -234,8 +234,8 @@ onBeforeUnmount(() => {
   root.value?.removeEventListener('blur', captureInputText, true)
 })
 
-// `aria-label` / `aria-labelledby` name the input (as in HeroUI) and `@focus` / `@blur` listen on it; the rest stays
-// on the wrapper div
+// `aria-label` / `aria-labelledby` name the input, which a labelled wrapper would leave unnamed, and `@focus` / `@blur`
+// listen on it; the rest stays on the wrapper div
 const attrs = useAttrs()
 const fieldAttrs = computed(() => splitFocusListeners(attrs))
 const rootAttrs = computed(() => {
