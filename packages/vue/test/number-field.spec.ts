@@ -425,4 +425,13 @@ describe('NumberField v-model modifiers', () => {
   it('optional emits undefined for an emptied input', async () => {
     expect(await typeAndBlur('', { modelModifiers: { optional: true } })).toEqual([undefined])
   })
+
+  it('nullable keeps a number typed into an empty (null) field', async () => {
+    const modelModifiers = { nullable: true } as const
+    expect(await typeAndBlur('30', { modelModifiers, modelValue: null })).toEqual([30])
+  })
+
+  it('keeps a number typed into an emptied field whose v-model is null', async () => {
+    expect(await typeAndBlur('30', { modelValue: null })).toEqual([30])
+  })
 })

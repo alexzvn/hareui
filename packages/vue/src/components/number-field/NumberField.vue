@@ -71,7 +71,7 @@
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
         :class="ui.input()"
-        @blur="onCommitEmpty"
+        @blur="commitIfEmptied"
         @keydown="onKeydown"
       />
       <NumberFieldIncrement
@@ -160,16 +160,24 @@ const [modelValue, modifiers] = defineModel<number | null, NumberModifier>({
   set: (v) => emptyModelValue(v, modifiers),
 })
 
-const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } =
-  useNumberValue({
-    model: modelValue,
-    defaultValue: () => props.defaultValue,
-    min: () => props.min,
-    max: () => props.max,
-    step: () => props.step,
-    formatOptions: () => props.formatOptions,
-    onCommit: () => commitValidation(),
-  })
+const {
+  effectiveStep,
+  displayValue,
+  defaultDisplayValue,
+  formValue,
+  commit,
+  captureInputText,
+  commitIfEmptied,
+  reset,
+} = useNumberValue({
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  min: () => props.min,
+  max: () => props.max,
+  step: () => props.step,
+  formatOptions: () => props.formatOptions,
+  onCommit: () => commitValidation(),
+})
 
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
@@ -187,12 +195,8 @@ const { validation, invalid, commitValidation } = useFieldValidation({
 })
 
 // Runs after Reka's blur / Enter handler, which has already applied a non-empty input
-const onCommitEmpty = (event: Event) => {
-  if ((event.target as HTMLInputElement).value === '') commitEmpty()
-}
-
 const onKeydown = (event: KeyboardEvent) => {
-  if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
+  if (event.key === 'Enter' && !event.isComposing) commitIfEmptied()
 }
 
 // RAC's spin button moves PageUp / PageDown by a single step (`onIncrementPage` = `onIncrement`); Reka moves 10 steps.
@@ -200,6 +204,7 @@ const onKeydown = (event: KeyboardEvent) => {
 // It is attached natively: a Vue `@keydown.capture` invoker would timestamp the re-dispatched event, and Vue's
 // invoker on the input then drops it as "dispatched before attach" when the key lands right after mount.
 const onKeydownCapture = (event: KeyboardEvent) => {
+  captureInputText(event)
   const target = event.target as HTMLElement
   if (
     (event.key !== 'PageUp' && event.key !== 'PageDown') ||
@@ -219,8 +224,15 @@ const onKeydownCapture = (event: KeyboardEvent) => {
   )
 }
 
-onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
-onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
+onMounted(() => {
+  root.value?.addEventListener('keydown', onKeydownCapture, true)
+  root.value?.addEventListener('blur', captureInputText, true)
+})
+
+onBeforeUnmount(() => {
+  root.value?.removeEventListener('keydown', onKeydownCapture, true)
+  root.value?.removeEventListener('blur', captureInputText, true)
+})
 
 // `aria-label` / `aria-labelledby` name the input (as in HeroUI) and `@focus` / `@blur` listen on it; the rest stays
 // on the wrapper div

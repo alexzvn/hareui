@@ -109,6 +109,21 @@ describe('NumberStepper', () => {
     expect(wrapper.get(input).attributes('aria-valuenow')).toBe('8')
   })
 
+  it('keeps a number typed into an emptied field whose v-model is null', async () => {
+    const wrapper = mount(NumberStepper, {
+      props: { label: 'Guests', modelValue: null },
+      attachTo: document.body,
+    })
+
+    const el = wrapper.get(input)
+    await el.trigger('focus')
+    ;(el.element as HTMLInputElement).value = '3'
+    await el.trigger('input')
+    await el.trigger('blur')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([3])
+    wrapper.unmount()
+  })
+
   it('formats the value with formatOptions and submits the raw number', () => {
     const form = document.createElement('form')
     document.body.append(form)

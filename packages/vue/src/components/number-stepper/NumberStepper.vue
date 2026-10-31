@@ -170,7 +170,7 @@
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
         :class="ui.input()"
-        @blur="onCommitEmpty"
+        @blur="commitIfEmptied"
         @keydown="onKeydown"
       />
     </NumberFieldRoot>
@@ -230,16 +230,24 @@ const ValueOutlet = useSlotOutlet(slots, 'value')
 const modelValue = defineModel<number | null>()
 
 // Same value pipeline as NumberField, submitted through the same sibling `<input type="hidden">`
-const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } =
-  useNumberValue({
-    model: modelValue,
-    defaultValue: () => props.defaultValue,
-    min: () => props.min,
-    max: () => props.max,
-    step: () => props.step,
-    formatOptions: () => props.formatOptions,
-    onCommit: () => commitValidation(),
-  })
+const {
+  effectiveStep,
+  displayValue,
+  defaultDisplayValue,
+  formValue,
+  commit,
+  captureInputText,
+  commitIfEmptied,
+  reset,
+} = useNumberValue({
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  min: () => props.min,
+  max: () => props.max,
+  step: () => props.step,
+  formatOptions: () => props.formatOptions,
+  onCommit: () => commitValidation(),
+})
 
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
@@ -269,17 +277,14 @@ const flowFormat = computed<Format | undefined>(() => {
 })
 
 // An emptied input commits "no value" (see NumberField)
-const onCommitEmpty = (event: Event) => {
-  if ((event.target as HTMLInputElement).value === '') commitEmpty()
-}
-
 const onKeydown = (event: KeyboardEvent) => {
-  if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
+  if (event.key === 'Enter' && !event.isComposing) commitIfEmptied()
 }
 
 // PageUp / PageDown move by a single step, as in NumberField (Reka moves 10). Attached natively on the root for the
 // same reason as NumberField: a Vue capture invoker would make Vue drop the re-dispatched key right after mount.
 const onKeydownCapture = (event: KeyboardEvent) => {
+  captureInputText(event)
   const target = event.target as HTMLElement
   if (
     (event.key !== 'PageUp' && event.key !== 'PageDown') ||
@@ -299,8 +304,15 @@ const onKeydownCapture = (event: KeyboardEvent) => {
   )
 }
 
-onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
-onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
+onMounted(() => {
+  root.value?.addEventListener('keydown', onKeydownCapture, true)
+  root.value?.addEventListener('blur', captureInputText, true)
+})
+
+onBeforeUnmount(() => {
+  root.value?.removeEventListener('keydown', onKeydownCapture, true)
+  root.value?.removeEventListener('blur', captureInputText, true)
+})
 
 // `aria-label` / `aria-labelledby` name the input, not the wrapper div
 const attrs = useAttrs()
