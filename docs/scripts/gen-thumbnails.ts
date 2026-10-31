@@ -54,6 +54,12 @@ type Pick = {
 const PICKS: Record<string, Pick> = {
   'alert-dialog': { open: 'button', overlay: '[data-slot="alert-dialog-dialog"]' },
   accordion: { select: '[data-slot="accordion-item"]:nth-child(-n+3)', width: 320 },
+  // The bar is fixed to the viewport bottom, so it is shot from its own preview.
+  'action-bar': {
+    demo: 'action-bar/basic',
+    select: '[data-slot="toolbar"]',
+    page: { width: 640, height: 400 },
+  },
   // App wraps a whole layout, so it shows one; DashboardGroup shows a different one.
   app: {
     demo: 'dashboard-group/app-layout-with-breadcrumbs',
