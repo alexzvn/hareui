@@ -192,3 +192,40 @@
     }
   }
 }
+
+/*
+ * Marquee: each copy slides by its own length plus the gap, then starts over. `inline` so the duration resolves on
+ * the element (`--marquee-duration`, set by the component's root), not on :root.
+ */
+@theme inline {
+  --animate-marquee: marquee var(--marquee-duration) linear infinite;
+  --animate-marquee-rtl: marquee-rtl var(--marquee-duration) linear infinite;
+  --animate-marquee-vertical: marquee-vertical var(--marquee-duration) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(calc(-100% - var(--marquee-gap)), 0, 0);
+    }
+  }
+
+  @keyframes marquee-rtl {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(calc(100% + var(--marquee-gap)), 0, 0);
+    }
+  }
+
+  @keyframes marquee-vertical {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(0, calc(-100% - var(--marquee-gap)), 0);
+    }
+  }
+}

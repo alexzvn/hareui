@@ -118,6 +118,12 @@ const PICKS: Record<string, Pick> = {
   main: { width: 360 },
   'rich-table': { width: 600 },
   'list-view': { select: '[data-slot="list-view"]', width: 320 },
+  // The first copy's leading logos, held still and without the edge fade, which paints the page background.
+  marquee: {
+    demo: 'marquee/overlay',
+    select: '[data-slot="marquee-content"]:first-child > :nth-child(-n+3)',
+    width: 560,
+  },
   alert: { select: ':scope > [data-slot="alert-root"]:nth-of-type(2)', width: 380 },
   // The basic demo pairs the zone with an empty file panel; the zone alone reads better at card size.
   'drop-zone': { select: '[data-slot="drop-zone"]' },
@@ -159,11 +165,13 @@ const slugs = args.length
       .map((f) => f.slice(0, -3))
       .sort()
 
-// Only the first demo stays visible, on a transparent page.
+// Only the first demo stays visible, on a transparent page. Marquees are held at their first frame, so both passes
+// of a shot see the same items.
 const ISOLATE = `
   html, body { background: transparent !important; }
   body * { visibility: hidden !important; transition: none !important; }
   [data-thumbnail], [data-thumbnail] * { visibility: visible !important; }
+  [data-slot="marquee-content"] { animation: none !important; }
 `
 
 type Box = {

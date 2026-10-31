@@ -116,7 +116,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'toolbar',
     'widget',
   ],
-  Media: ['avatar', 'avatar-group', 'carousel'],
+  Media: ['avatar', 'avatar-group', 'carousel', 'marquee'],
   Navigation: [
     'accordion',
     'breadcrumbs',
@@ -146,6 +146,7 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'item-card',
   'item-card-group',
   'list-view',
+  'marquee',
   'metric',
   'metric-group',
   'number-value',
