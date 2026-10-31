@@ -1,4 +1,4 @@
-import { h, isVNode, toRaw } from 'vue'
+import { h, toRaw } from 'vue'
 import type { FunctionalComponent } from 'vue'
 
 import type { IconValue } from '@/types/icon'
@@ -53,8 +53,6 @@ export const createSvgIcon = ({
  */
 export const IconRenderer: FunctionalComponent<{ icon: IconValue }> = ({ icon }) => {
   if (typeof icon === 'string') return h('span', { class: icon, 'aria-hidden': 'true' })
-
-  if (isVNode(icon)) return icon
 
   return h(toRaw(icon), { 'aria-hidden': 'true' })
 }

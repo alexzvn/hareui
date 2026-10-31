@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, reactive } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import { IconRenderer } from '@/utils/icon'
 
 const SvgIcon = defineComponent({ render: () => h('svg', { 'data-testid': 'svg' }) })
@@ -27,6 +28,14 @@ describe('IconRenderer', () => {
     })
 
     expect(wrapper.get('svg').attributes('data-slot')).toBe('leading-icon')
+  })
+
+  it('hides a rendered vnode passed as the icon from assistive technology', () => {
+    // `IconValue` has no vnode member, but an untyped template can still pass `h(Icon)`.
+    const icon = h(SvgIcon) as unknown as IconValue
+    const wrapper = mount(IconRenderer, { props: { icon } })
+
+    expect(wrapper.get('[data-testid=svg]').attributes('aria-hidden')).toBe('true')
   })
 
   it('renders a component read from reactive state without a Vue warning', () => {
