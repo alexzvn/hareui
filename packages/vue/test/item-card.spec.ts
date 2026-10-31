@@ -106,18 +106,18 @@ describe('ItemCard', () => {
     expect(wrapper.attributes('data-variant')).toBe('outline')
   })
 
-  it('renders an anchor with `href`', () => {
+  it('renders the title as an anchor with `href`, inside a non-interactive card', () => {
     const wrapper = mount(ItemCard, { props: { title: 'Docs', href: 'https://example.com' } })
+    const anchor = wrapper.get('a[data-slot=item-card-title]')
 
-    expect(wrapper.element.tagName).toBe('A')
-    expect(wrapper.attributes('href')).toBe('https://example.com')
+    expect(wrapper.element.tagName).toBe('DIV')
+    expect(anchor.attributes('href')).toBe('https://example.com')
+    expect(anchor.text()).toBe('Docs')
   })
 
   it('renders `to` as a plain anchor without a router', () => {
     const wrapper = mount(ItemCard, { props: { title: 'Settings', to: '/settings' } })
-
-    expect(wrapper.element.tagName).toBe('A')
-    expect(wrapper.attributes('href')).toBe('/settings')
+    expect(wrapper.get('a').attributes('href')).toBe('/settings')
   })
 
   it('adds `noopener noreferrer` to a new-tab link', () => {
@@ -125,8 +125,8 @@ describe('ItemCard', () => {
       props: { title: 'Docs', href: 'https://example.com', target: '_blank' },
     })
 
-    expect(wrapper.attributes('target')).toBe('_blank')
-    expect(wrapper.attributes('rel')).toBe('noopener noreferrer')
+    expect(wrapper.get('a').attributes('target')).toBe('_blank')
+    expect(wrapper.get('a').attributes('rel')).toBe('noopener noreferrer')
   })
 
   it('routes `to` through RouterLink when the app registers it', async () => {
@@ -139,37 +139,65 @@ describe('ItemCard', () => {
 
     const anchor = wrapper.get('a')
     expect(anchor.attributes('href')).toBe('/app/settings')
-    expect(anchor.attributes('data-slot')).toBe('item-card')
-    expect(anchor.attributes('data-active')).toBe('true')
+    expect(wrapper.get('[data-slot=item-card]').attributes('data-active')).toBe('true')
     await anchor.trigger('click')
     expect(navigate).toHaveBeenCalledWith('/settings')
   })
 
-  it('passes attributes to the anchor rendered through RouterLink', () => {
+  it('passes attributes to the card rendered through RouterLink', () => {
     const wrapper = mount(ItemCard, {
       props: { title: 'Settings', to: '/settings' },
       attrs: { id: 'settings-card' },
       global: { components: { RouterLink: routerStub(vi.fn<(to: unknown) => void>()) } },
     })
 
-    expect(wrapper.get('a').attributes('id')).toBe('settings-card')
+    expect(wrapper.get('[data-slot=item-card]').attributes('id')).toBe('settings-card')
+  })
+
+  it('keeps a string `as` as the card element of a link', () => {
+    const wrapper = mount(ItemCard, { props: { title: 'Docs', href: '/docs', as: 'li' } })
+
+    expect(wrapper.element.tagName).toBe('LI')
+    expect(wrapper.get('li > [data-slot=item-card-content] > a').attributes('href')).toBe('/docs')
   })
 
   it('drops `href` and sets aria-disabled on a disabled link', () => {
     const wrapper = mount(ItemCard, { props: { title: 'Docs', href: '/docs', disabled: true } })
+    const anchor = wrapper.get('a')
 
-    expect(wrapper.attributes('href')).toBeUndefined()
-    expect(wrapper.attributes('aria-disabled')).toBe('true')
+    expect(anchor.attributes('href')).toBeUndefined()
+    expect(anchor.attributes('aria-disabled')).toBe('true')
   })
 
-  it('renders a button that emits the click when it has a click listener', async () => {
+  it('does not call the click listener of a disabled link', async () => {
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+    const wrapper = mount(ItemCard, {
+      props: { title: 'Docs', href: '/docs', disabled: true, onClick },
+    })
+
+    await wrapper.get('a').trigger('click')
+    expect(onClick).not.toHaveBeenCalled()
+  })
+
+  it('renders the title as a button that emits the click when it has a click listener', async () => {
     const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(ItemCard, { props: { title: 'Profile', onClick } })
+    const button = wrapper.get('button[data-slot=item-card-title]')
 
-    expect(wrapper.element.tagName).toBe('BUTTON')
-    expect(wrapper.attributes('type')).toBe('button')
-    await wrapper.trigger('click')
+    expect(wrapper.element.tagName).toBe('DIV')
+    expect(button.attributes('type')).toBe('button')
+    expect(button.text()).toBe('Profile')
+    await button.trigger('click')
     expect(onClick).toHaveBeenCalledOnce()
+  })
+
+  it('describes the press target by the description', () => {
+    const wrapper = mount(ItemCard, {
+      props: { title: 'Profile', description: 'Name and photo', onClick: () => {} },
+    })
+
+    const description = wrapper.get('[data-slot=item-card-description]')
+    expect(wrapper.get('button').attributes('aria-describedby')).toBe(description.attributes('id'))
   })
 
   it('disables the button of a disabled card with a click listener', () => {
@@ -177,11 +205,64 @@ describe('ItemCard', () => {
       props: { title: 'Profile', disabled: true, onClick: () => {} },
     })
 
-    expect(wrapper.attributes('disabled')).toBeDefined()
+    expect(wrapper.get('button').attributes('disabled')).toBeDefined()
   })
 
   it('keeps the `as` element when a click listener is set', () => {
     const wrapper = mount(ItemCard, { props: { title: 'Profile', as: 'li', onClick: () => {} } })
     expect(wrapper.element.tagName).toBe('LI')
+  })
+})
+
+describe('ItemCard with an action control', () => {
+  const INTERACTIVE = 'a[href], button, input, select, textarea, [tabindex], [role=switch]'
+
+  // Interactive elements (the card included) that contain another one
+  const nestedInteractive = (root: Element) =>
+    [root, ...root.querySelectorAll(INTERACTIVE)].filter(
+      (el) => el.matches(INTERACTIVE) && el.querySelector(INTERACTIVE) !== null,
+    )
+
+  const action = (onToggle: () => void) => () =>
+    h(
+      'button',
+      { type: 'button', role: 'switch', 'aria-checked': 'false', onClick: onToggle },
+      'Sync',
+    )
+
+  it.each([
+    ['a click listener', { onClick: () => {} }],
+    ['an href', { href: '/settings' }],
+  ])('with %s, nests no interactive element inside another', (_, props) => {
+    const wrapper = mount(ItemCard, {
+      props: { title: 'Sync', ...props },
+      slots: { action: action(() => {}) },
+    })
+
+    expect(nestedInteractive(wrapper.element)).toEqual([])
+  })
+
+  it('with a click listener, passes axe', async () => {
+    const wrapper = mount(ItemCard, {
+      props: { title: 'Sync', description: 'Every hour', onClick: () => {} },
+      slots: { action: action(() => {}) },
+      attachTo: document.body,
+    })
+
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('clicking the action control does not press the card', async () => {
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+    const onToggle = vi.fn<() => void>()
+    const wrapper = mount(ItemCard, {
+      props: { title: 'Sync', onClick },
+      slots: { action: action(onToggle) },
+    })
+
+    await wrapper.get('[data-slot=item-card-action] button').trigger('click')
+    expect(onToggle).toHaveBeenCalledOnce()
+    expect(onClick).not.toHaveBeenCalled()
   })
 })

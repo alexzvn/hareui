@@ -28,15 +28,19 @@ export default {
       },
       grid: { base: 'rounded-2xl border-0 bg-surface shadow-surface' },
     },
-    // A link or a card with a click listener: a `currentColor` overlay at 8% on hover and 12% while pressed (150ms)
+    // A link or a card with a click listener: a `currentColor` overlay at 8% on hover and 12% while pressed (150ms).
+    // The title is the press target: its `::after` covers the card, and the action sits above it, so the card holds no
+    // control inside another and a click on an action control never presses the card.
     pressable: {
       true: {
         base: [
-          'relative w-full text-start outline-none no-highlight cursor-(--cursor-interactive)',
+          'relative w-full text-start no-highlight cursor-(--cursor-interactive)',
           'before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:bg-current before:opacity-0 before:transition-opacity before:duration-150 motion-reduce:before:transition-none',
-          'hover:before:opacity-8 active:before:opacity-12',
-          'focus-visible:status-focused',
+          'hover:before:opacity-8 has-[[data-slot=item-card-title]:active]:before:opacity-12',
+          'has-[[data-slot=item-card-title]:focus-visible]:status-focused',
         ],
+        title: 'text-start outline-none no-highlight after:absolute after:inset-0',
+        action: 'relative z-1',
       },
     },
     disabled: {

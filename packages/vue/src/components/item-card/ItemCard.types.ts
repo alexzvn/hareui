@@ -11,14 +11,14 @@ import type theme from './theme'
 type ItemCard = typeof theme
 
 /**
- * Props of `ItemCard`, a row with an icon, a title, a description and a trailing action. With `to` or `href` it
- * renders a link (through `RouterLink` when the app has it); a link or a card with a click listener gets hover and
- * press feedback.
+ * Props of `ItemCard`, a row with an icon, a title, a description and a trailing action. With `to` or `href` the title
+ * renders a link (through `RouterLink` when the app has it), with a click listener a `button`; either covers the whole
+ * card, gets hover and press feedback, and leaves the `#action` slot's controls outside it.
  */
 export type ItemCardProps = LinkBaseProps & {
   /**
-   * The element or component to render as when the card is not a link. Without it, a card with a click listener
-   * renders a `button`.
+   * The card's element or component. With `to` or `href`, a component (e.g. a framework link) renders the link
+   * instead and the card stays a `div`.
    * @defaultValue 'div'
    */
   as?: PrimitiveProps['as']
@@ -34,7 +34,10 @@ export type ItemCardProps = LinkBaseProps & {
    * @defaultValue 'default'
    */
   variant?: ComponentVariants<ItemCard>['variant']
-  /** Called when the card is clicked. Gives the card hover and press feedback; without a link it renders a `button`. */
+  /**
+   * Called when the card is pressed. Renders the title as a `button` covering the card, with hover and press feedback.
+   * Not called while the card is disabled.
+   */
   onClick?: (event: MouseEvent) => void
   /** Additional classes merged into the root element. */
   class?: ClassValue
@@ -46,11 +49,11 @@ export type ItemCardProps = LinkBaseProps & {
 export type ItemCardSlots = {
   /** The content of the leading icon box. Replaces the `icon` prop. */
   icon?: () => VNode[]
-  /** Replaces the title text. */
+  /** Replaces the title text. On a link or clickable card it sits inside the press target, so keep controls out. */
   title?: () => VNode[]
   /** Replaces the description text. */
   description?: () => VNode[]
-  /** Trailing content, such as a button, a switch or a chevron. */
+  /** Trailing content, such as a button, a switch or a chevron. Its controls stay outside the card's press target. */
   action?: () => VNode[]
   /** Extra content under the description. */
   default?: () => VNode[]
