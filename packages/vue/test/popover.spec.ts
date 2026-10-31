@@ -256,3 +256,36 @@ describe('popover', () => {
     expect(content()).not.toBeNull()
   })
 })
+
+describe('popover hover mode on touch', () => {
+  const tap = () =>
+    triggerEl().dispatchEvent(
+      new PointerEvent('pointerup', { bubbles: true, pointerType: 'touch' }),
+    )
+
+  it('ignores a tap on the trigger by default', async () => {
+    const w = mountPopover({ mode: 'hover' })
+    tap()
+    await settle()
+
+    expect(w.emitted('update:open')).toBeUndefined()
+  })
+
+  it('opens on a tap with enableTouch', async () => {
+    const w = mountPopover({ mode: 'hover', enableTouch: true })
+    tap()
+    await settle()
+
+    expect(w.emitted('update:open')).toEqual([[true]])
+  })
+
+  it('closes on a second tap with enableTouch', async () => {
+    const w = mountPopover({ mode: 'hover', enableTouch: true })
+    tap()
+    await settle()
+    tap()
+    await settle()
+
+    expect(w.emitted('update:open')).toEqual([[true], [false]])
+  })
+})

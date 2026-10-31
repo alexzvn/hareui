@@ -4,7 +4,9 @@
 export default {
   slots: {
     base: [
-      'origin-(--reka-popover-content-transform-origin) bg-overlay p-0 text-sm',
+      // The popper's own origin variable: Reka renames it per part (`--reka-popover-…`, `--reka-hover-card-…`), so
+      // only this one reaches the content in both modes.
+      'origin-(--reka-popper-transform-origin) bg-overlay p-0 text-sm',
       // React Aria sets `z-index: 100000` inline on popovers; HeroUI's base.css exposes that level as
       // `--z-index-overlay`. Reka copies the content's z-index onto its fixed positioning wrapper.
       'z-(--z-index-overlay)',
