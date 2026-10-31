@@ -15,4 +15,12 @@ describe('Accordion theme', () => {
     expect(indicator.classes()).toContain('custom')
     expect(indicator.classes()).toContain('size-4')
   })
+
+  it('renders a string item icon as the icon class', () => {
+    const wrapper = mount(Accordion, {
+      props: { items: [{ value: 'a', label: 'A', icon: 'icon-a' }] },
+    })
+
+    expect(wrapper.get('[data-slot=accordion-icon]').classes()).toContain('icon-a')
+  })
 })

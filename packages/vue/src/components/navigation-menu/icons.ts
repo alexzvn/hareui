@@ -1,9 +1,4 @@
-import type { Component, FunctionalComponent, HTMLAttributes } from 'vue'
-import { h, isVNode } from 'vue'
-
 import { createSvgIcon } from '@/utils/icon'
-
-type IconClass = HTMLAttributes['class']
 
 const CHEVRON_RIGHT =
   'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z'
@@ -24,23 +19,3 @@ export const ChevronDownIcon = createSvgIcon({ d: CHEVRON_DOWN })
 export const ExternalIcon = createSvgIcon({ viewBox: '0 0 7 7', d: EXTERNAL, isEvenOdd: false })
 
 export const EllipsisVerticalIcon = createSvgIcon({ d: ELLIPSIS_VERTICAL })
-
-/**
- * Renders an item icon. A string is applied as a class on an empty `<span>` (icon-font / CSS-mask
- * utilities such as Tailwind's iconify plugin); a component or render function is rendered as-is
- * and receives the themed `class`.
- */
-export const NavigationMenuIcon: FunctionalComponent<{
-  icon: string | Component
-  class?: IconClass
-}> = (props) => {
-  const icon = props.icon
-  if (typeof icon === 'string')
-    return h('span', { 'aria-hidden': 'true', class: [icon, props.class] })
-
-  if (isVNode(icon)) return icon
-
-  return h(icon as Component, { 'aria-hidden': 'true', class: props.class })
-}
-
-NavigationMenuIcon.props = ['icon', 'class']

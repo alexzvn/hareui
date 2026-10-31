@@ -11,6 +11,8 @@ export default {
       'hover:underline',
     ].join(' '),
     separator: 'size-3 text-muted rtl:rotate-180',
+    // `item.icon`, before the label inside the link
+    icon: 'me-1 size-4 shrink-0',
   },
   variants: {},
   defaultVariants: {},

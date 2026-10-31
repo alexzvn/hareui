@@ -8,7 +8,7 @@
     <div v-if="!hideHeader" data-slot="code-block-header" :class="ui.header()">
       <slot name="header" v-bind="headerSlotProps">
         <span data-slot="code-block-label" :class="ui.label()">
-          <component :is="icon" v-if="icon" aria-hidden="true" :class="ui.icon()" />
+          <IconRenderer v-if="icon" :icon="icon" :class="ui.icon()" />
           <span :class="ui.labelText()">{{ filename ?? lang }}</span>
         </span>
       </slot>
@@ -77,6 +77,7 @@ import Button from '@/components/button/Button.vue'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { CHECK_ICON_PATH } from '@/utils/checkIcon'
+import { IconRenderer } from '@/utils/icon'
 import { warn } from '@/utils/warn'
 
 import type {

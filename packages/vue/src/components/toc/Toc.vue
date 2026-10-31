@@ -152,6 +152,7 @@ import { computed, h, nextTick, onMounted, ref, useTemplateRef, watch } from 'vu
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { usePortal } from '@/composables/usePortal'
+import { IconRenderer } from '@/utils/icon'
 
 import { createCircuitMaskStyle, flattenLinks, LINK_HEIGHT } from './links'
 import { centerInContainer, scrollToHeading } from './scroll'
@@ -383,7 +384,7 @@ const TriggerContent: FunctionalComponent<{ open: boolean }> = ({ open }) => {
     h(
       'span',
       { 'data-slot': 'toc-trailing', class: ui.value.trailing() },
-      slots.trailing?.(slotProps) ?? h(icon, { class: ui.value.trailingIcon() }),
+      slots.trailing?.(slotProps) ?? h(IconRenderer, { icon, class: ui.value.trailingIcon() }),
     ),
   ]
 }

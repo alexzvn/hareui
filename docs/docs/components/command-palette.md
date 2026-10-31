@@ -54,7 +54,13 @@ bun add fuse.js
 
 ## Groups
 
-Pass `groups`, each with a unique `id`, an optional `label` and its `items`. An item shows a `label`, and optionally a `prefix`, a `suffix`, a `description`, a leading `icon`, `avatar` or `chip`, and `kbds` shortcuts. Icons are components (or class strings for icon-font utilities).
+Pass `groups`, each with a unique `id`, an optional `label` and its `items`. An item shows its `label` and can add:
+
+- `prefix` and `suffix` text around the label, and a `description` below it
+- a leading `icon`, `avatar` or `chip` (a status dot)
+- `kbds`, keyboard shortcuts at the end
+
+Icons are components or icon classes.
 
 <ComponentPreview name="command-palette/inline" />
 

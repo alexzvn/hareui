@@ -92,6 +92,12 @@ Set `separator` to display separator lines between tabs.
 
 <ComponentPreview name="tabs/with-separator" />
 
+### With Icons
+
+Set `icon` on an item to show an icon before its label.
+
+<ComponentPreview name="tabs/with-icons" />
+
 ### Secondary Variant
 
 <ComponentPreview name="tabs/secondary" />

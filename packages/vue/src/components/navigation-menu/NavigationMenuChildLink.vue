@@ -14,7 +14,7 @@
             })
           "
         >
-          <NavigationMenuIcon
+          <IconRenderer
             v-if="child.icon"
             :icon="child.icon"
             data-slot="childLinkIcon"
@@ -45,7 +45,7 @@
               "
             >
               {{ label() }}
-              <NavigationMenuIcon
+              <IconRenderer
                 v-if="showExternal() && customExternal()"
                 :icon="customExternal()!"
                 data-slot="childLinkLabelExternalIcon"
@@ -91,7 +91,7 @@
             "
           >
             {{ label() }}
-            <NavigationMenuIcon
+            <IconRenderer
               v-if="showExternal() && customExternal()"
               :icon="customExternal()!"
               data-slot="childLinkLabelExternalIcon"
@@ -123,9 +123,10 @@
 import { NavigationMenuLink } from 'reka-ui'
 
 import { get } from '@/utils/get'
+import { IconRenderer } from '@/utils/icon'
 
 import { useNavigationMenu } from './context'
-import { ExternalIcon, NavigationMenuIcon } from './icons'
+import { ExternalIcon } from './icons'
 import LinkResolver from './LinkResolver'
 import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.types'
 

@@ -1,6 +1,7 @@
 import type { PrimitiveProps } from 'reka-ui'
 import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -14,6 +15,8 @@ export type BreadcrumbsItem = {
   label?: string
   /** The URL to link to. The last item is always the current page and renders without a link. */
   href?: string
+  /** Icon rendered before the label. */
+  icon?: IconValue
   /** Additional classes merged into this item's `<li>`. */
   class?: ClassValue
   /** Extra fields are passed through to the slots as `item`. */

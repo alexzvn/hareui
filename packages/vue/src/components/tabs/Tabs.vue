@@ -49,6 +49,12 @@
                   "
                   data-slot="tabs-separator"
                 />
+                <IconRenderer
+                  v-if="item.icon"
+                  :icon="item.icon"
+                  :class="ui.tabIcon()"
+                  data-slot="tabs-tab-icon"
+                />
                 <slot
                   name="tab"
                   :item="item"
@@ -161,6 +167,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, wa
 import type { ScrollShadowVisibility } from '@/components/scroll-shadow/ScrollShadow.types'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { IconRenderer } from '@/utils/icon'
 
 import type { TabsItem, TabsProps, TabsSlots } from './Tabs.types'
 import theme from './theme'

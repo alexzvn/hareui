@@ -11,13 +11,13 @@
   >
     <SlotOutlet :name="slotName(target, '')" :slot-props="slotProps">
       <SlotOutlet :name="slotName(target, 'leading')" :slot-props="slotProps">
-        <PaletteIcon
+        <IconRenderer
           v-if="item.loading"
           :icon="ctx.loadingIcon.value"
           data-slot="command-palette-item-leading-icon"
           :class="ui.itemLeadingIcon({ override: item.ui?.itemLeadingIcon })"
         />
-        <PaletteIcon
+        <IconRenderer
           v-else-if="item.icon"
           :icon="item.icon"
           data-slot="command-palette-item-leading-icon"
@@ -91,7 +91,7 @@
         :class="ui.itemTrailing({ override: item.ui?.itemTrailing })"
       >
         <SlotOutlet :name="slotName(target, 'trailing')" :slot-props="slotProps">
-          <PaletteIcon
+          <IconRenderer
             v-if="hasChildren"
             :icon="ctx.props.childrenIcon ?? ChildrenIcon"
             data-slot="command-palette-item-trailing-icon"
@@ -111,7 +111,7 @@
               <template v-if="kbd.text" #default>{{ kbd.text }}</template>
             </Kbd>
           </span>
-          <PaletteIcon
+          <IconRenderer
             v-else-if="group?.highlightedIcon"
             :icon="group.highlightedIcon"
             data-slot="command-palette-item-trailing-highlighted-icon"
@@ -122,7 +122,7 @@
         </SlotOutlet>
 
         <ListboxItemIndicator v-if="!hasChildren" as-child>
-          <PaletteIcon
+          <IconRenderer
             :icon="ctx.props.selectedIcon ?? SelectedIcon"
             data-slot="command-palette-item-selected-icon"
             :class="ui.itemTrailingIcon({ override: item.ui?.itemTrailingIcon })"
@@ -143,6 +143,7 @@ import Kbd from '@/components/kbd/Kbd.vue'
 import type { KbdKey } from '@/components/kbd/kbdKeys'
 import { kbdKeysMap } from '@/components/kbd/kbdKeys'
 import { get } from '@/utils/get'
+import { IconRenderer } from '@/utils/icon'
 import { toText } from '@/utils/text'
 
 import type {
@@ -151,7 +152,7 @@ import type {
   CommandPaletteResolvedItem,
 } from './CommandPalette.types'
 import { getHighlight } from './commandPaletteSearch'
-import { Highlighted, PaletteIcon, SlotOutlet, slotName, useCommandPalette } from './context'
+import { Highlighted, SlotOutlet, slotName, useCommandPalette } from './context'
 import { ChildrenIcon, SelectedIcon } from './icons'
 
 // One command row: leading icon / avatar / chip, label and description (with search highlights), and trailing

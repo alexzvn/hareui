@@ -62,6 +62,12 @@
         </svg>
       </span>
       <component :is="slots['item-leading']" v-if="slots['item-leading']" v-bind="state" />
+      <IconRenderer
+        v-else-if="item.icon"
+        :icon="item.icon"
+        data-slot="menu-item-icon"
+        :class="classes.itemIcon!({ variant: item.variant })"
+      />
       <div v-if="item.description || slots['item-description']" class="flex flex-col">
         <label
           data-slot="label"
@@ -126,6 +132,7 @@ import { DropdownMenuCheckboxItem, DropdownMenuItem, DropdownMenuSubTrigger, use
 import { computed, h, inject, renderSlot, shallowReactive } from 'vue'
 
 import Kbd from '@/components/kbd/Kbd.vue'
+import { IconRenderer } from '@/utils/icon'
 
 import type { DropdownSelectionGroup } from './context'
 import { dropdownContextKey } from './context'

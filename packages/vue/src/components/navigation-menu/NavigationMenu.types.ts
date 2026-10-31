@@ -6,6 +6,7 @@ import type { BadgeProps } from '@/components/badge/Badge.types'
 import type { ChipProps } from '@/components/chip/Chip.types'
 import type { DropdownEntry } from '@/components/dropdown/Dropdown.types'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -15,9 +16,6 @@ import type { NavigationMenuPopoverProps } from './types'
 export type { NavigationMenuPopoverProps } from './types'
 
 type NavigationMenu = typeof theme
-
-/** An icon: a class string (icon-font / CSS-mask utilities such as `i-lucide-house`) or a component. */
-export type NavigationMenuIconValue = string | Component
 
 /** A link inside an item's dropdown content (horizontal) or popover (collapsed vertical). */
 export type NavigationMenuChildItem = {
@@ -32,7 +30,7 @@ type NavigationMenuItemFields = {
   /** The item text. */
   label?: string
   /** Leading icon: a class string or a component. */
-  icon?: NavigationMenuIconValue
+  icon?: IconValue
   /** Leading avatar, shown instead of the icon. */
   avatar?: AvatarProps
   /**
@@ -64,7 +62,7 @@ type NavigationMenuItemFields = {
    */
   actions?: DropdownEntry[]
   /** The icon at the end of the item, replacing the chevron shown for items with children. */
-  trailingIcon?: NavigationMenuIconValue
+  trailingIcon?: IconValue
   /**
    * The kind of item. `label` is a group heading (vertical only), `trigger` forces an item that has
    * children and a link to act as a collapsible button instead.
@@ -187,12 +185,12 @@ export type NavigationMenuProps<T extends NavigationMenuItem = NavigationMenuIte
   /** The value(s) open initially. Use when you do not need to control them. */
   defaultValue?: string | string[]
   /** The icon displayed to open an item with children, replacing the chevron. */
-  trailingIcon?: NavigationMenuIconValue
+  trailingIcon?: IconValue
   /**
    * The icon displayed after the label of `target="_blank"` items. `false` hides it.
    * @defaultValue true
    */
-  externalIcon?: boolean | NavigationMenuIconValue
+  externalIcon?: boolean | IconValue
   /** The items: a flat array, or an array of arrays to render groups separated by a divider (vertical). */
   items?: T[] | T[][]
   /**

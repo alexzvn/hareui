@@ -105,7 +105,7 @@ An item with nested `items` opens a submenu. Sections can carry their own `selec
 
 ### With Icons
 
-Use the `#item-leading` slot for icons or avatars. Extra fields on an item (such as `icon`) are passed through to the slots. `variant: 'danger'` colours destructive items.
+Set `icon` on an item to show an icon before its label. It takes an icon class or a component. The `#item-leading` slot replaces it, for avatars or anything else. `variant: 'danger'` colours destructive items.
 
 <ComponentPreview name="context-menu/with-icons" />
 
@@ -156,6 +156,7 @@ app.use(
 | `item`             | `menu-item`            | Menu item; per-item classes go in `item.class`                                          |
 | `indicator`        | `menu-item-indicator`  | Selection indicator (`menu-item-indicator--checkmark` / `menu-item-indicator--dot` SVG) |
 | `submenuIndicator` | `submenu-indicator`    | Submenu chevron                                                                         |
+| `itemIcon`         | `menu-item-icon`       | `item.icon`, before the label                                                           |
 | `section`          | -                      | Section group (`<section role="group">`, labelled by its header)                        |
 | `header`           | `header`               | Section header, labels the group                                                        |
 | `separator`        | `separator`            | Divider between entries                                                                 |

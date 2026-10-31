@@ -1,7 +1,7 @@
 <template>
   <Accordion v-model="expandedKeys" class="w-full max-w-md" :items="items" variant="surface">
     <template #indicator="{ item, open }">
-      <Icon v-if="item.icon" height="16" :icon="item.icon" width="16" />
+      <Icon v-if="item.indicator" height="16" :icon="item.indicator" width="16" />
       <Icon v-else height="16" :icon="open ? 'gravity-ui:minus' : 'gravity-ui:plus'" width="16" />
     </template>
   </Accordion>
@@ -14,7 +14,7 @@ import { Icon } from '@iconify/vue'
 import { ref } from 'vue'
 
 type IndicatorItem = {
-  icon?: string
+  indicator?: string
 } & AccordionItem
 
 const items: IndicatorItem[] = [
@@ -27,14 +27,14 @@ const items: IndicatorItem[] = [
   {
     value: '2',
     label: 'Using Caret Icon',
-    icon: 'gravity-ui:circle-chevron-down',
+    indicator: 'gravity-ui:circle-chevron-down',
     content:
       'This item uses a caret icon for the indicator. The rotation animation is applied automatically.',
   },
   {
     value: '3',
     label: 'Using Arrow Icon',
-    icon: 'gravity-ui:chevrons-down',
+    indicator: 'gravity-ui:chevrons-down',
     content:
       'This item uses an arrow icon. Any icon you pass will receive the rotation animation when the item expands.',
   },

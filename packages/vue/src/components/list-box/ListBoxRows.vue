@@ -121,7 +121,7 @@ const props = defineProps<{
   /** Slot class functions of the listBox theme. */
   classes: Pick<
     ComponentUI<typeof theme>,
-    'item' | 'indicator' | 'section' | 'header' | 'separator' | 'emptyState'
+    'item' | 'itemIcon' | 'indicator' | 'section' | 'header' | 'separator' | 'emptyState'
   >
   /** Reka item primitive (ComboBox: `ComboboxItem`). */
   component?: Component

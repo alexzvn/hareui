@@ -1,5 +1,6 @@
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -63,8 +64,8 @@ export type CodeBlockProps = {
   lang?: string
   /** File name shown in the header instead of the language. */
   filename?: string
-  /** Icon shown before the header label, e.g. the file type's icon. */
-  icon?: Component
+  /** Icon shown before the header label, e.g. the file type's icon: a class string or a component. */
+  icon?: IconValue
   /** Lines to highlight: line numbers and inclusive `[from, to]` ranges, 1-based. */
   highlight?: CodeBlockHighlightRange[]
   /**

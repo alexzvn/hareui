@@ -62,6 +62,9 @@ const items: DropdownEntry[] = [
 
 ### With Icons
 
+Set `icon` on an item to show an icon before its label. It takes an icon class or a component. The
+`#item-leading` slot replaces it.
+
 <ComponentPreview name="dropdown/with-icons" />
 
 ### With Descriptions
@@ -164,6 +167,7 @@ app.use(
 | `item`             | `menu-item`           | Menu item; per-item classes go in `item.class`                                          |
 | `indicator`        | `menu-item-indicator` | Selection indicator (`menu-item-indicator--checkmark` / `menu-item-indicator--dot` SVG) |
 | `submenuIndicator` | `submenu-indicator`   | Submenu chevron                                                                         |
+| `itemIcon`         | `menu-item-icon`      | `item.icon`, before the label                                                           |
 | `section`          | -                     | Section group (`<section role="group">`, labelled by its header)                        |
 | `header`           | `header`              | Section header, labels the group                                                        |
 | `separator`        | `separator`           | Divider between entries                                                                 |

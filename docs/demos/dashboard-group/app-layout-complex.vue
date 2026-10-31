@@ -91,10 +91,7 @@
               :ui="{ item: 'min-w-0 shrink', link: 'min-w-0' }"
             >
               <template #item="{ item }">
-                <span class="flex min-w-0 items-center gap-2">
-                  <Icon :icon="item.icon" class="size-4 shrink-0" />
-                  <span class="truncate">{{ item.label }}</span>
-                </span>
+                <span class="truncate">{{ item.label }}</span>
               </template>
             </Breadcrumbs>
           </template>
@@ -205,17 +202,15 @@ const items: NavigationMenuItem[][] = [
   ],
 ]
 
-type Crumb = BreadcrumbsItem & { icon: string }
-
-const breadcrumbs: Crumb[] = [{ label: 'Roadmap', icon: 'gravity-ui:chart-column' }]
+const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Roadmap', icon: gravityIcon('chart-column') }]
 
 const accountItems: DropdownEntry[] = [
-  { value: 'profile', label: 'Profile', icon: 'gravity-ui:person' },
-  { value: 'settings', label: 'Settings', icon: 'gravity-ui:gear' },
+  { value: 'profile', label: 'Profile', icon: gravityIcon('person') },
+  { value: 'settings', label: 'Settings', icon: gravityIcon('gear') },
   {
     value: 'logout',
     label: 'Log Out',
-    icon: 'gravity-ui:arrow-right-from-square',
+    icon: gravityIcon('arrow-right-from-square'),
     variant: 'danger',
   },
 ]

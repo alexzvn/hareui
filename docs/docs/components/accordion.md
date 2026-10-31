@@ -80,6 +80,12 @@ const items: MyItem[] = [/* ... */]
 
 <ComponentPreview name="accordion/without-separator" minHeight="400px" />
 
+### With Icons
+
+Set `icon` on an item to show an icon before its label. The `#leading` slot replaces it.
+
+<ComponentPreview name="accordion/with-icons" minHeight="400px" />
+
 ### Multiple Expanded
 
 <ComponentPreview name="accordion/multiple" minHeight="524px" />

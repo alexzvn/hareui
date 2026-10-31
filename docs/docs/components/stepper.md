@@ -8,7 +8,7 @@ links:
 
 ## Usage
 
-Pass the steps in the `items` prop. Each item can have a `title`, a `description`, an `icon` component and `content` shown while the step is active.
+Pass the steps in the `items` prop. Each item can have a `title`, a `description`, an `icon` (an icon class or a component) and `content` shown while the step is active.
 
 ```ts
 import { Stepper } from '@hareui/vue'

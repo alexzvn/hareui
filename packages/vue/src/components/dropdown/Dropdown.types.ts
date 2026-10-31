@@ -2,6 +2,7 @@ import type { VNode } from 'vue'
 
 import type { KbdKey } from '@/components/kbd/kbdKeys'
 import type { PortalTarget } from '@/config'
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -20,6 +21,8 @@ export type DropdownItem = {
   label?: string
   /** Secondary text under the label. */
   description?: string
+  /** Icon rendered before the label, unless the `#item-leading` slot is used. */
+  icon?: IconValue
   /** Text used for typeahead. Defaults to `label`. */
   textValue?: string
   /** Whether the item can't be focused, selected or activated. */
@@ -32,7 +35,7 @@ export type DropdownItem = {
   items?: DropdownEntry[]
   /** Classes merged onto the item element. */
   class?: ClassValue
-  /** Extra fields (icons, ...) are passed through to the slots as `item`. */
+  /** Extra fields are passed through to the slots as `item`. */
   [key: string]: unknown
 }
 
@@ -132,7 +135,7 @@ export type DropdownSlots<T extends DropdownItem = DropdownItem> = {
   'content-top'?: () => VNode[]
   /** Replaces the whole item content. */
   item?: (props: DropdownItemSlotProps<T>) => VNode[]
-  /** Content before the label, such as an icon or avatar. */
+  /** Content before the label, such as an icon or avatar. Replaces `item.icon`. */
   'item-leading'?: (props: DropdownItemSlotProps<T>) => VNode[]
   /** Replaces the item label text. */
   'item-label'?: (props: DropdownItemSlotProps<T>) => VNode[]

@@ -3,6 +3,7 @@ export type { HareUIConfig, PortalTarget } from './config'
 export * as themes from './components/themes'
 export type { Themes } from './components/themes'
 export type * from './types/tv'
+export type { IconValue } from './types/icon'
 export { tv } from './utils/tv'
 
 export * from './components/button'

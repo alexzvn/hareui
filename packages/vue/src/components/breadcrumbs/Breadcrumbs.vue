@@ -19,6 +19,12 @@
         :tabindex="index === items.length - 1 || disabled ? undefined : 0"
         :class="ui.link()"
       >
+        <IconRenderer
+          v-if="item.icon"
+          :icon="item.icon"
+          data-slot="breadcrumbs-icon"
+          :class="ui.icon()"
+        />
         <slot name="item" :item="item" :index="index" :current="index === items.length - 1">
           {{ item.label }}
         </slot>
@@ -35,6 +41,7 @@ import { cloneVNode, Comment, h, isVNode, useSlots } from 'vue'
 
 import Link from '@/components/link/Link.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { IconRenderer } from '@/utils/icon'
 
 import type {
   BreadcrumbsItem,

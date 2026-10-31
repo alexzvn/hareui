@@ -49,7 +49,7 @@ Pass the source as `code` and its shiki language id as `lang`. The code renders 
 
 ### Filename
 
-Use the `filename` prop to show a file name in the header instead of the language. Pass a component as `icon` to show it before the label.
+Use the `filename` prop to show a file name in the header instead of the language. Pass an icon class or a component as `icon` to show it before the label.
 
 <ComponentPreview name="code-block/filename" />
 

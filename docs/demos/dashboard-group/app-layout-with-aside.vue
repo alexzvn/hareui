@@ -47,10 +47,7 @@
               :ui="{ item: 'min-w-0 shrink', link: 'min-w-0' }"
             >
               <template #item="{ item }">
-                <span class="flex min-w-0 items-center gap-2">
-                  <Icon :icon="item.icon" class="size-4 shrink-0" />
-                  <span class="truncate">{{ item.label }}</span>
-                </span>
+                <span class="truncate">{{ item.label }}</span>
               </template>
             </Breadcrumbs>
           </template>
@@ -288,9 +285,7 @@ const footerItems: NavigationMenuItem[] = [
   { label: 'Help Center', icon: gravityIcon('circle-question'), href: '#' },
 ]
 
-type Crumb = BreadcrumbsItem & { icon: string }
-
-const breadcrumbs: Crumb[] = [{ label: 'Inbox', icon: 'gravity-ui:envelope' }]
+const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Inbox', icon: gravityIcon('envelope') }]
 
 const avatars = {
   blue: 'https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/blue.jpg',

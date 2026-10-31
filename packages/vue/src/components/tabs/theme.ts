@@ -28,6 +28,7 @@ export default {
       'focus-visible:status-focused',
       'data-[orientation=vertical]:min-w-20',
     ],
+    tabIcon: 'me-1.5 size-4 shrink-0',
     tabIndicator: [
       'absolute start-0 top-0 rounded-3xl bg-segment shadow-surface -z-1',
       'text-center text-sm leading-5 font-medium text-segment-foreground cursor-(--cursor-interactive)',

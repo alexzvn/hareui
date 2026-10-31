@@ -41,7 +41,7 @@ Use the `#item-leading` slot to choose an icon per file type. Bind `ui.linkLeadi
 
 ### Custom icons
 
-Use `indicator-icon`, `expanded-icon` and `collapsed-icon` to replace the chevron and the folder icons. Each takes a component; an item's own `icon` still wins over the folder icons.
+Use `indicator-icon`, `expanded-icon` and `collapsed-icon` to replace the chevron and the folder icons. Each takes an icon class or a component; an item's own `icon` still wins over the folder icons.
 
 <ComponentPreview name="tree/custom-icons" />
 

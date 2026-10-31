@@ -8,7 +8,10 @@ links:
 
 ## Usage
 
-Pass the events in the `items` prop. Each item can have a `date`, `title`, `description` and an `icon` component or an `avatar` for its marker.
+Pass the events in the `items` prop. Each item can have:
+
+- a `date`, a `title` and a `description`
+- an `icon` (an icon class or a component) or an `avatar` for its marker
 
 ```ts
 import { Timeline } from '@hareui/vue'

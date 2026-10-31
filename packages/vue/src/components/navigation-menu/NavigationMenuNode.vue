@@ -117,7 +117,7 @@
               <EllipsisVerticalIcon />
             </button>
             <template #item-leading="{ item: entry }">
-              <NavigationMenuIcon
+              <IconRenderer
                 v-if="entry.icon"
                 :icon="entry.icon"
                 data-slot="linkActionsItemIcon"
@@ -206,9 +206,10 @@ import type {
 } from '@/components/dropdown/Dropdown.types'
 import Dropdown from '@/components/dropdown/Dropdown.vue'
 import Tooltip from '@/components/tooltip/Tooltip.vue'
+import { IconRenderer } from '@/utils/icon'
 
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
-import { EllipsisVerticalIcon, NavigationMenuIcon } from './icons'
+import { EllipsisVerticalIcon } from './icons'
 import type { ResolvedLink } from './LinkResolver'
 import LinkResolver from './LinkResolver'
 import type { NavigationMenuItem } from './NavigationMenu.types'

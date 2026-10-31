@@ -34,10 +34,10 @@
           :class="ui.back({ override: backAttrs.class })"
           @click="onBack"
         >
-          <PaletteIcon :icon="backIcon ?? BackIcon" />
+          <IconRenderer :icon="backIcon ?? BackIcon" />
         </Button>
       </slot>
-      <PaletteIcon
+      <IconRenderer
         v-else-if="icon !== false"
         :icon="icon ?? SearchIcon"
         data-slot="command-palette-input-icon"
@@ -56,13 +56,13 @@
         @keydown.backspace="onBackspace"
       />
 
-      <PaletteIcon
+      <IconRenderer
         v-if="loading"
         :icon="loadingIcon"
         data-slot="command-palette-loading"
         :class="ui.loading()"
       />
-      <PaletteIcon
+      <IconRenderer
         v-else-if="trailingIcon"
         :icon="trailingIcon"
         data-slot="command-palette-input-trailing-icon"
@@ -78,7 +78,7 @@
           :class="ui.close({ override: closeAttrs.class })"
           @click="emit('update:open', false)"
         >
-          <PaletteIcon v-if="closeIcon" :icon="closeIcon" />
+          <IconRenderer v-if="closeIcon" :icon="closeIcon" />
         </CloseButton>
       </slot>
     </div>
@@ -167,14 +167,15 @@ import Button from '@/components/button/Button.vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
 import Spinner from '@/components/spinner/Spinner.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import type { IconValue } from '@/types/icon'
 import { get } from '@/utils/get'
+import { IconRenderer } from '@/utils/icon'
 import { toText } from '@/utils/text'
 
 import type {
   CommandPaletteEmits,
   CommandPaletteFuseOptions,
   CommandPaletteGroup,
-  CommandPaletteIcon,
   CommandPaletteItem,
   CommandPaletteProps,
   CommandPaletteResolvedItem,
@@ -182,7 +183,7 @@ import type {
 } from './CommandPalette.types'
 import CommandPaletteOption from './CommandPaletteOption.vue'
 import type { CommandPaletteContext } from './context'
-import { commandPaletteKey, PaletteIcon, SlotOutlet } from './context'
+import { commandPaletteKey, SlotOutlet } from './context'
 import { BackIcon, SearchIcon } from './icons'
 import theme from './theme'
 import { useCommandPaletteSearch } from './useCommandPaletteSearch'
@@ -276,7 +277,7 @@ const closeAttrs = computed(() => {
 const inputAttrs = computed(() => (typeof props.input === 'object' ? props.input : {}))
 
 // The input's spinner and loading items share it.
-const loadingIcon = computed<CommandPaletteIcon>(
+const loadingIcon = computed<IconValue>(
   () => (typeof props.loading === 'object' ? props.loading.icon : undefined) ?? Spinner,
 )
 

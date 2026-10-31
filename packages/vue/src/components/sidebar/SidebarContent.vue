@@ -26,7 +26,7 @@
             :class="ui.close({ override: closeClass })"
             @click="emit('close')"
           >
-            <component :is="closeIcon" v-if="closeIcon" />
+            <IconRenderer v-if="closeIcon" :icon="closeIcon" />
             <svg v-else aria-hidden="true" viewBox="0 0 16 16">
               <path
                 fill="currentColor"
@@ -55,6 +55,7 @@ import { computed } from 'vue'
 
 import Button from '@/components/button/Button.vue'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
+import { IconRenderer } from '@/utils/icon'
 
 import type {
   SidebarCloseProps,

@@ -47,6 +47,7 @@ const items = [
 | `base`      | `breadcrumbs`           | `<ol>` root                                        |
 | `item`      | `breadcrumbs-item`      | `<li>` per item (an item's `class` is merged here) |
 | `link`      | `link`                  | the item's [Link](/docs/components/link)           |
+| `icon`      | `breadcrumbs-icon`      | `item.icon`, before the label inside the link      |
 | `separator` | `breadcrumbs-separator` | separator icon between items                       |
 
 ### Typing items
@@ -57,11 +58,11 @@ const items = [
 import type { BreadcrumbsItem } from '@hareui/vue'
 
 interface MyItem extends BreadcrumbsItem {
-  icon: string
+  badge: string
 }
 
 const items: MyItem[] = [/* ... */]
-// <template #item="{ item }"> — item.icon is a string
+// <template #item="{ item }"> — item.badge is a string
 ```
 
 ## Examples
@@ -71,6 +72,12 @@ const items: MyItem[] = [/* ... */]
 <ComponentPreview name="breadcrumbs/level-2" />
 
 <ComponentPreview name="breadcrumbs/level-3" />
+
+### With Icons
+
+Set `icon` on an item to show an icon before its label. It takes an icon class or a component.
+
+<ComponentPreview name="breadcrumbs/with-icons" />
 
 ### Disabled State
 
@@ -115,6 +122,7 @@ app.use(
 - `base` → `[data-slot="breadcrumbs"]` – base breadcrumbs container
 - `item` → `[data-slot="breadcrumbs-item"]` – individual breadcrumb item wrapper
 - `link` → `[data-slot="breadcrumbs-item"] [data-slot="link"]` – breadcrumb link element
+- `icon` → `[data-slot="breadcrumbs-icon"]` – the item icon, before the label
 - `separator` → `[data-slot="breadcrumbs-separator"]` – separator icon between items
 
 #### State Attributes
