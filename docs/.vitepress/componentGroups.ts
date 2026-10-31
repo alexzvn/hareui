@@ -33,7 +33,15 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'dashboard-sidebar-toggle',
     'dashboard-toolbar',
   ],
-  'Data Display': ['badge', 'chip', 'number-value', 'rich-table', 'table', 'timeline'],
+  'Data Display': [
+    'badge',
+    'chip',
+    'number-value',
+    'rich-table',
+    'table',
+    'timeline',
+    'trend-chip',
+  ],
   'Date and Time': [
     'calendar',
     'date-field',
@@ -128,6 +136,7 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'timeline',
   'toc',
   'tree',
+  'trend-chip',
 ])
 
 // Pages that get an "Updated" badge in the sidebar. Clear entries after the next release.
