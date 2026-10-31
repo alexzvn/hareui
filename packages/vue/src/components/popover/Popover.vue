@@ -5,11 +5,12 @@
     v-slot="{ close }: { close?: () => void }"
     @update:open="setOpen"
   >
+    <!-- Mirrors React Aria marking the trigger pressed while its press-opened popover is open; a hover card isn't press-opened. -->
     <component
       :is="parts.Trigger"
       v-if="!!slots.default"
       as-child
-      :data-pressed="isOpen ? 'true' : undefined"
+      :data-pressed="isOpen && !isHover ? 'true' : undefined"
     >
       <slot :open="isOpen" />
     </component>

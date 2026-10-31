@@ -179,6 +179,14 @@ describe('Tooltip', () => {
     expect(content?.textContent).toContain('K')
   })
 
+  it('passes an object `kbds` entry to Kbd as props', async () => {
+    mountTooltip({ defaultOpen: true, kbds: [{ keys: 'command' }] })
+    await nextTick()
+    const abbr = document.querySelector('[data-slot=kbds] kbd abbr')
+    expect(abbr?.textContent).toBe('⌘')
+    expect(abbr?.getAttribute('title')).toBe('Command')
+  })
+
   it('renders no shortcut wrapper without `kbds`', async () => {
     mountTooltip({ defaultOpen: true })
     await nextTick()
