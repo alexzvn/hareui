@@ -141,4 +141,5 @@ export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>([
   'select',
   'tabs',
   'toast',
+  'tooltip',
 ])

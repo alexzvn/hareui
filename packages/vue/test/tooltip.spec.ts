@@ -170,4 +170,19 @@ describe('Tooltip', () => {
     expect(document.querySelector('[role=tooltip]')).toBeNull()
     expect(trigger.hasAttribute('aria-describedby')).toBe(false)
   })
+
+  it('renders one Kbd per `kbds` entry inside the tooltip content', async () => {
+    mountTooltip({ defaultOpen: true, kbds: ['K', { keys: 'command' }] })
+    await nextTick()
+    const content = document.querySelector('[data-slot=kbds]')
+    expect(content?.querySelectorAll('kbd')).toHaveLength(2)
+    expect(content?.textContent).toContain('K')
+  })
+
+  it('renders no shortcut wrapper without `kbds`', async () => {
+    mountTooltip({ defaultOpen: true })
+    await nextTick()
+    expect(document.querySelector('[data-slot=kbds]')).toBeNull()
+    expect(document.querySelector('kbd')).toBeNull()
+  })
 })
