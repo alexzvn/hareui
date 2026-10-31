@@ -2,7 +2,7 @@
   <button
     type="button"
     data-slot="close-button"
-    :aria-label="ariaLabel"
+    :aria-label="ariaLabel ?? t('closeButton.close')"
     :disabled="disabled || undefined"
     :class="ui.base()"
   >
@@ -31,11 +31,14 @@
 
 <script setup lang="ts">
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import type { CloseButtonProps, CloseButtonSlots } from './CloseButton.types'
 import theme from './theme'
 
-const props = withDefaults(defineProps<CloseButtonProps>(), { ariaLabel: 'Close' })
+const { t } = useLocale()
+
+const props = withDefaults(defineProps<CloseButtonProps>(), { ariaLabel: undefined })
 defineSlots<CloseButtonSlots>()
 
 const ui = useComponentUI('closeButton', {

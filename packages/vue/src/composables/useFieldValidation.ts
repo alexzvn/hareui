@@ -21,6 +21,7 @@ import {
 import type { FormInputEvent, ValidationBehavior, ValidationError } from '@/components/form/context'
 import { formContextKey } from '@/components/form/context'
 import type { FormFieldProps, FormInputEvents } from '@/components/form/types'
+import { useLocale } from '@/composables/useLocale'
 
 /** Snapshot of the native `ValidityState` flags. */
 export type ValidationDetails = {
@@ -153,6 +154,7 @@ export const useFieldValidation = <T>(
   /** Commits the current value's validation (native behavior), e.g. after a stepper press that fires no `change`. */
   commitValidation: () => void
 } => {
+  const { t } = useLocale()
   const form = inject(formContextKey, null)
   const behavior = computed(
     () => options.validationBehavior() ?? form?.validationBehavior.value ?? 'native',
@@ -243,7 +245,7 @@ export const useFieldValidation = <T>(
     const isNative = behavior.value === 'native'
     const message =
       isNative && realtime.value.isInvalid
-        ? realtime.value.validationErrors.join(' ') || 'Invalid value.'
+        ? realtime.value.validationErrors.join(' ') || t('validation.invalid')
         : ''
 
     for (const el of els) {

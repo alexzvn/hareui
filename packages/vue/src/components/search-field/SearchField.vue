@@ -64,7 +64,7 @@
       <CloseButton
         v-if="slots.clearIcon"
         data-slot="search-field-clear-button"
-        aria-label="Clear search"
+        :aria-label="t('searchField.clear')"
         tabindex="-1"
         :disabled="disabled || readonly || undefined"
         :class="ui.clearButton()"
@@ -76,7 +76,7 @@
       <CloseButton
         v-else
         data-slot="search-field-clear-button"
-        aria-label="Clear search"
+        :aria-label="t('searchField.clear')"
         tabindex="-1"
         :disabled="disabled || readonly || undefined"
         :class="ui.clearButton()"
@@ -98,11 +98,14 @@ import { splitInputAttrs } from '@/components/text-field/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 
 import type { SearchFieldProps, SearchFieldSlots, SearchFieldEmits } from './SearchField.types'
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<SearchFieldProps>(), { invalid: undefined })
 const emit = defineEmits<SearchFieldEmits>()

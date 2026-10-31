@@ -41,7 +41,7 @@
                 <slot name="close" :close="close">
                   <CloseButton
                     data-slot="alert-dialog-close-trigger"
-                    :aria-label="closeButtonOptions.label"
+                    :aria-label="closeButtonOptions.label ?? t('alertDialog.close')"
                     :class="ui.closeTrigger()"
                   >
                     <IconRenderer
@@ -175,6 +175,7 @@ import { computed, useSlots, useTemplateRef } from 'vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDialogShell } from '@/composables/useDialogShell'
+import { useLocale } from '@/composables/useLocale'
 import { resolveCloseButton } from '@/utils/closeButton'
 import { IconRenderer } from '@/utils/icon'
 
@@ -182,6 +183,8 @@ import type { AlertDialogEmits, AlertDialogProps, AlertDialogSlots } from './Ale
 import theme from './theme'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<AlertDialogProps>(), {
   open: undefined,
   portal: undefined,

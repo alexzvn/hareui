@@ -78,7 +78,7 @@
             v-if="clearable"
             type="button"
             tabindex="-1"
-            aria-label="Clear selection"
+            :aria-label="t('autocomplete.clear')"
             data-slot="autocomplete-clear-button"
             :aria-hidden="isPlaceholder ? 'true' : undefined"
             :data-empty="isPlaceholder ? 'true' : undefined"
@@ -185,8 +185,8 @@
               :id="searchId"
               ref="searchField"
               :value="inputValue"
-              :label="searchLabel"
-              :placeholder="searchPlaceholder"
+              :label="searchLabel ?? t('autocomplete.search')"
+              :placeholder="searchPlaceholder ?? t('autocomplete.searchPlaceholder')"
               :listbox-id="listboxId"
               :active-descendant="activeDescendant"
               :ui="props.ui"
@@ -202,7 +202,7 @@
               ref="list"
               data-slot="list-box"
               data-layout="stack"
-              aria-label="Suggestions"
+              :aria-label="t('autocomplete.suggestions')"
               :aria-labelledby="listLabelledBy"
               :aria-multiselectable="isMultiple ? 'true' : undefined"
               :data-empty="countRows(blocks) ? undefined : 'true'"
@@ -294,6 +294,7 @@ import { usePressRelease } from '@/components/select/pressRelease'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
 
 import type {
@@ -318,14 +319,16 @@ import { useAutocompleteVirtualFocus } from './useAutocompleteVirtualFocus'
 defineOptions({ inheritAttrs: false })
 
 // Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<AutocompleteProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
-  placeholder: 'Select an item',
+  placeholder: undefined,
   search: true,
-  searchPlaceholder: 'Search...',
-  searchLabel: 'Search options',
+  searchPlaceholder: undefined,
+  searchLabel: undefined,
   filter: undefined,
   open: undefined,
   invalid: undefined,
@@ -375,7 +378,7 @@ const {
   model: modelValue,
   defaultValue: () => props.defaultValue,
   isMultiple: () => isMultiple.value,
-  placeholder: () => props.placeholder,
+  placeholder: () => props.placeholder ?? t('autocomplete.placeholder'),
 })
 
 // ---- Validation -------------------------------------------------------------------------------------------------

@@ -165,6 +165,7 @@
         data-slot="number-stepper-input"
         :required="required || undefined"
         :aria-invalid="invalid ? 'true' : undefined"
+        :aria-roledescription="t('numberStepper.roledescription')"
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
@@ -193,7 +194,7 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
   NumberFieldRoot,
-  useLocale,
+  useLocale as useRekaLocale,
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, toRef, useAttrs, useTemplateRef } from 'vue'
 
@@ -202,6 +203,7 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { useNumberValue } from '@/composables/useNumberValue'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
 
@@ -211,6 +213,8 @@ import theme from './theme'
 defineOptions({ inheritAttrs: false })
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<NumberStepperProps>(), {
   increment: true,
   decrement: true,
@@ -253,7 +257,7 @@ const { validation, invalid, commitValidation } = useFieldValidation({
 
 // The value rolls digit by digit (number-flow, as in HeroUI Pro), with the same locale and format as the spin button.
 // number-flow skips the motion under `prefers-reduced-motion`.
-const locale = useLocale(toRef(() => props.locale))
+const locale = useRekaLocale(toRef(() => props.locale))
 
 const flowFormat = computed<Format | undefined>(() => {
   if (!props.formatOptions) return undefined
@@ -318,11 +322,15 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
 // The buttons are named after the field: "Increase Quantity"
 const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
 const incrementLabel = computed(() =>
-  fieldName.value ? `Increase ${fieldName.value}` : 'Increase',
+  fieldName.value
+    ? t('numberStepper.incrementField', { label: fieldName.value })
+    : t('numberStepper.increment'),
 )
 
 const decrementLabel = computed(() =>
-  fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease',
+  fieldName.value
+    ? t('numberStepper.decrementField', { label: fieldName.value })
+    : t('numberStepper.decrement'),
 )
 
 const incrementButton = computed(() =>

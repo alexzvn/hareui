@@ -48,7 +48,7 @@
       <slot name="trailing" />
       <CloseButton
         data-slot="search-field-clear-button"
-        aria-label="Clear search"
+        :aria-label="t('autocomplete.clearSearch')"
         tabindex="-1"
         :class="searchUi.clearButton()"
         @mousedown.prevent
@@ -65,10 +65,13 @@ import { ref, useTemplateRef } from 'vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
 import searchFieldTheme from '@/components/search-field/theme'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import type { AutocompleteProps } from './Autocomplete.types'
 
 // Autocomplete's search field (HeroUI `Autocomplete.Filter` + `SearchField`), rendered inside the popover. Private.
+const { t } = useLocale()
+
 const props = defineProps<{
   id: string
   value: string

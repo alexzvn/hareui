@@ -61,6 +61,10 @@
       "types": "./dist/editor.d.ts",
       "import": "./dist/editor.js"
     },
+    "./locale": {
+      "types": "./dist/locale/index.d.ts",
+      "import": "./dist/locale/index.js"
+    },
     "./vite": {
       "types": "./dist/vite.d.ts",
       "import": "./dist/vite.js"

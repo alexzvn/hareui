@@ -119,6 +119,7 @@ import Toolbar from '@/components/toolbar/Toolbar.vue'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
 import Tooltip from '@/components/tooltip/Tooltip.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import type { IconValue } from '@/types/icon'
 import { IconRenderer } from '@/utils/icon'
 
@@ -137,6 +138,8 @@ import { getEditorToolbarIcon } from './icons'
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<EditorToolbarProps<H>>(), {
   as: 'div',
@@ -299,6 +302,13 @@ const getItemIcon = (item: object): IconValue | undefined => {
   return defaults && getEditorToolbarIcon(defaults.icon)
 }
 
+// The built-in, translated name of a command.
+const getCommandLabel = (command: EditorCommand) => {
+  const defaults = getCommandDefaults(command)
+
+  return defaults && t(defaults.label, defaults.params)
+}
+
 const getItemName = (item: EditorToolbarButtonBase) => {
   if (item.label) return item.label
   if (typeof item.tooltip === 'string') return item.tooltip
@@ -306,7 +316,7 @@ const getItemName = (item: EditorToolbarButtonBase) => {
 
   const command = getCommand(item)
 
-  return command && getCommandDefaults(command)?.label
+  return command && getCommandLabel(command)
 }
 
 const getTooltipProps = (item: EditorToolbarItem<H>): TooltipProps => {
@@ -353,7 +363,7 @@ const toMenuItem = (
 ): EditorToolbarDropdownMenuItem => {
   const command = getCommand(entry)
   const menuItem = entry as EditorToolbarDropdownMenuItem
-  const label = menuItem.label ?? (command && getCommandDefaults(command)?.label) ?? ''
+  const label = menuItem.label ?? (command && getCommandLabel(command)) ?? ''
 
   return {
     ...menuItem,

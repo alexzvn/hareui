@@ -90,7 +90,7 @@
       <CloseButton
         v-if="content.closeButton !== false"
         data-slot="toast-close"
-        :aria-label="closeButtonOptions.label"
+        :aria-label="closeButtonOptions.label ?? t('toast.close')"
         :class="ui.close()"
         @click="props.close"
       >
@@ -121,6 +121,7 @@ import Button from '@/components/button/Button.vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
 import Spinner from '@/components/spinner/Spinner.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { resolveCloseButton } from '@/utils/closeButton'
 import { IconRenderer } from '@/utils/icon'
 
@@ -128,6 +129,8 @@ import renderValue from './renderValue'
 import theme from './theme'
 import type { ToastItemProps } from './ToastItem.types'
 import type { ToastContentValue } from './toastQueue'
+
+const { t } = useLocale()
 
 const props = defineProps<ToastItemProps>()
 

@@ -238,6 +238,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { keyboardModalityKey, useKeyboardModality } from '@/composables/useKeyboardModality'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
 
 import { usePressRelease } from './pressRelease'
@@ -253,11 +254,13 @@ provide(keyboardModalityKey, useKeyboardModality())
 
 // Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides,
 // `loading` → no sentinel
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<SelectProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
-  placeholder: 'Select an item',
+  placeholder: undefined,
   side: 'bottom',
   align: 'center',
   open: undefined,
@@ -291,7 +294,7 @@ const {
   model: modelValue,
   defaultValue: () => props.defaultValue,
   isMultiple: () => isMultiple.value,
-  placeholder: () => props.placeholder,
+  placeholder: () => props.placeholder ?? t('select.placeholder'),
   order: 'collection',
 })
 

@@ -6,7 +6,7 @@
     :variant="variant"
     :size="size"
     :disabled="disabled"
-    :aria-label="open ? 'Close sidebar' : 'Open sidebar'"
+    :aria-label="open ? t('dashboardSidebarToggle.close') : t('dashboardSidebarToggle.open')"
     :aria-expanded="open"
     :aria-controls="open && sidebar?.id.value ? `${sidebar.id.value}-menu` : undefined"
     :class="ui.base()"
@@ -55,12 +55,15 @@ import { computed } from 'vue'
 import Button from '@/components/button/Button.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDashboard } from '@/composables/useDashboard'
+import { useLocale } from '@/composables/useLocale'
 
 import type {
   DashboardSidebarToggleProps,
   DashboardSidebarToggleSlots,
 } from './DashboardSidebarToggle.types'
 import theme from './theme'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<DashboardSidebarToggleProps>(), {
   as: 'button',

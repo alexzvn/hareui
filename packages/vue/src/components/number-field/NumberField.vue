@@ -65,6 +65,7 @@
         :placeholder="placeholder"
         :required="required || undefined"
         :aria-invalid="invalid ? 'true' : undefined"
+        :aria-roledescription="t('numberField.roledescription')"
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
@@ -126,6 +127,7 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { useNumberValue } from '@/composables/useNumberValue'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
 
@@ -135,6 +137,8 @@ import theme from './theme'
 defineOptions({ inheritAttrs: false })
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<NumberFieldProps>(), {
   increment: true,
   decrement: true,
@@ -230,11 +234,15 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
 // As in RAC: the stepper buttons are named after the field ("Increase Width") and control its input
 const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
 const incrementLabel = computed(() =>
-  fieldName.value ? `Increase ${fieldName.value}` : 'Increase',
+  fieldName.value
+    ? t('numberField.incrementField', { label: fieldName.value })
+    : t('numberField.increment'),
 )
 
 const decrementLabel = computed(() =>
-  fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease',
+  fieldName.value
+    ? t('numberField.decrementField', { label: fieldName.value })
+    : t('numberField.decrement'),
 )
 
 const ui = useComponentUI('numberField', {

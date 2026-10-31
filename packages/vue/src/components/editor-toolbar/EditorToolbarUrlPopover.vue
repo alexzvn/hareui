@@ -16,7 +16,7 @@
         variant="secondary"
         full-width
         :placeholder="field.placeholder"
-        :aria-label="field.label"
+        :aria-label="t(field.label)"
         data-slot="editor-toolbar-url-input"
         @keydown.enter.prevent="submit"
       />
@@ -24,7 +24,7 @@
         <Button v-if="kind === 'link' && isSet" size="sm" variant="tertiary" @click="apply('')">
           Remove
         </Button>
-        <Button size="sm" :disabled="!href" @click="submit">Apply</Button>
+        <Button size="sm" :disabled="!href" @click="submit">{{ t('editorToolbar.apply') }}</Button>
       </div>
     </template>
   </Popover>
@@ -37,13 +37,20 @@ import { computed, ref, useTemplateRef, watch } from 'vue'
 import Button from '@/components/button/Button.vue'
 import Input from '@/components/input/Input.vue'
 import Popover from '@/components/popover/Popover.vue'
+import { useLocale } from '@/composables/useLocale'
 
 type UrlKind = 'link' | 'image'
 
-// The mark or node each kind edits, the attribute holding its URL, and the field's labels.
+const { t } = useLocale()
+
+// The mark or node each kind edits, the attribute holding its URL, and the field's label key.
 const FIELDS = {
-  link: { attribute: 'href', label: 'Link URL', placeholder: 'https://example.com' },
-  image: { attribute: 'src', label: 'Image URL', placeholder: 'https://example.com/photo.jpg' },
+  link: { attribute: 'href', label: 'editorToolbar.linkUrl', placeholder: 'https://example.com' },
+  image: {
+    attribute: 'src',
+    label: 'editorToolbar.imageUrl',
+    placeholder: 'https://example.com/photo.jpg',
+  },
 } as const satisfies Record<UrlKind, { attribute: string; label: string; placeholder: string }>
 
 const props = defineProps<{

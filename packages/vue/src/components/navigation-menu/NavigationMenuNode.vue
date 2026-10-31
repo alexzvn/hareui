@@ -111,7 +111,7 @@
             <button
               type="button"
               data-slot="linkAction"
-              :aria-label="`More actions for ${label}`"
+              :aria-label="t('navigationMenu.moreActions', { label: label ?? '' })"
               :class="ui.linkAction({ override: item.ui?.linkAction })"
             >
               <EllipsisVerticalIcon />
@@ -201,6 +201,7 @@ import { computed, useId } from 'vue'
 
 import Dropdown from '@/components/dropdown/Dropdown.vue'
 import Tooltip from '@/components/tooltip/Tooltip.vue'
+import { useLocale } from '@/composables/useLocale'
 import { IconRenderer } from '@/utils/icon'
 import type { ResolvedLink } from '@/utils/link'
 import { LinkResolver } from '@/utils/link'
@@ -215,6 +216,8 @@ import NavigationMenuPopover from './NavigationMenuPopover.vue'
 import NavigationMenuTabBridge from './NavigationMenuTabBridge'
 
 // One item of the menu (recursive for vertical children).
+const { t } = useLocale()
+
 const props = withDefaults(
   defineProps<{
     item: NavigationMenuItem

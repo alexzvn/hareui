@@ -41,7 +41,9 @@ Use the `toaster` prop to pass props to the toast region, such as its `placement
 
 ### Direction
 
-Use the `dir` prop to set the reading direction. With `rtl`, sliders, arrow-key navigation and popover placement are mirrored. Use the `locale` prop, a locale code such as `'en'` or `'ar'`, to set the locale used by date, number and calendar components.
+Set `dir="rtl"` to mirror sliders, arrow-key navigation and popover placement. `App` renders no element of its own, so
+also set `dir="rtl"` on `<html>` (or on an element around the app). That mirrors the layout, icons and portalled
+overlays too.
 
 <ComponentPreview name="app/direction" />
 

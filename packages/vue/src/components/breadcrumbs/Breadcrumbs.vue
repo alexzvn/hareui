@@ -1,5 +1,10 @@
 <template>
-  <Primitive :as="as" aria-label="Breadcrumbs" data-slot="breadcrumbs" :class="ui.base()">
+  <Primitive
+    :as="as"
+    :aria-label="t('breadcrumbs.label')"
+    data-slot="breadcrumbs"
+    :class="ui.base()"
+  >
     <li
       v-for="(item, index) in items"
       :key="index"
@@ -49,6 +54,7 @@ import { cloneVNode, Comment, h, isVNode, useSlots } from 'vue'
 
 import Link from '@/components/link/Link.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { IconRenderer } from '@/utils/icon'
 import { LinkResolver } from '@/utils/link'
 
@@ -59,6 +65,8 @@ import type {
   ItemSlotProps,
 } from './Breadcrumbs.types'
 import theme from './theme'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<BreadcrumbsProps<T>>(), { as: 'ol' })
 const slots = useSlots()

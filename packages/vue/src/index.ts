@@ -1,5 +1,15 @@
 export { createHareUI, hareUIConfigKey } from './config'
 export type { HareUIConfig, PortalTarget } from './config'
+export { defineLocale } from './locale/defineLocale'
+
+export type {
+  DeepPartial,
+  DefineLocaleOptions,
+  Direction,
+  Locale,
+  Messages,
+} from './locale/defineLocale'
+
 export * as themes from './components/themes'
 export type { Themes } from './components/themes'
 export type * from './types/tv'

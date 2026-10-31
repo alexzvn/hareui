@@ -72,7 +72,7 @@
         type="button"
         tabindex="-1"
         data-slot="combo-box-trigger"
-        aria-label="Show suggestions"
+        :aria-label="t('comboBox.trigger')"
         :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
         aria-haspopup="listbox"
         :aria-expanded="isOpen ? 'true' : 'false'"
@@ -157,7 +157,7 @@
           data-slot="list-box"
           data-layout="stack"
           data-orientation="vertical"
-          aria-label="Suggestions"
+          :aria-label="t('comboBox.suggestions')"
           :aria-labelledby="hasLabel ? `${listboxId} ${labelId}` : undefined"
           :aria-multiselectable="isMultiple ? 'true' : undefined"
           :data-empty="visibleCount ? undefined : 'true'"
@@ -230,6 +230,7 @@ import { usePressRelease } from '@/components/select/pressRelease'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
 
 import type {
@@ -252,6 +253,8 @@ import { useComboBoxOpenState } from './useComboBoxOpenState'
 defineOptions({ inheritAttrs: false })
 
 // Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<ComboBoxProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',

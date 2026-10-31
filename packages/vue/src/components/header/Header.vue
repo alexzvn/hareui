@@ -52,6 +52,7 @@ import Button from '@/components/button/Button.vue'
 import Drawer from '@/components/drawer/Drawer.vue'
 import Modal from '@/components/modal/Modal.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { useMenuAutoClose } from '@/composables/useMenuAutoClose'
 import { usePortal } from '@/composables/usePortal'
 import type { ResolvedLink } from '@/utils/link'
@@ -66,6 +67,8 @@ import { useHeaderToggleIcon } from './useHeaderToggleIcon'
 
 defineOptions({ inheritAttrs: false })
 
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<HeaderProps>(), {
   as: 'header',
   title: 'HareUI',
@@ -76,9 +79,9 @@ const props = withDefaults(defineProps<HeaderProps>(), {
   autoClose: true,
   hideOnScroll: false,
   shouldBlockScroll: true,
-  openLabel: 'Open menu',
-  closeLabel: 'Close menu',
-  menuTitle: 'Navigation menu',
+  openLabel: undefined,
+  closeLabel: undefined,
+  menuTitle: undefined,
 })
 
 const slots = defineSlots<HeaderSlots>()
@@ -135,7 +138,9 @@ const Toggle: FunctionalComponent = () => {
       variant: 'ghost',
       ...options,
       iconOnly: true,
-      'aria-label': open.value ? props.closeLabel : props.openLabel,
+      'aria-label': open.value
+        ? (props.closeLabel ?? t('header.close'))
+        : (props.openLabel ?? t('header.open')),
       'aria-expanded': open.value,
       'data-slot': 'header-toggle',
       class: ui.value.toggle({ override: options.class }),
@@ -276,7 +281,7 @@ const MenuContent: FunctionalComponent<{ close: () => void }> = ({ close }) => {
   if (slots.content) return slots.content({ close })
 
   const title = h(VisuallyHidden, { asChild: true }, () =>
-    h(DialogTitle, null, () => props.menuTitle),
+    h(DialogTitle, null, () => props.menuTitle ?? t('header.menu')),
   )
 
   return [title, renderMenuHeader(), renderMenuBody()]

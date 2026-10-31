@@ -76,6 +76,7 @@ import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vu
 import Button from '@/components/button/Button.vue'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { CHECK_ICON_PATH } from '@/utils/checkIcon'
 import { IconRenderer } from '@/utils/icon'
 import { warn } from '@/utils/warn'
@@ -94,11 +95,9 @@ import theme from './theme'
 
 type Highlighted = { code: string; lang: string; lines: CodeBlockToken[][] }
 
-const COPY_DEFAULTS: Required<CodeBlockCopyOptions> = {
-  label: 'Copy code',
-  copiedLabel: 'Copied',
-  duration: 1650,
-}
+const { t } = useLocale()
+
+const COPY_DURATION = 1650
 
 const THEME_DEFAULTS: Required<CodeBlockThemes> = { light: 'github-light', dark: 'github-dark' }
 
@@ -109,7 +108,11 @@ const highlighted = shallowRef<Highlighted>()
 const isCopied = ref(false)
 
 const copyOptions = computed(() =>
-  defu(typeof props.copy === 'object' ? props.copy : {}, COPY_DEFAULTS),
+  defu(typeof props.copy === 'object' ? props.copy : {}, {
+    label: t('codeBlock.copy'),
+    copiedLabel: t('codeBlock.copied'),
+    duration: COPY_DURATION,
+  } satisfies Required<CodeBlockCopyOptions>),
 )
 
 const themes = computed(() => defu(props.themes, THEME_DEFAULTS))

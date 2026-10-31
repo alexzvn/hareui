@@ -53,7 +53,7 @@
                   :id="triggerId"
                   ref="trigger"
                   type="button"
-                  aria-label="Calendar"
+                  :aria-label="t('datePicker.calendar')"
                   :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
                   :aria-describedby="describedBy"
                   data-slot="date-picker-trigger"
@@ -159,6 +159,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useInertOutside } from '@/composables/useInertOutside'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
 
 import type { DatePickerEmits, DatePickerProps, DatePickerSlots } from './DatePicker.types'
@@ -167,6 +168,8 @@ import theme from './theme'
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<DatePickerProps>(), {
   invalid: undefined,
   open: undefined,
@@ -230,12 +233,12 @@ const formatDateBoundary = (value: DateValue) => {
 // and fed into `validate` so it follows `validationBehavior` like any other error.
 const builtinValidate = (value: DateValue) => {
   if (props.minValue && value.compare(props.minValue) < 0)
-    return `Value must be ${formatDateBoundary(props.minValue)} or later.`
+    return t('validation.min', { value: formatDateBoundary(props.minValue) })
 
   if (props.maxValue && value.compare(props.maxValue) > 0)
-    return `Value must be ${formatDateBoundary(props.maxValue)} or earlier.`
+    return t('validation.max', { value: formatDateBoundary(props.maxValue) })
 
-  if (props.isDateUnavailable?.(value)) return 'Selected date unavailable.'
+  if (props.isDateUnavailable?.(value)) return t('validation.unavailable')
 
   return undefined
 }

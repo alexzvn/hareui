@@ -63,7 +63,7 @@
                 :id="triggerId"
                 ref="trigger"
                 type="button"
-                aria-label="Calendar"
+                :aria-label="t('dateRangePicker.calendar')"
                 :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
                 :aria-describedby="describedBy"
                 :data-reka-date-field-segment="undefined"
@@ -190,6 +190,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useInertOutside } from '@/composables/useInertOutside'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
 
 import type {
@@ -206,6 +207,8 @@ defineOptions({ inheritAttrs: false })
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<DateRangePickerProps>(), {
   invalid: undefined,
   open: undefined,
@@ -335,7 +338,7 @@ const onCalendarUpdate = (value: DateRange | undefined) => {
 // Combined with the builtin range validation the way RAC's `mergeValidation` does: a custom error wins.
 const validate = (value: DateRangeValue) => {
   const custom = props.validate?.(value)
-  return custom && custom !== true ? custom : validateDateRange(value, props)
+  return custom && custom !== true ? custom : validateDateRange(value, { constraints: props, t })
 }
 
 const { validation, commitValidation } = useFieldValidation<DateRangeValue>({

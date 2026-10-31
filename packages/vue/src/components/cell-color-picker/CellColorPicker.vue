@@ -39,13 +39,13 @@
           <ColorSwatchPicker
             v-if="presets?.length"
             :items="presets"
-            aria-label="Color presets"
+            :aria-label="t('cellColorPicker.presets')"
             size="xs"
             :ui="{ indicator: 'hidden' }"
             :class="ui.presets()"
           />
           <ColorArea
-            aria-label="Color area"
+            :aria-label="t('cellColorPicker.area')"
             class="max-w-full"
             color-space="hsb"
             :x="{ channel: 'saturation' }"
@@ -55,7 +55,7 @@
             channel="hue"
             class="gap-1 px-1"
             color-space="hsb"
-            label="Hue"
+            :label="t('cellColorPicker.hue')"
             :ui="{ output: 'text-muted' }"
           />
         </slot>
@@ -75,6 +75,7 @@ import ColorSwatchPicker from '@/components/color-swatch-picker/ColorSwatchPicke
 import ColorSwatch from '@/components/color-swatch/ColorSwatch.vue'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import type {
   CellColorPickerProps,
@@ -84,6 +85,8 @@ import type {
 import theme from './theme'
 
 // `open: undefined` keeps an absent `open` uncontrolled
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<CellColorPickerProps>(), {
   modelValue: undefined,
   defaultValue: undefined,

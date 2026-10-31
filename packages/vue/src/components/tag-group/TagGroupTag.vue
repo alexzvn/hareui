@@ -28,7 +28,7 @@
         v-if="removable"
         :id="removeButtonId"
         data-slot="tag-remove-button"
-        aria-label="Remove tag"
+        :aria-label="t('tagGroup.remove')"
         :aria-labelledby="`${removeButtonId} ${rowId}`"
         :disabled="disabled"
         :class="classes.removeButton()"
@@ -51,10 +51,13 @@ import CloseButton from '@/components/close-button/CloseButton.vue'
 // collection and needs to skip disabled tags), so this component only renders and tracks hover-ish
 // visual state; it never attaches its own keydown handler. Presses are reported with their event so the
 // parent can tell Shift+press (range) from a toggle.
+import { useLocale } from '@/composables/useLocale'
 import type { ComponentUI } from '@/types/tv'
 
 import type { TagGroupItem, TagGroupSlots } from './TagGroup.types'
 import type tagTheme from './tagTheme'
+
+const { t } = useLocale()
 
 const props = defineProps<{
   item: TagGroupItem

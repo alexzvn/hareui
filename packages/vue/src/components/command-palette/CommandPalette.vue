@@ -28,7 +28,7 @@
           variant="ghost"
           size="sm"
           icon-only
-          aria-label="Back"
+          :aria-label="t('commandPalette.back')"
           v-bind="backAttrs"
           data-slot="command-palette-back"
           :class="ui.back({ override: backAttrs.class })"
@@ -72,7 +72,7 @@
       <slot name="close" :ui="ui">
         <CloseButton
           v-if="close"
-          aria-label="Close"
+          :aria-label="t('commandPalette.close')"
           v-bind="closeAttrs"
           data-slot="command-palette-close"
           :class="ui.close({ override: closeAttrs.class })"
@@ -83,7 +83,11 @@
       </slot>
     </div>
 
-    <ListboxContent data-slot="command-palette-content" aria-label="Results" :class="ui.content()">
+    <ListboxContent
+      data-slot="command-palette-content"
+      :aria-label="t('commandPalette.results')"
+      :class="ui.content()"
+    >
       <div
         v-if="filteredGroups.length"
         role="presentation"
@@ -138,7 +142,9 @@
 
       <div v-else data-slot="command-palette-empty" :class="ui.empty()">
         <slot name="empty" :search-term="searchTerm">
-          {{ searchTerm ? `No matching data for "${searchTerm}"` : 'No data' }}
+          {{
+            searchTerm ? t('commandPalette.noMatchFor', { searchTerm }) : t('commandPalette.noData')
+          }}
         </slot>
       </div>
     </ListboxContent>
@@ -167,6 +173,7 @@ import Button from '@/components/button/Button.vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
 import Spinner from '@/components/spinner/Spinner.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import type { IconValue } from '@/types/icon'
 import { get } from '@/utils/get'
 import { IconRenderer } from '@/utils/icon'
@@ -188,13 +195,15 @@ import { BackIcon, SearchIcon } from './icons'
 import theme from './theme'
 import { useCommandPaletteSearch } from './useCommandPaletteSearch'
 
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<CommandPaletteProps<T>>(), {
   as: 'div',
   modelValue: undefined,
   defaultValue: undefined,
   highlightOnHover: true,
   selectionBehavior: 'toggle',
-  placeholder: 'Type a command or search...',
+  placeholder: undefined,
   // `false` in its type would make Vue cast an absent `icon` to `false` (hidden).
   icon: undefined,
   autofocus: true,
@@ -233,7 +242,9 @@ const groups = computed<CommandPaletteGroup[]>(() =>
   currentNested.value ? [currentNested.value] : (props.groups ?? []),
 )
 
-const placeholder = computed(() => currentNested.value?.placeholder || props.placeholder)
+const placeholder = computed(
+  () => currentNested.value?.placeholder || props.placeholder || t('commandPalette.placeholder'),
+)
 
 const isBackShown = computed(() => !!currentNested.value && (props.back !== false || !!slots.back))
 

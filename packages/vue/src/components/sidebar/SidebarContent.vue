@@ -20,7 +20,7 @@
             variant="ghost"
             size="sm"
             icon-only
-            aria-label="Close sidebar"
+            :aria-label="t('sidebar.close')"
             v-bind="closeAttrs"
             data-slot="sidebar-close"
             :class="ui.close({ override: closeClass })"
@@ -55,6 +55,7 @@ import { computed } from 'vue'
 
 import Button from '@/components/button/Button.vue'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
+import { useLocale } from '@/composables/useLocale'
 import { IconRenderer } from '@/utils/icon'
 
 import type {
@@ -66,6 +67,8 @@ import type {
 } from './Sidebar.types'
 
 // The header, body and footer of a `Sidebar`, rendered in the desktop panel and again inside the mobile menu.
+const { t } = useLocale()
+
 const props = defineProps<{
   ui: SidebarUI
   state: SidebarState

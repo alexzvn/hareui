@@ -43,7 +43,7 @@
                 <slot name="close" :close="close">
                   <CloseButton
                     data-slot="drawer-close-trigger"
-                    :aria-label="closeButtonOptions.label"
+                    :aria-label="closeButtonOptions.label ?? t('drawer.close')"
                     :class="ui.closeTrigger()"
                   >
                     <IconRenderer
@@ -117,6 +117,7 @@ import { computed, useSlots, useTemplateRef } from 'vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDialogShell } from '@/composables/useDialogShell'
+import { useLocale } from '@/composables/useLocale'
 import { resolveCloseButton } from '@/utils/closeButton'
 import { IconRenderer } from '@/utils/icon'
 
@@ -124,6 +125,8 @@ import type { DrawerProps, DrawerSlots, DrawerEmits } from './Drawer.types'
 import theme from './theme'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<DrawerProps>(), {
   open: undefined,
   portal: undefined,
