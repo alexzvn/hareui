@@ -3,9 +3,12 @@
  *
  * Up/Down/Home/End/PageUp/PageDown move focus between enabled rows without wrapping; Left/Right cycle focus from the
  * row through the controls of its cells and back; Space selects, Enter runs the row's action; typing a label moves to
- * it; Tab and Shift+Tab leave the list. Runs in the capture phase, so the arrows a row's controls would otherwise
- * take (a menu button opens on ArrowDown) move between rows first, as in RAC.
+ * it; Tab and Shift+Tab leave the list. The focused row is the list's only tab stop: the controls in rows are taken out
+ * of the tab order (`tabindex="-1"`), as in a RAC grid. Runs in the capture phase, so the arrows a row's controls
+ * would otherwise take (a menu button opens on ArrowDown) move between rows first, as in RAC.
  */
+import { onBeforeUnmount, onMounted } from 'vue'
+
 import { useTypeahead } from '@/components/list-box/useTypeahead'
 import { getScrollParent } from '@/utils/scrollParent'
 
@@ -47,6 +50,23 @@ const getTabbables = (root: HTMLElement): HTMLElement[] => {
   )
 }
 
+// Only the list's own rows: a list nested in an action cell is one of the row's controls
+const getOwnRows = (root: HTMLElement): HTMLElement[] => {
+  return [...root.children].filter(
+    (el): el is HTMLElement => el instanceof HTMLElement && el.matches('[role=row][data-index]'),
+  )
+}
+
+const removeControlsFromTabOrder = (root: HTMLElement) => {
+  const controls = getOwnRows(root).flatMap((row) => [
+    ...row.querySelectorAll<HTMLElement>(CONTROLS),
+  ])
+
+  for (const el of controls) {
+    if (el.tabIndex >= 0) el.tabIndex = -1
+  }
+}
+
 const isRowArrow = (event: KeyboardEvent) =>
   (event.key === 'ArrowDown' || event.key === 'ArrowUp') && !event.altKey
 
@@ -82,6 +102,26 @@ export const useListViewKeyboard = ({
 }: ListViewKeyboardOptions) => {
   // RAC `useTypeSelect`: searched from the focused row onwards (inclusive); Space continues a search in progress
   const typeahead = useTypeahead({ start: 'current', space: true })
+
+  // Rows and their slot content render and re-render on their own, so every change is checked
+  let tabOrderObserver: MutationObserver | undefined
+
+  onMounted(() => {
+    const root = getRoot()
+    if (!root) return
+
+    removeControlsFromTabOrder(root)
+    tabOrderObserver = new MutationObserver(() => removeControlsFromTabOrder(root))
+
+    tabOrderObserver.observe(root, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['tabindex', 'href'],
+    })
+  })
+
+  onBeforeUnmount(() => tabOrderObserver?.disconnect())
 
   const getEnabledIndices = () => items().flatMap((item, index) => (item.disabled ? [] : [index]))
 

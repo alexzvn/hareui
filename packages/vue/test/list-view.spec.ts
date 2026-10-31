@@ -25,6 +25,7 @@ let wrapper: VueWrapper | undefined
 afterEach(() => {
   wrapper?.unmount()
   wrapper = undefined
+  vi.restoreAllMocks()
 })
 
 type MountOptions = {
@@ -62,15 +63,55 @@ const focusedLabel = () => document.activeElement?.getAttribute('aria-label')
 
 const press = async (key: string, init: KeyboardEventInit = {}) => {
   const target = document.activeElement as HTMLElement
+  const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init })
 
-  target.dispatchEvent(
-    new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }),
-  )
-
+  target.dispatchEvent(event)
   await nextTick()
+
+  return event
 }
 
 const lastModel = (list: VueWrapper) => list.emitted('update:modelValue')?.at(-1)?.[0]
+
+const actionButtons = () => [
+  h('button', { type: 'button' }, 'Share'),
+  h('button', { type: 'button' }, 'More'),
+]
+
+const actionButton = (list: VueWrapper, label: string, text: string) => {
+  const found = row(list, label)
+    .findAll('button')
+    .find((button) => button.text() === text)
+
+  if (!found) throw new Error(`No ${text} button in ${label}`)
+
+  return found
+}
+
+// What the browser's Tab order can reach inside the list
+const tabbables = (list: VueWrapper) => {
+  const root = list.element as HTMLElement
+
+  return [root, ...root.querySelectorAll<HTMLElement>('*')].filter((el) => el.tabIndex >= 0)
+}
+
+const manyFiles = Array.from({ length: 1000 }, (_, index) => ({
+  value: index,
+  label: `File ${index}`,
+}))
+
+// happy-dom has no layout: the virtualizer measures its scroll element's box and each row, and clamps scrolling to
+// the scroll height, so give them sizes (restored after each test)
+const mockLayout = () => {
+  vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(300)
+  vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(400)
+  vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(300)
+  vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(400)
+  vi.spyOn(HTMLElement.prototype, 'scrollHeight', 'get').mockReturnValue(1_000_000)
+}
+
+const renderedRowIndices = (list: VueWrapper) =>
+  rows(list).map((r) => Number(r.attributes('aria-rowindex')))
 
 describe('ListView structure', () => {
   it('renders a labelled grid of rows, each with one gridcell', async () => {
@@ -193,12 +234,7 @@ describe('ListView keyboard', () => {
   })
 
   it('ArrowRight and ArrowLeft move through the action slot and back to the row', async () => {
-    const actions = () => [
-      h('button', { type: 'button' }, 'Share'),
-      h('button', { type: 'button' }, 'More'),
-    ]
-
-    const list = mountList({}, { slots: { 'item-action': actions } })
+    const list = mountList({}, { slots: { 'item-action': actionButtons } })
     focusRow(list, 'Documents')
 
     await press('ArrowRight')
@@ -216,6 +252,115 @@ describe('ListView keyboard', () => {
     // Up/Down from a control still move between rows
     await press('ArrowDown')
     expect(focusedLabel()).toBe('Photos')
+  })
+
+  it('ArrowLeft and ArrowRight are mirrored in a right-to-left layout', async () => {
+    const list = mountList(
+      {},
+      { slots: { 'item-action': actionButtons }, attrs: { style: 'direction: rtl' } },
+    )
+
+    focusRow(list, 'Documents')
+
+    await press('ArrowLeft')
+    expect(document.activeElement?.textContent).toBe('Share')
+
+    await press('ArrowRight')
+    expect(focusedLabel()).toBe('Documents')
+
+    await press('ArrowRight')
+    expect(document.activeElement?.textContent).toBe('More')
+  })
+
+  it('PageDown and PageUp move focus by the height of the scrolling list', async () => {
+    const items = manyFiles.slice(0, 8)
+    const list = mountList({ items }, { attrs: { style: 'overflow-y: auto' } })
+
+    // A 60px viewport over 20px rows: a page down from a row reaches the row 40px below it
+    Object.defineProperties(list.element, {
+      clientHeight: { value: 60 },
+      scrollHeight: { value: 160 },
+    })
+
+    rows(list).forEach((r, index) => {
+      Object.defineProperties(r.element, {
+        offsetTop: { value: index * 20 },
+        offsetHeight: { value: 20 },
+      })
+    })
+
+    focusRow(list, 'File 0')
+
+    await press('PageDown')
+    expect(focusedLabel()).toBe('File 2')
+
+    await press('PageDown')
+    expect(focusedLabel()).toBe('File 4')
+
+    await press('PageUp')
+    expect(focusedLabel()).toBe('File 2')
+  })
+})
+
+describe('ListView tab order', () => {
+  it('the focused row is the only tab stop: action controls leave the tab order', async () => {
+    const list = mountList({}, { slots: { 'item-action': actionButtons } })
+    focusRow(list, 'Photos')
+    await nextTick()
+
+    expect(tabbables(list)).toEqual([row(list, 'Photos').element])
+    expect(actionButton(list, 'Documents', 'Share').attributes('tabindex')).toBe('-1')
+  })
+
+  it('Tab from outside onto a control still in the tab order lands on the focused row', async () => {
+    const outside = document.createElement('button')
+    document.body.prepend(outside)
+    const list = mountList({}, { slots: { 'item-action': actionButtons } })
+    focusRow(list, 'Photos')
+    outside.focus()
+
+    // A control rendered with tabindex 0, reached before the list takes it out of the tab order
+    const share = actionButton(list, 'Documents', 'Share').element as HTMLElement
+    share.setAttribute('tabindex', '0')
+    share.focus()
+
+    expect(focusedLabel()).toBe('Photos')
+    outside.remove()
+  })
+
+  it('a control focused by a pointer or script keeps focus, and its row becomes the tab stop', async () => {
+    const list = mountList({}, { slots: { 'item-action': actionButtons } })
+    focusRow(list, 'Photos')
+
+    const share = actionButton(list, 'Documents', 'Share').element as HTMLElement
+    share.focus()
+    await nextTick()
+
+    expect(document.activeElement).toBe(share)
+    expect(tabbables(list)).toEqual([row(list, 'Documents').element])
+  })
+
+  it('Tab leaves the list from the focused row, past the action controls', async () => {
+    const list = mountList({}, { slots: { 'item-action': actionButtons } })
+    focusRow(list, 'Photos')
+
+    const event = await press('Tab')
+
+    // The browser moves on from the list's last tab stop, the focused row itself
+    expect(event.defaultPrevented).toBe(false)
+    expect(focusedLabel()).toBe('Photos')
+    expect(tabbables(list).at(-1)).toBe(row(list, 'Photos').element)
+  })
+
+  it('Shift+Tab leaves the list: focus moves to the list, which is out of the tab order', async () => {
+    const list = mountList({}, { slots: { 'item-action': actionButtons } })
+    focusRow(list, 'Photos')
+
+    const event = await press('Tab', { shiftKey: true })
+
+    expect(event.defaultPrevented).toBe(false)
+    expect(document.activeElement).toBe(list.element)
+    expect(list.attributes('tabindex')).toBe('-1')
   })
 })
 
@@ -320,6 +465,38 @@ describe('ListView selection', () => {
     expect(row(list, 'Documents').attributes('aria-selected')).toBe('true')
     expect(row(list, 'Photos').attributes('aria-selected')).toBe('false')
   })
+
+  it('Shift+click selects the range from the last clicked row over enabled rows', async () => {
+    const list = mountList({ selectable: true, multiple: true })
+
+    await row(list, 'Documents').trigger('click')
+    await row(list, 'README.md').trigger('click', { shiftKey: true })
+
+    expect(lastModel(list)).toEqual(['docs', 'photos', 'readme'])
+  })
+
+  it('replace behaviour: a click selects the row alone and Ctrl or Cmd+click adds or removes it', async () => {
+    const list = mountList({ selectable: true, multiple: true, selectionBehavior: 'replace' })
+
+    await row(list, 'Documents').trigger('click')
+    await row(list, 'README.md').trigger('click', { ctrlKey: true })
+    expect(lastModel(list)).toEqual(['docs', 'readme'])
+
+    await row(list, 'Documents').trigger('click', { metaKey: true })
+    expect(lastModel(list)).toEqual(['readme'])
+
+    await row(list, 'Photos').trigger('click')
+    expect(lastModel(list)).toEqual(['photos'])
+  })
+
+  it('replace behaviour: Shift+click extends from the row clicked alone', async () => {
+    const list = mountList({ selectable: true, multiple: true, selectionBehavior: 'replace' })
+
+    await row(list, 'Photos').trigger('click')
+    await row(list, 'package.json').trigger('click', { shiftKey: true })
+
+    expect(lastModel(list)).toEqual(['photos', 'readme', 'pkg'])
+  })
 })
 
 describe('ListView actions', () => {
@@ -344,6 +521,23 @@ describe('ListView actions', () => {
     await row(list, 'Documents').trigger('click')
     expect(onAction).toHaveBeenCalledTimes(1)
     expect(lastModel(list)).toEqual(['photos', 'docs'])
+  })
+
+  it('a click on a control in the action slot neither presses nor selects the row', async () => {
+    const onAction = vi.fn<(value: ListViewValue) => void>()
+    const onShare = vi.fn<() => void>()
+    const share = () => h('button', { type: 'button', onClick: onShare }, 'Share')
+
+    const list = mountList(
+      { selectable: true, multiple: true },
+      { attrs: { onAction }, slots: { 'item-action': share } },
+    )
+
+    await actionButton(list, 'Documents', 'Share').trigger('click')
+
+    expect(onShare).toHaveBeenCalledTimes(1)
+    expect(onAction).not.toHaveBeenCalled()
+    expect(list.emitted('update:modelValue')).toBeUndefined()
   })
 
   it('Enter selects a row when nothing listens to action', async () => {
@@ -448,24 +642,28 @@ describe('ListView actions', () => {
     await row(list, 'Beta').trigger('click')
     expect(navigate).toHaveBeenCalledWith('/b')
   })
+
+  it('a link row is actionable without an action listener: a click opens it instead of selecting', async () => {
+    const dispatch = vi.spyOn(HTMLAnchorElement.prototype, 'dispatchEvent').mockReturnValue(true)
+
+    const list = mountList({
+      items: [{ value: 'a', label: 'Alpha', href: '/files/a' }],
+      selectable: true,
+      multiple: true,
+    })
+
+    await row(list, 'Alpha').trigger('click')
+
+    expect(dispatch).toHaveBeenCalledTimes(1)
+    expect(list.emitted('action')).toEqual([['a']])
+    expect(list.emitted('update:modelValue')).toBeUndefined()
+  })
 })
 
 describe('ListView virtualize', () => {
   it('renders only a window of a long list', async () => {
-    // happy-dom has no layout: the virtualizer measures its scroll element's box, so give it one
-    const sizes = [
-      vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(300),
-      vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(400),
-      vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(300),
-      vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(400),
-    ]
-
-    const items = Array.from({ length: 1000 }, (_, index) => ({
-      value: index,
-      label: `File ${index}`,
-    }))
-
-    const list = mountList({ items, virtualize: { overscan: 3 } })
+    mockLayout()
+    const list = mountList({ items: manyFiles, virtualize: { overscan: 3 } })
     await nextTick()
     await nextTick()
 
@@ -474,7 +672,34 @@ describe('ListView virtualize', () => {
     expect(rendered.length).toBeLessThan(50)
     expect(list.get('[role=grid]').attributes('aria-rowcount')).toBe('1000')
     expect(rendered[0]!.attributes('aria-rowindex')).toBe('1')
+  })
 
-    sizes.forEach((size) => size.mockRestore())
+  it('keeps the focused row rendered when it scrolls out of view, so arrow keys still move', async () => {
+    mockLayout()
+    const list = mountList({ items: manyFiles, virtualize: true })
+    await vi.waitFor(() => row(list, 'File 0'))
+    focusRow(list, 'File 0')
+
+    const grid = list.element as HTMLElement
+    grid.scrollTop = 20_000
+    grid.dispatchEvent(new Event('scroll'))
+
+    await vi.waitFor(() => expect(Math.max(...renderedRowIndices(list))).toBeGreaterThan(100))
+    expect(document.activeElement).toBe(row(list, 'File 0').element)
+
+    await press('ArrowDown')
+    await vi.waitFor(() => expect(focusedLabel()).toBe('File 1'))
+  })
+
+  it('End moves focus to the last row while it is off screen', async () => {
+    mockLayout()
+    const list = mountList({ items: manyFiles, virtualize: true })
+    await vi.waitFor(() => row(list, 'File 0'))
+    focusRow(list, 'File 0')
+
+    await press('End')
+
+    await vi.waitFor(() => expect(focusedLabel()).toBe('File 999'))
+    expect(row(list, 'File 999').attributes('aria-rowindex')).toBe('1000')
   })
 })

@@ -13,37 +13,32 @@
     @focusin="onFocusin"
     @keydown.capture="onKeydown"
   >
-    <div
-      v-if="virtualPadding.top > 0"
-      role="presentation"
-      aria-hidden="true"
-      :style="{ height: `${virtualPadding.top}px` }"
-    />
-    <ListViewItemRow
-      v-for="row in rows"
-      :key="row.item.value"
-      :ref="measureRow"
-      :item="row.item"
-      :index="row.index"
-      :selected="selection.isSelected(row.item.value)"
-      :focusable="row.index === focusedIndex"
-      :is-link="isLinkItem(row.item)"
-      :is-last="row.index === items.length - 1"
-      :selection-mode="selectionMode"
-      :checkbox-variant="variant === 'secondary' ? 'primary' : 'secondary'"
-      :row-index="virtualizer ? row.index + 1 : undefined"
-      :ui="ui"
-      :slots="itemSlots"
-      @press="(event, pointerType) => onPress(row.index, { event, pointerType })"
-      @activate="onActivate(row.index)"
-      @toggle="onToggle(row.index)"
-    />
-    <div
-      v-if="virtualPadding.bottom > 0"
-      role="presentation"
-      aria-hidden="true"
-      :style="{ height: `${virtualPadding.bottom}px` }"
-    />
+    <template v-for="entry in entries" :key="entry.key">
+      <div
+        v-if="entry.kind === 'spacer'"
+        role="presentation"
+        aria-hidden="true"
+        :style="{ height: `${entry.height}px` }"
+      />
+      <ListViewItemRow
+        v-else
+        :ref="measureRow"
+        :item="entry.item"
+        :index="entry.index"
+        :selected="selection.isSelected(entry.item.value)"
+        :focusable="entry.index === focusedIndex"
+        :is-link="hasLink(entry.item)"
+        :is-last="entry.index === items.length - 1"
+        :selection-mode="selectionMode"
+        :checkbox-variant="variant === 'secondary' ? 'primary' : 'secondary'"
+        :row-index="virtualizer ? entry.index + 1 : undefined"
+        :ui="ui"
+        :slots="itemSlots"
+        @press="(event, pointerType) => onPress(entry.index, { event, pointerType })"
+        @activate="onActivate(entry.index)"
+        @toggle="onToggle(entry.index)"
+      />
+    </template>
     <!-- A grid owns only rows, so the empty state is one (RAC GridList) -->
     <div v-if="!items.length" role="row" data-slot="list-view-empty">
       <div role="gridcell" data-slot="list-view-empty-state" :class="ui.emptyState()">
@@ -54,12 +49,14 @@
 </template>
 
 <script setup lang="ts" generic="T extends ListViewItem = ListViewItem">
+import type { VirtualItem, Virtualizer } from '@tanstack/vue-virtual'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import type { VNode } from 'vue'
 import { computed, getCurrentInstance, shallowRef, useSlots, useTemplateRef } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useLocale } from '@/composables/useLocale'
+import { hasLink } from '@/utils/link'
 
 import type {
   ListViewEmits,
@@ -119,9 +116,12 @@ const selection = useListViewSelection({
   onUpdate: (value) => emit('update:modelValue', value),
 })
 
-const isLinkItem = (item: ListViewItem) => item.to !== undefined || item.href !== undefined
-
 // ---- Virtualization ----
+
+/** A rendered row, or a stand-in for the height of the virtualized rows that aren't rendered. */
+type ListViewEntry =
+  | { kind: 'row'; key: ListViewValue; item: ListViewItem; index: number }
+  | { kind: 'spacer'; key: symbol; height: number }
 
 const DEFAULT_ESTIMATE_SIZE = 48
 const DEFAULT_OVERSCAN = 5
@@ -143,27 +143,60 @@ const virtualizer = props.virtualize
     )
   : undefined
 
-const rows = computed(() => {
-  if (!virtualizer) return props.items.map((item, index) => ({ item, index }))
+const toRowEntry = (index: number): ListViewEntry[] => {
+  const item = props.items[index]
 
-  return virtualizer.value.getVirtualItems().flatMap(({ index }) => {
-    const item = props.items[index]
+  return item ? [{ kind: 'row', key: item.value, item, index }] : []
+}
 
-    return item ? [{ item, index }] : []
-  })
+// Spacers are keyed by their order (symbols, so they never collide with an item value): the one above the rows stays
+// the same element while the window moves
+const toSpacerEntry = (order: number, height: number): ListViewEntry => ({
+  kind: 'spacer',
+  key: Symbol.for(`list-view-spacer-${order}`),
+  height,
 })
 
-// The rows outside the window are stood in for by two spacers of their measured or estimated height
-const virtualPadding = computed(() => {
-  const windowed = virtualizer?.value.getVirtualItems() ?? []
-  if (!virtualizer || !windowed.length) return { top: 0, bottom: 0 }
+// The rows in the virtual window plus the focused row, wherever it is: RAC keeps the focused row rendered so focus
+// survives scrolling it out of view and the arrow keys still move from it. Spacers of the measured or estimated
+// height fill every gap, so each row sits at its virtual offset.
+const getVirtualEntries = (v: Virtualizer<HTMLElement, HTMLElement>): ListViewEntry[] => {
+  const windowed = v.getVirtualItems()
 
-  const end = windowed.at(-1)?.end ?? 0
+  // Fresh once `getVirtualItems()` has measured
+  const focused: VirtualItem | undefined = v.measurementsCache[focusedIndex.value]
+  const isFocusedOutside = !!focused && !windowed.some((row) => row.index === focused.index)
 
-  return {
-    top: windowed[0]?.start ?? 0,
-    bottom: virtualizer.value.getTotalSize() - end,
+  const segments: VirtualItem[] = isFocusedOutside
+    ? [...windowed, focused].sort((a, b) => a.index - b.index)
+    : windowed
+
+  const rendered: ListViewEntry[] = []
+  let spacers = 0
+  let offset = 0
+
+  for (const segment of segments) {
+    const gap = segment.start - offset
+
+    if (gap > 0) {
+      rendered.push(toSpacerEntry(spacers, gap))
+      spacers += 1
+    }
+
+    rendered.push(...toRowEntry(segment.index))
+    offset = segment.end
   }
+
+  const rest = v.getTotalSize() - offset
+  if (rest > 0) rendered.push(toSpacerEntry(spacers, rest))
+
+  return rendered
+}
+
+const entries = computed(() => {
+  if (!virtualizer) return props.items.flatMap((_, index) => toRowEntry(index))
+
+  return getVirtualEntries(virtualizer.value)
 })
 
 // Register each rendered row so its real height is measured (and re-measured on resize). Vue calls a function ref
@@ -191,7 +224,7 @@ const focusedIndex = computed(() => {
 })
 
 const isFocusedRowRendered = computed(() =>
-  rows.value.some((row) => row.index === focusedIndex.value),
+  entries.value.some((entry) => entry.kind === 'row' && entry.index === focusedIndex.value),
 )
 
 // Only the list's own rows: a list nested in an action cell has rows with the same indices
@@ -256,11 +289,22 @@ const onRootFocus = (event: FocusEvent) => {
   if (index !== undefined) focusIndex(index)
 }
 
+// A row's controls are out of the tab order (see `useListViewKeyboard`), so Tab from outside only reaches one that
+// hasn't been taken out yet; the focused row holds the tab stop, so focus goes there. A control focused by a pointer
+// or a script keeps focus and makes its row the focused one, as in RAC's GridList.
 const onFocusin = (event: FocusEvent) => {
+  const list = root.value
   const target = event.target as HTMLElement
-  if (target.getAttribute('role') !== 'row' || target.parentElement !== root.value) return
+  const row = target.closest<HTMLElement>('[role=row][data-index]')
+  if (!list || !row || row.parentElement !== list) return
 
-  const item = props.items[Number(target.dataset.index)]
+  const from = event.relatedTarget as Node | null
+  const isFromOutside = !from || !list.contains(from)
+  const isTabbedOntoControl = target !== row && target.tabIndex >= 0 && isFromOutside
+  const entryIndex = getEntryIndex()
+  if (isTabbedOntoControl && entryIndex !== undefined) return focusIndex(entryIndex)
+
+  const item = props.items[Number(row.dataset.index)]
   if (item) focusedValue.value = item.value
 }
 
@@ -269,7 +313,7 @@ const onFocusin = (event: FocusEvent) => {
 const instance = getCurrentInstance()
 
 // Rows are actionable when `action` has a listener (RAC `onAction`) or when they link somewhere
-const allowsActions = (item: ListViewItem) => !!instance?.vnode.props?.onAction || isLinkItem(item)
+const allowsActions = (item: ListViewItem) => !!instance?.vnode.props?.onAction || hasLink(item)
 
 // RAC `useSelectableItem`: with `toggle` behaviour a press runs the action while nothing is selected; with
 // `replace` it selects, and a double click or Enter runs the action
@@ -291,7 +335,7 @@ const runAction = (index: number) => {
   if (!item) return
 
   emit('action', item.value)
-  if (!isLinkItem(item)) return
+  if (!hasLink(item)) return
 
   isFollowingLink = true
   getRowElement(index)?.click()

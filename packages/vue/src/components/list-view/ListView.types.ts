@@ -138,7 +138,10 @@ export type ListViewSlots<T extends ListViewItem = ListViewItem> = {
   'item-label'?: ListViewItemSlot<T>
   /** Replaces the description text. */
   'item-description'?: ListViewItemSlot<T>
-  /** Content at the end of the row (buttons, a menu). Left and Right arrows move focus into and out of it. */
+  /**
+   * Content at the end of the row (buttons, a menu). Its controls are left out of the Tab order, so the list stays one
+   * tab stop; Left and Right arrows move focus into and out of it.
+   */
   'item-action'?: ListViewItemSlot<T>
   /** Shown when `items` is empty. Defaults to "No results found". */
   empty?: () => VNode[]
