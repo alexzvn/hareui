@@ -41,7 +41,7 @@ const metrics: SparklineMetric[] = [
   {
     title: 'Table Bookings',
     value: 1836,
-    trend: { value: '+6.4%' },
+    trend: { label: '+6.4%' },
     color: 'var(--success)',
     data: toData([140, 152, 148, 166, 171, 163, 180, 188, 184, 196]),
   },
@@ -49,7 +49,7 @@ const metrics: SparklineMetric[] = [
     title: 'Repeat Guests',
     value: 0.314,
     format: { format: 'percent', maximumFractionDigits: 1 },
-    trend: { value: '-2.4%', trend: 'down' },
+    trend: { label: '-2.4%', trend: 'down' },
     color: 'var(--danger)',
     data: toData([35.2, 34.8, 35.1, 34.0, 33.6, 33.9, 32.8, 32.1, 31.9, 31.4]),
   },

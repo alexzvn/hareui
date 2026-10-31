@@ -21,10 +21,10 @@ export type MetricStatus = 'success' | 'warning' | 'danger'
 /** Formatting of the `Metric` value: every `NumberValue` prop except `value`. */
 export type MetricFormat = Omit<NumberValueProps, 'value' | 'class' | 'ui'>
 
-/** The `Metric` trend chip: `TrendChip` props, with `value` as its text. */
+/** The `Metric` trend chip: `TrendChip` props, with the chip text in `label`. */
 export type MetricTrend = Omit<TrendChipProps, 'label'> & {
   /** The chip text, e.g. `+3.2%`. */
-  value: string | number
+  label: string | number
 }
 
 /** The `Metric` progress bar. */

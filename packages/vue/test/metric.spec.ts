@@ -5,6 +5,7 @@ import { h } from 'vue'
 import Metric from '@/components/metric/Metric.vue'
 
 import { expectAccessible } from './a11y'
+import { settle } from './settle'
 
 describe('Metric', () => {
   it('is accessible with an icon, trend and progress', async () => {
@@ -14,7 +15,7 @@ describe('Metric', () => {
         icon: 'i-test',
         status: 'success',
         value: 1280,
-        trend: { value: '+4%' },
+        trend: { label: '+4%' },
         progress: { value: 40 },
       },
       attachTo: document.body,
@@ -42,7 +43,7 @@ describe('Metric', () => {
   })
 
   it('renders the trend as a TrendChip with data-trend', () => {
-    const wrapper = mount(Metric, { props: { value: 1, trend: { value: '-2%', trend: 'down' } } })
+    const wrapper = mount(Metric, { props: { value: 1, trend: { label: '-2%', trend: 'down' } } })
     const chip = wrapper.get('[data-trend]')
     expect(chip.attributes('data-trend')).toBe('down')
     expect(chip.text()).toContain('-2%')
@@ -84,13 +85,13 @@ describe('Metric', () => {
       },
     })
 
-    expect(wrapper.get('dd').text()).toBe('1,280|1280')
+    expect(wrapper.get('[data-slot="metric-value"]').text()).toBe('1,280|1280')
     wrapper.unmount()
   })
 
   it('replaces the trend chip with the trend slot', () => {
     const wrapper = mount(Metric, {
-      props: { value: 1, trend: { value: '+1%' } },
+      props: { value: 1, trend: { label: '+1%' } },
       slots: { trend: () => h('span', { id: 'own-trend' }, 'flat') },
     })
 
@@ -164,6 +165,38 @@ describe('Metric', () => {
 
     expect(wrapper.attributes('data-chart-placement')).toBe('inline')
     expect(wrapper.get('dd').find('[data-test="chart"]').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('renders no lone definition without a title', () => {
+    const wrapper = mount(Metric, { props: { value: 12 } })
+
+    expect(wrapper.find('dl').exists()).toBe(false)
+    expect(wrapper.find('dd').exists()).toBe(false)
+    expect(wrapper.get('[data-slot="metric-value"]').text()).toBe('12')
+  })
+
+  it('passes axe without a title', async () => {
+    const wrapper = mount(Metric, { props: { value: 12 }, attachTo: document.body })
+
+    await expectAccessible(wrapper.element)
+    wrapper.unmount()
+  })
+
+  it('emits action with the chosen menu item', async () => {
+    const wrapper = mount(Metric, {
+      props: { value: 1, actions: [{ value: 'export', label: 'Export' }] },
+      attachTo: document.body,
+    })
+
+    const trigger = wrapper.get('[data-slot="metric-actions"] button').element as HTMLElement
+    trigger.focus()
+    trigger.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    await settle()
+    document.querySelector<HTMLElement>('[data-slot=menu-item]')!.click()
+    await settle()
+
+    expect(wrapper.emitted('action')).toEqual([['export']])
     wrapper.unmount()
   })
 })

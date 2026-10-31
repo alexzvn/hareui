@@ -41,7 +41,7 @@ import { Metric } from '@hareui/vue'
 
 ### Trend
 
-`trend` adds a [TrendChip](./trend-chip) next to the value. It takes the chip's props, with the chip text in `value`.
+`trend` adds a [TrendChip](./trend-chip) next to the value. It takes the chip's props, with the chip text in `label`.
 
 `format` sets how the value is written. It takes [NumberValue](./number-value) props, for example
 `{ format: 'currency', currency: 'USD' }`.

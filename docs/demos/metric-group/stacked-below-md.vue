@@ -20,14 +20,14 @@ const items: Pick<MetricProps, 'title' | 'value' | 'format' | 'trend'>[] = [
     title: 'Revenue',
     value: 48250,
     format: { format: 'currency', currency: 'USD' },
-    trend: { value: '+12.4%' },
+    trend: { label: '+12.4%' },
   },
-  { title: 'Orders', value: 1284, trend: { value: '+3.8%' } },
+  { title: 'Orders', value: 1284, trend: { label: '+3.8%' } },
   {
     title: 'Refund rate',
     value: 0.018,
     format: { format: 'percent', maximumFractionDigits: 1 },
-    trend: { value: '-0.2%', trend: 'down' },
+    trend: { label: '-0.2%', trend: 'down' },
   },
 ]
 </script>

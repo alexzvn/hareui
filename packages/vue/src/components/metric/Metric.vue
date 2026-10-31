@@ -6,7 +6,8 @@
     :data-chart-placement="chartPlacement"
     :class="ui.base()"
   >
-    <dl data-slot="metric-list" :class="ui.list()">
+    <!-- Without a header term the list would hold a lone `<dd>`, so it falls back to plain containers. -->
+    <component :is="hasHeader ? 'dl' : 'div'" data-slot="metric-list" :class="ui.list()">
       <dt v-if="hasHeader" data-slot="metric-header" :class="ui.header()">
         <div
           v-if="icon || !!slots.icon"
@@ -22,7 +23,7 @@
           <slot name="title">{{ title }}</slot>
         </span>
       </dt>
-      <dd data-slot="metric-content" :class="ui.content()">
+      <component :is="hasHeader ? 'dd' : 'div'" data-slot="metric-content" :class="ui.content()">
         <span data-slot="metric-value" :class="ui.value()">
           <NumberValue v-if="value !== undefined" v-bind="format" :value="value">
             <template v-if="!!slots.value" #default="slotProps">
@@ -31,12 +32,7 @@
           </NumberValue>
         </span>
         <slot name="trend">
-          <TrendChip
-            v-if="trend"
-            v-bind="trendProps"
-            data-slot="metric-trend"
-            :class="ui.trend()"
-          />
+          <TrendChip v-if="trend" v-bind="trend" data-slot="metric-trend" :class="ui.trend()" />
         </slot>
         <div
           v-if="chartPlacement === 'inline' && !!slots.chart"
@@ -53,8 +49,8 @@
             :aria-label="title ?? t('metric.progress')"
           />
         </div>
-      </dd>
-    </dl>
+      </component>
+    </component>
     <slot />
     <div v-if="!!slots.actions || actions?.length" data-slot="metric-actions" :class="ui.actions()">
       <slot name="actions">
@@ -112,13 +108,4 @@ const ui = useComponentUI('metric', {
 })
 
 const hasHeader = computed(() => !!props.title || !!props.icon || !!slots.title || !!slots.icon)
-
-// `trend.value` is the chip text: TrendChip calls it `label`
-const trendProps = computed(() => {
-  if (!props.trend) return {}
-
-  const { value, ...chipProps } = props.trend
-
-  return { ...chipProps, label: value }
-})
 </script>

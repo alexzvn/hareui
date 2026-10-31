@@ -4,7 +4,7 @@
       title="Active Subscribers"
       :icon="Subscribers"
       :value="1284"
-      :trend="{ value: '-12', trend: 'down' }"
+      :trend="{ label: '-12', trend: 'down' }"
       :actions="actions"
       @action="last = String($event)"
     />

@@ -2,6 +2,7 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
+import { Chip } from '@/components/chip'
 import TrendChip from '@/components/trend-chip/TrendChip.vue'
 
 import { expectAccessible } from './a11y'
@@ -96,5 +97,11 @@ describe('TrendChip', () => {
     expect(wrapper.find('[data-slot="trend-chip-prefix"]').exists()).toBe(false)
     expect(wrapper.find('[data-slot="trend-chip-suffix"]').exists()).toBe(false)
     wrapper.unmount()
+  })
+
+  it('uses the default colour for the neutral trend', () => {
+    const wrapper = mount(TrendChip, { props: { trend: 'neutral', label: '0%' } })
+
+    expect(wrapper.getComponent(Chip).props('color')).toBe('default')
   })
 })

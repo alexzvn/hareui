@@ -4,7 +4,7 @@
     title="Net Revenue"
     :value="91340"
     :format="{ format: 'currency', currency: 'EUR', maximumFractionDigits: 0 }"
-    :trend="{ value: '+5.2%' }"
+    :trend="{ label: '+5.2%' }"
   >
     <template #chart>
       <AreaChart
