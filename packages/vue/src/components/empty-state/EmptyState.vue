@@ -95,7 +95,7 @@ const ui = useComponentUI('emptyState', {
     size: props.size,
     variant: props.variant,
     structured: isStructured.value,
-    media: mediaKind.value === 'icon' ? 'icon' : 'avatar',
+    media: mediaKind.value ?? 'none',
   }),
   props,
 })

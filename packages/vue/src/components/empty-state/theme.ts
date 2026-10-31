@@ -38,6 +38,8 @@ export default {
     media: {
       icon: { media: 'rounded-full bg-default text-foreground' },
       avatar: {},
+      custom: {},
+      none: {},
     },
     structured: {
       true: { base: 'flex flex-col items-center text-center' },
