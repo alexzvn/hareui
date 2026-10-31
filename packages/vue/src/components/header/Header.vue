@@ -54,6 +54,8 @@ import Modal from '@/components/modal/Modal.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useMenuAutoClose } from '@/composables/useMenuAutoClose'
 import { usePortal } from '@/composables/usePortal'
+import type { ResolvedLink } from '@/utils/link'
+import { LinkResolver } from '@/utils/link'
 
 import type { DrawerMenuProps, HeaderProps, HeaderSlots, ModalMenuProps } from './Header.types'
 import theme from './theme'
@@ -144,33 +146,31 @@ const Toggle: FunctionalComponent = () => {
 }
 
 // With vue-router installed (a global `RouterLink`), a path `to` navigates client-side and the route drives `autoClose`.
+// Any other `to` (a URL, a hash) stays a plain anchor.
 const instance = getCurrentInstance()
-const RouterLink = instance?.appContext.components.RouterLink
 
-const titleAttrs = computed(() => ({
-  to: props.to,
-  'aria-label': props.title.trim(),
-  'data-slot': 'header-title',
-  class: ui.value.title(),
-}))
+const titleLink = computed(() => ({ to: props.to, external: !props.to.startsWith('/') }))
 
 const titleContent = () => (slots.title ? slots.title() : props.title)
 
-const renderTitleLink = () => {
-  if (RouterLink && props.to.startsWith('/')) {
-    return h(RouterLink, titleAttrs.value, () => titleContent())
-  }
-
-  const { class: className, 'aria-label': ariaLabel } = titleAttrs.value
-  const linkAttrs = {
-    'aria-label': ariaLabel,
-    'data-slot': 'header-title',
-    class: className,
-    href: props.to,
-  }
-
-  return h('a', linkAttrs, titleContent())
-}
+const renderTitleLink = () =>
+  h(
+    LinkResolver,
+    { link: titleLink.value },
+    {
+      default: ({ as, attrs }: ResolvedLink) =>
+        h(
+          as,
+          {
+            ...attrs,
+            'aria-label': props.title.trim(),
+            'data-slot': 'header-title',
+            class: ui.value.title(),
+          },
+          { default: titleContent },
+        ),
+    },
+  )
 
 const Left: FunctionalComponent = () =>
   h('div', { 'data-slot': 'header-left', class: ui.value.left() }, [

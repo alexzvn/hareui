@@ -3,6 +3,7 @@ import type { VNode } from 'vue'
 import type { KbdKey } from '@/components/kbd/kbdKeys'
 import type { PortalTarget } from '@/config'
 import type { IconValue } from '@/types/icon'
+import type { LinkBaseProps } from '@/types/link'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -13,8 +14,11 @@ type Dropdown = typeof theme
 /** The key identifying a `Dropdown` item, emitted by `action` and stored in `v-model`. */
 export type DropdownValue = string | number
 
-/** An actionable or selectable entry of a `Dropdown` menu. */
-export type DropdownItem = {
+/**
+ * An actionable or selectable entry of a `Dropdown` menu. A plain action item with `to` or `href` renders as a link:
+ * pressing it (or Enter / Space on it) follows the link.
+ */
+export type DropdownItem = LinkBaseProps & {
   /** Unique key of the item across the whole menu. Emitted by `action` and stored in `v-model`. */
   value: DropdownValue
   /** The item text, shown unless the `#item` / `#item-label` slot is used. */
@@ -33,6 +37,11 @@ export type DropdownItem = {
   kbd?: { keys?: KbdKey | KbdKey[]; content?: string }
   /** Nested entries: the item becomes a submenu trigger. */
   items?: DropdownEntry[]
+  /**
+   * Called when the item is chosen, before the root `action` event (or the selection toggle). Call
+   * `event.preventDefault()` to keep the menu open.
+   */
+  onSelect?: (event: Event) => void
   /** Classes merged onto the item element. */
   class?: ClassValue
   /** Extra fields are passed through to the slots as `item`. */

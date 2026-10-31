@@ -109,6 +109,14 @@ Set `icon` on an item to show an icon before its label. It takes an icon class o
 
 <ComponentPreview name="context-menu/with-icons" />
 
+### With Links
+
+An item with `to` or `href` renders as a link. Clicking it, or pressing Enter or Space on it, follows the link. With vue-router installed, `to` navigates client-side.
+
+`onSelect` on an item runs when the item is chosen, before the `action` event. Call `event.preventDefault()` in it to keep the menu open.
+
+<ComponentPreview name="context-menu/with-links" />
+
 ### With Custom Slots
 
 `#content-top` and `#content-bottom` render inside the menu, above and below the items. `#item-label`, `#item-description` and `#item-trailing` replace parts of each item, and `#item` replaces the whole item content.

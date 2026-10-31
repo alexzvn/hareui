@@ -1,6 +1,6 @@
 <template>
   <li data-slot="childItem" :class="ui.childItem({ override: parent.ui?.childItem })">
-    <LinkResolver v-slot="{ as, active, attrs }" :item="child">
+    <LinkResolver v-slot="{ as, active, attrs }" :link="child" :current="false">
       <NavigationMenuLink as-child :active="active" @select="onSelect">
         <component
           :is="as"
@@ -124,10 +124,10 @@ import { NavigationMenuLink } from 'reka-ui'
 
 import { get } from '@/utils/get'
 import { IconRenderer } from '@/utils/icon'
+import { LinkResolver } from '@/utils/link'
 
 import { useNavigationMenu } from './context'
 import { ExternalIcon } from './icons'
-import LinkResolver from './LinkResolver'
 import type { NavigationMenuChildItem, NavigationMenuItem } from './NavigationMenu.types'
 
 // One link of an item's child list, in a dropdown content (`detailed`: label + description) or in

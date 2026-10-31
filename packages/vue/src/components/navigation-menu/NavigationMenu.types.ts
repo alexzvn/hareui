@@ -7,6 +7,7 @@ import type { ChipProps } from '@/components/chip/Chip.types'
 import type { DropdownEntry } from '@/components/dropdown/Dropdown.types'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
 import type { IconValue } from '@/types/icon'
+import type { LinkBaseProps } from '@/types/link'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -26,7 +27,7 @@ export type NavigationMenuChildItem = {
 } & Omit<NavigationMenuItemFields, 'type' | 'ui'>
 
 /** The known fields of an item, kept apart from the index signature so `Omit` preserves them. */
-type NavigationMenuItemFields = {
+type NavigationMenuItemFields = LinkBaseProps & {
   /** The item text. */
   label?: string
   /** Leading icon: a class string or a component. */
@@ -84,28 +85,8 @@ type NavigationMenuItemFields = {
   open?: boolean
   /** Called when the item is selected (clicked or activated with the keyboard). */
   onSelect?: (e: Event) => void
-  /** Whether the item is the current location. Overrides the router match. */
-  active?: boolean
-  /** Whether the item is disabled. */
-  disabled?: boolean
-  /** The URL to link to. A vue-router location is passed to `RouterLink` when the app has it, a string renders a plain anchor. */
-  href?: string
-  /** A route location (vue-router) or URL. */
-  to?: string | Record<string, unknown>
   /** The element or component to render the link as, e.g. a router link component. */
   as?: string | Component
-  /** The link `target`. `_blank` also shows the external icon. */
-  target?: '_blank' | '_parent' | '_self' | '_top' | (string & {}) | null
-  /** The link `rel`. Defaults to `noopener noreferrer` for `_blank`. */
-  rel?: string | null
-  /** The link `download` attribute. */
-  download?: boolean | string
-  /** Treat the link as external: never route it through `RouterLink`. */
-  external?: boolean
-  /** With a router, only match the exact route as active. */
-  exact?: boolean
-  /** With a router, replace the history entry instead of pushing. */
-  replace?: boolean
   /** Additional classes merged into the item's link. */
   class?: ClassValue
   /** Per-slot class overrides for this item. */

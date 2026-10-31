@@ -4,6 +4,7 @@ export * as themes from './components/themes'
 export type { Themes } from './components/themes'
 export type * from './types/tv'
 export type { IconValue } from './types/icon'
+export type { LinkBaseProps } from './types/link'
 export { tv } from './utils/tv'
 
 export * from './components/button'

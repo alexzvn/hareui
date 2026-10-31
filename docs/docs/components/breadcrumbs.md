@@ -65,6 +65,19 @@ const items: MyItem[] = [/* ... */]
 // <template #item="{ item }"> — item.badge is a string
 ```
 
+### Links
+
+Each item can link somewhere. The last item is the current page and never renders a link.
+
+| Field                       | What it does                                                            |
+| --------------------------- | ----------------------------------------------------------------------- |
+| `to`                        | Route location; navigates client-side when vue-router is installed      |
+| `href`                      | Plain URL, always a normal `<a>`                                        |
+| `target`, `rel`, `download` | Passed to the `<a>`; `target="_blank"` sets `rel="noopener noreferrer"` |
+| `external`                  | Never routes `to` through vue-router                                    |
+| `replace`, `exact`          | Router only: replace the history entry, match only the exact route      |
+| `disabled`                  | Drops the `href` and sets `aria-disabled="true"`                        |
+
 ## Examples
 
 ### Navigation Levels

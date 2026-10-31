@@ -67,6 +67,16 @@ Set `icon` on an item to show an icon before its label. It takes an icon class o
 
 <ComponentPreview name="dropdown/with-icons" />
 
+### With Links
+
+An item with `to` or `href` renders as a link. Clicking it, or pressing Enter or Space on it, follows
+the link. With vue-router installed, `to` navigates client-side.
+
+`onSelect` on an item runs when the item is chosen, before the `action` event. Call
+`event.preventDefault()` in it to keep the menu open.
+
+<ComponentPreview name="dropdown/with-links" />
+
 ### With Descriptions
 
 <ComponentPreview name="dropdown/with-descriptions" />

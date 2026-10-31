@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
-import { h, nextTick } from 'vue'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { defineComponent, h, nextTick } from 'vue'
 
 import type { ContextMenuEntry, ContextMenuItemSlotProps } from '@/components/context-menu'
 import { ContextMenu } from '@/components/context-menu'
@@ -312,5 +312,87 @@ describe('context menu accessibility', () => {
     await rightClick()
     expect(menu()).not.toBeNull()
     await expectAccessible()
+  })
+})
+
+describe('context menu item icons, links and onSelect', () => {
+  // A minimal vue-router RouterLink: it renders nothing itself and hands the link state to its slot.
+  const routerStub = (navigate: (to: unknown) => void) =>
+    defineComponent({
+      props: { to: { type: [String, Object], required: true }, custom: Boolean, replace: Boolean },
+      setup(props, { slots }) {
+        return () =>
+          slots.default?.({
+            href: `/app${props.to}`,
+            isActive: false,
+            isExactActive: false,
+            navigate: (event: MouseEvent) => {
+              event.preventDefault()
+              navigate(props.to)
+            },
+          })
+      },
+    })
+
+  const StarIcon = { render: () => h('svg', { 'data-testid': 'star' }) }
+
+  it('renders an item icon only when the item sets one', async () => {
+    render({
+      props: {
+        items: [
+          { value: 'fav', label: 'Favourite', icon: StarIcon },
+          { value: 'plain', label: 'Plain' },
+        ],
+      },
+    })
+
+    await rightClick()
+
+    expect(item('Favourite').querySelector('[data-testid=star]')?.getAttribute('aria-hidden')).toBe(
+      'true',
+    )
+
+    expect(item('Plain').querySelector('[data-slot=menu-item-icon]')).toBeNull()
+  })
+
+  it('renders an item with href as an anchor menu item', async () => {
+    render({ props: { items: [{ value: 'docs', label: 'Docs', href: '/docs' }] } })
+    await rightClick()
+    expect(item('Docs').tagName).toBe('A')
+    expect(item('Docs').getAttribute('href')).toBe('/docs')
+    expect(item('Docs').getAttribute('role')).toBe('menuitem')
+  })
+
+  it('a disabled link item has no href', async () => {
+    render({ props: { items: [{ value: 'docs', label: 'Docs', href: '/docs', disabled: true }] } })
+    await rightClick()
+    expect(item('Docs').hasAttribute('href')).toBe(false)
+    expect(item('Docs').getAttribute('aria-disabled')).toBe('true')
+  })
+
+  it('routes an item `to` through RouterLink when the app registers it', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    wrapper = mount(ContextMenu, {
+      props: { items: [{ value: 'settings', label: 'Settings', to: '/settings' }] },
+      slots: { default: () => h('p', 'Right-click the card') },
+      attachTo: document.body,
+      global: { components: { RouterLink: routerStub(navigate) } },
+    })
+
+    await rightClick()
+    expect(item('Settings').getAttribute('href')).toBe('/app/settings')
+    item('Settings').click()
+    await settle()
+    expect(navigate).toHaveBeenCalledWith('/settings')
+  })
+
+  it('calls item onSelect with the event and still emits action', async () => {
+    const onSelect = vi.fn<(event: Event) => void>()
+    const w = render({ props: { items: [{ value: 'copy', label: 'Copy', onSelect }] } })
+    await rightClick()
+    item('Copy').click()
+    await settle()
+    expect(onSelect).toHaveBeenCalledWith(expect.any(Event))
+    expect(w.emitted('action')).toEqual([['copy']])
   })
 })

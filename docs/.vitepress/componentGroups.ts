@@ -127,6 +127,7 @@ export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>([
   'breadcrumbs',
   'context-menu',
   'dropdown',
+  'link',
   'list-box',
   'tabs',
 ])

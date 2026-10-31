@@ -7,6 +7,7 @@ import type { BadgeProps } from '@/components/badge/Badge.types'
 import type { ButtonProps } from '@/components/button/Button.types'
 import type { CloseButtonProps } from '@/components/close-button/CloseButton.types'
 import type { IconValue } from '@/types/icon'
+import type { LinkBaseProps } from '@/types/link'
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -32,8 +33,11 @@ type CommandPaletteItemSlot =
   | 'itemTrailingKbds'
   | 'itemTrailingKbd'
 
-/** One command of a group. Extra fields are kept and passed to the slots as `item`. */
-export type CommandPaletteItem = {
+/**
+ * One command of a group. Extra fields are kept and passed to the slots as `item`. The link fields render the row as
+ * a link; `active` and `disabled` keep their item meaning, and the row's highlight never follows the router.
+ */
+export type CommandPaletteItem = Omit<LinkBaseProps, 'active' | 'disabled' | 'exact'> & {
   /** Text shown before the label, in the regular text color. */
   prefix?: string
   /** The item text. Searched by default. */
@@ -70,22 +74,8 @@ export type CommandPaletteItem = {
   children?: CommandPaletteItem[]
   /** Called when the item is selected (clicked, or `Enter` while highlighted). Not called for items with `children`. */
   onSelect?: (event: Event) => void
-  /** The URL to link to: the item renders as an anchor. */
-  href?: string
-  /** A route location (vue-router) or URL. Goes through `RouterLink` when the app has it. */
-  to?: string | Record<string, unknown>
   /** The element or component to render the link as, e.g. a router link component. */
   as?: string | Component
-  /** The link `target`. */
-  target?: '_blank' | '_parent' | '_self' | '_top' | (string & {}) | null
-  /** The link `rel`. Defaults to `noopener noreferrer` for `_blank`. */
-  rel?: string | null
-  /** The link `download` attribute. */
-  download?: boolean | string
-  /** Treat the link as external: never route it through `RouterLink`. */
-  external?: boolean
-  /** With a router, replace the history entry instead of pushing. */
-  replace?: boolean
   /** Additional classes merged into the item element. */
   class?: ClassValue
   /** Per-slot class overrides for this item. */
