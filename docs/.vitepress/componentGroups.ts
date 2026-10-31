@@ -36,6 +36,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
   'Data Display': [
     'badge',
     'chip',
+    'metric',
     'number-value',
     'rich-table',
     'table',
@@ -128,6 +129,7 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'command-palette',
   'context-menu',
   'editor',
+  'metric',
   'number-value',
   'rating',
   'sidebar',
