@@ -144,7 +144,13 @@ Set `fuse.fuseOptions.includeMatches` to mark the matched characters in labels a
 
 ## Custom slots
 
-Items and groups with a `slot` render through `#<slot>`, `#<slot>-leading`, `#<slot>-label`, `#<slot>-description`, `#<slot>-trailing` and `#<slot>-group-label`. Items with `href` or `to` render as links.
+Set `slot` on an item or group to give it its own slots:
+
+- `#<slot>-leading`, `#<slot>-label`, `#<slot>-description` and `#<slot>-trailing` for the parts of an item
+- `#<slot>` for the whole item
+- `#<slot>-group-label` for a group's heading
+
+Items with `href` or `to` render as links.
 
 <ComponentPreview name="command-palette/custom-slot" />
 

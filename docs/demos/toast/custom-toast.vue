@@ -50,8 +50,8 @@ const customQueue = new ToastQueue()
 
 const show = () => {
   customQueue.add({
-    title: 'Custom layout toast',
-    description: 'This uses a custom render function',
+    title: 'Meeting in 10 minutes',
+    description: 'Design review · Room 4B',
     variant: 'default',
   })
 }

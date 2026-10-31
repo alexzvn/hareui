@@ -104,9 +104,12 @@ The button takes the same link props as [`Link`](./link#link-props):
 
 <ComponentPreview name="button/social" />
 
-### Render Function
+### Custom Element
 
-<ComponentPreview name="button/render-function" />
+`as` renders the button as another element or component. An element other than `<button>` gets `role="button"`, joins
+the tab order and responds to Enter and Space. Here a `<label>` opens the file picker of the input inside it.
+
+<ComponentPreview name="button/custom-element" />
 
 ### Adding custom variants
 

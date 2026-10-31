@@ -9,9 +9,9 @@
       <template #title> Scroll: {{ scroll.charAt(0).toUpperCase() + scroll.slice(1) }} </template>
       <template #body>
         <p v-for="i in 30" :key="i" class="mb-3">
-          Paragraph {{ i }}: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-          pulvinar risus non risus hendrerit venenatis. Pellentesque sit amet hendrerit risus, sed
-          porttitor quam.
+          <strong class="text-foreground">{{ i }}.</strong> We may update these terms from time to
+          time. When we do, we'll email you at least 30 days before the changes apply and keep the
+          previous version on this page.
         </p>
       </template>
       <template #footer="{ close }">

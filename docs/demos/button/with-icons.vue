@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-wrap gap-3">
     <Button>
-      <Icon icon="gravity-ui:globe" />
+      <Icon icon="gravity-ui:magnifier" />
       Search
     </Button>
     <Button variant="secondary">

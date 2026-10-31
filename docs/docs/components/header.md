@@ -12,7 +12,13 @@ links:
 import { Header } from '@hareui/vue'
 ```
 
-The `Header` component renders a sticky `<header>` element. Use the `left`, `default` and `right` slots to customize it, and the `body` or `content` slots to fill the menu shown on mobile. Add `class="border-b border-separator"` to separate it from the page.
+The `Header` component renders a sticky `<header>` element. Fill the bar with these slots:
+
+- `left`: the title link
+- `default`: the navigation, centered from the `lg` breakpoint
+- `right`: actions
+
+On mobile, the `body` slot fills the menu; `content` replaces the whole menu. Add `class="border-b border-separator"` to separate the header from the page.
 
 <ComponentPreview name="header/basic" contain="18rem" />
 

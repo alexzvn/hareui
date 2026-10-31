@@ -192,7 +192,13 @@ Previous/next navigation for a controlled Accordion or DisclosureGroup (used by 
 | `onExpandedChange` | `(keys: ExpandedValue[]) => void`   | -       | Called with the new expanded values                  |
 | `multiple`         | `MaybeRefOrGetter<boolean>`         | `false` | Keep previously expanded items open while navigating |
 
-Returns `currentIndex`, `isPrevDisabled`, `isNextDisabled` (computed refs) and `onPrevious`, `onNext`.
+It returns:
+
+| Name                               | Type                   | Description                                                         |
+| ---------------------------------- | ---------------------- | ------------------------------------------------------------------- |
+| `currentIndex`                     | `ComputedRef<number>`  | Index of the first expanded item (the first item when none is open) |
+| `isPrevDisabled`, `isNextDisabled` | `ComputedRef<boolean>` | Whether there is no item before / after it                          |
+| `onPrevious`, `onNext`             | `() => void`           | Expand the previous / next item                                     |
 
 ## Theme
 

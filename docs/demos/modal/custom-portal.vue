@@ -1,41 +1,26 @@
 <template>
   <div class="flex flex-col gap-4">
-    <div>
-      <p class="text-sm">
-        Render modals inside a custom container instead of <code>document.body</code>
-      </p>
-      <p class="text-sm text-muted">
-        Apply <code class="rounded px-1 py-0.5 text-xs">transform: translateZ(0)</code> to the
-        container to create a new stacking context.
-      </p>
-    </div>
+    <p class="text-sm text-muted">
+      The panel's <code>transform</code> makes it the containing block, so the backdrop covers only
+      the panel.
+    </p>
     <div
       ref="container"
       class="relative flex h-[380px] items-center justify-center overflow-hidden rounded bg-muted/20"
       style="transform: translate(0)"
     >
-      <Modal v-if="container" :portal="container" :ui="{ backdrop: 'h-full' }">
+      <Modal
+        v-if="container"
+        :portal="container"
+        :ui="{ backdrop: 'h-full', container: 'h-full max-h-full' }"
+      >
         <Button>Open Modal</Button>
-        <template #title> Custom Portal </template>
+        <template #title> Session expiring </template>
         <template #body>
-          <p class="text-sm text-muted">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
-          <p class="text-sm text-muted">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
-          <p class="text-sm text-muted">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
+          <p>You'll be signed out in 2 minutes. Save your work or stay signed in.</p>
         </template>
         <template #footer="{ close }">
-          <Button variant="secondary" @click="close"> Close </Button>
+          <Button @click="close"> Stay Signed In </Button>
         </template>
       </Modal>
     </div>

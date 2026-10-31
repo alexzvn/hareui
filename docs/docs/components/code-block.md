@@ -73,7 +73,11 @@ Use the `hide-header` prop to remove the header row. The copy button then sits o
 
 ### Copy
 
-The copy button writes `code` to the clipboard and shows a check for about 2 seconds. Pass an object to `copy` to change its `label`, its `copiedLabel` or the `duration` in milliseconds, or set `copy` to `false` to hide it.
+The copy button writes `code` to the clipboard and shows a check for 1650 ms. Set `copy` to `false` to hide it, or pass an object to change it:
+
+- `label`: the button's accessible name
+- `copiedLabel`: the name once copied
+- `duration`: how long the check shows, in milliseconds (default `1650`)
 
 <ComponentPreview name="code-block/copy" />
 

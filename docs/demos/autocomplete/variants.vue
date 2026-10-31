@@ -96,10 +96,10 @@ import { Autocomplete, TagGroup } from '@hareui/vue'
 import { ref } from 'vue'
 
 const items: ListBoxItem[] = [
-  { value: 'option1', label: 'Option 1' },
-  { value: 'option2', label: 'Option 2' },
-  { value: 'option3', label: 'Option 3' },
-  { value: 'option4', label: 'Option 4' },
+  { value: 'design', label: 'Design' },
+  { value: 'engineering', label: 'Engineering' },
+  { value: 'marketing', label: 'Marketing' },
+  { value: 'support', label: 'Support' },
 ]
 
 const selectedKey1 = ref<string | null>(null)

@@ -53,6 +53,8 @@ through props and named slots.
 
 ### Controlled State
 
+Bind `v-model:open` to open the dialog from anywhere, here a button outside it.
+
 <ComponentPreview name="alert-dialog/controlled" />
 
 ### Custom Icon
@@ -72,6 +74,9 @@ through props and named slots.
 <ComponentPreview name="alert-dialog/custom-backdrop" />
 
 ### Dismiss Behavior
+
+An alert dialog waits for an answer: by default, Escape and clicks on the backdrop don't close it. Set
+`keyboardDismissible` to close it with Escape, and `dismissible` to close it with a backdrop click.
 
 <ComponentPreview name="alert-dialog/dismiss-behavior" />
 

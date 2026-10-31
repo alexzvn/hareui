@@ -119,7 +119,9 @@ An item with `to` or `href` renders as a link. Clicking it, or pressing Enter or
 
 ### With Custom Slots
 
-`#content-top` and `#content-bottom` render inside the menu, above and below the items. `#item-label`, `#item-description` and `#item-trailing` replace parts of each item, and `#item` replaces the whole item content.
+- `#content-top` and `#content-bottom` render inside the menu, above and below the items.
+- `#item-label`, `#item-description` and `#item-trailing` replace parts of each item.
+- `#item` replaces the whole item content.
 
 <ComponentPreview name="context-menu/with-custom-slots" />
 

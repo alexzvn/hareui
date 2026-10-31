@@ -86,9 +86,11 @@ For more details, see the Tailwind CSS documentation:
 
 <ComponentPreview name="link/custom-icon" />
 
-### Render Function
+### Custom Element
 
-<ComponentPreview name="link/render-function" />
+`as` renders the link as another element or component. Here it is a `<button>` that looks like a link.
+
+<ComponentPreview name="link/custom-element" />
 
 ## Customization
 

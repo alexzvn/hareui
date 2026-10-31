@@ -1,80 +1,35 @@
 <template>
-  <div class="flex max-w-sm flex-col gap-6">
-    <div class="flex flex-col gap-2">
-      <h3 class="text-lg font-semibold">dismissible</h3>
-      <p class="text-sm text-muted">
-        Controls whether the alert dialog can be dismissed by clicking the overlay backdrop. Alert
-        dialogs typically require explicit action, so this defaults to <code>false</code>. Set to
-        <code>true</code> for less critical confirmations.
-      </p>
-      <AlertDialog class="sm:max-w-[400px]" :dismissible="false" title="dismissible = false">
-        <Button variant="secondary"> Open Alert Dialog </Button>
-        <template #header>
-          <div
-            data-slot="alert-dialog-icon"
-            class="flex size-10 shrink-0 items-center justify-center rounded-3xl select-none bg-danger-soft text-danger-soft-foreground"
-          >
-            <Icon class="size-5" icon="gravity-ui:circle-info" />
-          </div>
-          <p class="align-middle text-base font-medium text-foreground">dismissible = false</p>
-          <p class="text-sm leading-5 text-muted">
-            Clicking the backdrop won't close this alert dialog
-          </p>
-        </template>
-        <template #body>
-          <p>
-            Try clicking outside this alert dialog on the overlay - it won't close. You must use the
-            action buttons to dismiss it.
-          </p>
-        </template>
-        <template #footer="{ close }">
-          <Button variant="tertiary" @click="close"> Cancel </Button>
-          <Button @click="close"> Confirm </Button>
-        </template>
-      </AlertDialog>
-    </div>
+  <div class="flex flex-wrap gap-3">
+    <AlertDialog class="sm:max-w-[400px]" status="danger" title="Delete 3 files?">
+      <Button variant="secondary"> Default </Button>
+      <template #body>
+        <p>Escape and backdrop clicks do nothing. Pick an answer below.</p>
+      </template>
+      <template #footer="{ close }">
+        <Button variant="tertiary" @click="close"> Cancel </Button>
+        <Button variant="danger" @click="close"> Delete </Button>
+      </template>
+    </AlertDialog>
 
-    <div class="flex flex-col gap-2">
-      <h3 class="text-lg font-semibold">keyboardDismissible</h3>
-      <p class="text-sm text-muted">
-        Controls whether the ESC key can dismiss the alert dialog. Alert dialogs typically require
-        explicit action, so this defaults to <code>false</code>. When set to <code>true</code>, the
-        ESC key will be enabled.
-      </p>
-      <AlertDialog
-        class="sm:max-w-[400px]"
-        :keyboard-dismissible="false"
-        title="keyboardDismissible = false"
-      >
-        <Button variant="secondary"> Open Alert Dialog </Button>
-        <template #header>
-          <div
-            data-slot="alert-dialog-icon"
-            class="flex size-10 shrink-0 items-center justify-center rounded-3xl select-none bg-accent-soft text-accent-soft-foreground"
-          >
-            <Icon class="size-5" icon="gravity-ui:circle-info" />
-          </div>
-          <p class="align-middle text-base font-medium text-foreground">
-            keyboardDismissible = false
-          </p>
-          <p class="text-sm leading-5 text-muted">ESC key is disabled</p>
-        </template>
-        <template #body>
-          <p>
-            Press ESC - nothing happens. You must use the action buttons to dismiss this alert
-            dialog.
-          </p>
-        </template>
-        <template #footer="{ close }">
-          <Button variant="tertiary" @click="close"> Cancel </Button>
-          <Button @click="close"> Confirm </Button>
-        </template>
-      </AlertDialog>
-    </div>
+    <AlertDialog
+      class="sm:max-w-[400px]"
+      dismissible
+      keyboard-dismissible
+      status="accent"
+      title="Turn on notifications?"
+    >
+      <Button variant="secondary"> Dismissible </Button>
+      <template #body>
+        <p>Press Escape or click outside to close this one.</p>
+      </template>
+      <template #footer="{ close }">
+        <Button variant="tertiary" @click="close"> Not Now </Button>
+        <Button @click="close"> Turn On </Button>
+      </template>
+    </AlertDialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { AlertDialog, Button } from '@hareui/vue'
-import { Icon } from '@iconify/vue'
 </script>

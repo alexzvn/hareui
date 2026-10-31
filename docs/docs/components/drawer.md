@@ -61,6 +61,8 @@ excluded from the body area to avoid scroll conflicts.
 
 ### Controlled State
 
+Bind `v-model:open` to open the drawer from anywhere, here a button outside it.
+
 <ComponentPreview name="drawer/controlled" />
 
 ### With Form

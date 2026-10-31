@@ -373,7 +373,18 @@ for (const file of files) {
       type: format(s.type, `slots:${s.name}`),
       description: s.description,
     })),
-    events: meta.events.map((e) => ({
+    // `defineModel('x')` adds `update:x` next to the same event declared in the Emits type: keep one per
+    // name, preferring the documented entry.
+    events: [
+      ...meta.events
+        .reduce((byName, e) => {
+          const seen = byName.get(e.name)
+          if (!seen || (!seen.description && e.description)) byName.set(e.name, e)
+
+          return byName
+        }, new Map<string, (typeof meta.events)[number]>())
+        .values(),
+    ].map((e) => ({
       name: e.name,
       type: format(e.type, `events:${e.name}`),
       description: e.description,

@@ -4,7 +4,7 @@
     allows-empty-collection
     clearable
     class="w-[256px]"
-    label="Search a Star Wars characters"
+    label="Star Wars character"
     placeholder="Search..."
     search-label="Search characters"
     search-placeholder="Search characters..."

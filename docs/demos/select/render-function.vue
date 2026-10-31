@@ -2,7 +2,7 @@
   <!-- Attributes fall through to the root element -->
   <Select
     class="w-[256px]"
-    data-custom="foo"
+    data-testid="state-select"
     label="State"
     placeholder="Select one"
     :items="states"

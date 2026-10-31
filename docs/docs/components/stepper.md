@@ -68,7 +68,16 @@ Use the `color` prop to change the active circle, the completed circles and the 
 
 ### CSS Variables
 
-The colors and sizes are CSS variables on the root, so a class can override them for every step: `--stepper-active-color`, `--stepper-complete-color`, `--stepper-complete-fg`, `--stepper-inactive-border`, `--stepper-inactive-fg`, `--stepper-indicator-size`, `--stepper-separator-size` and `--stepper-vertical-gap`.
+The colors and sizes are CSS variables on the root, so one class restyles every step:
+
+| Variable                                             | Sets                                            |
+| ---------------------------------------------------- | ----------------------------------------------- |
+| `--stepper-active-color`                             | Ring and number of the active step              |
+| `--stepper-complete-color`, `--stepper-complete-fg`  | Fill and check mark of completed steps          |
+| `--stepper-inactive-border`, `--stepper-inactive-fg` | Ring and number of upcoming steps               |
+| `--stepper-indicator-size`                           | Size of each step circle                        |
+| `--stepper-separator-size`                           | Thickness of the line between steps             |
+| `--stepper-vertical-gap`                             | Space between steps in the vertical orientation |
 
 <ComponentPreview name="stepper/custom-color" />
 
@@ -76,7 +85,12 @@ The colors and sizes are CSS variables on the root, so a class can override them
 
 Use `v-model` to control the active step. The value is matched against each item's `value` (or the key set with `value-key`); a number that no item has is a step index. A value past the last step marks every step completed. Use `default-value` when you don't need to control it.
 
-The component exposes `next()` and `prev()`, which move one step and emit `next` / `prev` with the new step, and `hasNext` / `hasPrev` to disable your buttons at either end. Here Finish sets the value past the last step, which completes them all.
+The component exposes these through a template ref:
+
+- `next()` and `prev()` move one step and emit `next` / `prev` with the new step.
+- `hasNext` and `hasPrev` tell you when to disable your buttons at either end.
+
+Here Finish sets the value past the last step, which completes them all.
 
 <ComponentPreview name="stepper/model" />
 
@@ -126,7 +140,11 @@ The `#indicator` slot can also mix content: a check on completed steps and a sma
 
 ### Per-Item Slots
 
-Set the `slot` field of an item to give it its own slots: `#<slot>-wrapper`, `#<slot>-title`, `#<slot>-description` and `#<slot>` for its content. They take precedence over the shared slots.
+Set the `slot` field of an item to give it its own slots. They take precedence over the shared slots:
+
+- `#<slot>-title` and `#<slot>-description` for its text
+- `#<slot>-wrapper` for its title and description together
+- `#<slot>` for its content
 
 <ComponentPreview name="stepper/item-slot" />
 
