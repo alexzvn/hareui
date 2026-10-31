@@ -14,6 +14,7 @@
         data-slot="drawer-backdrop"
         :style="visualViewportStyle"
         :class="ui.backdrop()"
+        v-bind="presenceListeners"
       >
         <div
           data-slot="drawer-content"
@@ -162,6 +163,7 @@ const {
   onEscapeKeyDown,
   onInteractOutside,
   onOpenAutoFocus,
+  presenceListeners,
 } = useDialogShell({
   props,
   slots,

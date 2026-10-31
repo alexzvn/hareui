@@ -92,4 +92,12 @@ export type AlertDialogSlots = {
 export type AlertDialogEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]
+  /** Emitted when the open animation starts. */
+  enter: []
+  /** Emitted when the open animation finished, right after `enter` when there is none. */
+  'after:enter': []
+  /** Emitted when the close animation starts. */
+  leave: []
+  /** Emitted when the close animation finished and the dialog left the DOM. */
+  'after:leave': []
 }

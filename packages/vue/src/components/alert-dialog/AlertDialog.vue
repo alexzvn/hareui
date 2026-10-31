@@ -14,6 +14,7 @@
         data-slot="alert-dialog-backdrop"
         :style="visualViewportStyle"
         :class="ui.backdrop()"
+        v-bind="presenceListeners"
       >
         <!-- No force-mount: see Modal.vue - the dialog's `presence-hold` keeps it through the container's exit animation -->
         <div
@@ -221,6 +222,7 @@ const {
   onEscapeKeyDown,
   onInteractOutside,
   onOpenAutoFocus,
+  presenceListeners,
 } = useDialogShell({
   props,
   slots,

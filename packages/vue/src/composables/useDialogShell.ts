@@ -1,5 +1,5 @@
 import type { MaybeRefOrGetter, ShallowRef, Slot } from 'vue'
-import { computed, ref, toValue, watch } from 'vue'
+import { computed, nextTick, ref, toValue, watch } from 'vue'
 
 import type { PortalTarget } from '@/config'
 
@@ -8,6 +8,13 @@ import { useLayerDismiss } from './useLayerDismiss'
 import { usePortal } from './usePortal'
 import { useTabbableFocusLoop } from './useTabbableFocusLoop'
 import { useVisualViewport } from './useVisualViewport'
+
+/** The events every dialog shell emits; each component's `Emits` type declares them. */
+type DialogShellEmit = ((event: 'update:open', value: boolean) => void) &
+  ((event: 'enter') => void) &
+  ((event: 'after:enter') => void) &
+  ((event: 'leave') => void) &
+  ((event: 'after:leave') => void)
 
 export type DialogShellOptions = {
   /** The component's props; reads `open`, `defaultOpen`, `title`, `portal` and `dismissible`. */
@@ -25,7 +32,7 @@ export type DialogShellOptions = {
   slots: { header?: Slot<never>; title?: Slot<never> }
   /** The `DialogContent` instance (the component's `useTemplateRef`). */
   dialogContent: Readonly<ShallowRef<{ $el: HTMLElement } | null>>
-  emit: (event: 'update:open', value: boolean) => void
+  emit: DialogShellEmit
   /** Whether Escape closes the dialog. Modal ties it to `dismissible`; Drawer and AlertDialog have `keyboardDismissible`. */
   keyboardDismissible: MaybeRefOrGetter<boolean | undefined>
   /**
@@ -46,6 +53,8 @@ export type DialogShellOptions = {
  * - Escape is blocked unless `keyboardDismissible`; outside presses and focus are blocked unless `props.dismissible`.
  *   Interactions landing in a layer stacked above the dialog never dismiss it.
  * - The page outside the content is `inert` exactly while the mirror is open and the content is mounted.
+ * - `enter`, `after:enter`, `leave`, `after:leave` follow the Presence of the element `presenceListeners` is bound to
+ *   (the one unmounted last), always in that order; `after:leave` waits until that element left the DOM.
  * - On open, focus goes to the dialog element itself.
  * - `hasHeader` is `#header` slot, `headerExtras` or a title (`title` prop / `#title` slot); `showHeaderTitle` is a
  *   title without a `#header` slot.
@@ -84,6 +93,30 @@ export const useDialogShell = (options: DialogShellOptions) => {
     isKeyboardDismissible: () => !!toValue(options.keyboardDismissible),
   })
 
+  // Reka's Presence skips `leave` when it unmounts without a running exit animation, so it's emitted on demand.
+  let isLeaving = false
+  const presenceListeners = {
+    onEnter: () => {
+      isLeaving = false
+      emit('enter')
+    },
+    onAfterEnter: () => emit('after:enter'),
+    onLeave: () => {
+      isLeaving = true
+      emit('leave')
+    },
+    onAfterLeave: async () => {
+      if (!isLeaving) emit('leave')
+      isLeaving = false
+
+      // Presence fires `after-leave` before it unmounts the node; the unmount render is queued by then only after one
+      // microtask, so wait for it and then for that render.
+      await Promise.resolve()
+      await nextTick()
+      emit('after:leave')
+    },
+  }
+
   // React Aria's Dialog focuses the dialog container itself on open, not the first
   // tabbable descendant (Reka's FocusScope default). Match that so e.g. a footer
   // button doesn't pick up an unwanted focus ring when the dialog opens.
@@ -112,5 +145,7 @@ export const useDialogShell = (options: DialogShellOptions) => {
     onEscapeKeyDown,
     onInteractOutside,
     onOpenAutoFocus,
+    /** `v-bind` on the element unmounted last (the backdrop's `DialogOverlay`): Reka Presence's lifecycle events. */
+    presenceListeners,
   }
 }

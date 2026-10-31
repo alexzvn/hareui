@@ -10,7 +10,12 @@
       <slot :open="isOpen" />
     </DialogTrigger>
     <DialogPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <DialogOverlay data-slot="modal-backdrop" :style="visualViewportStyle" :class="ui.backdrop()">
+      <DialogOverlay
+        data-slot="modal-backdrop"
+        :style="visualViewportStyle"
+        :class="ui.backdrop()"
+        v-bind="presenceListeners"
+      >
         <!-- data-state mirrors Reka's overlay/content so container enter/exit animations (theme and user `data-[state=…]:` classes) run.
              The dialog has no visible exit animation; its theme runs `presence-hold` while closed so its own Presence keeps it
              mounted and the overlay's Presence removes it with the backdrop. Not `force-mount`: Reka's modal content then
@@ -150,6 +155,7 @@ const {
   onEscapeKeyDown,
   onInteractOutside,
   onOpenAutoFocus,
+  presenceListeners,
 } = useDialogShell({
   props,
   slots,
