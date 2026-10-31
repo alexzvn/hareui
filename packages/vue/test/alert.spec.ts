@@ -130,3 +130,37 @@ describe('Alert', () => {
     wrapper.unmount()
   })
 })
+
+describe('Alert closeButton and v-model:open', () => {
+  it('renders no close button by default', () => {
+    const wrapper = mount(Alert, { props: { title: 'T' } })
+    expect(wrapper.find('[data-slot=alert-close]').exists()).toBe(false)
+  })
+
+  it('renders a close button labelled "Close" with closeButton', () => {
+    const wrapper = mount(Alert, { props: { title: 'T', closeButton: true } })
+    expect(wrapper.get('[data-slot=alert-close]').attributes('aria-label')).toBe('Close')
+  })
+
+  it('sets the close icon and aria-label from a closeButton object', () => {
+    const wrapper = mount(Alert, {
+      props: { title: 'T', closeButton: { icon: 'i-test-x', label: 'Dismiss' } },
+    })
+
+    const close = wrapper.get('[data-slot=alert-close]')
+    expect(close.attributes('aria-label')).toBe('Dismiss')
+    expect(close.find('span.i-test-x').exists()).toBe(true)
+  })
+
+  it('hides itself and emits update:open when the close button is clicked', async () => {
+    const wrapper = mount(Alert, { props: { title: 'T', closeButton: true } })
+    await wrapper.get('[data-slot=alert-close]').trigger('click')
+    expect(wrapper.emitted('update:open')).toEqual([[false]])
+    expect(wrapper.find('[data-slot=alert-root]').exists()).toBe(false)
+  })
+
+  it('renders nothing while open is false', () => {
+    const wrapper = mount(Alert, { props: { title: 'T', open: false } })
+    expect(wrapper.find('[data-slot=alert-root]').exists()).toBe(false)
+  })
+})

@@ -124,6 +124,7 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
 // Pages that get an "Updated" badge in the sidebar. Clear entries after the next release.
 export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>([
   'accordion',
+  'alert',
   'alert-dialog',
   'app',
   'autocomplete',
