@@ -165,11 +165,12 @@
         data-slot="number-stepper-input"
         :required="required || undefined"
         :aria-invalid="invalid ? 'true' : undefined"
+        :aria-roledescription="t('numberStepper.roledescription')"
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
         :class="ui.input()"
-        @blur="onCommitEmpty"
+        @blur="commitIfEmptied"
         @keydown="onKeydown"
       />
     </NumberFieldRoot>
@@ -193,7 +194,7 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
   NumberFieldRoot,
-  useLocale,
+  useLocale as useRekaLocale,
 } from 'reka-ui'
 import { computed, onBeforeUnmount, onMounted, toRef, useAttrs, useTemplateRef } from 'vue'
 
@@ -202,6 +203,7 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { useNumberValue } from '@/composables/useNumberValue'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
 
@@ -209,6 +211,8 @@ import type { NumberStepperProps, NumberStepperSlots } from './NumberStepper.typ
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<NumberStepperProps>(), {
@@ -226,16 +230,24 @@ const ValueOutlet = useSlotOutlet(slots, 'value')
 const modelValue = defineModel<number | null>()
 
 // Same value pipeline as NumberField, submitted through the same sibling `<input type="hidden">`
-const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } =
-  useNumberValue({
-    model: modelValue,
-    defaultValue: () => props.defaultValue,
-    min: () => props.min,
-    max: () => props.max,
-    step: () => props.step,
-    formatOptions: () => props.formatOptions,
-    onCommit: () => commitValidation(),
-  })
+const {
+  effectiveStep,
+  displayValue,
+  defaultDisplayValue,
+  formValue,
+  commit,
+  captureInputText,
+  commitIfEmptied,
+  reset,
+} = useNumberValue({
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  min: () => props.min,
+  max: () => props.max,
+  step: () => props.step,
+  formatOptions: () => props.formatOptions,
+  onCommit: () => commitValidation(),
+})
 
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
@@ -253,7 +265,7 @@ const { validation, invalid, commitValidation } = useFieldValidation({
 
 // The value rolls digit by digit (number-flow, as in HeroUI Pro), with the same locale and format as the spin button.
 // number-flow skips the motion under `prefers-reduced-motion`.
-const locale = useLocale(toRef(() => props.locale))
+const locale = useRekaLocale(toRef(() => props.locale))
 
 const flowFormat = computed<Format | undefined>(() => {
   if (!props.formatOptions) return undefined
@@ -265,17 +277,14 @@ const flowFormat = computed<Format | undefined>(() => {
 })
 
 // An emptied input commits "no value" (see NumberField)
-const onCommitEmpty = (event: Event) => {
-  if ((event.target as HTMLInputElement).value === '') commitEmpty()
-}
-
 const onKeydown = (event: KeyboardEvent) => {
-  if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
+  if (event.key === 'Enter' && !event.isComposing) commitIfEmptied()
 }
 
 // PageUp / PageDown move by a single step, as in NumberField (Reka moves 10). Attached natively on the root for the
 // same reason as NumberField: a Vue capture invoker would make Vue drop the re-dispatched key right after mount.
 const onKeydownCapture = (event: KeyboardEvent) => {
+  captureInputText(event)
   const target = event.target as HTMLElement
   if (
     (event.key !== 'PageUp' && event.key !== 'PageDown') ||
@@ -295,8 +304,15 @@ const onKeydownCapture = (event: KeyboardEvent) => {
   )
 }
 
-onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
-onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
+onMounted(() => {
+  root.value?.addEventListener('keydown', onKeydownCapture, true)
+  root.value?.addEventListener('blur', captureInputText, true)
+})
+
+onBeforeUnmount(() => {
+  root.value?.removeEventListener('keydown', onKeydownCapture, true)
+  root.value?.removeEventListener('blur', captureInputText, true)
+})
 
 // `aria-label` / `aria-labelledby` name the input, not the wrapper div
 const attrs = useAttrs()
@@ -305,24 +321,29 @@ const rootAttrs = computed(() => {
   return rest
 })
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled: isDisabled,
-  required: () => props.required,
-  hideDescriptionWhenInvalid: true,
-})
+const { name, id, describedBy, formField, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled: isDisabled,
+    required: () => props.required,
+    hideDescriptionWhenInvalid: true,
+  })
 
 // The buttons are named after the field: "Increase Quantity"
 const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
 const incrementLabel = computed(() =>
-  fieldName.value ? `Increase ${fieldName.value}` : 'Increase',
+  fieldName.value
+    ? t('numberStepper.incrementField', { label: fieldName.value })
+    : t('numberStepper.increment'),
 )
 
 const decrementLabel = computed(() =>
-  fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease',
+  fieldName.value
+    ? t('numberStepper.decrementField', { label: fieldName.value })
+    : t('numberStepper.decrement'),
 )
 
 const incrementButton = computed(() =>
@@ -336,7 +357,7 @@ const decrementButton = computed(() =>
 const ui = useComponentUI('numberStepper', {
   theme,
   variantProps: () => ({
-    size: props.size,
+    size: props.size ?? formField.size.value,
     reversed: props.reversed,
   }),
   props,

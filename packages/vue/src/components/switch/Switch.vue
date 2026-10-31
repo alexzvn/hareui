@@ -57,6 +57,7 @@ import {
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { createChangeEvent } from '@/utils/formControlEvents'
 
 import type { SwitchProps, SwitchSlots } from './Switch.types'
 import theme from './theme'
@@ -75,6 +76,8 @@ const props = withDefaults(defineProps<SwitchProps>(), {
 const emit = defineEmits<{
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean]
+  /** Emitted after the user toggles the switch (not on `v-model` writes or form reset). */
+  change: [event: Event]
 }>()
 
 defineSlots<SwitchSlots>()
@@ -83,7 +86,7 @@ const slots = useSlots()
 const ui = useComponentUI('switch', {
   theme,
   variantProps: () => ({
-    size: props.size,
+    size: props.size ?? formField.size.value,
   }),
   props,
 })
@@ -108,7 +111,7 @@ const { validation, invalid, commitValidation } = useFieldValidation({
   },
 })
 
-const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, formField, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,
@@ -123,5 +126,6 @@ const onUpdate = (value: boolean) => {
   local.value = value
   emit('update:modelValue', value)
   commitValidation()
+  emit('change', createChangeEvent())
 }
 </script>

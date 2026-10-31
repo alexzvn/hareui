@@ -1,6 +1,7 @@
 import type { VNodeChild } from 'vue'
 import { markRaw, reactive } from 'vue'
 
+import type { CloseButtonProp } from '@/types/closeButton'
 import type { ClassValue } from '@/utils/tv'
 
 // How long a closing toast stays mounted for its exit animation, in milliseconds.
@@ -267,6 +268,11 @@ export type ToastContentValue = {
   action?: ToastAction
   /** Shows a spinner in place of the indicator. */
   isLoading?: boolean
+  /**
+   * Whether the close button is rendered; an object customises its `icon` and `label` (accessible name).
+   * @defaultValue true
+   */
+  closeButton?: CloseButtonProp
 }
 
 /** An action button shown inside a toast. */

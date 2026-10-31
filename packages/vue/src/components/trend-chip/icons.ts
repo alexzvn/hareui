@@ -1,0 +1,7 @@
+import { createSvgIcon } from '@/utils/icon'
+
+// gravity-ui icons (MIT): `arrow-up`. Rotated for the down trend.
+const ARROW_UP =
+  'M8 14.75a.75.75 0 0 1-.75-.75V3.81L4.53 6.53a.75.75 0 0 1-1.06-1.06l4-4a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1-1.06 1.06L8.75 3.81V14a.75.75 0 0 1-.75.75'
+
+export const ArrowUpIcon = createSvgIcon({ d: ARROW_UP, size: 16 })

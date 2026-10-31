@@ -9,6 +9,25 @@ import { expectAccessible } from './a11y'
 const order = (el: Element) =>
   [...el.children].map((c) => c.getAttribute('data-slot') ?? c.tagName.toLowerCase())
 
+// A minimal vue-router RouterLink: it renders nothing itself and hands the link state to its slot. Like vue-router's
+// `custom` mode, a single slot node becomes its root, so attributes fall through to it.
+const routerStub = (navigate: (to: unknown) => void) =>
+  defineComponent({
+    props: { to: { type: [String, Object], required: true }, custom: Boolean, replace: Boolean },
+    setup(props, { slots }) {
+      return () => {
+        const nodes = slots.default?.({
+          href: `/app${props.to}`,
+          isActive: props.to === '/current',
+          isExactActive: props.to === '/current',
+          navigate: () => navigate(props.to),
+        })
+
+        return nodes?.length === 1 ? nodes[0] : nodes
+      }
+    },
+  })
+
 describe('Link', () => {
   it('renders an anchor with HeroUI data-slot and no icon by default', () => {
     const wrapper = mount(Link, { props: { href: '/docs' }, slots: { default: () => 'Docs' } })
@@ -146,5 +165,117 @@ describe('Link', () => {
     expect(wrapper.get('[data-slot="link-default-icon"]').attributes('aria-hidden')).toBe('true')
     expect(wrapper.text()).toBe('Docs')
     wrapper.unmount()
+  })
+})
+
+describe('Link link props', () => {
+  it('to goes through RouterLink when the app registers it', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    const wrapper = mount(Link, {
+      props: { to: '/current' },
+      slots: { default: () => 'Home' },
+      global: { components: { RouterLink: routerStub(navigate) } },
+    })
+
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('/app/current')
+    expect(wrapper.attributes('data-slot')).toBe('link')
+    expect(wrapper.attributes('data-active')).toBe('true')
+    expect(wrapper.attributes('role')).toBeUndefined()
+    await wrapper.trigger('click')
+    expect(navigate).toHaveBeenCalledWith('/current')
+  })
+
+  it('to without a router renders a plain anchor', () => {
+    const wrapper = mount(Link, { props: { to: '/docs' }, slots: { default: () => 'Docs' } })
+    expect(wrapper.attributes('href')).toBe('/docs')
+    expect(wrapper.attributes('role')).toBeUndefined()
+  })
+
+  it('a disabled to stays off the router, without an href', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    const wrapper = mount(Link, {
+      props: { to: '/current', disabled: true },
+      global: { components: { RouterLink: routerStub(navigate) } },
+    })
+
+    expect(wrapper.attributes('href')).toBeUndefined()
+    expect(wrapper.attributes('aria-disabled')).toBe('true')
+    await wrapper.trigger('click')
+    expect(navigate).not.toHaveBeenCalled()
+  })
+
+  it('sets target, a default rel for a new tab, and download', () => {
+    const wrapper = mount(Link, {
+      props: { href: '/report.pdf', target: '_blank', download: 'report.pdf' },
+    })
+
+    expect(wrapper.attributes()).toMatchObject({
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      download: 'report.pdf',
+    })
+  })
+
+  it('sets no download attribute unless asked', () => {
+    const wrapper = mount(Link, { props: { href: '/docs' } })
+    expect(wrapper.attributes('download')).toBeUndefined()
+  })
+
+  it('renders `download` without a value, so the browser keeps the file name', () => {
+    const wrapper = mount(Link, { props: { href: '/report.pdf', download: true } })
+    expect(wrapper.attributes('download')).toBe('')
+  })
+})
+
+// A router link component passed as `as`: it reads `to`, `replace` and `external` as props and navigates on click.
+const routerLinkAs = (navigate: (to: unknown) => void) =>
+  markRaw(
+    defineComponent({
+      props: { to: [String, Object], replace: Boolean, external: Boolean },
+      setup:
+        (props, { slots }) =>
+        () =>
+          h(
+            'a',
+            {
+              href: String(props.to),
+              'data-replace': String(props.replace),
+              'data-external': String(props.external),
+              onClick: () => navigate(props.to),
+            },
+            slots.default?.(),
+          ),
+    }),
+  )
+
+describe('Link with a router link component as `as`', () => {
+  it('forwards `replace` to it', () => {
+    const wrapper = mount(Link, {
+      props: { as: routerLinkAs(vi.fn<(to: unknown) => void>()), to: '/x', replace: true },
+    })
+
+    expect(wrapper.attributes('data-replace')).toBe('true')
+  })
+
+  it('forwards `external` to it', () => {
+    const wrapper = mount(Link, {
+      props: { as: routerLinkAs(vi.fn<(to: unknown) => void>()), to: '/x', external: true },
+    })
+
+    expect(wrapper.attributes('data-external')).toBe('true')
+  })
+
+  it('when disabled, renders no href, is aria-disabled and never navigates', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    const wrapper = mount(Link, {
+      props: { as: routerLinkAs(navigate), to: '/x', disabled: true },
+      slots: { default: () => 'Docs' },
+    })
+
+    expect(wrapper.attributes('href')).toBeUndefined()
+    expect(wrapper.attributes('aria-disabled')).toBe('true')
+    await wrapper.trigger('click')
+    expect(navigate).not.toHaveBeenCalled()
   })
 })

@@ -44,6 +44,24 @@ The default slot's first child is the trigger (receives the current `open` state
 
 <ComponentPreview name="popover/interactive" />
 
+### Hover Mode
+
+With `mode="hover"`, the popover opens when the pointer rests on the trigger or the trigger gets focus. It doesn't
+move focus or block the rest of the page. You can move the pointer into the popover and click its content. The
+`content` slot gets no `close` function in this mode.
+
+| Prop          | Default | What it does                                            |
+| ------------- | ------- | ------------------------------------------------------- |
+| `openDelay`   | `700`   | Milliseconds of hover or focus before it opens          |
+| `closeDelay`  | `300`   | Milliseconds after the pointer or focus leaves to close |
+| `enableTouch` | `false` | A tap opens it at once, and the next tap closes it      |
+
+Touch screens have no hover, so without `enableTouch` a tap only opens the popover where tapping focuses the trigger
+(not in Safari on iOS). For triggers people are meant to tap, the default `click` mode is the better fit. The issue
+preview below uses shorter delays and `enableTouch`.
+
+<ComponentPreview name="popover/hover-mode" />
+
 ## Customization
 
 ### Tailwind CSS
@@ -87,6 +105,10 @@ app.use(
 ### Slots
 
 <ApiTable component="Popover" kind="slots" />
+
+### Emits
+
+<ApiTable component="Popover" kind="emits" />
 
 ## Theme
 

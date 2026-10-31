@@ -4,6 +4,9 @@ import { onScopeDispose, toValue, watch } from 'vue'
 import type { LayerDismissPolicy, OutsideEvent } from './nestedLayer'
 import { shouldDismissOnEscape, shouldDismissOnOutside, shouldDismissOnPress } from './nestedLayer'
 
+/** The event type Reka's DismissableLayer gives an outside `pointerdown`. */
+const POINTER_DOWN_OUTSIDE = 'dismissableLayer.pointerDownOutside'
+
 type LayerDismissOptions = {
   /**
    * The Layer's `[data-dismissable-layer]` element or Reka's positioning wrapper around it (a `*Content`
@@ -25,6 +28,13 @@ type LayerDismissOptions = {
    * @defaultValue false
    */
   shouldIgnoreSecondaryButton?: boolean
+  /**
+   * Called when an Escape press or an outside press is blocked only because the Layer isn't dismissible
+   * (`isDismissible` / `isKeyboardDismissible` false). Never called for interactions that dismiss, nor for those kept
+   * open by the Layer stack, the pointer button or an earlier handler (Reka's modal content prevents right and
+   * Ctrl+left clicks outside).
+   */
+  onPrevent?: () => void
   /**
    * Reka's DismissableLayer only starts listening for outside presses a task after the content mounts, so a press
    * right after opening is lost. React Aria listens as soon as the Layer is open: with this set, presses created
@@ -59,12 +69,24 @@ export const useLayerDismiss = (options: LayerDismissOptions) => {
   let handledPress: Event | undefined
 
   const onEscapeKeyDown = (event: KeyboardEvent) => {
-    if (!shouldDismissOnEscape(resolvePolicy())) event.preventDefault()
+    if (shouldDismissOnEscape(resolvePolicy())) return
+    event.preventDefault()
+    options.onPrevent?.()
   }
 
   const onInteractOutside = (event: OutsideEvent) => {
+    // Read before this handler prevents it: a press an earlier handler already kept from dismissing never closes the
+    // Layer, whatever its `dismissible` flag, so it isn't a blocked dismiss attempt.
+    const wasPrevented = event.defaultPrevented
     const isHandled = event.detail.originalEvent === handledPress
-    if (isHandled || !shouldDismissOnOutside(event, resolvePolicy())) event.preventDefault()
+    const policy = resolvePolicy()
+    if (!isHandled && shouldDismissOnOutside(event, policy)) return
+    event.preventDefault()
+
+    // Focus moving out isn't a dismiss attempt; only a press the `dismissible` flag alone blocked counts.
+    const isPress = event.type === POINTER_DOWN_OUTSIDE
+    if (isHandled || wasPrevented || !isPress || !options.onPrevent) return
+    if (shouldDismissOnOutside(event, { ...policy, isDismissible: true })) options.onPrevent()
   }
 
   const { earlyPress } = options

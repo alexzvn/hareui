@@ -3,6 +3,7 @@ import { nextTick, watch } from 'vue'
 
 import type { ListBoxValue } from '@/components/list-box/ListBox.types'
 import type { CollectionValue } from '@/components/list-box/useCollectionModel'
+import { createChangeEvent } from '@/utils/formControlEvents'
 
 import type { ComboBoxProps } from './ComboBox.types'
 
@@ -18,6 +19,8 @@ type ComboBoxCommitOptions = {
   /** Writes the local text without emitting `update:inputValue`. */
   mirrorText: (text: string) => void
   close: () => void
+  /** Emits `change` for committed custom text the selection write didn't already report. */
+  onChange: (event: Event) => void
 }
 
 // RAC `commitSelection` / `commitCustomValue` / `commitValue` / `revert`
@@ -32,15 +35,43 @@ export const useComboBoxCommit = (options: ComboBoxCommitOptions) => {
   // RAC sets `lastValueRef` first so clearing the selection doesn't reset the custom text
   let isKeepingText = false
 
-  const commitCustomValue = () => {
-    if (!isMultiple()) {
-      isKeepingText = true
-      selection.value = null
+  // The text as the input gained focus or as of the last commit or selection write (which reports its own
+  // `change`): committing it again isn't a change
+  let committedText = inputValue.value
 
-      nextTick(() => {
-        isKeepingText = false
-      })
+  const syncCommittedText = () => {
+    committedText = inputValue.value
+  }
+
+  watch(selectedKey, syncCommittedText, { flush: 'sync' })
+
+  watch(
+    isFocused,
+    (focused) => {
+      if (focused) syncCommittedText()
+    },
+    { flush: 'sync' },
+  )
+
+  // Multiple selection keeps the text as a filter: only single selection commits it as the value
+  const commitCustomValue = () => {
+    if (isMultiple()) {
+      options.close()
+      return
     }
+
+    const isNewText = inputValue.value !== committedText
+    syncCommittedText()
+
+    // Clearing a selection emits `change` itself
+    if (isNewText && selection.value == null) options.onChange(createChangeEvent())
+
+    isKeepingText = true
+    selection.value = null
+
+    nextTick(() => {
+      isKeepingText = false
+    })
 
     options.close()
   }

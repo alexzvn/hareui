@@ -10,7 +10,12 @@
       <slot :open="isOpen" />
     </DialogTrigger>
     <DialogPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <DialogOverlay data-slot="modal-backdrop" :style="visualViewportStyle" :class="ui.backdrop()">
+      <DialogOverlay
+        data-slot="modal-backdrop"
+        :style="visualViewportStyle"
+        :class="ui.backdrop()"
+        v-bind="presenceListeners"
+      >
         <!-- data-state mirrors Reka's overlay/content so container enter/exit animations (theme and user `data-[state=…]:` classes) run.
              The dialog has no visible exit animation; its theme runs `presence-hold` while closed so its own Presence keeps it
              mounted and the overlay's Presence removes it with the backdrop. Not `force-mount`: Reka's modal content then
@@ -66,7 +71,12 @@
               </VisuallyHidden>
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton data-slot="modal-close-trigger" :class="ui.closeTrigger()" />
+                  <ResolvedCloseButton
+                    data-slot="modal-close-trigger"
+                    :close-button="closeButton"
+                    label-key="modal.close"
+                    :class="ui.closeTrigger()"
+                  />
                 </slot>
               </DialogClose>
             </slot>
@@ -91,7 +101,7 @@ import {
 } from 'reka-ui'
 import { useSlots, useTemplateRef } from 'vue'
 
-import CloseButton from '@/components/close-button/CloseButton.vue'
+import ResolvedCloseButton from '@/components/close-button/ResolvedCloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDialogShell } from '@/composables/useDialogShell'
 
@@ -133,6 +143,7 @@ const {
   onEscapeKeyDown,
   onInteractOutside,
   onOpenAutoFocus,
+  presenceListeners,
 } = useDialogShell({
   props,
   slots,

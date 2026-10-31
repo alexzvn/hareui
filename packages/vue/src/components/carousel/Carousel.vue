@@ -2,7 +2,7 @@
   <Primitive
     :as="as"
     role="region"
-    aria-roledescription="carousel"
+    :aria-roledescription="t('carousel.roledescription')"
     tabindex="0"
     data-slot="carousel"
     :dir="dir"
@@ -18,7 +18,7 @@
             v-for="(item, index) in items"
             :key="index"
             role="group"
-            aria-roledescription="slide"
+            :aria-roledescription="t('carousel.slide')"
             data-slot="carousel-item"
             :class="ui.item({ override: getItemClass(item) })"
           >
@@ -48,7 +48,7 @@
           :key="index"
           type="button"
           role="tab"
-          :aria-label="goToLabel(index + 1)"
+          :aria-label="goToLabel ? goToLabel(index + 1) : t('carousel.goto', { slide: index + 1 })"
           :aria-selected="state.selectedIndex === index"
           :data-selected="state.selectedIndex === index || undefined"
           data-slot="carousel-dot"
@@ -72,7 +72,7 @@
           :key="index"
           type="button"
           role="tab"
-          :aria-label="goToLabel(index + 1)"
+          :aria-label="goToLabel ? goToLabel(index + 1) : t('carousel.goto', { slide: index + 1 })"
           :aria-selected="state.selectedIndex === index"
           :data-selected="state.selectedIndex === index || undefined"
           data-slot="carousel-thumbnail"
@@ -123,6 +123,7 @@ import {
 import Button from '@/components/button/Button.vue'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { prefersReducedMotion } from '@/utils/motion'
 
 import type {
@@ -136,6 +137,8 @@ import type {
 import { createPluginLoaders, isStoppedOnInteraction } from './carouselPlugins'
 import theme from './theme'
 
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<CarouselProps<T>>(), {
   as: 'div',
   items: () => [],
@@ -144,7 +147,7 @@ const props = withDefaults(defineProps<CarouselProps<T>>(), {
   arrows: false,
   dots: false,
   thumbnails: false,
-  goToLabel: (slide: number) => `Go to slide ${slide}`,
+  goToLabel: undefined,
   autoplay: false,
   autoScroll: false,
   autoHeight: false,
@@ -202,11 +205,13 @@ const state = shallowReactive({
 })
 
 const dotsOptions = computed(() =>
-  defu(typeof props.dots === 'object' ? props.dots : {}, { label: 'Slide indicators' }),
+  defu(typeof props.dots === 'object' ? props.dots : {}, { label: t('carousel.dots') }),
 )
 
 const thumbnailsOptions = computed(() =>
-  defu(typeof props.thumbnails === 'object' ? props.thumbnails : {}, { label: 'Slide thumbnails' }),
+  defu(typeof props.thumbnails === 'object' ? props.thumbnails : {}, {
+    label: t('carousel.thumbnails'),
+  }),
 )
 
 const isDotsVisible = computed(() => !!props.dots && state.scrollSnaps.length > 1)
@@ -347,8 +352,6 @@ const CHEVRON_PATHS = {
   next: 'M5.47 13.03a.75.75 0 0 1 0-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 1.06-1.06l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 0 1-1.06 0',
 } as const
 
-const ARROW_LABELS = { prev: 'Previous slide', next: 'Next slide' } as const
-
 const renderChevron = (side: 'prev' | 'next') =>
   h('svg', { 'aria-hidden': 'true', width: 16, height: 16, viewBox: '0 0 16 16', fill: 'none' }, [
     h('path', {
@@ -372,7 +375,7 @@ const Arrow: FunctionalComponent<{ side: 'prev' | 'next' }> = ({ side }) => {
       variant: 'tertiary',
       size: 'sm',
       iconOnly: true,
-      'aria-label': ARROW_LABELS[side],
+      'aria-label': t(`carousel.${side}`),
       disabled: isPrev ? !state.canScrollPrev : !state.canScrollNext,
       ...rest,
       'data-slot': `carousel-${side}`,

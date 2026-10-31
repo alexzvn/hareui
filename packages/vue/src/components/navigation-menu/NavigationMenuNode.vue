@@ -28,8 +28,9 @@
     <LinkResolver
       v-else-if="item.type !== 'label'"
       v-slot="link"
-      :item="item"
+      :link="item"
       :button="accordion && hasChildren && item.type === 'trigger'"
+      :current="false"
     >
       <component
         :is="hasActions ? 'div' : Passthrough"
@@ -106,18 +107,17 @@
                 override: item.ui?.linkActionsMenu,
               })
             "
-            @action="onAction"
           >
             <button
               type="button"
               data-slot="linkAction"
-              :aria-label="`More actions for ${label}`"
+              :aria-label="t('navigationMenu.moreActions', { label: label ?? '' })"
               :class="ui.linkAction({ override: item.ui?.linkAction })"
             >
               <EllipsisVerticalIcon />
             </button>
             <template #item-leading="{ item: entry }">
-              <NavigationMenuIcon
+              <IconRenderer
                 v-if="entry.icon"
                 :icon="entry.icon"
                 data-slot="linkActionsItemIcon"
@@ -199,18 +199,15 @@ import {
 } from 'reka-ui'
 import { computed, useId } from 'vue'
 
-import type {
-  DropdownEntry,
-  DropdownItem,
-  DropdownValue,
-} from '@/components/dropdown/Dropdown.types'
 import Dropdown from '@/components/dropdown/Dropdown.vue'
 import Tooltip from '@/components/tooltip/Tooltip.vue'
+import { useLocale } from '@/composables/useLocale'
+import { IconRenderer } from '@/utils/icon'
+import type { ResolvedLink } from '@/utils/link'
+import { LinkResolver } from '@/utils/link'
 
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
-import { EllipsisVerticalIcon, NavigationMenuIcon } from './icons'
-import type { ResolvedLink } from './LinkResolver'
-import LinkResolver from './LinkResolver'
+import { EllipsisVerticalIcon } from './icons'
 import type { NavigationMenuItem } from './NavigationMenu.types'
 import NavigationMenuAccordionContent from './NavigationMenuAccordionContent.vue'
 import NavigationMenuChildLink from './NavigationMenuChildLink.vue'
@@ -230,6 +227,8 @@ const props = withDefaults(
   }>(),
   { level: 0, listIndex: 0 },
 )
+
+const { t } = useLocale()
 
 const ctx = useNavigationMenu()
 const { ui } = ctx
@@ -320,22 +319,6 @@ let stopObservingActions: (() => void) | undefined
 const setActionsEl = (el: unknown) => {
   stopObservingActions?.()
   stopObservingActions = el instanceof HTMLElement ? ctx.observeActions(el) : undefined
-}
-
-// The entry a Dropdown `action` names: an item, or one inside a section or a submenu.
-const findAction = (entries: DropdownEntry[], value: DropdownValue): DropdownItem | undefined => {
-  for (const entry of entries) {
-    if ('value' in entry && entry.value === value) return entry
-    const nested = 'items' in entry && entry.items ? findAction(entry.items, value) : undefined
-    if (nested) return nested
-  }
-
-  return undefined
-}
-
-const onAction = (value: DropdownValue) => {
-  const onSelect = findAction(props.item.actions ?? [], value)?.onSelect
-  if (typeof onSelect === 'function') onSelect()
 }
 
 type Kind = typeof NavigationMenuTrigger | typeof AccordionTrigger | typeof NavigationMenuLink

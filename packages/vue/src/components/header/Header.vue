@@ -52,8 +52,11 @@ import Button from '@/components/button/Button.vue'
 import Drawer from '@/components/drawer/Drawer.vue'
 import Modal from '@/components/modal/Modal.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { useMenuAutoClose } from '@/composables/useMenuAutoClose'
 import { usePortal } from '@/composables/usePortal'
+import type { ResolvedLink } from '@/utils/link'
+import { LinkResolver } from '@/utils/link'
 
 import type { DrawerMenuProps, HeaderProps, HeaderSlots, ModalMenuProps } from './Header.types'
 import theme from './theme'
@@ -63,6 +66,8 @@ import { useHeaderScrollUnlock } from './useHeaderScrollUnlock'
 import { useHeaderToggleIcon } from './useHeaderToggleIcon'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<HeaderProps>(), {
   as: 'header',
@@ -74,9 +79,9 @@ const props = withDefaults(defineProps<HeaderProps>(), {
   autoClose: true,
   hideOnScroll: false,
   shouldBlockScroll: true,
-  openLabel: 'Open menu',
-  closeLabel: 'Close menu',
-  menuTitle: 'Navigation menu',
+  openLabel: undefined,
+  closeLabel: undefined,
+  menuTitle: undefined,
 })
 
 const slots = defineSlots<HeaderSlots>()
@@ -133,7 +138,9 @@ const Toggle: FunctionalComponent = () => {
       variant: 'ghost',
       ...options,
       iconOnly: true,
-      'aria-label': open.value ? props.closeLabel : props.openLabel,
+      'aria-label': open.value
+        ? (props.closeLabel ?? t('header.close'))
+        : (props.openLabel ?? t('header.open')),
       'aria-expanded': open.value,
       'data-slot': 'header-toggle',
       class: ui.value.toggle({ override: options.class }),
@@ -144,33 +151,31 @@ const Toggle: FunctionalComponent = () => {
 }
 
 // With vue-router installed (a global `RouterLink`), a path `to` navigates client-side and the route drives `autoClose`.
+// Any other `to` (a URL, a hash) stays a plain anchor.
 const instance = getCurrentInstance()
-const RouterLink = instance?.appContext.components.RouterLink
 
-const titleAttrs = computed(() => ({
-  to: props.to,
-  'aria-label': props.title.trim(),
-  'data-slot': 'header-title',
-  class: ui.value.title(),
-}))
+const titleLink = computed(() => ({ to: props.to, external: !props.to.startsWith('/') }))
 
 const titleContent = () => (slots.title ? slots.title() : props.title)
 
-const renderTitleLink = () => {
-  if (RouterLink && props.to.startsWith('/')) {
-    return h(RouterLink, titleAttrs.value, () => titleContent())
-  }
-
-  const { class: className, 'aria-label': ariaLabel } = titleAttrs.value
-  const linkAttrs = {
-    'aria-label': ariaLabel,
-    'data-slot': 'header-title',
-    class: className,
-    href: props.to,
-  }
-
-  return h('a', linkAttrs, titleContent())
-}
+const renderTitleLink = () =>
+  h(
+    LinkResolver,
+    { link: titleLink.value },
+    {
+      default: ({ as, attrs }: ResolvedLink) =>
+        h(
+          as,
+          {
+            ...attrs,
+            'aria-label': props.title.trim(),
+            'data-slot': 'header-title',
+            class: ui.value.title(),
+          },
+          { default: titleContent },
+        ),
+    },
+  )
 
 const Left: FunctionalComponent = () =>
   h('div', { 'data-slot': 'header-left', class: ui.value.left() }, [
@@ -276,7 +281,7 @@ const MenuContent: FunctionalComponent<{ close: () => void }> = ({ close }) => {
   if (slots.content) return slots.content({ close })
 
   const title = h(VisuallyHidden, { asChild: true }, () =>
-    h(DialogTitle, null, () => props.menuTitle),
+    h(DialogTitle, null, () => props.menuTitle ?? t('header.menu')),
   )
 
   return [title, renderMenuHeader(), renderMenuBody()]

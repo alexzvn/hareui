@@ -29,7 +29,14 @@
     @blur="interaction.isDomFocused = false"
   >
     <slot name="item" v-bind="state">
-      <slot name="item-leading" v-bind="state" />
+      <slot name="item-leading" v-bind="state">
+        <IconRenderer
+          v-if="item.icon"
+          :icon="item.icon"
+          :class="classes.itemIcon()"
+          data-slot="list-box-item-icon"
+        />
+      </slot>
       <!-- With a description: Label + Description (HeroUI's rich item). Label only: plain text (HeroUI's `<ListBox.Item>Text</ListBox.Item>`). -->
       <div v-if="isRich" class="flex flex-col">
         <Label v-if="hasLabel" :id="labelId" :disabled="state.disabled">
@@ -86,6 +93,7 @@ import Description from '@/components/description/Description.vue'
 import Label from '@/components/label/Label.vue'
 import { keyboardModalityKey } from '@/composables/useKeyboardModality'
 import type { ComponentUI } from '@/types/tv'
+import { IconRenderer } from '@/utils/icon'
 
 import type { ListBoxItem, ListBoxItemSlotProps, ListBoxSlots, ListBoxValue } from './ListBox.types'
 import type theme from './theme'
@@ -99,7 +107,7 @@ const props = defineProps<{
   indicator: boolean
   listDisabled: boolean
   /** Slot class functions of the parent ListBox (its `ui` prop layered in); `variant` is applied per item. */
-  classes: Pick<ComponentUI<typeof theme>, 'item' | 'indicator'>
+  classes: Pick<ComponentUI<typeof theme>, 'item' | 'itemIcon' | 'indicator'>
   /** The Reka item primitive to render (ComboBox passes `ComboboxItem`). */
   component?: Component
   /**

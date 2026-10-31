@@ -26,6 +26,20 @@
           >
             <slot name="content">
               <span v-if="text">{{ text }}</span>
+              <span v-if="kbds?.length" data-slot="kbds" :class="ui.kbds()">
+                <Kbd
+                  v-for="(kbd, index) in kbds"
+                  :key="index"
+                  v-bind="typeof kbd === 'string' ? {} : kbd"
+                  :ui="
+                    typeof kbd === 'string'
+                      ? { base: ui.kbd() }
+                      : { ...kbd.ui, base: ui.kbd({ class: kbd.ui?.base }) }
+                  "
+                >
+                  <template v-if="typeof kbd === 'string'">{{ kbd }}</template>
+                </Kbd>
+              </span>
             </slot>
             <TooltipArrow v-if="arrow" as-child>
               <svg
@@ -58,6 +72,7 @@ import {
 } from 'reka-ui'
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 
+import { Kbd } from '@/components/kbd'
 import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { usePortal } from '@/composables/usePortal'

@@ -40,7 +40,15 @@ export default {
     copy: {
       true: { header: 'pe-11' },
     },
+    hideHeader: {
+      true: {},
+    },
   },
+  compoundVariants: [
+    // Without a header the copy button sits over the first line: the code stops 44px short of the
+    // end (24px button + 12px inset + 8px gap).
+    { hideHeader: true, copy: true, class: { code: 'w-[calc(100%-2.75rem)]' } },
+  ],
   defaultVariants: {
     copied: false,
   },

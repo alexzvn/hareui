@@ -1,28 +1,47 @@
 <template>
-  <Primitive :as="as" aria-label="Breadcrumbs" data-slot="breadcrumbs" :class="ui.base()">
+  <Primitive
+    :as="as"
+    :aria-label="t('breadcrumbs.label')"
+    data-slot="breadcrumbs"
+    :class="ui.base()"
+  >
     <li
       v-for="(item, index) in items"
       :key="index"
       data-slot="breadcrumbs-item"
       :data-current="index === items.length - 1 ? 'true' : undefined"
-      :data-disabled="disabled || index === items.length - 1 ? 'true' : undefined"
+      :data-disabled="isInert(item, index) ? 'true' : undefined"
       :class="ui.item({ override: item.class })"
     >
       <!-- The current page is a non-interactive span, like React Aria's current Breadcrumb. -->
-      <Link
-        :as="index === items.length - 1 || disabled || !item.href ? 'span' : 'a'"
-        :href="index === items.length - 1 ? undefined : item.href"
-        :disabled="disabled || index === items.length - 1"
-        :role="index === items.length - 1 || disabled || !item.href ? 'link' : undefined"
-        :aria-current="index === items.length - 1 ? 'page' : undefined"
-        :data-current="index === items.length - 1 ? 'true' : undefined"
-        :tabindex="index === items.length - 1 || disabled ? undefined : 0"
-        :class="ui.link()"
+      <LinkResolver
+        v-slot="link"
+        :link="item"
+        :button="isInert(item, index) || !hasLink(item)"
+        fallback="span"
+        :current="false"
       >
-        <slot name="item" :item="item" :index="index" :current="index === items.length - 1">
-          {{ item.label }}
-        </slot>
-      </Link>
+        <Link
+          v-bind="link.attrs"
+          :as="link.as"
+          :disabled="isInert(item, index)"
+          :role="link.as === 'span' ? 'link' : undefined"
+          :aria-current="index === items.length - 1 ? 'page' : undefined"
+          :data-current="index === items.length - 1 ? 'true' : undefined"
+          :tabindex="isInert(item, index) ? undefined : 0"
+          :class="ui.link()"
+        >
+          <slot name="item" :item="item" :index="index" :current="index === items.length - 1">
+            <IconRenderer
+              v-if="item.icon"
+              :icon="item.icon"
+              data-slot="breadcrumbs-icon"
+              :class="ui.icon()"
+            />
+            {{ item.label }}
+          </slot>
+        </Link>
+      </LinkResolver>
       <Separator v-if="index < items.length - 1" :item="item" :index="index" :current="false" />
     </li>
   </Primitive>
@@ -35,6 +54,9 @@ import { cloneVNode, Comment, h, isVNode, useSlots } from 'vue'
 
 import Link from '@/components/link/Link.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
+import { IconRenderer } from '@/utils/icon'
+import { hasLink, LinkResolver } from '@/utils/link'
 
 import type {
   BreadcrumbsItem,
@@ -44,11 +66,17 @@ import type {
 } from './Breadcrumbs.types'
 import theme from './theme'
 
+const { t } = useLocale()
+
 const props = withDefaults(defineProps<BreadcrumbsProps<T>>(), { as: 'ol' })
 const slots = useSlots()
 defineSlots<BreadcrumbsSlots<T>>()
 
 const ui = useComponentUI('breadcrumbs', { theme: theme, variantProps: () => ({}), props })
+
+// The current page (the last item) and disabled items render as a non-interactive `span`.
+const isInert = (item: T, index: number) =>
+  props.disabled || !!item.disabled || index === props.items.length - 1
 
 const CHEVRON_RIGHT =
   'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z'

@@ -7,7 +7,8 @@
   "workspaces": {
     ".": {
       "entry": ["tooling/lint/**/*.mjs", "tooling/scripts/**/*.ts"],
-      "project": ["tooling/lint/**/*.mjs", "tooling/scripts/**/*.ts"]
+      "project": ["tooling/lint/**/*.mjs", "tooling/scripts/**/*.ts"],
+      "ignoreDependencies": ["@vue/typescript-plugin", "typescript-language-server"]
     },
     "packages/vue": {
       "entry": ["build/*.ts", "test/**/*.spec.ts"],

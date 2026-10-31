@@ -49,7 +49,7 @@
         :value="progress"
         size="sm"
         :color="progressColor"
-        :aria-label="`Upload progress for ${name}`"
+        :aria-label="t('dropZone.progress', { filename: name })"
         data-slot="drop-zone-file-progress"
         :class="cls('fileProgress')"
       />
@@ -60,7 +60,7 @@
         :class="cls('fileRetryTrigger')"
         @click="emit('retry')"
       >
-        <slot name="retry" v-bind="slotProps">Retry</slot>
+        <slot name="retry" v-bind="slotProps">{{ t('dropZone.retry') }}</slot>
       </button>
       <slot v-bind="slotProps" />
     </div>
@@ -68,7 +68,7 @@
       v-if="removable"
       type="button"
       data-slot="drop-zone-file-remove-trigger"
-      :aria-label="`Remove ${name}`"
+      :aria-label="t('dropZone.removeFile', { filename: name })"
       :class="cls('fileRemoveTrigger')"
       @click="emit('remove')"
     >
@@ -98,6 +98,7 @@ import { computed, inject } from 'vue'
 
 import ProgressBar from '@/components/progress-bar/ProgressBar.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import { dropZoneContextKey } from './context'
 import type {
@@ -108,6 +109,8 @@ import type {
 } from './DropZoneFileItem.types'
 import theme from './theme'
 import { fileExtension, formatColor, formatFileSize } from './utils'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<DropZoneFileItemProps>(), { removable: true })
 

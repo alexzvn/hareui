@@ -54,6 +54,12 @@ type Pick = {
 const PICKS: Record<string, Pick> = {
   'alert-dialog': { open: 'button', overlay: '[data-slot="alert-dialog-dialog"]' },
   accordion: { select: '[data-slot="accordion-item"]:nth-child(-n+3)', width: 320 },
+  // The bar is fixed to the viewport bottom, so it is shot from its own preview.
+  'action-bar': {
+    demo: 'action-bar/basic',
+    select: '[data-slot="toolbar"]',
+    page: { width: 640, height: 400 },
+  },
   // App wraps a whole layout, so it shows one; DashboardGroup shows a different one.
   app: {
     demo: 'dashboard-group/app-layout-with-breadcrumbs',
@@ -61,6 +67,14 @@ const PICKS: Record<string, Pick> = {
     crop: { x: 0, y: 0, width: 480, height: 220 },
   },
   container: { width: 360 },
+  // The trigger alone says little; the inline palette shows the search field and its results.
+  'command-palette': { demo: 'command-palette/inline' },
+  // Opening needs a right-click, so the controlled demo's button opens it.
+  'context-menu': {
+    demo: 'context-menu/controlled',
+    open: 'button',
+    overlay: '[data-slot="context-menu-popover"]',
+  },
   'dashboard-group': {
     demo: 'dashboard-group/app-layout-default',
     page: { width: 1024, height: 640 },
@@ -111,6 +125,21 @@ const PICKS: Record<string, Pick> = {
   'navigation-menu': { demo: 'navigation-menu/orientation' },
   main: { width: 360 },
   'rich-table': { width: 600 },
+  editor: { width: 440 },
+  'list-view': { select: '[data-slot="list-view"]', width: 320 },
+  // The first copy's leading logos, held still and without the edge fade, which paints the page background.
+  marquee: {
+    demo: 'marquee/overlay',
+    select: '[data-slot="marquee-content"]:first-child > :nth-child(-n+3)',
+    width: 560,
+  },
+  sidebar: {
+    demo: 'sidebar/basic',
+    page: { width: 1024, height: 640 },
+    crop: { x: 0, y: 0, width: 240, height: 320 },
+  },
+  timeline: { width: 300 },
+  toc: { select: '[data-slot="toc"]' },
   alert: { select: ':scope > [data-slot="alert-root"]:nth-of-type(2)', width: 380 },
   // The basic demo pairs the zone with an empty file panel; the zone alone reads better at card size.
   'drop-zone': { select: '[data-slot="drop-zone"]' },
@@ -152,11 +181,13 @@ const slugs = args.length
       .map((f) => f.slice(0, -3))
       .sort()
 
-// Only the first demo stays visible, on a transparent page.
+// Only the first demo stays visible, on a transparent page. Marquees are held at their first frame, so both passes
+// of a shot see the same items.
 const ISOLATE = `
   html, body { background: transparent !important; }
   body * { visibility: hidden !important; transition: none !important; }
   [data-thumbnail], [data-thumbnail] * { visibility: visible !important; }
+  [data-slot="marquee-content"] { animation: none !important; }
 `
 
 type Box = {

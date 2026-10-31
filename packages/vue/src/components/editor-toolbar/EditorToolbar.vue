@@ -33,18 +33,18 @@
                   :class="ui.button({ class: 'gap-0.5 px-2', override: item.class })"
                   @click="onClick($event, item)"
                 >
-                  <component
-                    :is="getDropdownTriggerIcon(item)"
+                  <IconRenderer
                     v-if="getDropdownTriggerIcon(item)"
+                    :icon="getDropdownTriggerIcon(item)!"
                   />
                   <span v-if="item.label">{{ item.label }}</span>
                   <component :is="chevronIcon" class="size-3" />
                 </Button>
 
                 <template #item-leading="{ item: entry }">
-                  <component
-                    :is="getEntryIcon(entry)"
+                  <IconRenderer
                     v-if="getEntryIcon(entry)"
+                    :icon="getEntryIcon(entry)!"
                     class="size-4 shrink-0"
                   />
                 </template>
@@ -65,7 +65,7 @@
                       v-bind="isToggleItem(item) ? getToggleProps(item) : getButtonProps(item)"
                       :class="ui.button({ override: item.class })"
                     >
-                      <component :is="getItemIcon(item)" v-if="getItemIcon(item)" />
+                      <IconRenderer v-if="getItemIcon(item)" :icon="getItemIcon(item)!" />
                       <span v-if="item.label">{{ item.label }}</span>
                     </component>
                   </EditorToolbarUrlPopover>
@@ -79,7 +79,7 @@
                   :class="ui.button({ override: item.class })"
                   @click="onClick($event, item)"
                 >
-                  <component :is="getItemIcon(item)" v-if="getItemIcon(item)" />
+                  <IconRenderer v-if="getItemIcon(item)" :icon="getItemIcon(item)!" />
                   <span v-if="item.label">{{ item.label }}</span>
                 </component>
               </Tooltip>
@@ -103,7 +103,7 @@
 import { BubbleMenu, FloatingMenu } from '@tiptap/vue-3/menus'
 import { defu } from 'defu'
 import { Primitive } from 'reka-ui'
-import type { Component, ComponentPublicInstance } from 'vue'
+import type { ComponentPublicInstance } from 'vue'
 import { computed, inject, useAttrs, useTemplateRef } from 'vue'
 
 import type { ButtonProps } from '@/components/button/Button.types'
@@ -119,6 +119,9 @@ import Toolbar from '@/components/toolbar/Toolbar.vue'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
 import Tooltip from '@/components/tooltip/Tooltip.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
+import type { IconValue } from '@/types/icon'
+import { IconRenderer } from '@/utils/icon'
 
 import { getCommandDefaults } from './defaults'
 import type {
@@ -135,6 +138,8 @@ import { getEditorToolbarIcon } from './icons'
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<EditorToolbarProps<H>>(), {
   as: 'div',
@@ -288,13 +293,20 @@ const isToggleItem = (item: EditorToolbarItem<H>) => {
   return !!handlers.value[command.kind]?.isToggle
 }
 
-const getItemIcon = (item: object): Component | undefined => {
-  if ('icon' in item && item.icon) return item.icon as Component
+const getItemIcon = (item: object): IconValue | undefined => {
+  if ('icon' in item && item.icon) return item.icon as IconValue
 
   const command = getCommand(item)
   const defaults = command && getCommandDefaults(command)
 
   return defaults && getEditorToolbarIcon(defaults.icon)
+}
+
+// The built-in, translated name of a command.
+const getCommandLabel = (command: EditorCommand) => {
+  const defaults = getCommandDefaults(command)
+
+  return defaults && t(defaults.labelKey, defaults.params)
 }
 
 const getItemName = (item: EditorToolbarButtonBase) => {
@@ -304,7 +316,7 @@ const getItemName = (item: EditorToolbarButtonBase) => {
 
   const command = getCommand(item)
 
-  return command && getCommandDefaults(command)?.label
+  return command && getCommandLabel(command)
 }
 
 const getTooltipProps = (item: EditorToolbarItem<H>): TooltipProps => {
@@ -351,7 +363,7 @@ const toMenuItem = (
 ): EditorToolbarDropdownMenuItem => {
   const command = getCommand(entry)
   const menuItem = entry as EditorToolbarDropdownMenuItem
-  const label = menuItem.label ?? (command && getCommandDefaults(command)?.label) ?? ''
+  const label = menuItem.label ?? (command && getCommandLabel(command)) ?? ''
 
   return {
     ...menuItem,

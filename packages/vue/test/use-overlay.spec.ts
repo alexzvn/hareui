@@ -1,7 +1,7 @@
 import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { Component } from 'vue'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, onMounted, watch } from 'vue'
 
 import AlertDialog from '@/components/alert-dialog/AlertDialog.vue'
 import App from '@/components/app/App.vue'
@@ -61,6 +61,70 @@ const ConfirmModal = defineComponent({
           ],
         },
       )
+  },
+})
+
+// happy-dom has no CSS animations: report a running one for closed elements whose theme declares a closed-state
+// animation, so a Modal stays mounted through its exit until `finishExit` (see modal.spec.ts).
+const stubExitAnimations = () => {
+  const original = window.getComputedStyle.bind(window)
+  vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
+    const real = original(el, pseudo)
+
+    const animatesClosed =
+      el.getAttribute?.('data-state') === 'closed' &&
+      /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
+
+    if (!animatesClosed) return real
+
+    return new Proxy(real, {
+      get: (target, key) => (key === 'animationName' ? 'exit' : Reflect.get(target, key)),
+    })
+  })
+}
+
+// Ends the closed backdrop's exit animation; the dialog's `presence-hold` leaves with it.
+const finishExit = async () => {
+  const event = Object.assign(new Event('animationend', { bubbles: true }), {
+    animationName: 'exit',
+  })
+
+  document
+    .querySelectorAll('[data-slot=modal-backdrop][data-state=closed]')
+    .forEach((el) => el.dispatchEvent(event))
+
+  await settle()
+}
+
+/** Emits `enter` like a HareUI overlay only with `hasLifecycle`, as a wrapper rendering a Modal or plain markup does. */
+const LifecyclePanel = defineComponent({
+  props: { open: Boolean, hasLifecycle: Boolean },
+  emits: ['enter'],
+  setup: (props, { emit }) => {
+    onMounted(() => {
+      if (props.hasLifecycle) emit('enter')
+    })
+
+    return () => h('div', { 'data-slot': 'panel' }, 'Panel')
+  },
+})
+
+/** Emits `after:leave` as soon as it closes, before the provider starts waiting for it. */
+const InstantLeavePanel = defineComponent({
+  props: { open: Boolean },
+  emits: ['enter', 'after:leave'],
+  setup: (props, { emit }) => {
+    onMounted(() => emit('enter'))
+
+    watch(
+      () => props.open,
+      (open) => {
+        if (!open) emit('after:leave')
+      },
+      { flush: 'sync' },
+    )
+
+    return () => h('div', { 'data-slot': 'panel' }, 'Panel')
   },
 })
 
@@ -329,12 +393,18 @@ describe('useOverlay', () => {
     expect(dialogs()).toHaveLength(1)
   })
 
-  it('keeps a closed overlay rendered until its exit animation ends', async () => {
+  it('waits for the exit animation of a component without lifecycle events', async () => {
     let finish = () => {}
     const finished = new Promise<void>((resolve) => (finish = resolve))
 
+    const Panel = defineComponent({
+      props: { open: Boolean },
+      setup: (props) => () =>
+        h('div', { 'data-slot': 'panel', 'data-state': props.open ? 'open' : 'closed' }, 'Panel'),
+    })
+
     const exitAnimation = () => {
-      const target = document.querySelector('[data-slot=modal-backdrop][data-state=closed]')
+      const target = document.querySelector('[data-slot=panel][data-state=closed]')
       if (!target) return []
 
       return [{ effect: { target, getComputedTiming: () => ({ endTime: 200 }) }, finished }]
@@ -343,27 +413,105 @@ describe('useOverlay', () => {
     Object.defineProperty(document, 'getAnimations', { value: exitAnimation, configurable: true })
 
     mountApp()
-    const modal = overlay.create(ConfirmModal)
+    const panel = overlay.create(Panel)
 
-    const opened = modal.open()
+    void panel.open()
     await settle()
-    escapeKeydown()
-    await settle()
-
-    const onResolve = vi.fn<(value: unknown) => void>()
-    void opened.then(onResolve)
+    panel.close()
     await settle()
 
-    expect(modal.isOpen).toBe(false)
-    expect(modal.isMounted).toBe(true)
-    expect(onResolve).not.toHaveBeenCalled()
+    expect(panel.isOpen).toBe(false)
+    expect(panel.isMounted).toBe(true)
+    expect(document.querySelector('[data-slot=panel]')).not.toBeNull()
 
     finish()
     await settle()
 
-    expect(modal.isMounted).toBe(false)
-    expect(onResolve).toHaveBeenCalledWith(undefined)
+    expect(panel.isMounted).toBe(false)
+    expect(document.querySelector('[data-slot=panel]')).toBeNull()
 
     Reflect.deleteProperty(document, 'getAnimations')
+  })
+
+  it('keeps a Modal mounted through its exit animation until after:leave', async () => {
+    stubExitAnimations()
+    mountApp()
+
+    const events: string[] = []
+    const modal = overlay.create(Modal, {
+      props: { title: 'Leaving', 'onAfter:leave': () => events.push('after:leave') },
+    })
+
+    void modal.open().then(() => events.push('resolved'))
+    await settle()
+    escapeKeydown()
+    await settle()
+
+    expect(modal.isOpen).toBe(false)
+    expect(modal.isMounted).toBe(true)
+    expect(dialogs()).toHaveLength(1)
+    expect(events).toEqual([])
+
+    await finishExit()
+
+    expect(events).toEqual(['after:leave', 'resolved'])
+    expect(modal.isMounted).toBe(false)
+    expect(dialogs()).toHaveLength(0)
+  })
+
+  it('keeps a Modal reopened during its exit animation open, and unmounts it after its next exit', async () => {
+    stubExitAnimations()
+    mountApp()
+    const modal = overlay.create(Modal, { props: { title: 'Back again' } })
+
+    void modal.open()
+    await settle()
+    modal.close()
+    await settle()
+    void modal.open()
+    await settle()
+
+    expect(modal.isOpen).toBe(true)
+    expect(modal.isMounted).toBe(true)
+    expect(dialogs()).toHaveLength(1)
+
+    modal.close()
+    await settle()
+    await finishExit()
+
+    expect(modal.isMounted).toBe(false)
+    expect(dialogs()).toHaveLength(0)
+  })
+
+  it('unmounts an overlay whose after:leave came before the provider waited for it', async () => {
+    mountApp()
+    const panel = overlay.create(InstantLeavePanel)
+
+    void panel.open()
+    await settle()
+    panel.close()
+    await settle()
+
+    expect(panel.isMounted).toBe(false)
+    expect(document.querySelector('[data-slot=panel]')).toBeNull()
+  })
+
+  it('forgets that an overlay emitted enter once unmount() removed it', async () => {
+    mountApp()
+    const panel = overlay.create(LifecyclePanel)
+
+    void panel.open({ hasLifecycle: true })
+    await settle()
+    panel.unmount()
+    await settle()
+
+    // Reopened without `hasLifecycle`, it never emits `after:leave`: closing falls back to the exit animations.
+    void panel.open()
+    await settle()
+    panel.close()
+    await settle()
+
+    expect(panel.isMounted).toBe(false)
+    expect(document.querySelector('[data-slot=panel]')).toBeNull()
   })
 })

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
 import Popover from '@/components/popover/Popover.vue'
@@ -254,5 +254,123 @@ describe('popover', () => {
     await settle()
     expect(w.emitted('update:open')).toBeUndefined()
     expect(content()).not.toBeNull()
+  })
+})
+
+describe('popover hover mode on touch', () => {
+  const tap = () =>
+    triggerEl().dispatchEvent(
+      new PointerEvent('pointerup', { bubbles: true, pointerType: 'touch' }),
+    )
+
+  it('ignores a tap on the trigger by default', async () => {
+    const w = mountPopover({ mode: 'hover' })
+    tap()
+    await settle()
+
+    expect(w.emitted('update:open')).toBeUndefined()
+  })
+
+  it('opens on a tap with enableTouch', async () => {
+    const w = mountPopover({ mode: 'hover', enableTouch: true })
+    tap()
+    await settle()
+
+    expect(w.emitted('update:open')).toEqual([[true]])
+  })
+
+  it('closes on a second tap with enableTouch', async () => {
+    const w = mountPopover({ mode: 'hover', enableTouch: true })
+    tap()
+    await settle()
+    tap()
+    await settle()
+
+    expect(w.emitted('update:open')).toEqual([[true], [false]])
+  })
+})
+
+describe('popover hover mode', () => {
+  const mouse = (type: string) =>
+    triggerEl().dispatchEvent(new PointerEvent(type, { pointerType: 'mouse' }))
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('opens only after the default open delay', async () => {
+    vi.useFakeTimers()
+    const w = mountPopover({ mode: 'hover' })
+    mouse('pointerenter')
+    vi.advanceTimersByTime(699)
+    expect(w.emitted('update:open')).toBeUndefined()
+
+    vi.advanceTimersByTime(1)
+    expect(w.emitted('update:open')).toEqual([[true]])
+  })
+
+  // With the card open, Reka's trigger `pointerleave` only arms a grace area toward the content; the
+  // close delay starts once the pointer moves somewhere outside the trigger, content and that area.
+  it('closes only after the default close delay once the pointer leaves', async () => {
+    vi.useFakeTimers()
+    const w = mountPopover({ mode: 'hover', defaultOpen: true })
+    await settle()
+    expect(content()).not.toBeNull()
+
+    mouse('pointerleave')
+    await settle()
+
+    outside!.dispatchEvent(
+      new PointerEvent('pointermove', {
+        bubbles: true,
+        pointerType: 'mouse',
+        clientX: 500,
+        clientY: 500,
+      }),
+    )
+
+    vi.advanceTimersByTime(299)
+    expect(w.emitted('update:open')).toBeUndefined()
+
+    vi.advanceTimersByTime(1)
+    expect(w.emitted('update:open')).toEqual([[false]])
+  })
+
+  it('stays closed while a controlled `open` is false', async () => {
+    vi.useFakeTimers()
+    const w = mountPopover({ mode: 'hover', open: false })
+    mouse('pointerenter')
+    vi.advanceTimersByTime(700)
+    await settle()
+
+    expect(w.emitted('update:open')).toEqual([[true]])
+    expect(content()).toBeNull()
+  })
+
+  it('does not mark the trigger pressed while open', async () => {
+    mountPopover({ mode: 'hover', defaultOpen: true })
+    await settle()
+
+    expect(content()).not.toBeNull()
+    expect(triggerEl().hasAttribute('data-pressed')).toBe(false)
+  })
+
+  it('passes no `close` to the content slot', async () => {
+    const slotProps: Record<string, unknown>[] = []
+    wrapper = mount(Popover, {
+      props: { mode: 'hover', defaultOpen: true },
+      slots: {
+        default: () => h('button', { 'data-testid': 'trigger' }, 'Open'),
+        content: (props: Record<string, unknown>) => {
+          slotProps.push(props)
+          return h('p', 'Body')
+        },
+      },
+      attachTo: document.body,
+    })
+
+    await settle()
+
+    expect(slotProps.at(-1)).not.toHaveProperty('close')
   })
 })

@@ -7,6 +7,7 @@ export default {
     body: 'text-sm',
     bodyInner: 'px-4 pt-0 pb-4 text-muted',
     heading: 'flex',
+    icon: 'me-2 size-4 shrink-0',
     indicator: [
       'ms-auto size-4 shrink-0 text-muted',
       'transition duration-250 motion-reduce:transition-none',

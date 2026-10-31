@@ -10,6 +10,8 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :class="ui.base()"
+    @focus.capture="onFieldFocusCapture"
+    @blur.capture="onFieldBlurCapture"
   >
     <FieldLabel :id="labelId" as="span" :class="ui.label()" @click="button?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="setOpen">
@@ -78,7 +80,7 @@
             v-if="clearable"
             type="button"
             tabindex="-1"
-            aria-label="Clear selection"
+            :aria-label="t('autocomplete.clear')"
             data-slot="autocomplete-clear-button"
             :aria-hidden="isPlaceholder ? 'true' : undefined"
             :data-empty="isPlaceholder ? 'true' : undefined"
@@ -171,6 +173,8 @@
           @focus-outside="onOutside"
           @escape-key-down="onEscapeKeyDown"
           @keydown="onPopoverKeydown"
+          @focus.capture="onFieldFocusCapture"
+          @blur.capture="onFieldBlurCapture"
         >
           <ListboxRoot
             class="contents"
@@ -185,8 +189,8 @@
               :id="searchId"
               ref="searchField"
               :value="inputValue"
-              :label="searchLabel"
-              :placeholder="searchPlaceholder"
+              :label="searchLabel ?? t('autocomplete.search')"
+              :placeholder="searchPlaceholder ?? t('autocomplete.searchPlaceholder')"
               :listbox-id="listboxId"
               :active-descendant="activeDescendant"
               :ui="props.ui"
@@ -202,7 +206,7 @@
               ref="list"
               data-slot="list-box"
               data-layout="stack"
-              aria-label="Suggestions"
+              :aria-label="t('autocomplete.suggestions')"
               :aria-labelledby="listLabelledBy"
               :aria-multiselectable="isMultiple ? 'true' : undefined"
               :data-empty="countRows(blocks) ? undefined : 'true'"
@@ -293,8 +297,11 @@ import { useCollectionModel } from '@/components/list-box/useCollectionModel'
 import { usePressRelease } from '@/components/select/pressRelease'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
+import { withChangeEvent } from '@/utils/formControlEvents'
 
 import type {
   AutocompleteEmits,
@@ -317,15 +324,17 @@ import { useAutocompleteVirtualFocus } from './useAutocompleteVirtualFocus'
 
 defineOptions({ inheritAttrs: false })
 
+const { t } = useLocale()
+
 // Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<AutocompleteProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
-  placeholder: 'Select an item',
+  placeholder: undefined,
   search: true,
-  searchPlaceholder: 'Search...',
-  searchLabel: 'Search options',
+  searchPlaceholder: undefined,
+  searchLabel: undefined,
   filter: undefined,
   open: undefined,
   invalid: undefined,
@@ -361,22 +370,24 @@ const searchInput = () => searchField.value?.input ?? undefined
 // Selected items keep selection order, as RAC (`[...selectedKeys]`)
 const {
   options,
-  selection,
+  selection: modelSelection,
   selectedValues,
   selectedKey,
   selectedItems,
   valueText,
   isPlaceholder,
   isSelected,
-  clear: clearSelection,
   reset,
 } = useCollectionModel<T>({
   items: () => props.items,
   model: modelValue,
   defaultValue: () => props.defaultValue,
   isMultiple: () => isMultiple.value,
-  placeholder: () => props.placeholder,
+  placeholder: () => props.placeholder ?? t('autocomplete.placeholder'),
 })
+
+// Writes through `selection` are the user's: they emit `change`
+const selection = withChangeEvent(modelSelection, (event) => emit('change', event))
 
 // ---- Validation -------------------------------------------------------------------------------------------------
 const { validation, invalid, commitValidation } = useFieldValidation<AutocompleteValue>({
@@ -406,7 +417,7 @@ const onHiddenInvalid = () => {
 }
 
 // ---- Ids / ARIA -------------------------------------------------------------------------------------------------
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+const { name, id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
   useFieldChrome({
     props,
     slots,
@@ -452,6 +463,7 @@ const {
   virtualize: () => props.virtualize,
   isDisabled: () => disabled.value,
   isOpen: () => isOpen.value,
+  onHighlight: (payload) => emit('highlight', payload),
 })
 
 const { inputValue, blocks, setSearchText, onEscapeKeyDown } = useAutocompleteSearch<T>({
@@ -500,7 +512,7 @@ const onListUpdate = (value: unknown) => {
 const clear = () => {
   if (disabled.value || isPlaceholder.value) return
 
-  clearSelection()
+  selection.value = null
   commitValidation()
   emit('clear')
 }
@@ -537,6 +549,11 @@ const {
     currentValue: () => selectedValues.value[0],
     select: selectTypeaheadMatch,
   },
+})
+
+const { onFocusCapture: onFieldFocusCapture, onBlurCapture: onFieldBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
 })
 
 const pressRelease = usePressRelease()

@@ -21,6 +21,7 @@ export default {
       // Reka's ListboxItem sets `data-disabled=""` itself (it wins over ours), so match on presence
       'data-disabled:status-disabled',
     ],
+    itemIcon: 'size-4 shrink-0',
     indicator: [
       'absolute end-2 top-1/2 flex size-4 shrink-0 -translate-y-1/2 items-center justify-center text-default-foreground',
       'transition duration-250 motion-reduce:transition-none',

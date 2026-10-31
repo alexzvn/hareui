@@ -388,3 +388,50 @@ describe('NumberField stepper button slots', () => {
     expect(buttonUpdates).toBe(0)
   })
 })
+
+describe('NumberField v-model modifiers', () => {
+  const typeAndBlur = async (
+    text: string,
+    props: Pick<NumberFieldProps, 'modelModifiers'> & { modelValue?: number | null } = {},
+  ) => {
+    const wrapper = mount(NumberField, {
+      props: { label: 'Quantity', modelValue: 5, ...props },
+      attachTo: document.body,
+    })
+
+    const el = wrapper.get(input)
+    await el.trigger('focus')
+    ;(el.element as HTMLInputElement).value = text
+    await el.trigger('input')
+    await el.trigger('blur')
+    const emitted = wrapper.emitted('update:modelValue')?.at(-1)
+    wrapper.unmount()
+
+    return emitted
+  }
+
+  it('without modifiers emits undefined for an emptied input', async () => {
+    expect(await typeAndBlur('')).toEqual([undefined])
+  })
+
+  it('nullable emits null for an emptied input', async () => {
+    expect(await typeAndBlur('', { modelModifiers: { nullable: true } })).toEqual([null])
+  })
+
+  it('nullable keeps 0 as a value', async () => {
+    expect(await typeAndBlur('0', { modelModifiers: { nullable: true } })).toEqual([0])
+  })
+
+  it('optional emits undefined for an emptied input', async () => {
+    expect(await typeAndBlur('', { modelModifiers: { optional: true } })).toEqual([undefined])
+  })
+
+  it('nullable keeps a number typed into an empty (null) field', async () => {
+    const modelModifiers = { nullable: true } as const
+    expect(await typeAndBlur('30', { modelModifiers, modelValue: null })).toEqual([30])
+  })
+
+  it('keeps a number typed into an emptied field whose v-model is null', async () => {
+    expect(await typeAndBlur('30', { modelValue: null })).toEqual([30])
+  })
+})

@@ -46,7 +46,7 @@ const submit = async (w: VueWrapper) => {
 
 /** A TextField bound with v-model to `state[name]`. */
 const field = <K extends string>(
-  state: Partial<Record<K, string | number | undefined>>,
+  state: Partial<Record<K, string | number | null | undefined>>,
   name: K,
   props: Record<string, unknown> = {},
 ) => {
@@ -54,7 +54,7 @@ const field = <K extends string>(
     label: name,
     name,
     modelValue: state[name],
-    'onUpdate:modelValue': (value: string | number | undefined) => {
+    'onUpdate:modelValue': (value: string | number | null | undefined) => {
       state[name] = value
     },
     ...props,

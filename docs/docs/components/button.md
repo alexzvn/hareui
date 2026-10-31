@@ -18,7 +18,7 @@ import { Button } from '@hareui/vue'
 ## Anatomy
 
 Button is a single component — no compound parts. Content is composed through named
-slots.
+slots, or through the `label`, `leadingIcon`, `trailingIcon` and `avatar` props (a slot wins over its prop).
 
 ```vue
 <Button>
@@ -28,7 +28,7 @@ slots.
 </Button>
 ```
 
-`ui` keys: `base`, `spinner`.
+`ui` keys: `base`, `spinner`, `label`, `leadingIcon`, `trailingIcon`, `avatar`.
 
 ## Examples
 
@@ -48,6 +48,17 @@ slots.
 
 <ComponentPreview name="button/icon-only" />
 
+### Label and Icon Props
+
+Pass `label` for the text, and `leadingIcon`, `trailingIcon` or `avatar` for what sits around it. A slot wins over its
+prop. A button with an icon or avatar but no label is square, like `iconOnly`; give it an `aria-label`.
+
+An icon can be a component or a CSS class string. A class string only shows an icon when your app has a CSS icon
+plugin, such as `@iconify/tailwind4` (`icon-[lucide--x]`) or UnoCSS `presetIcons` (`i-lucide-x`). Iconify names such
+as `lucide:x` don't work as strings; pass an `Icon` component for those.
+
+<ComponentPreview name="button/label-and-icons" />
+
 ### Loading
 
 <ComponentPreview name="button/loading" />
@@ -55,6 +66,31 @@ slots.
 ### Loading State
 
 <ComponentPreview name="button/loading-state" />
+
+### Automatic Loading
+
+With `loadingAuto`, the button shows a spinner and ignores clicks while the promise returned by its `@click` handler
+runs. A `type="submit"` button inside a `Form` also waits for the form's `@submit` handler.
+
+<ComponentPreview name="button/loading-auto" />
+
+### As a Link
+
+Give the button `to` or `href` and it renders a link. With vue-router installed, an internal `to` goes through
+`RouterLink`; anything else renders a plain `<a>`. A disabled link has no `href` and can't be focused.
+
+The button takes the same link props as [`Link`](./link#link-props):
+
+| Prop            | What it does                                                    |
+| --------------- | --------------------------------------------------------------- |
+| `target`, `rel` | As on `<a>`; `target="_blank"` adds `rel="noopener noreferrer"` |
+| `download`      | Downloads the file instead of opening it                        |
+| `external`      | Skips `RouterLink` for `to`                                     |
+| `replace`       | Replaces the history entry instead of pushing one               |
+| `exact`         | Marks the link active only on the exact route                   |
+| `active`        | Sets the active state yourself; `[data-active=true]` marks it   |
+
+<ComponentPreview name="button/as-link" />
 
 ### Full Width
 
@@ -68,9 +104,12 @@ slots.
 
 <ComponentPreview name="button/social" />
 
-### Render Function
+### Custom Element
 
-<ComponentPreview name="button/render-function" />
+`as` renders the button as another element or component. An element other than `<button>` gets `role="button"`, joins
+the tab order and responds to Enter and Space. Here a `<label>` opens the file picker of the input inside it.
+
+<ComponentPreview name="button/custom-element" />
 
 ### Adding custom variants
 
@@ -114,10 +153,14 @@ app.use(
 
 Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
-| `ui` key  | `data-slot` | Description                        |
-| --------- | ----------- | ---------------------------------- |
-| `base`    | `button`    | The root `<button>` / `as` element |
-| `spinner` | `spinner`   | The auto-rendered pending spinner  |
+| `ui` key       | `data-slot`            | Description                                        |
+| -------------- | ---------------------- | -------------------------------------------------- |
+| `base`         | `button`               | The root `<button>` / `as` element (`<a>` as link) |
+| `spinner`      | `spinner`              | The auto-rendered pending spinner                  |
+| `label`        | `button-label`         | The `label` prop's text                            |
+| `leadingIcon`  | `button-leading-icon`  | The `leadingIcon` prop's icon                      |
+| `trailingIcon` | `button-trailing-icon` | The `trailingIcon` prop's icon                     |
+| `avatar`       | `button-avatar`        | The `avatar` prop's `Avatar`                       |
 
 ### Interactive states
 
@@ -126,6 +169,7 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 - **Focus**: `:focus-visible`
 - **Disabled**: `:disabled` / `[aria-disabled=true]`
 - **Pending**: `[data-pending=true]` — renders a `Spinner` in the leading slot, blocks `@click`, stays focusable
+- **Current route** (link): `[data-active=true]`
 
 ## API Reference
 

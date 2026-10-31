@@ -23,6 +23,12 @@ export default {
       '[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:pointer-events-none [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:-mx-0.5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:my-0.5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-5 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:shrink-0 [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:self-center sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:my-1 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4',
     ],
     spinner: '',
+    label: '',
+    // Same box as an SVG child: 20px under `sm`, 16px from `sm`, so a class-string icon (an empty span) matches too.
+    leadingIcon: 'pointer-events-none -mx-0.5 my-0.5 size-5 shrink-0 self-center sm:my-1 sm:size-4',
+    trailingIcon:
+      'pointer-events-none -mx-0.5 my-0.5 size-5 shrink-0 self-center sm:my-1 sm:size-4',
+    avatar: '-mx-0.5 size-5 shrink-0 sm:size-4 [&_[data-slot=avatar-fallback]]:text-[0.5rem]',
   },
   variants: {
     variant: {
@@ -51,6 +57,9 @@ export default {
     size: {
       sm: {
         base: '[--button-height:--spacing(9)] px-3 md:[--button-height:--spacing(8)] [:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 sm:[:where(&_svg:not([data-slot=spinner]_svg,[data-slot=link-icon]_svg))]:size-4 active:[transform:scale(0.98)] data-[pressed=true]:[transform:scale(0.98)]',
+        leadingIcon: 'size-4',
+        trailingIcon: 'size-4',
+        avatar: 'size-4',
       },
       md: { base: '' },
       lg: {

@@ -2,6 +2,8 @@ import type { VNode } from 'vue'
 
 import type { KbdKey } from '@/components/kbd/kbdKeys'
 import type { PortalTarget } from '@/config'
+import type { IconValue } from '@/types/icon'
+import type { LinkBaseProps } from '@/types/link'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -12,14 +14,19 @@ type Dropdown = typeof theme
 /** The key identifying a `Dropdown` item, emitted by `action` and stored in `v-model`. */
 export type DropdownValue = string | number
 
-/** An actionable or selectable entry of a `Dropdown` menu. */
-export type DropdownItem = {
+/**
+ * An actionable or selectable entry of a `Dropdown` menu. A plain action item with `to` or `href` renders as a link:
+ * pressing it (or Enter / Space on it) follows the link.
+ */
+export type DropdownItem = LinkBaseProps & {
   /** Unique key of the item across the whole menu. Emitted by `action` and stored in `v-model`. */
   value: DropdownValue
   /** The item text, shown unless the `#item` / `#item-label` slot is used. */
   label?: string
   /** Secondary text under the label. */
   description?: string
+  /** Icon rendered before the label, unless the `#item-leading` slot is used. */
+  icon?: IconValue
   /** Text used for typeahead. Defaults to `label`. */
   textValue?: string
   /** Whether the item can't be focused, selected or activated. */
@@ -30,9 +37,14 @@ export type DropdownItem = {
   kbd?: { keys?: KbdKey | KbdKey[]; content?: string }
   /** Nested entries: the item becomes a submenu trigger. */
   items?: DropdownEntry[]
+  /**
+   * Called when the item is chosen, before the root `action` event (or the selection toggle). Call
+   * `event.preventDefault()` to keep the menu open.
+   */
+  onSelect?: (event: Event) => void
   /** Classes merged onto the item element. */
   class?: ClassValue
-  /** Extra fields (icons, ...) are passed through to the slots as `item`. */
+  /** Extra fields are passed through to the slots as `item`. */
   [key: string]: unknown
 }
 
@@ -132,7 +144,7 @@ export type DropdownSlots<T extends DropdownItem = DropdownItem> = {
   'content-top'?: () => VNode[]
   /** Replaces the whole item content. */
   item?: (props: DropdownItemSlotProps<T>) => VNode[]
-  /** Content before the label, such as an icon or avatar. */
+  /** Content before the label, such as an icon or avatar. Replaces `item.icon`. */
   'item-leading'?: (props: DropdownItemSlotProps<T>) => VNode[]
   /** Replaces the item label text. */
   'item-label'?: (props: DropdownItemSlotProps<T>) => VNode[]

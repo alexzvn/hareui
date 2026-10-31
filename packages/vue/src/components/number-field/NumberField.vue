@@ -61,15 +61,17 @@
         </DecrementOutlet>
       </NumberFieldDecrement>
       <NumberFieldInput
+        v-bind="fieldAttrs.focus"
         data-slot="number-field-input"
         :placeholder="placeholder"
         :required="required || undefined"
         :aria-invalid="invalid ? 'true' : undefined"
+        :aria-roledescription="t('numberField.roledescription')"
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
         :class="ui.input()"
-        @blur="onCommitEmpty"
+        @blur="commitIfEmptied"
         @keydown="onKeydown"
       />
       <NumberFieldIncrement
@@ -126,13 +128,19 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { useNumberValue } from '@/composables/useNumberValue'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
+import { splitFocusListeners } from '@/utils/formControlEvents'
+import type { ModelModifier } from '@/utils/modelModifiers'
+import { toEmptyModelValue } from '@/utils/modelModifiers'
 
 import type { NumberFieldProps, NumberFieldSlots } from './NumberField.types'
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<NumberFieldProps>(), {
@@ -145,19 +153,31 @@ const slots = defineSlots<NumberFieldSlots>()
 const DecrementOutlet = useSlotOutlet(slots, 'decrement')
 const IncrementOutlet = useSlotOutlet(slots, 'increment')
 
-/** The numeric value; `undefined` while the input is empty. */
-const modelValue = defineModel<number | null>()
+type NumberModifier = Extract<ModelModifier, 'nullable' | 'optional'>
 
-const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } =
-  useNumberValue({
-    model: modelValue,
-    defaultValue: () => props.defaultValue,
-    min: () => props.min,
-    max: () => props.max,
-    step: () => props.step,
-    formatOptions: () => props.formatOptions,
-    onCommit: () => commitValidation(),
-  })
+/** The numeric value; `undefined` while the input is empty (`null` with `v-model.nullable`). */
+const [modelValue, modifiers] = defineModel<number | null, NumberModifier>({
+  set: (v) => toEmptyModelValue(v, modifiers),
+})
+
+const {
+  effectiveStep,
+  displayValue,
+  defaultDisplayValue,
+  formValue,
+  commit,
+  captureInputText,
+  commitIfEmptied,
+  reset,
+} = useNumberValue({
+  model: modelValue,
+  defaultValue: () => props.defaultValue,
+  min: () => props.min,
+  max: () => props.max,
+  step: () => props.step,
+  formatOptions: () => props.formatOptions,
+  onCommit: () => commitValidation(),
+})
 
 const root = useTemplateRef<HTMLElement>('root')
 const isDisabled = useFieldsetDisabled(() => props.disabled)
@@ -175,12 +195,8 @@ const { validation, invalid, commitValidation } = useFieldValidation({
 })
 
 // Runs after Reka's blur / Enter handler, which has already applied a non-empty input
-const onCommitEmpty = (event: Event) => {
-  if ((event.target as HTMLInputElement).value === '') commitEmpty()
-}
-
 const onKeydown = (event: KeyboardEvent) => {
-  if (event.key === 'Enter' && !event.isComposing) onCommitEmpty(event)
+  if (event.key === 'Enter' && !event.isComposing) commitIfEmptied()
 }
 
 // RAC's spin button moves PageUp / PageDown by a single step (`onIncrementPage` = `onIncrement`); Reka moves 10 steps.
@@ -188,6 +204,7 @@ const onKeydown = (event: KeyboardEvent) => {
 // It is attached natively: a Vue `@keydown.capture` invoker would timestamp the re-dispatched event, and Vue's
 // invoker on the input then drops it as "dispatched before attach" when the key lands right after mount.
 const onKeydownCapture = (event: KeyboardEvent) => {
+  captureInputText(event)
   const target = event.target as HTMLElement
   if (
     (event.key !== 'PageUp' && event.key !== 'PageDown') ||
@@ -207,17 +224,26 @@ const onKeydownCapture = (event: KeyboardEvent) => {
   )
 }
 
-onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
-onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
+onMounted(() => {
+  root.value?.addEventListener('keydown', onKeydownCapture, true)
+  root.value?.addEventListener('blur', captureInputText, true)
+})
 
-// `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
+onBeforeUnmount(() => {
+  root.value?.removeEventListener('keydown', onKeydownCapture, true)
+  root.value?.removeEventListener('blur', captureInputText, true)
+})
+
+// `aria-label` / `aria-labelledby` name the input, which a labelled wrapper would leave unnamed, and `@focus` / `@blur`
+// listen on it; the rest stays on the wrapper div
 const attrs = useAttrs()
+const fieldAttrs = computed(() => splitFocusListeners(attrs))
 const rootAttrs = computed(() => {
-  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
+  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = fieldAttrs.value.rest
   return rest
 })
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,
@@ -230,11 +256,15 @@ const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldCh
 // As in RAC: the stepper buttons are named after the field ("Increase Width") and control its input
 const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
 const incrementLabel = computed(() =>
-  fieldName.value ? `Increase ${fieldName.value}` : 'Increase',
+  fieldName.value
+    ? t('numberField.incrementField', { label: fieldName.value })
+    : t('numberField.increment'),
 )
 
 const decrementLabel = computed(() =>
-  fieldName.value ? `Decrease ${fieldName.value}` : 'Decrease',
+  fieldName.value
+    ? t('numberField.decrementField', { label: fieldName.value })
+    : t('numberField.decrement'),
 )
 
 const ui = useComponentUI('numberField', {

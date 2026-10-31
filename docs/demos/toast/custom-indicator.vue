@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-full max-w-xl flex-col items-center justify-center">
-    <Button size="sm" variant="secondary" @click="show"> Custom indicator </Button>
+    <Button size="sm" variant="secondary" @click="show"> Add to favorites </Button>
   </div>
 </template>
 
@@ -10,6 +10,6 @@ import { Icon } from '@iconify/vue'
 import { h } from 'vue'
 
 const show = () => {
-  toast('Custom icon indicator', { indicator: h(Icon, { icon: 'gravity-ui:star' }) })
+  toast('Added to favorites', { indicator: h(Icon, { icon: 'gravity-ui:star' }) })
 }
 </script>

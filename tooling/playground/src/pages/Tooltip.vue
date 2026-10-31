@@ -117,6 +117,18 @@ const sides = ['top', 'right', 'bottom', 'left'] as const
     </section>
 
     <section>
+      <h2 class="mb-2 text-sm font-medium text-muted">Keyboard shortcuts (kbds, shown from lg)</h2>
+      <div class="flex flex-wrap items-center gap-6 py-10">
+        <Tooltip :delay="0" text="Search" :kbds="[{ keys: 'command' }, 'K']">
+          <Button variant="secondary">Text + kbds</Button>
+        </Tooltip>
+        <Tooltip :delay="0" :kbds="['ctrl', 'shift', 'P']">
+          <Button variant="secondary">kbds only</Button>
+        </Tooltip>
+      </div>
+    </section>
+
+    <section>
       <h2 class="mb-2 text-sm font-medium text-muted">:ui override</h2>
       <div class="flex flex-wrap items-center gap-6 py-10">
         <Tooltip text="Custom styled tooltip" :ui="{ base: 'bg-accent text-accent-foreground' }">

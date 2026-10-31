@@ -1,10 +1,22 @@
 <template>
-  <PopoverRoot :open="isOpen" modal v-slot="{ close }" @update:open="setOpen">
-    <PopoverTrigger v-if="!!slots.default" as-child :data-pressed="isOpen ? 'true' : undefined">
+  <component
+    :is="parts.Root"
+    v-bind="rootProps"
+    v-slot="{ close }: { close?: () => void }"
+    @update:open="setOpen"
+  >
+    <!-- Mirrors React Aria marking the trigger pressed while its press-opened popover is open; a hover card isn't press-opened. -->
+    <component
+      :is="parts.Trigger"
+      v-if="!!slots.default"
+      as-child
+      :data-pressed="isOpen && !isHover ? 'true' : undefined"
+    >
       <slot :open="isOpen" />
-    </PopoverTrigger>
-    <PopoverPortal :disabled="portalTarget.disabled" :to="portalTarget.to">
-      <PopoverContent
+    </component>
+    <component :is="parts.Portal" :disabled="portalTarget.disabled" :to="portalTarget.to">
+      <component
+        :is="parts.Content"
         ref="contentRef"
         data-slot="popover"
         :side="side"
@@ -15,15 +27,15 @@
         :class="ui.base()"
         @escape-key-down="onEscapeKeyDown"
         @interact-outside="onInteractOutside"
-        @open-auto-focus="onOpenAutoFocus"
+        v-bind="contentListeners"
       >
         <div ref="dialogRef" data-slot="popover-dialog" tabindex="-1" :class="ui.dialog()">
           <h2 v-if="hasHeading" :id="headingId" data-slot="popover-heading" :class="ui.heading()">
             <slot name="title">{{ title }}</slot>
           </h2>
-          <slot name="content" :close="close" />
+          <slot name="content" v-bind="(close ? { close } : {}) as PopoverContentSlotProps<M>" />
         </div>
-        <PopoverArrow v-if="arrow" as-child>
+        <component :is="parts.Arrow" v-if="arrow" as-child>
           <svg
             data-slot="popover-overlay-arrow"
             fill="none"
@@ -35,14 +47,25 @@
           >
             <path d="M0 0C5.48483 8 6.5 8 12 0Z" />
           </svg>
-        </PopoverArrow>
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
+        </component>
+      </component>
+    </component>
+  </component>
 </template>
 
-<script setup lang="ts">
-import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
+<script setup lang="ts" generic="M extends PopoverMode = 'click'">
+import {
+  HoverCardArrow,
+  HoverCardContent,
+  HoverCardPortal,
+  HoverCardRoot,
+  HoverCardTrigger,
+  PopoverArrow,
+  PopoverContent,
+  PopoverPortal,
+  PopoverRoot,
+  PopoverTrigger,
+} from 'reka-ui'
 import { computed, useId, useSlots, useTemplateRef, watch } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
@@ -51,12 +74,22 @@ import { useInertOutside } from '@/composables/useInertOutside'
 import { useLayerDismiss } from '@/composables/useLayerDismiss'
 import { usePortal } from '@/composables/usePortal'
 
-import type { PopoverProps, PopoverSlots, PopoverEmits } from './Popover.types'
+import type {
+  PopoverContentSlotProps,
+  PopoverEmits,
+  PopoverMode,
+  PopoverProps,
+  PopoverSlots,
+} from './Popover.types'
 import theme from './theme'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
-const props = withDefaults(defineProps<PopoverProps>(), {
+const props = withDefaults(defineProps<PopoverProps<M>>(), {
   open: undefined,
+  mode: 'click' as never,
+  openDelay: 700,
+  closeDelay: 300,
+  enableTouch: false,
   side: 'bottom',
   align: 'center',
   sideOffset: 8,
@@ -69,7 +102,27 @@ const props = withDefaults(defineProps<PopoverProps>(), {
 const portalTarget = usePortal(() => props.portal)
 const emit = defineEmits<PopoverEmits>()
 const slots = useSlots()
-defineSlots<PopoverSlots>()
+defineSlots<PopoverSlots<M>>()
+
+const PARTS = {
+  click: {
+    Root: PopoverRoot,
+    Trigger: PopoverTrigger,
+    Portal: PopoverPortal,
+    Content: PopoverContent,
+    Arrow: PopoverArrow,
+  },
+  hover: {
+    Root: HoverCardRoot,
+    Trigger: HoverCardTrigger,
+    Portal: HoverCardPortal,
+    Content: HoverCardContent,
+    Arrow: HoverCardArrow,
+  },
+}
+
+const isHover = computed(() => props.mode === 'hover')
+const parts = computed(() => (isHover.value ? PARTS.hover : PARTS.click))
 
 const ui = useComponentUI('popover', { theme: theme, variantProps: () => ({}), props })
 
@@ -88,15 +141,32 @@ const { isOpen, setOpen } = useControllableOpen({
 
 // `isOpen` turns false synchronously in `setOpen` (Reka's `update:open`) and with the `open` prop. The
 // content instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
-useInertOutside(() => (isOpen.value ? contentRef.value?.$el : null), isOpen)
+// A hover card isn't modal, so the page stays interactive.
+useInertOutside(
+  () => (isOpen.value && !isHover.value ? contentRef.value?.$el : null),
+  () => isOpen.value && !isHover.value,
+)
 
 // React Aria's useInteractOutside only reacts to the primary button, so a right click outside keeps the popover open.
 const { onEscapeKeyDown, onInteractOutside } = useLayerDismiss({
   content: () => contentRef.value?.$el,
   isDismissible: () => props.dismissible,
   shouldIgnoreSecondaryButton: true,
-  earlyPress: { isOpen, onDismiss: () => setOpen(false) },
+  onPrevent: () => emit('close:prevent'),
+  earlyPress: { isOpen: () => isOpen.value && !isHover.value, onDismiss: () => setOpen(false) },
 })
+
+// Hover mode opens and closes on its own delays and isn't modal.
+const rootProps = computed(() =>
+  isHover.value
+    ? {
+        open: isOpen.value,
+        openDelay: props.openDelay,
+        closeDelay: props.closeDelay,
+        enableTouch: props.enableTouch,
+      }
+    : { open: isOpen.value, modal: true },
+)
 
 // Reka hard-codes `aria-labelledby` to the trigger id below any attrs we pass, so relabel the dialog
 // here; Vue never re-patches it because Reka's value doesn't change between renders.
@@ -111,6 +181,9 @@ const onOpenAutoFocus = (event: Event) => {
   event.preventDefault()
   dialogRef.value?.focus()
 }
+
+// A hover card doesn't move focus, so it gets no `open-auto-focus` handler.
+const contentListeners = computed(() => (isHover.value ? {} : { onOpenAutoFocus }))
 
 // The arrow SVG is 12px tall. Reka's PopperContent adds the arrow's height to `sideOffset`, but
 // React Aria measures `offset` from the trigger to the popover body (the arrow overlaps the gap),

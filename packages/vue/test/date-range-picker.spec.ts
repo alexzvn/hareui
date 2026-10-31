@@ -2,8 +2,10 @@ import { CalendarDate } from '@internationalized/date'
 import type { ComponentMountingOptions } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { h } from 'vue'
 
 import DateRangePicker from '@/components/date-range-picker/DateRangePicker.vue'
+import FormField from '@/components/form-field/FormField.vue'
 
 import { expectAccessible } from './a11y'
 
@@ -37,6 +39,20 @@ describe('dateRangePicker', () => {
 
     expect((wrapper.get('input[name=from]').element as HTMLInputElement).value).toBe('2025-01-10')
     expect((wrapper.get('input[name=to]').element as HTMLInputElement).value).toBe('2025-01-15')
+  })
+
+  it('inside a named FormField, submits both the start and the end date', () => {
+    const wrapper = mount(() =>
+      h('form', [
+        h(FormField, { name: 'stay' }, () => h(DateRangePicker, { defaultValue: range })),
+      ]),
+    )
+
+    const data = [...new FormData(wrapper.element as HTMLFormElement)]
+    expect(data).toEqual([
+      ['stay', '2025-01-10'],
+      ['stayEnd', '2025-01-15'],
+    ])
   })
 
   it('opens a popover with a range calendar; picking two days commits, closes and refocuses the trigger', async () => {

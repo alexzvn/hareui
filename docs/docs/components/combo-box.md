@@ -140,7 +140,7 @@ Pass `filter` to replace the default case- and accent-insensitive "contains" mat
 
 ### Render Function
 
-ComboBox has no `render` prop; attributes such as `data-custom` fall through to the root.
+ComboBox has no `render` prop; attributes such as `data-testid` fall through to the root.
 
 <ComponentPreview name="combo-box/render-function" />
 
@@ -238,6 +238,8 @@ app.use(
 <ApiTable component="ComboBox" kind="slots" />
 
 ### Emits
+
+`change` fires when the selection changes: an option is picked, the text is cleared, or typed text is committed with `allowsCustomValue`. Typing alone doesn't fire it. Its argument is a plain `Event` with no value, so read the value from `v-model`. `highlight` emits the highlighted option, and `undefined` when the list closes.
 
 <ApiTable component="ComboBox" kind="emits" />
 

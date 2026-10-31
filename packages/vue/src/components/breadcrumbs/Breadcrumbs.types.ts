@@ -1,6 +1,8 @@
 import type { PrimitiveProps } from 'reka-ui'
 import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
+import type { LinkBaseProps } from '@/types/link'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -8,12 +10,15 @@ import type theme from './theme'
 
 type Breadcrumbs = typeof theme
 
-/** One entry of the `Breadcrumbs` trail. */
-export type BreadcrumbsItem = {
+/**
+ * One entry of the `Breadcrumbs` trail. The last item is always the current page and renders without a link; a
+ * disabled item renders without a link too.
+ */
+export type BreadcrumbsItem = LinkBaseProps & {
   /** The item text, shown unless `#item` is used. */
   label?: string
-  /** The URL to link to. The last item is always the current page and renders without a link. */
-  href?: string
+  /** Icon rendered before the label. */
+  icon?: IconValue
   /** Additional classes merged into this item's `<li>`. */
   class?: ClassValue
   /** Extra fields are passed through to the slots as `item`. */

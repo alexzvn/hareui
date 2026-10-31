@@ -4,7 +4,7 @@
     :as="as"
     data-slot="toc"
     data-variant="floating"
-    :aria-label="as === 'nav' ? title : undefined"
+    :aria-label="as === 'nav' ? resolvedTitle : undefined"
     :class="ui.root()"
     v-bind="$attrs"
   >
@@ -15,7 +15,7 @@
           type="button"
           data-slot="toc-marks"
           :data-side="side"
-          :aria-label="title"
+          :aria-label="resolvedTitle"
           aria-haspopup="dialog"
           :aria-expanded="isOpen"
           :aria-controls="isOpen ? panelId : undefined"
@@ -39,7 +39,7 @@
         <PopoverContent
           ref="panelEl"
           data-slot="toc-panel"
-          :aria-label="title"
+          :aria-label="resolvedTitle"
           :side="side === 'right' ? 'left' : 'right'"
           :side-offset="8"
           :collision-padding="8"
@@ -93,7 +93,7 @@
     :as="as"
     data-slot="toc"
     data-variant="list"
-    :aria-label="as === 'nav' ? title : undefined"
+    :aria-label="as === 'nav' ? resolvedTitle : undefined"
     :open="isOpen"
     :class="ui.root()"
     v-bind="$attrs"
@@ -151,7 +151,9 @@ import { computed, h, nextTick, onMounted, ref, useTemplateRef, watch } from 'vu
 
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
+import { IconRenderer } from '@/utils/icon'
 
 import { createCircuitMaskStyle, flattenLinks, LINK_HEIGHT } from './links'
 import { centerInContainer, scrollToHeading } from './scroll'
@@ -168,7 +170,7 @@ const props = withDefaults(defineProps<TocProps<T>>(), {
   as: 'nav',
   links: () => [],
   variant: 'list',
-  title: 'On this page',
+  title: undefined,
   color: 'accent',
   highlight: false,
   side: 'right',
@@ -180,8 +182,12 @@ const props = withDefaults(defineProps<TocProps<T>>(), {
   portal: undefined,
 })
 
+const { t } = useLocale()
+
 const emit = defineEmits<TocEmits>()
 const slots = defineSlots<TocSlots<T>>()
+
+const resolvedTitle = computed(() => props.title ?? t('toc.title'))
 
 const openState = ref(props.defaultOpen)
 const isOpen = computed(() => props.open ?? openState.value)
@@ -378,12 +384,12 @@ const TriggerContent: FunctionalComponent<{ open: boolean }> = ({ open }) => {
     h(
       'span',
       { 'data-slot': 'toc-title', class: ui.value.title() },
-      slots.default?.({ open }) ?? props.title,
+      slots.default?.({ open }) ?? resolvedTitle.value,
     ),
     h(
       'span',
       { 'data-slot': 'toc-trailing', class: ui.value.trailing() },
-      slots.trailing?.(slotProps) ?? h(icon, { class: ui.value.trailingIcon() }),
+      slots.trailing?.(slotProps) ?? h(IconRenderer, { icon, class: ui.value.trailingIcon() }),
     ),
   ]
 }

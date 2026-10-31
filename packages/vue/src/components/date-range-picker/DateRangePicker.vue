@@ -63,7 +63,7 @@
                 :id="triggerId"
                 ref="trigger"
                 type="button"
-                aria-label="Calendar"
+                :aria-label="t('dateRangePicker.calendar')"
                 :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
                 :aria-describedby="describedBy"
                 :data-reka-date-field-segment="undefined"
@@ -108,7 +108,7 @@
         feature="focusable"
         aria-hidden="true"
         tabindex="-1"
-        :name="part === 'start' ? startName : endName"
+        :name="part === 'start' ? (startName ?? fieldName) : endInputName"
         :value="committed?.[part]?.toString() ?? ''"
         :required="required"
         :disabled="disabled"
@@ -190,6 +190,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useInertOutside } from '@/composables/useInertOutside'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
 
 import type {
@@ -203,6 +204,8 @@ import { mergeRangeTime } from './mergeRangeTime'
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 // `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
 // controlled-valid/controlled-closed and hide validation errors / force the popover shut
@@ -335,7 +338,7 @@ const onCalendarUpdate = (value: DateRange | undefined) => {
 // Combined with the builtin range validation the way RAC's `mergeValidation` does: a custom error wins.
 const validate = (value: DateRangeValue) => {
   const custom = props.validate?.(value)
-  return custom && custom !== true ? custom : validateDateRange(value, props)
+  return custom && custom !== true ? custom : validateDateRange(value, { constraints: props, t })
 }
 
 const { validation, commitValidation } = useFieldValidation<DateRangeValue>({
@@ -353,19 +356,33 @@ const { validation, commitValidation } = useFieldValidation<DateRangeValue>({
 
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 
+// Inside a named `FormField` without explicit names, the start takes the field name and the end `<name>End`,
+// so a submitted form carries both dates.
+const endInputName = computed(
+  () => props.endName ?? (fieldName.value ? `${fieldName.value}End` : undefined),
+)
+
 // Reka's matcher is single-argument and read once at setup; outside the calendar React Aria calls it with a `null` anchor.
 const fieldIsDateUnavailable = (date: DateValue) => props.isDateUnavailable?.(date, null) ?? false
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
-  useFieldChrome({
-    props,
-    slots,
-    invalid,
-    validation,
-    disabled,
-    required: () => props.required,
-    hideDescriptionWhenInvalid: true,
-  })
+const {
+  name: fieldName,
+  id,
+  labelId,
+  hasLabel,
+  describedBy,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+})
 
 const triggerId = computed(() => `${id.value}-trigger`)
 

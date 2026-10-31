@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { ConfigProvider } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import { defineComponent, h, markRaw } from 'vue'
 
 import type { TabsProps } from '@/components/tabs/Tabs.types'
 import Tabs from '@/components/tabs/Tabs.vue'
@@ -474,5 +474,44 @@ describe('Tabs accessibility', () => {
     ])
 
     wrapper.unmount()
+  })
+})
+
+describe('Tabs item icon', () => {
+  const iconItems = [
+    { label: 'Overview', value: 'overview', icon: 'icon-overview' },
+    { label: 'Reports', value: 'reports' },
+  ]
+
+  it('renders an aria-hidden icon before the label when the item sets one', () => {
+    const wrapper = mount(Tabs, { props: { items: iconItems } })
+    const icon = wrapper.findAll('[data-slot=tabs-tab]')[0]!.find('[data-slot=tabs-tab-icon]')
+    expect(icon.exists()).toBe(true)
+    expect(icon.attributes('aria-hidden')).toBe('true')
+  })
+
+  it('renders no icon element when the item has no icon', () => {
+    const wrapper = mount(Tabs, { props: { items: iconItems } })
+    const tab = wrapper.findAll('[data-slot=tabs-tab]')[1]!
+    expect(tab.find('[data-slot=tabs-tab-icon]').exists()).toBe(false)
+    expect(tab.element.children).toHaveLength(0)
+  })
+
+  it('renders a component icon', () => {
+    const Glyph = markRaw(defineComponent(() => () => h('svg', { 'data-testid': 'glyph' })))
+    const wrapper = mount(Tabs, { props: { items: [{ label: 'A', icon: Glyph }] } })
+    const icon = wrapper.get('[data-testid=glyph]')
+    expect(icon.attributes('aria-hidden')).toBe('true')
+  })
+})
+
+describe('Tabs #tab slot', () => {
+  it('a custom #tab replaces the default tab icon', () => {
+    const wrapper = mount(Tabs, {
+      props: { items: [{ label: 'Overview', value: 'overview', icon: 'icon-overview' }] },
+      slots: { tab: ({ item }: { item: { label?: string } }) => h('b', item.label) },
+    })
+
+    expect(wrapper.find('[data-slot=tabs-tab-icon]').exists()).toBe(false)
   })
 })

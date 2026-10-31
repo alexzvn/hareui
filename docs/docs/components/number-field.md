@@ -97,6 +97,14 @@ Bind the value with `v-model` to synchronize with other components or perform cu
 
 <ComponentPreview name="number-field/controlled" />
 
+### Model Modifiers
+
+An emptied field commits `undefined`. Use `v-model.nullable` to commit `null` instead, for example when an API expects an explicit empty value. `v-model.optional` keeps `undefined`. `0` is always a value.
+
+`NumberField` supports only the `nullable` and `optional` modifiers. `trim`, `number` and `lazy` don't apply: the value is already a number, parsed and committed by the field.
+
+<ComponentPreview name="number-field/model-modifiers" />
+
 ### Step Values
 
 Configure increment/decrement step values for precise control.
@@ -194,6 +202,8 @@ NumberField sets these data attributes:
 ### Emits
 
 <ApiTable component="NumberField" kind="emits" />
+
+`@focus` and `@blur` listeners go to the input, so they fire when the input gains and loses focus.
 
 ## Theme
 

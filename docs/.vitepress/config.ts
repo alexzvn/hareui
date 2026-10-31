@@ -69,6 +69,12 @@ export default defineConfigWithTheme<ThemeConfig>({
           replacement: fileURLToPath(new URL('../../packages/vue/src/$1.ts', import.meta.url)),
         },
         {
+          find: /^@hareui\/vue\/locale$/,
+          replacement: fileURLToPath(
+            new URL('../../packages/vue/src/locale/index.ts', import.meta.url),
+          ),
+        },
+        {
           find: /^@hareui\/vue$/,
           replacement: fileURLToPath(new URL('../../packages/vue/src/index.ts', import.meta.url)),
         },

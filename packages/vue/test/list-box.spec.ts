@@ -626,3 +626,32 @@ describe('ListBox', () => {
     })
   })
 })
+
+describe('ListBox item icon', () => {
+  const iconItems = [
+    { value: 'a', label: 'Alpha', icon: 'icon-alpha' },
+    { value: 'b', label: 'Beta' },
+  ]
+
+  it('renders an aria-hidden icon before the label when the item sets one', () => {
+    const wrapper = mount(ListBox, { props: { items: iconItems } })
+    const icon = wrapper.findAll(option)[0]!.find('[data-slot=list-box-item-icon]')
+    expect(icon.attributes('aria-hidden')).toBe('true')
+    expect(wrapper.findAll(option)[0]!.text()).toBe('Alpha')
+  })
+
+  it('renders no icon element when the item has no icon', () => {
+    const wrapper = mount(ListBox, { props: { items: iconItems } })
+    expect(wrapper.findAll(option)[1]!.find('[data-slot=list-box-item-icon]').exists()).toBe(false)
+  })
+
+  it('#item-leading replaces the item icon', () => {
+    const wrapper = mount(ListBox, {
+      props: { items: iconItems },
+      slots: { 'item-leading': () => h('i', { 'data-testid': 'lead' }) },
+    })
+
+    expect(wrapper.find('[data-slot=list-box-item-icon]').exists()).toBe(false)
+    expect(wrapper.findAll('[data-testid=lead]')).toHaveLength(2)
+  })
+})

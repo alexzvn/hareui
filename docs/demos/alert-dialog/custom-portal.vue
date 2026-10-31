@@ -1,14 +1,9 @@
 <template>
   <div class="flex flex-col gap-4">
-    <div>
-      <p class="text-sm">
-        Render alert dialogs inside a custom container instead of <code>document.body</code>
-      </p>
-      <p class="text-sm text-muted">
-        Apply <code class="rounded px-1 py-0.5 text-xs">transform: translateZ(0)</code> to the
-        container to create a new stacking context.
-      </p>
-    </div>
+    <p class="text-sm text-muted">
+      The panel's <code>transform</code> makes it the containing block, so the backdrop covers only
+      the panel.
+    </p>
     <div
       ref="portalRef"
       class="relative flex h-[380px] items-center justify-center overflow-hidden rounded bg-muted/20"
@@ -16,33 +11,19 @@
     >
       <AlertDialog
         v-if="portalRef"
-        class="h-full max-h-full sm:max-w-md"
+        class="sm:max-w-[400px]"
         :portal="portalRef"
-        status="accent"
-        title="Custom Portal"
+        status="warning"
+        title="Leave this page?"
         :ui="{ backdrop: 'h-full', container: 'h-full max-h-full' }"
       >
-        <Button>Open Alert Dialog</Button>
+        <Button>Leave Page</Button>
         <template #body>
-          <p class="text-sm text-muted">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
-          <p class="text-sm text-muted">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
-          <p class="text-sm text-muted">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          </p>
+          <p>Your reply to Sam hasn't been sent yet. It will be kept as a draft.</p>
         </template>
         <template #footer="{ close }">
-          <Button variant="tertiary" @click="close"> Cancel </Button>
-          <Button @click="close"> Confirm </Button>
+          <Button variant="tertiary" @click="close"> Stay </Button>
+          <Button @click="close"> Leave </Button>
         </template>
       </AlertDialog>
     </div>

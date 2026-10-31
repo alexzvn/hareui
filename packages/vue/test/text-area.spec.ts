@@ -4,6 +4,7 @@ import { h } from 'vue'
 
 import TextArea from '@/components/text-area/TextArea.vue'
 import TextField from '@/components/text-field/TextField.vue'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 
 import { expectAccessible } from './a11y'
 
@@ -105,4 +106,57 @@ describe('TextArea', () => {
       wrapper.unmount()
     },
   )
+})
+
+describe('TextArea v-model modifiers', () => {
+  // Starts from a typed value, as clearing a field does
+  const typeInto = async (modelModifiers: ModelModifiers | undefined, text: string) => {
+    const wrapper = mount(TextArea, {
+      props: { modelValue: 'Draft', modelModifiers },
+      attrs: { 'aria-label': 'Notes' },
+    })
+
+    await wrapper.get('textarea').setValue(text)
+
+    return wrapper.emitted('update:modelValue')?.at(-1)
+  }
+
+  it('without modifiers emits the text as typed', async () => {
+    expect(await typeInto(undefined, ' line one\n')).toEqual([' line one\n'])
+  })
+
+  it('without modifiers emits an emptied textarea as an empty string', async () => {
+    expect(await typeInto(undefined, '')).toEqual([''])
+  })
+
+  it('trim emits the text without surrounding whitespace', async () => {
+    expect(await typeInto({ trim: true }, '\n  Notes  \n')).toEqual(['Notes'])
+  })
+
+  it('number emits numeric text as a number', async () => {
+    expect(await typeInto({ number: true }, '12')).toEqual([12])
+  })
+
+  it('nullable emits null for an emptied textarea', async () => {
+    expect(await typeInto({ nullable: true }, '')).toEqual([null])
+  })
+
+  it('optional emits undefined for an emptied textarea', async () => {
+    expect(await typeInto({ optional: true }, '')).toEqual([undefined])
+  })
+
+  it('lazy emits on change, not on input', async () => {
+    const wrapper = mount(TextArea, {
+      props: { modelModifiers: { lazy: true } },
+      attrs: { 'aria-label': 'Notes' },
+    })
+
+    const el = wrapper.get('textarea')
+    el.element.value = 'Draft'
+    await el.trigger('input')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+    await el.trigger('change')
+    expect(wrapper.emitted('update:modelValue')).toEqual([['Draft']])
+  })
 })

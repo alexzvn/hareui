@@ -4,7 +4,6 @@ export type {
   NavigationMenuChildItem,
   NavigationMenuContentOptions,
   NavigationMenuEmits,
-  NavigationMenuIconValue,
   NavigationMenuItem,
   NavigationMenuPopoverProps,
   NavigationMenuProps,

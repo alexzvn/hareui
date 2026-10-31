@@ -1,24 +1,31 @@
 import type { EditorCommand } from '@/components/editor/Editor.types'
+import type { TranslateParams } from '@/composables/useLocale'
+import type { MessageKey } from '@/locale/defineLocale'
 
 import type { EditorToolbarIconName } from './icons'
 
-type CommandDefaults = { icon: EditorToolbarIconName; label: string }
+/** `labelKey` is the message key of the command's name, `params` fill its placeholders. */
+type CommandDefaults = {
+  icon: EditorToolbarIconName
+  labelKey: MessageKey
+  params?: TranslateParams
+}
 
 type CommandDefaultsResolver = (command: EditorCommand) => CommandDefaults | undefined
 
 const MARKS: Record<string, CommandDefaults> = {
-  bold: { icon: 'bold', label: 'Bold' },
-  italic: { icon: 'italic', label: 'Italic' },
-  underline: { icon: 'underline', label: 'Underline' },
-  strike: { icon: 'strike', label: 'Strikethrough' },
-  code: { icon: 'code', label: 'Inline code' },
+  bold: { icon: 'bold', labelKey: 'editorToolbar.bold' },
+  italic: { icon: 'italic', labelKey: 'editorToolbar.italic' },
+  underline: { icon: 'underline', labelKey: 'editorToolbar.underline' },
+  strike: { icon: 'strike', labelKey: 'editorToolbar.strike' },
+  code: { icon: 'code', labelKey: 'editorToolbar.code' },
 }
 
 const ALIGNMENTS: Record<string, CommandDefaults> = {
-  left: { icon: 'alignLeft', label: 'Align left' },
-  center: { icon: 'alignCenter', label: 'Align center' },
-  right: { icon: 'alignRight', label: 'Align right' },
-  justify: { icon: 'alignJustify', label: 'Justify' },
+  left: { icon: 'alignLeft', labelKey: 'editorToolbar.alignLeft' },
+  center: { icon: 'alignCenter', labelKey: 'editorToolbar.alignCenter' },
+  right: { icon: 'alignRight', labelKey: 'editorToolbar.alignRight' },
+  justify: { icon: 'alignJustify', labelKey: 'editorToolbar.alignJustify' },
 }
 
 const fixed =
@@ -33,22 +40,23 @@ const RESOLVERS: Record<string, CommandDefaultsResolver> = {
     command.level
       ? {
           icon: `heading${command.level}` as EditorToolbarIconName,
-          label: `Heading ${command.level}`,
+          labelKey: 'editorToolbar.heading',
+          params: { level: command.level },
         }
       : undefined,
-  link: fixed({ icon: 'link', label: 'Link' }),
-  image: fixed({ icon: 'image', label: 'Image' }),
-  blockquote: fixed({ icon: 'blockquote', label: 'Quote' }),
-  bulletList: fixed({ icon: 'bulletList', label: 'Bullet list' }),
-  orderedList: fixed({ icon: 'orderedList', label: 'Numbered list' }),
-  taskList: fixed({ icon: 'taskList', label: 'Task list' }),
-  codeBlock: fixed({ icon: 'codeBlock', label: 'Code block' }),
-  horizontalRule: fixed({ icon: 'horizontalRule', label: 'Divider' }),
-  paragraph: fixed({ icon: 'paragraph', label: 'Paragraph' }),
-  undo: fixed({ icon: 'undo', label: 'Undo' }),
-  redo: fixed({ icon: 'redo', label: 'Redo' }),
-  clearFormatting: fixed({ icon: 'clearFormatting', label: 'Clear formatting' }),
+  link: fixed({ icon: 'link', labelKey: 'editorToolbar.link' }),
+  image: fixed({ icon: 'image', labelKey: 'editorToolbar.image' }),
+  blockquote: fixed({ icon: 'blockquote', labelKey: 'editorToolbar.blockquote' }),
+  bulletList: fixed({ icon: 'bulletList', labelKey: 'editorToolbar.bulletList' }),
+  orderedList: fixed({ icon: 'orderedList', labelKey: 'editorToolbar.orderedList' }),
+  taskList: fixed({ icon: 'taskList', labelKey: 'editorToolbar.taskList' }),
+  codeBlock: fixed({ icon: 'codeBlock', labelKey: 'editorToolbar.codeBlock' }),
+  horizontalRule: fixed({ icon: 'horizontalRule', labelKey: 'editorToolbar.horizontalRule' }),
+  paragraph: fixed({ icon: 'paragraph', labelKey: 'editorToolbar.paragraph' }),
+  undo: fixed({ icon: 'undo', labelKey: 'editorToolbar.undo' }),
+  redo: fixed({ icon: 'redo', labelKey: 'editorToolbar.redo' }),
+  clearFormatting: fixed({ icon: 'clearFormatting', labelKey: 'editorToolbar.clearFormatting' }),
 }
 
-/** The built-in icon and English name of a command, when its kind is built in. */
+/** The built-in icon and name (message key) of a command, when its kind is built in. */
 export const getCommandDefaults = (command: EditorCommand) => RESOLVERS[command.kind]?.(command)

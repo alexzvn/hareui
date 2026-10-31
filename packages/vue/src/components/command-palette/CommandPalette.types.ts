@@ -6,15 +6,14 @@ import type { AvatarProps } from '@/components/avatar/Avatar.types'
 import type { BadgeProps } from '@/components/badge/Badge.types'
 import type { ButtonProps } from '@/components/button/Button.types'
 import type { CloseButtonProps } from '@/components/close-button/CloseButton.types'
+import type { IconValue } from '@/types/icon'
+import type { LinkBaseProps } from '@/types/link'
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
 import type theme from './theme'
 
 type CommandPalette = typeof theme
-
-/** An icon: a class string (icon-font / CSS-mask utilities such as `i-lucide-search`) or a component. */
-export type CommandPaletteIcon = string | Component
 
 /** The theme slots an item can restyle through its own `ui`. */
 type CommandPaletteItemSlot =
@@ -34,8 +33,11 @@ type CommandPaletteItemSlot =
   | 'itemTrailingKbds'
   | 'itemTrailingKbd'
 
-/** One command of a group. Extra fields are kept and passed to the slots as `item`. */
-export type CommandPaletteItem = {
+/**
+ * One command of a group. Extra fields are kept and passed to the slots as `item`. The link fields render the row as
+ * a link; `active` and `disabled` keep their item meaning, and the row's highlight never follows the router.
+ */
+export type CommandPaletteItem = Omit<LinkBaseProps, 'active' | 'disabled' | 'exact'> & {
   /** Text shown before the label, in the regular text color. */
   prefix?: string
   /** The item text. Searched by default. */
@@ -45,7 +47,7 @@ export type CommandPaletteItem = {
   /** A second, muted line under the label. Searched by default. */
   description?: string
   /** Leading icon: a class string or a component. */
-  icon?: CommandPaletteIcon
+  icon?: IconValue
   /** Leading avatar, shown when there is no `icon`. */
   avatar?: AvatarProps
   /**
@@ -72,22 +74,8 @@ export type CommandPaletteItem = {
   children?: CommandPaletteItem[]
   /** Called when the item is selected (clicked, or `Enter` while highlighted). Not called for items with `children`. */
   onSelect?: (event: Event) => void
-  /** The URL to link to: the item renders as an anchor. */
-  href?: string
-  /** A route location (vue-router) or URL. Goes through `RouterLink` when the app has it. */
-  to?: string | Record<string, unknown>
   /** The element or component to render the link as, e.g. a router link component. */
   as?: string | Component
-  /** The link `target`. */
-  target?: '_blank' | '_parent' | '_self' | '_top' | (string & {}) | null
-  /** The link `rel`. Defaults to `noopener noreferrer` for `_blank`. */
-  rel?: string | null
-  /** The link `download` attribute. */
-  download?: boolean | string
-  /** Treat the link as external: never route it through `RouterLink`. */
-  external?: boolean
-  /** With a router, replace the history entry instead of pushing. */
-  replace?: boolean
   /** Additional classes merged into the item element. */
   class?: ClassValue
   /** Per-slot class overrides for this item. */
@@ -118,7 +106,7 @@ export type CommandPaletteGroup<T extends CommandPaletteItem = CommandPaletteIte
    */
   postFilter?(searchTerm: string, items: T[]): T[]
   /** An icon shown at the end of the highlighted item. */
-  highlightedIcon?: CommandPaletteIcon
+  highlightedIcon?: IconValue
 }
 
 /** Search options, passed to Fuse.js. */
@@ -214,24 +202,24 @@ export type CommandPaletteProps<T extends CommandPaletteItem = CommandPaletteIte
    * items); it defaults to the `Spinner` component.
    * @defaultValue false
    */
-  loading?: boolean | { icon?: CommandPaletteIcon }
+  loading?: boolean | { icon?: IconValue }
   /**
    * The icon at the start of the input. `false` hides it.
    * @defaultValue the gravity-ui `magnifier` icon
    */
-  icon?: CommandPaletteIcon | false
+  icon?: IconValue | false
   /** An icon at the end of the input. */
-  trailingIcon?: CommandPaletteIcon
+  trailingIcon?: IconValue
   /**
    * The icon shown at the end of selected items.
    * @defaultValue the gravity-ui `check` icon
    */
-  selectedIcon?: CommandPaletteIcon
+  selectedIcon?: IconValue
   /**
    * The icon shown at the end of items with children.
    * @defaultValue the gravity-ui `chevron-right` icon
    */
-  childrenIcon?: CommandPaletteIcon
+  childrenIcon?: IconValue
   /**
    * The input placeholder.
    * @defaultValue 'Type a command or search...'
@@ -247,14 +235,14 @@ export type CommandPaletteProps<T extends CommandPaletteItem = CommandPaletteIte
    * `false`. An object is passed to the `CloseButton`; its `icon` replaces the close button's own icon.
    * @defaultValue false
    */
-  close?: boolean | (CloseButtonProps & { icon?: CommandPaletteIcon })
+  close?: boolean | (CloseButtonProps & { icon?: IconValue })
   /**
    * Shows a back button at the start of the input while nested children are shown. An object is passed to the `Button`;
    * its `icon` defaults to the gravity-ui `arrow-left` icon.
    * `{ variant: 'ghost', size: 'sm', iconOnly: true }`{lang="ts-type"}
    * @defaultValue true
    */
-  back?: boolean | (ButtonProps & { icon?: CommandPaletteIcon })
+  back?: boolean | (ButtonProps & { icon?: IconValue })
   /**
    * Shows the search input. `false` hides it; an object is bound to the `<input>` as attributes. Use the palette's
    * own `disabled` prop to disable it.

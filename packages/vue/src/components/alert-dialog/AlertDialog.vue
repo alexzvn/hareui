@@ -14,6 +14,7 @@
         data-slot="alert-dialog-backdrop"
         :style="visualViewportStyle"
         :class="ui.backdrop()"
+        v-bind="presenceListeners"
       >
         <!-- No force-mount: see Modal.vue - the dialog's `presence-hold` keeps it through the container's exit animation -->
         <div
@@ -39,7 +40,12 @@
             <slot name="content" :close="close">
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton data-slot="alert-dialog-close-trigger" :class="ui.closeTrigger()" />
+                  <ResolvedCloseButton
+                    data-slot="alert-dialog-close-trigger"
+                    :close-button="closeButton"
+                    label-key="alertDialog.close"
+                    :class="ui.closeTrigger()"
+                  />
                 </slot>
               </DialogClose>
               <!-- Before the header so `header + body` / `header + footer` spacing selectors still match -->
@@ -162,7 +168,7 @@ import {
 } from 'reka-ui'
 import { useSlots, useTemplateRef } from 'vue'
 
-import CloseButton from '@/components/close-button/CloseButton.vue'
+import ResolvedCloseButton from '@/components/close-button/ResolvedCloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDialogShell } from '@/composables/useDialogShell'
 
@@ -204,6 +210,7 @@ const {
   onEscapeKeyDown,
   onInteractOutside,
   onOpenAutoFocus,
+  presenceListeners,
 } = useDialogShell({
   props,
   slots,

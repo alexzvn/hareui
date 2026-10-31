@@ -10,7 +10,7 @@ export type {
   FormErrorEvent,
   FormErrorWithId,
   FormFieldName,
-  FormFieldProps,
+  FormFieldValidationProps,
   FormInputEvents,
   FormSchema,
   FormState,

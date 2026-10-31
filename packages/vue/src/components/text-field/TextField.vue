@@ -50,6 +50,8 @@ import Input from '@/components/input/Input.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import type { ModelModifier } from '@/utils/modelModifiers'
+import { toEmptyModelValue } from '@/utils/modelModifiers'
 
 import { splitInputAttrs, textFieldContextKey } from './context'
 import type { TextFieldProps, TextFieldSlots } from './TextField.types'
@@ -62,14 +64,16 @@ const props = withDefaults(defineProps<TextFieldProps>(), { type: 'text', invali
 const slots = defineSlots<TextFieldSlots>()
 
 /** The input value. */
-const modelValue = defineModel<string | number>()
+const [modelValue, modifiers] = defineModel<string | number | null, ModelModifier>({
+  set: (v) => toEmptyModelValue(v, modifiers),
+})
 
 // `defaultValue` seeds the field without emitting `update:modelValue` on mount (RAC's `onChange` only reports
 // changes). Writes that don't change the value (an inner Input mirroring the same value) don't emit either.
 const uncontrolledValue = ref(props.defaultValue)
 watch(modelValue, (v) => {
   // A parent clearing its v-model clears the field, not back to an earlier typed value
-  if (v === undefined) uncontrolledValue.value = undefined
+  if (v === undefined || v === null) uncontrolledValue.value = undefined
 })
 
 const value = computed<string | number | undefined>({
@@ -122,7 +126,7 @@ const onFocusOut = (event: FocusEvent) => {
   focusState.isFocusVisible = false
 }
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,
@@ -144,7 +148,8 @@ provide(textFieldContextKey, {
   fullWidth: toRef(() => props.fullWidth),
   inputAttrs,
   model: value,
-  name: toRef(() => props.name),
+  modelModifiers: modifiers,
+  name,
   type: toRef(() => props.type),
 })
 

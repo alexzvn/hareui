@@ -41,6 +41,8 @@ through props and named slots.
 
 ### Placement
 
+`placement` names a physical side of the screen: `left` and `right` stay the same in right-to-left layouts.
+
 <ComponentPreview name="drawer/placements" />
 
 ### Non-Dismissable
@@ -59,6 +61,8 @@ excluded from the body area to avoid scroll conflicts.
 
 ### Controlled State
 
+Bind `v-model:open` to open the drawer from anywhere, here a button outside it.
+
 <ComponentPreview name="drawer/controlled" />
 
 ### With Form
@@ -72,6 +76,27 @@ excluded from the body area to avoid scroll conflicts.
 ### Backdrop Variants
 
 <ComponentPreview name="drawer/backdrop-variants" />
+
+### Custom Close Button
+
+`closeButton` takes `false` to hide the close button, or an object with an `icon` and a `label` (its accessible name) to customise it.
+
+<ComponentPreview name="drawer/custom-close-button" />
+
+### Events
+
+| Event           | Fires when                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------ |
+| `enter`         | the open animation starts                                                                                    |
+| `after:enter`   | the open animation ends                                                                                      |
+| `leave`         | the close animation starts                                                                                   |
+| `after:leave`   | the drawer has left the page                                                                                 |
+| `close:prevent` | Escape, a backdrop click or a closing swipe is ignored because `keyboardDismissible` or `dismissible` is off |
+
+Without an animation, `after:enter` and `after:leave` fire right away. This drawer ignores Escape and backdrop clicks,
+so try them to see `close:prevent`.
+
+<ComponentPreview name="drawer/events" />
 
 ## Customization
 
@@ -112,7 +137,7 @@ app.use(
 | `body`         | `drawer-body`          | Main scrollable content area, rendered when `#body` is present                                        |
 | `footer`       | `drawer-footer`        | Footer section for actions, rendered when `#footer` is present                                        |
 | `handle`       | `drawer-handle`        | Visual drag handle indicator (bar: `data-slot="drawer-handle-bar"`), rendered when `handle` is `true` |
-| `closeTrigger` | `drawer-close-trigger` | Close button, rendered when `closeButton` is `true`                                                   |
+| `closeTrigger` | `drawer-close-trigger` | Close button, rendered unless `closeButton` is `false`                                                |
 
 #### Backdrop Variants
 
@@ -126,6 +151,8 @@ app.use(
 - `placement="top"` - Slides down from the top edge (the handle renders below the footer)
 - `placement="left"` - Slides in from the left edge
 - `placement="right"` - Slides in from the right edge
+
+In right-to-left layouts `left` and `right` still dock on that physical side.
 
 ### Interactive States
 

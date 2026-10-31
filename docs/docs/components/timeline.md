@@ -8,7 +8,10 @@ links:
 
 ## Usage
 
-Pass the events in the `items` prop. Each item can have a `date`, `title`, `description` and an `icon` component or an `avatar` for its marker.
+Pass the events in the `items` prop. Each item can have:
+
+- a `date`, a `title` and a `description`
+- an `icon` (an icon class or a component) or an `avatar` for its marker
 
 ```ts
 import { Timeline } from '@hareui/vue'
@@ -100,7 +103,13 @@ Use the `#indicator` slot to replace the content of every marker. The `state` sl
 
 ### Per-item slots
 
-Set the `slot` field of an item to give it its own slots: `#<slot>-indicator`, `#<slot>-wrapper`, `#<slot>-date`, `#<slot>-title` and `#<slot>-description`. Extra item fields are available in the slot props.
+Set the `slot` field of an item to give it its own slots:
+
+- `#<slot>-date`, `#<slot>-title` and `#<slot>-description` for its text
+- `#<slot>-indicator` for its marker
+- `#<slot>-wrapper` for everything next to the marker
+
+Extra item fields are available in the slot props.
 
 <ComponentPreview name="timeline/item-slot" />
 

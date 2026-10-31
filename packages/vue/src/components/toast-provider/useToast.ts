@@ -17,6 +17,11 @@ export type ToastOptions = {
   /** Shows a spinner in place of the indicator. */
   isLoading?: boolean
   /**
+   * Whether the close button is rendered; an object customises its `icon` and `label` (accessible name).
+   * @defaultValue true
+   */
+  closeButton?: ToastContentValue['closeButton']
+  /**
    * Auto-dismiss timeout in milliseconds; 0 keeps the toast open.
    * @defaultValue 4000
    */
@@ -82,6 +87,7 @@ const createToastFunction = (queue: ToastQueue<ToastContentValue>): ToastFunctio
     variant: options?.variant || 'default',
     action: options?.action,
     isLoading: options?.isLoading,
+    closeButton: options?.closeButton,
   })
 
   const createAddOptions = (options?: ToastOptions) => ({

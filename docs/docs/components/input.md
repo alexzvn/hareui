@@ -60,6 +60,22 @@ Bind the value with `v-model`.
 
 <ComponentPreview name="input/controlled" />
 
+### Model Modifiers
+
+`v-model` takes these modifiers. They combine, for example `v-model.trim.nullable`.
+
+| Modifier   | Effect                                               |
+| ---------- | ---------------------------------------------------- |
+| `trim`     | Removes spaces at the start and end                  |
+| `number`   | Turns the value into a number when it reads as one   |
+| `lazy`     | Updates when the input loses focus, not on every key |
+| `nullable` | An emptied input is `null`                           |
+| `optional` | An emptied input is `undefined`                      |
+
+`nullable` wins when both are set. `0` counts as a value, not as empty.
+
+<ComponentPreview name="input/model-modifiers" />
+
 ## Customization
 
 ### Tailwind CSS

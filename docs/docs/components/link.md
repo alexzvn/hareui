@@ -30,6 +30,17 @@ import { Link } from '@hareui/vue'
 
 <ComponentPreview name="link/icon-placement" />
 
+### Link Props
+
+The usual link attributes work, plus a few extras:
+
+- `to` and `href` set the destination. With vue-router installed, an internal `to` navigates client-side.
+- `target` and `rel` work as on `<a>`. `target="_blank"` adds `rel="noopener noreferrer"`.
+- `download` downloads the file instead of opening it.
+- `disabled` removes the `href`, so the link can't be followed or focused.
+
+<ComponentPreview name="link/link-props" />
+
 ### Text Decoration with Tailwind CSS
 
 Link is underlined on hover by default. Use Tailwind CSS text-decoration utilities to make the underline always visible, remove it entirely, or customize its color, style, thickness, and offset.
@@ -75,9 +86,11 @@ For more details, see the Tailwind CSS documentation:
 
 <ComponentPreview name="link/custom-icon" />
 
-### Render Function
+### Custom Element
 
-<ComponentPreview name="link/render-function" />
+`as` renders the link as another element or component. Here it is a `<button>` that looks like a link.
+
+<ComponentPreview name="link/custom-element" />
 
 ## Customization
 
@@ -115,6 +128,7 @@ app.use(
 - **Hover**: `:hover`
 - **Pressed**: `:active`
 - **Disabled**: `[aria-disabled="true"]`
+- **Current route**: `[data-active="true"]`
 
 ## API Reference
 
@@ -128,17 +142,22 @@ app.use(
 
 ### Using with Routing Libraries
 
-Pass a router link component to `as`; the Link styles and icon stay the same:
+With vue-router installed, `to` goes through `RouterLink`: navigation is client-side and `[data-active=true]` marks
+the current route (`exact` matches only the exact route, `active` overrides the match). Without a router, `to` renders
+a plain `<a>`.
 
 ```vue
 <template>
-  <Link :as="RouterLink" to="/about"> About Page </Link>
+  <Link to="/about"> About Page </Link>
 </template>
+```
 
-<script setup lang="ts">
-import { Link } from '@hareui/vue'
-import { RouterLink } from 'vue-router'
-</script>
+For another router (or a framework link component), pass it to `as`; it receives `to` and `href`:
+
+```vue
+<template>
+  <Link :as="NuxtLink" to="/about"> About Page </Link>
+</template>
 ```
 
 ## Theme

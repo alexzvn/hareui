@@ -28,8 +28,10 @@ export default {
       'focus-visible:status-focused',
       'data-[orientation=vertical]:min-w-20',
     ],
+    tabIcon: 'me-1.5 size-4 shrink-0',
+    // `left-0`, not `start-0`: `--tabs-indicator-x` is measured from the list's left edge, in RTL too
     tabIndicator: [
-      'absolute start-0 top-0 rounded-3xl bg-segment shadow-surface -z-1',
+      'absolute left-0 top-0 rounded-3xl bg-segment shadow-surface -z-1',
       'text-center text-sm leading-5 font-medium text-segment-foreground cursor-(--cursor-interactive)',
       '[transition-duration:250ms] [transition-property:translate,width,height] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none',
       'w-(--tabs-indicator-width) h-(--tabs-indicator-height) translate-x-(--tabs-indicator-x) translate-y-(--tabs-indicator-y)',

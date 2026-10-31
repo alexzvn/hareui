@@ -17,7 +17,7 @@
           <button
             type="button"
             data-slot="sidebar-rail"
-            aria-label="Toggle sidebar"
+            :aria-label="t('sidebar.toggle')"
             tabindex="-1"
             :class="ui.rail()"
             @click="toggleSidebar"
@@ -59,6 +59,7 @@ import { Primitive } from 'reka-ui'
 import { computed, getCurrentInstance, h, ref, watch } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { useMenuAutoClose } from '@/composables/useMenuAutoClose'
 import { useSidebarMenu } from '@/composables/useSidebarMenu'
 
@@ -74,6 +75,8 @@ import theme from './theme'
 import { useBelowBreakpoint } from './useBelowBreakpoint'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   as: 'aside',
@@ -203,7 +206,7 @@ const { Menu, menuProps, menuClasses } = useSidebarMenu(() => ({
   classes: { backdrop: ui.value.overlay(), dialog: ui.value.content() },
 }))
 
-const menuTitle = computed(() => props.menu?.title ?? props.title ?? 'Sidebar')
+const menuTitle = computed(() => props.menu?.title ?? props.title ?? t('sidebar.title'))
 
 const instance = getCurrentInstance()
 

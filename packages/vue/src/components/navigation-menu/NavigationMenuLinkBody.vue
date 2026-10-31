@@ -20,7 +20,7 @@
         data-slot="linkLeadingChip"
         :class="ui.linkLeadingChip({ override: item.ui?.linkLeadingChip })"
       >
-        <NavigationMenuIcon
+        <IconRenderer
           :icon="item.icon"
           data-slot="linkLeadingIcon"
           :class="
@@ -31,7 +31,7 @@
           "
         />
       </Badge>
-      <NavigationMenuIcon
+      <IconRenderer
         v-else-if="item.icon"
         :icon="item.icon"
         data-slot="linkLeadingIcon"
@@ -52,7 +52,7 @@
       <SlotOutlet :name="slotName(item, 'label')" :slot-props="{ item, active, index }">
         {{ label }}
       </SlotOutlet>
-      <NavigationMenuIcon
+      <IconRenderer
         v-if="shouldShowExternal && externalIcon"
         :icon="externalIcon"
         data-slot="linkLabelExternalIcon"
@@ -105,7 +105,7 @@
             {{ kbd.text }}
           </template>
         </Kbd>
-        <NavigationMenuIcon
+        <IconRenderer
           v-if="hasIndicator && indicatorIcon"
           :icon="indicatorIcon"
           data-slot="linkTrailingIcon"
@@ -136,7 +136,7 @@
             })
           "
         />
-        <NavigationMenuIcon
+        <IconRenderer
           v-else-if="item.trailingIcon"
           :icon="item.trailingIcon"
           data-slot="linkTrailingIcon"
@@ -160,9 +160,10 @@ import Badge from '@/components/badge/Badge.vue'
 import Chip from '@/components/chip/Chip.vue'
 import Kbd from '@/components/kbd/Kbd.vue'
 import { kbdKeysMap } from '@/components/kbd/kbdKeys'
+import { IconRenderer } from '@/utils/icon'
 
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
-import { ChevronDownIcon, ChevronRightIcon, ExternalIcon, NavigationMenuIcon } from './icons'
+import { ChevronDownIcon, ChevronRightIcon, ExternalIcon } from './icons'
 import type { NavigationMenuItem } from './NavigationMenu.types'
 
 // The contents of an item's link: leading (avatar / icon / chip), label, trailing (badge / kbds / chevron).

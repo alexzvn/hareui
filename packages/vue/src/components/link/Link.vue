@@ -1,20 +1,18 @@
 <template>
-  <Primitive
-    :as="as"
-    :href="isDisabled ? undefined : href"
-    :role="hrefless ? 'link' : undefined"
-    :tabindex="hrefless && !isDisabled ? 0 : undefined"
-    :aria-disabled="isDisabled ? 'true' : undefined"
-    :data-disabled="isDisabled ? 'true' : undefined"
-    data-slot="link"
-    :class="ui.base()"
-    @click="onClick"
-    @keydown="onKeydown"
-  >
-    <Icon v-if="showIcon && iconPlacement === 'start'" />
-    <slot />
-    <Icon v-if="showIcon && iconPlacement === 'end'" />
-  </Primitive>
+  <LinkResolver v-slot="link" :link="linkTarget">
+    <Primitive
+      :as="link.as"
+      v-bind="toAttrs(link)"
+      data-slot="link"
+      :class="ui.base()"
+      @click="onClick"
+      @keydown="onKeydown($event, isHrefless(link))"
+    >
+      <Icon v-if="showIcon && iconPlacement === 'start'" />
+      <slot />
+      <Icon v-if="showIcon && iconPlacement === 'end'" />
+    </Primitive>
+  </LinkResolver>
 </template>
 
 <script setup lang="ts">
@@ -23,16 +21,25 @@ import { computed, h } from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
+import type { ResolvedLink } from '@/utils/link'
+import { LINK_PROP_DEFAULTS, LinkResolver, pickLinkProps } from '@/utils/link'
 
 import type { LinkProps, LinkSlots } from './Link.types'
 import theme from './theme'
 
-const props = withDefaults(defineProps<LinkProps>(), { as: 'a', iconPlacement: 'end' })
+const props = withDefaults(defineProps<LinkProps>(), {
+  ...LINK_PROP_DEFAULTS,
+  as: 'a',
+  iconPlacement: 'end',
+})
+
 const slots = defineSlots<LinkSlots>()
 
 const ui = useComponentUI('link', { theme: theme, variantProps: () => ({}), props })
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 const showIcon = computed(() => props.icon || !!slots.icon)
+
+const linkTarget = computed(() => ({ ...pickLinkProps(props), disabled: isDisabled.value }))
 
 // HeroUI's ExternalLinkIcon (9×9, viewBox 0 0 7 7).
 const defaultIcon = () =>
@@ -69,7 +76,20 @@ const Icon = () =>
 
 // React Aria renders a Link without an href (or a disabled one) as `role="link"`, focusable unless disabled and
 // activated by Enter; a native anchor only gets that from its href.
-const hrefless = computed(() => props.as === 'a' && (isDisabled.value || !props.href))
+const isHrefless = (link: ResolvedLink) => link.as === 'a' && !link.attrs.href
+
+const toAttrs = (link: ResolvedLink) => {
+  const isBare = isHrefless(link)
+
+  return {
+    ...link.attrs,
+    role: isBare ? 'link' : undefined,
+    tabindex: isBare && !isDisabled.value ? 0 : undefined,
+    'aria-disabled': isDisabled.value ? 'true' : undefined,
+    'data-disabled': isDisabled.value ? 'true' : undefined,
+    'data-active': link.active ? 'true' : undefined,
+  }
+}
 
 const onClick = (event: MouseEvent) => {
   if (!isDisabled.value) return
@@ -78,9 +98,9 @@ const onClick = (event: MouseEvent) => {
   event.stopImmediatePropagation()
 }
 
-const onKeydown = (event: KeyboardEvent) => {
+const onKeydown = (event: KeyboardEvent, isBare: boolean) => {
   const isEnterPress = event.key === 'Enter' && !event.repeat
-  if (!hrefless.value || isDisabled.value || !isEnterPress) return
+  if (!isBare || isDisabled.value || !isEnterPress) return
 
   const link = event.currentTarget as HTMLElement
   event.preventDefault()

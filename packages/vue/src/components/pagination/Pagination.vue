@@ -1,5 +1,10 @@
 <template>
-  <nav aria-label="pagination" data-slot="pagination" role="navigation" :class="ui.base()">
+  <nav
+    :aria-label="t('pagination.label')"
+    data-slot="pagination"
+    role="navigation"
+    :class="ui.base()"
+  >
     <div v-if="$slots.summary" data-slot="pagination-summary" dir="auto" :class="ui.summary()">
       <slot name="summary" :page="current" :total="total" />
     </div>
@@ -8,7 +13,7 @@
         <button
           type="button"
           data-slot="pagination-previous"
-          :aria-label="prevButton.label ? undefined : 'Previous page'"
+          :aria-label="prevButton.label ? undefined : t('pagination.prev')"
           :disabled="isPrevDisabled || undefined"
           :data-disabled="isPrevDisabled ? 'true' : undefined"
           :class="navClass"
@@ -71,7 +76,7 @@
         <button
           type="button"
           data-slot="pagination-next"
-          :aria-label="nextButton.label ? undefined : 'Next page'"
+          :aria-label="nextButton.label ? undefined : t('pagination.next')"
           :disabled="isNextDisabled || undefined"
           :data-disabled="isNextDisabled ? 'true' : undefined"
           :class="navClass"
@@ -109,6 +114,7 @@ import { defu } from 'defu'
 import { computed, ref } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import type {
   PaginationEntry,
@@ -119,9 +125,6 @@ import type {
 } from './Pagination.types'
 import theme from './theme'
 
-const PREV_DEFAULTS = { label: 'Previous' } satisfies PaginationNavButton
-const NEXT_DEFAULTS = { label: 'Next' } satisfies PaginationNavButton
-
 // `page: undefined` keeps the uncontrolled page when unbound.
 const props = withDefaults(defineProps<PaginationProps>(), {
   page: undefined,
@@ -130,6 +133,7 @@ const props = withDefaults(defineProps<PaginationProps>(), {
 
 const emit = defineEmits<PaginationEmits>()
 defineSlots<PaginationSlots>()
+const { t } = useLocale()
 
 const ui = useComponentUI('pagination', {
   theme,
@@ -137,8 +141,13 @@ const ui = useComponentUI('pagination', {
   props,
 })
 
-const prevButton = computed(() => defu(props.prev, PREV_DEFAULTS))
-const nextButton = computed(() => defu(props.next, NEXT_DEFAULTS))
+const prevButton = computed(() =>
+  defu(props.prev, { label: t('pagination.prevLabel') } satisfies PaginationNavButton),
+)
+
+const nextButton = computed(() =>
+  defu(props.next, { label: t('pagination.nextLabel') } satisfies PaginationNavButton),
+)
 
 const uncontrolled = ref(props.defaultPage)
 const current = computed(() => props.page ?? uncontrolled.value)

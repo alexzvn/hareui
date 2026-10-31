@@ -2,7 +2,7 @@ import type { injectComboboxRootContext, injectListboxRootContext } from 'reka-u
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type {
   ListBoxEntry,
   ListBoxItem,
@@ -136,7 +136,7 @@ export type ComboBoxProps<T extends ListBoxItem = ListBoxItem> = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ComboBox>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Props of the `#value` slot. */
 export type ComboBoxValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
@@ -188,6 +188,25 @@ export type ComboBoxEmits = {
   'update:inputValue': [value: string]
   /** The end of the option list scrolled into view while `loading` is false. */
   loadMore: []
+  /** The user changed the selection (an option, cleared text or custom text); not on `v-model` writes. */
+  change: [event: Event]
+  /** Focus entered the field (its input) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between the input, its button and the popover doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
+  /**
+   * The highlighted option changed (arrow keys, hover, opening); `undefined` when none is highlighted, and once as
+   * the popover closes.
+   */
+  highlight: [payload: ComboBoxHighlight | undefined]
+}
+
+/** Payload of the `ComboBox` and `Autocomplete` `highlight` event. */
+export type ComboBoxHighlight = {
+  /** The highlighted option element. */
+  ref: HTMLElement
+  /** The highlighted option's `value`. */
+  value: ListBoxValue
 }
 
 /** Which option gets the virtual focus when the popover opens with nothing selected (RAC `FocusStrategy`). */

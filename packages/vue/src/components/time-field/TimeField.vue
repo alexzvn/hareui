@@ -70,9 +70,12 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 
 import theme from './theme'
 import type { TimeFieldEmits, TimeFieldProps, TimeFieldSlots } from './TimeField.types'
+
+const { t } = useLocale()
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<TimeFieldProps>(), { invalid: undefined })
@@ -119,10 +122,10 @@ const formatTimeBoundary = (value: AnyTime) => {
 // into `validate` so it follows `validationBehavior` like any other error.
 const builtinValidate = (value: TimeValue) => {
   if (props.minValue && compareTimeOfDay(value, props.minValue) < 0)
-    return `Value must be ${formatTimeBoundary(props.minValue)} or later.`
+    return t('validation.min', { value: formatTimeBoundary(props.minValue) })
 
   if (props.maxValue && compareTimeOfDay(value, props.maxValue) > 0)
-    return `Value must be ${formatTimeBoundary(props.maxValue)} or earlier.`
+    return t('validation.max', { value: formatTimeBoundary(props.maxValue) })
 
   return undefined
 }
@@ -159,7 +162,7 @@ const onUpdate = (value: TimeValue | undefined) => {
   commitValidation()
 }
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+const { name, id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
   useFieldChrome({
     props,
     slots,

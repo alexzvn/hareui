@@ -20,7 +20,9 @@
               <!-- Like React Aria's select-all checkbox: only multiple selection can select every row, so single selection disables it and names it "Select". -->
               <Checkbox
                 :model-value="selectAllModel"
-                :aria-label="selectionMode === 'multiple' ? 'Select all' : 'Select'"
+                :aria-label="
+                  selectionMode === 'multiple' ? t('table.selectAll') : t('table.select')
+                "
                 :disabled="selectionMode !== 'multiple' || selectableKeys.length === 0"
                 tabindex="-1"
                 @update:model-value="toggleSelectAll"
@@ -90,10 +92,10 @@
                 data-slot="table-column-resizer"
                 role="separator"
                 aria-orientation="vertical"
-                aria-label="Resizer"
+                :aria-label="t('table.resizer')"
                 :aria-labelledby="`${columnHeaderId(column)}-resizer ${columnHeaderId(column)}`"
                 :aria-valuenow="columnWidthOf(column)"
-                :aria-valuetext="`${columnWidthOf(column)} pixels`"
+                :aria-valuetext="t('table.resizerValue', { width: columnWidthOf(column) })"
                 :aria-valuemin="minWidthOf(column)"
                 :aria-valuemax="column.maxWidth"
                 tabindex="0"
@@ -142,7 +144,7 @@
               <Checkbox
                 :model-value="isSelected(flat.key)"
                 :disabled="!isSelectable(flat.key, flat.row)"
-                :aria-label="`Select row ${flat.index + 1}`"
+                :aria-label="t('table.selectRow', { index: flat.index + 1 })"
                 variant="secondary"
                 tabindex="-1"
                 @update:model-value="manager.toggle(flat.key)"
@@ -207,6 +209,7 @@ import { computed, useSlots, useTemplateRef } from 'vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
 import Spinner from '@/components/spinner/Spinner.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import type {
   TableSelection,
@@ -224,6 +227,8 @@ import { useTableLoadMore } from './useTableLoadMore'
 import { useTableNavigation } from './useTableNavigation'
 import { useTableSelection } from './useTableSelection'
 import { useTableSort } from './useTableSort'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<TableProps<T>>(), {
   variant: 'primary',

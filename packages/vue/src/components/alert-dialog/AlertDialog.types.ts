@@ -1,6 +1,8 @@
 import type { VNode } from 'vue'
 
 import type { PortalTarget } from '@/config'
+import type { CloseButtonProp } from '@/types/closeButton'
+import type { DialogEmits } from '@/types/dialog'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -52,10 +54,10 @@ export type AlertDialogProps = {
    */
   keyboardDismissible?: boolean
   /**
-   * Whether the default close button is rendered.
+   * Whether the default close button is rendered; an object customises its `icon` and `label` (accessible name).
    * @defaultValue true
    */
-  closeButton?: boolean
+  closeButton?: CloseButtonProp
   /**
    * Renders the alert dialog in a portal. `true` portals to `document.body`, a selector string or element is used as the teleport target, and `false` disables portalling.
    * Falls back to `createHareUI({ portal })`, then `true`.
@@ -88,7 +90,4 @@ export type AlertDialogSlots = {
 }
 
 /** Events emitted by `AlertDialog`. */
-export type AlertDialogEmits = {
-  /** Emitted when the open state changes. */
-  'update:open': [value: boolean]
-}
+export type AlertDialogEmits = DialogEmits

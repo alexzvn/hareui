@@ -1,5 +1,7 @@
-import { h } from 'vue'
+import { h, toRaw } from 'vue'
 import type { FunctionalComponent } from 'vue'
+
+import type { IconValue } from '@/types/icon'
 
 type SvgIconOptions = {
   /** One or more path definitions. */
@@ -43,3 +45,16 @@ export const createSvgIcon = ({
 
   return icon
 }
+
+/**
+ * Renders an `IconValue` with `aria-hidden="true"`: a class string on an empty `<span>`, a component as is. Attributes
+ * (`class`, `data-slot`, …) fall through onto the rendered element and can override `aria-hidden`. A component read
+ * from reactive state (a toast in the queue, items in a `ref`) is unwrapped, so Vue renders it without a warning.
+ */
+export const IconRenderer: FunctionalComponent<{ icon: IconValue }> = ({ icon }) => {
+  if (typeof icon === 'string') return h('span', { class: icon, 'aria-hidden': 'true' })
+
+  return h(toRaw(icon), { 'aria-hidden': 'true' })
+}
+
+IconRenderer.props = ['icon']

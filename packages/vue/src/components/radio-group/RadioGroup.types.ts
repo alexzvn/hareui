@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -80,7 +80,7 @@ export type RadioGroupProps<T extends RadioGroupItem = RadioGroupItem> = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<RadioGroup>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots of `RadioGroup`. */
 export type RadioGroupSlots<T extends RadioGroupItem = RadioGroupItem> = {

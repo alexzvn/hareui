@@ -57,7 +57,12 @@ Use `as` to render the link as another component. `target: '_blank'` adds an ext
 
 #### Icons
 
-HareUI doesn't ship an icon set. The `icon` and `trailingIcon` properties, and the `trailing-icon` and `external-icon` props, accept either a component or a class name. A class name is set on an empty `<span>`, which works with icon fonts and CSS icon plugins such as `i-lucide-house`. The examples on this page use [Iconify](https://iconify.design) components:
+HareUI doesn't ship an icon set. These options take a component or a class name:
+
+- the `icon` and `trailingIcon` item properties
+- the `trailing-icon` and `external-icon` props
+
+A class name is set on an empty `<span>`, so icon fonts and CSS icon plugins work. The examples on this page use [Iconify](https://iconify.design) components:
 
 ```ts
 import { Icon } from '@iconify/vue'
@@ -176,7 +181,12 @@ Use the `ui` prop to show a small label under each icon in a collapsed menu.
 
 ### With custom slot
 
-Use the `slot` property to customize a single item. It renders with the `#<slot>`, `#<slot>-leading`, `#<slot>-label`, `#<slot>-trailing`, `#<slot>-actions` and `#<slot>-content` slots instead of the generic `#item` ones.
+Set `slot` on an item to give it its own slots, used instead of the generic `#item` ones:
+
+- `#<slot>` for the whole content of its link
+- `#<slot>-leading`, `#<slot>-label` and `#<slot>-trailing` for its parts
+- `#<slot>-actions` for the buttons shown on hover
+- `#<slot>-content` for its dropdown, or its popover in a collapsed rail
 
 <ComponentPreview name="navigation-menu/with-custom-slot" align="start" minHeight="260px" />
 
@@ -228,7 +238,12 @@ A vertical menu in an app sidebar, with groups, a collapsible section, a badge, 
 
 ### Interactive States
 
-Hovered items get a `bg-default` background with the `pill` variant and `text-foreground` with the `link` variant, on devices that support hover. An open trigger has `data-state="open"`, the active item has `aria-current="page"` when it comes from the router, keyboard focus shows a `:focus-visible` ring, and disabled items have `aria-disabled`.
+Hovered items get a `bg-default` background with the `pill` variant and `text-foreground` with the `link` variant, on devices that support hover. Other states:
+
+- **Open**: `data-state="open"` on the trigger
+- **Active**: `aria-current="page"` when the router matches the item
+- **Focus**: a `:focus-visible` ring for keyboard focus
+- **Disabled**: `aria-disabled` on the item
 
 ## API Reference
 

@@ -1,3 +1,5 @@
+import { enMessages } from '@/locale/en'
+
 /**
  * Name of a modifier or special key that `Kbd` can render as a symbol, e.g. `'command'` (⌘)
  * or `'shift'` (⇧). Copied from HeroUI's `kbd.constants.ts`.
@@ -52,28 +54,10 @@ export const kbdKeysMap: Record<KbdKey, string> = {
   alt: '⌥',
 }
 
-/** Human-readable name for each `KbdKey`, used as the symbol's `title` (e.g. `ctrl` → `Control`). */
-export const kbdKeysLabelMap: Record<KbdKey, string> = {
-  command: 'Command',
-  shift: 'Shift',
-  ctrl: 'Control',
-  option: 'Option',
-  enter: 'Enter',
-  delete: 'Delete',
-  escape: 'Escape',
-  tab: 'Tab',
-  capslock: 'Caps Lock',
-  up: 'Up',
-  right: 'Right',
-  down: 'Down',
-  left: 'Left',
-  pageup: 'Page Up',
-  pagedown: 'Page Down',
-  home: 'Home',
-  end: 'End',
-  help: 'Help',
-  space: 'Space',
-  fn: 'Fn',
-  win: 'Win',
-  alt: 'Alt',
-}
+/**
+ * English name for each `KbdKey` (e.g. `ctrl` → `Control`); `Kbd` renders the active locale's `kbd` names as the
+ * symbol's `title`. A frozen copy, so writing to it cannot change the English fallback strings.
+ */
+export const kbdKeysLabelMap: Readonly<Record<KbdKey, string>> = Object.freeze({
+  ...enMessages.kbd,
+})

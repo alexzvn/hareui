@@ -4,12 +4,16 @@
       aria-label="File actions"
       class="w-full p-2"
       selection-mode="none"
-      :items="sections(false)"
+      :items="items"
       @action="(value) => alert(`Selected item: ${value}`)"
     >
       <template #item-leading="{ item }">
         <div class="flex h-8 items-start justify-center pt-px">
-          <Icon :class="['size-4 shrink-0', item.icon.cls]" :icon="item.icon.name" />
+          <Icon
+            class="size-4 shrink-0"
+            :class="item.variant === 'danger' ? 'text-danger' : 'text-muted'"
+            :icon="item.icon"
+          />
         </div>
       </template>
       <template #item-trailing="{ item }">
@@ -27,13 +31,12 @@ import { Kbd, ListBox, Surface } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
 
 type FileAction = {
-  icon: { name: string; cls: string }
+  icon: string
   keys: KbdKey[]
   key: string
 } & ListBoxItem
 
-const icon = (name: string, cls = 'text-muted') => ({ name, cls })
-const sections = (dangerDisabled: boolean): ListBoxEntry<FileAction>[] => [
+const items: ListBoxEntry<FileAction>[] = [
   {
     type: 'section',
     label: 'Actions',
@@ -42,7 +45,7 @@ const sections = (dangerDisabled: boolean): ListBoxEntry<FileAction>[] => [
         value: 'new-file',
         label: 'New file',
         description: 'Create a new file',
-        icon: icon('gravity-ui:square-plus'),
+        icon: 'gravity-ui:square-plus',
         keys: ['command'],
         key: 'N',
       },
@@ -50,7 +53,7 @@ const sections = (dangerDisabled: boolean): ListBoxEntry<FileAction>[] => [
         value: 'edit-file',
         label: 'Edit file',
         description: 'Make changes',
-        icon: icon('gravity-ui:pencil'),
+        icon: 'gravity-ui:pencil',
         keys: ['command'],
         key: 'E',
       },
@@ -66,8 +69,7 @@ const sections = (dangerDisabled: boolean): ListBoxEntry<FileAction>[] => [
         label: 'Delete file',
         description: 'Move to trash',
         variant: 'danger',
-        disabled: dangerDisabled,
-        icon: icon('gravity-ui:trash-bin', 'text-danger'),
+        icon: 'gravity-ui:trash-bin',
         keys: ['command', 'shift'],
         key: 'D',
       },

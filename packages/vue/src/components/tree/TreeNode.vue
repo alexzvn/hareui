@@ -44,7 +44,7 @@
           v-if="ctx.hasCheckbox()"
           :model-value="state.isIndeterminate ? 'indeterminate' : state.isSelected"
           :disabled="isRowDisabled"
-          :aria-label="`Select ${label}`"
+          :aria-label="t('tree.select', { label })"
           tabindex="-1"
           :class="ui.linkCheckbox({ override: item.ui?.linkCheckbox })"
           @update:model-value="state.handleSelect()"
@@ -56,7 +56,7 @@
           :data-leaf="isExpandable ? undefined : ''"
           :class="ui.linkChevron({ override: item.ui?.linkChevron })"
         >
-          <TreeIcon
+          <IconRenderer
             :icon="ctx.icons().indicator"
             data-slot="tree-indicator"
             :class="ui.linkIndicator({ override: item.ui?.linkIndicator })"
@@ -73,7 +73,7 @@
             v-if="ctx.slots[slotName('leading')]"
             v-bind="scopeOf(state)"
           />
-          <TreeIcon
+          <IconRenderer
             v-else-if="leadingIcon(state.isExpanded)"
             :icon="leadingIcon(state.isExpanded)!"
             data-slot="tree-leading-icon"
@@ -101,7 +101,7 @@
               v-if="ctx.slots[slotName('trailing')]"
               v-bind="scopeOf(state)"
             />
-            <TreeIcon
+            <IconRenderer
               v-else-if="item.trailingIcon"
               :icon="item.trailingIcon"
               data-slot="tree-trailing-icon"
@@ -150,13 +150,16 @@ import { Comment, computed, defineComponent, inject, ref, useAttrs, watch } from
 import type { FunctionalComponent, StyleValue } from 'vue'
 
 import Checkbox from '@/components/checkbox/Checkbox.vue'
+import { useLocale } from '@/composables/useLocale'
+import { IconRenderer } from '@/utils/icon'
 import { resolveSlotName } from '@/utils/slotName'
 
 import { treeContextKey } from './context'
-import { TreeIcon } from './icons'
 import type { TreeItem, TreeItemSlotProps } from './Tree.types'
 
 defineOptions({ name: 'TreeNode', inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = defineProps<{
   item: TreeItem

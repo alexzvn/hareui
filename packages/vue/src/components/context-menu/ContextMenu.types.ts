@@ -106,7 +106,7 @@ export type ContextMenuSlots<T extends ContextMenuItem = ContextMenuItem> = {
   'content-bottom'?: () => VNode[]
   /** Replaces the whole item content. */
   item?: (props: ContextMenuItemSlotProps<T>) => VNode[]
-  /** Content before the label, such as an icon or avatar. */
+  /** Content before the label, such as an icon or avatar. Replaces `item.icon`. */
   'item-leading'?: (props: ContextMenuItemSlotProps<T>) => VNode[]
   /** Replaces the item label text. */
   'item-label'?: (props: ContextMenuItemSlotProps<T>) => VNode[]

@@ -1,9 +1,10 @@
 import type { PrimitiveProps } from 'reka-ui'
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
 import type { ButtonProps } from '@/components/button/Button.types'
 import type { DrawerProps } from '@/components/drawer/Drawer.types'
 import type { ModalProps } from '@/components/modal/Modal.types'
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -26,10 +27,10 @@ export type SidebarMenuProps = Partial<DrawerProps> | Partial<ModalProps>
 /** The close button of the sidebar header: `Button` props plus the icon it shows. */
 export type SidebarCloseProps = Omit<ButtonProps, 'as'> & {
   /**
-   * The icon component rendered in the button.
+   * The icon rendered in the button: a class string or a component.
    * @defaultValue Gravity UI `xmark`
    */
-  icon?: Component
+  icon?: IconValue
 }
 
 /** The resolved slot class functions of `Sidebar`, passed to slots that replace one of its parts. */

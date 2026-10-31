@@ -1,5 +1,6 @@
 import type { VNode } from 'vue'
 
+import type { KbdProps } from '@/components/kbd'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -12,6 +13,12 @@ type Tooltip = typeof theme
 export type TooltipProps = {
   /** The text content of the tooltip. Ignored when the `content` slot is used. */
   text?: string
+  /**
+   * Keyboard shortcut shown after the text, one `Kbd` per entry. A string becomes the key text;
+   * an object is passed to `Kbd` as props (e.g. `{ keys: 'command' }`). Hidden below the `lg` breakpoint.
+   * Ignored when the `content` slot is used.
+   */
+  kbds?: (string | KbdProps)[]
   /** The controlled open state of the tooltip. Use with `v-model:open`. */
   open?: boolean
   /** The open state of the tooltip when it is initially rendered. Use when you do not need to control its open state. */

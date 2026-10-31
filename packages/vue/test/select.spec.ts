@@ -647,3 +647,26 @@ describe('Select', () => {
     })
   })
 })
+
+describe('Select item icon', () => {
+  it('renders the item icon in its option, aria-hidden, and none for items without one', async () => {
+    const wrapper = mount(Select, {
+      props: {
+        items: [
+          { value: 'cat', label: 'Cat', icon: 'icon-cat' },
+          { value: 'dog', label: 'Dog' },
+        ],
+        label: 'Pet',
+      },
+      attachTo: document.body,
+    })
+
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+    const options = document.querySelectorAll<HTMLElement>('[role=option]')
+    const icon = options[0]!.querySelector('[data-slot=list-box-item-icon]')
+    expect(icon?.getAttribute('aria-hidden')).toBe('true')
+    expect(options[1]!.querySelector('[data-slot=list-box-item-icon]')).toBeNull()
+    wrapper.unmount()
+  })
+})

@@ -1,6 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ExpandedValue } from '@/composables/useExpandedValues'
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -12,6 +13,8 @@ type Accordion = typeof theme
 export type AccordionItem = {
   /** The trigger text, shown unless `#label` is used. */
   label?: string
+  /** Icon shown before the label (decorative, `aria-hidden`), unless `#leading` is used. */
+  icon?: IconValue
   /** The value identifying this item. Defaults to the item's index. */
   value?: ExpandedValue
   /** Whether this item is disabled. */

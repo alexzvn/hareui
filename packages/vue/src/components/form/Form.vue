@@ -453,6 +453,7 @@ provide(formContextKey, {
   validationBehavior,
   validationErrors,
   errors,
+  loading,
   validateOnInputDelay: computed(() => props.validateOnInputDelay),
   state,
   emit: onInputEvent,

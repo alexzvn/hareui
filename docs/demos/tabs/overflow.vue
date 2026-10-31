@@ -1,11 +1,5 @@
 <template>
-  <div class="w-[400px]">
-    <Tabs :items="items" :ui="{ tabPanel: 'pt-4' }">
-      <template #content="{ item }">
-        <p>{{ item.content }}</p>
-      </template>
-    </Tabs>
-  </div>
+  <Tabs class="w-full max-w-[400px]" :items="items" :ui="{ tabPanel: 'pt-4' }" />
 </template>
 
 <script setup lang="ts">
