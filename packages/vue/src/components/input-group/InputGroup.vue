@@ -47,6 +47,7 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { splitInputAttrs, textFieldContextKey } from '@/components/text-field/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useFormField } from '@/composables/useFormField'
 
 import type { InputGroupProps, InputGroupSlots } from './InputGroup.types'
 import theme from './theme'
@@ -106,10 +107,19 @@ if (field && ownModel) {
   })
 }
 
-const type = computed(() => props.type ?? field?.type.value ?? 'text')
-const name = computed(() => props.name ?? field?.name.value)
+// A bare InputGroup inside a FormField takes its id, name and description ids, and shows its errors there
+const formField = useFormField({
+  id: () => props.id,
+  name: () => props.name,
+  validation: () => own?.validation.value,
+  disabled: () => disabled.value,
+  required: () => props.required,
+})
 
-const id = computed(() => props.id ?? field?.id.value)
+const type = computed(() => props.type ?? field?.type.value ?? 'text')
+const name = computed(() => props.name ?? field?.name.value ?? formField.name.value)
+
+const id = computed(() => props.id ?? field?.id.value ?? formField.id.value)
 const variant = computed(() => props.variant ?? field?.variant.value)
 const fullWidth = computed(() => props.fullWidth ?? field?.fullWidth.value ?? false)
 const disabled = useFieldsetDisabled(() => props.disabled ?? field?.disabled.value ?? false)
@@ -170,7 +180,10 @@ const controlAttrs = computed(() => ({
   readonly: readonly.value || undefined,
   'aria-invalid': invalid.value ? ('true' as const) : undefined,
   'aria-describedby':
-    [attrs['aria-describedby'] as string | undefined, field?.describedBy.value]
+    [
+      attrs['aria-describedby'] as string | undefined,
+      field?.describedBy.value ?? formField.describedBy.value,
+    ]
       .filter(Boolean)
       .join(' ') || undefined,
   'data-invalid': invalid.value ? 'true' : undefined,

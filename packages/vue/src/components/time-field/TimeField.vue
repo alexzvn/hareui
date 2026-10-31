@@ -162,7 +162,7 @@ const onUpdate = (value: TimeValue | undefined) => {
   commitValidation()
 }
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+const { name, id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
   useFieldChrome({
     props,
     slots,

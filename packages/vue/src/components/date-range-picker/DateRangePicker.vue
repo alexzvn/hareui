@@ -108,7 +108,7 @@
         feature="focusable"
         aria-hidden="true"
         tabindex="-1"
-        :name="part === 'start' ? startName : endName"
+        :name="part === 'start' ? (startName ?? fieldName) : endName"
         :value="committed?.[part]?.toString() ?? ''"
         :required="required"
         :disabled="disabled"
@@ -359,16 +359,24 @@ const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
 // Reka's matcher is single-argument and read once at setup; outside the calendar React Aria calls it with a `null` anchor.
 const fieldIsDateUnavailable = (date: DateValue) => props.isDateUnavailable?.(date, null) ?? false
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
-  useFieldChrome({
-    props,
-    slots,
-    invalid,
-    validation,
-    disabled,
-    required: () => props.required,
-    hideDescriptionWhenInvalid: true,
-  })
+const {
+  name: fieldName,
+  id,
+  labelId,
+  hasLabel,
+  describedBy,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled,
+  required: () => props.required,
+  hideDescriptionWhenInvalid: true,
+})
 
 const triggerId = computed(() => `${id.value}-trigger`)
 

@@ -10,7 +10,7 @@
     :required="required || undefined"
     :readonly="readonly || undefined"
     :aria-invalid="invalid ? 'true' : undefined"
-    :aria-describedby="field?.describedBy.value"
+    :aria-describedby="describedBy"
     data-slot="textarea"
     :data-invalid="invalid ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
@@ -26,6 +26,7 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { textFieldContextKey } from '@/components/text-field/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useFormField } from '@/composables/useFormField'
 import type { ModelModifier } from '@/utils/modelModifiers'
 import { emptyModelValue, textModelDirective } from '@/utils/modelModifiers'
 
@@ -84,8 +85,18 @@ if (field && ownModel) {
   })
 }
 
-const name = computed(() => props.name ?? field?.name.value)
-const id = computed(() => props.id ?? field?.id.value)
+// A bare TextArea inside a FormField takes its id, name and description ids, and shows its errors there
+const formField = useFormField({
+  id: () => props.id,
+  name: () => props.name,
+  validation: () => own?.validation.value,
+  disabled: () => disabled.value,
+  required: () => props.required,
+})
+
+const name = computed(() => props.name ?? field?.name.value ?? formField.name.value)
+const id = computed(() => props.id ?? field?.id.value ?? formField.id.value)
+const describedBy = computed(() => field?.describedBy.value ?? formField.describedBy.value)
 const variant = computed(() => props.variant ?? field?.variant.value)
 const fullWidth = computed(() => props.fullWidth ?? field?.fullWidth.value ?? false)
 const disabled = useFieldsetDisabled(() => props.disabled ?? field?.disabled.value ?? false)

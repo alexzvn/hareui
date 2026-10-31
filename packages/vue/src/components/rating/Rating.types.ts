@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
@@ -112,7 +112,7 @@ export type RatingProps = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Rating>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Emits of `Rating`. */
 export type RatingEmits = {

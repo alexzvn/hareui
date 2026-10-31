@@ -495,8 +495,8 @@ const valueId = `${autoId}-value`
 const shouldShowValue = computed(() => isMultiple.value || !!slots.value)
 
 // Chrome ids derive from `autoId` even with an `id` prop (that one names the input)
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
-  {
+const { name, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
     props,
     baseId: autoId,
     slots,
@@ -507,8 +507,7 @@ const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError
     hideDescriptionWhenInvalid: true,
     ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
     describedByIds: () => [shouldShowValue.value && valueId],
-  },
-)
+  })
 
 const inputLabelledBy = computed(
   () =>

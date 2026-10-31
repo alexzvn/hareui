@@ -121,7 +121,7 @@ const ui = useComponentUI('rating', {
   theme,
   variantProps: () => ({
     color: props.color,
-    size: props.size,
+    size: props.size ?? formField.size.value,
     orientation: props.orientation,
     readonly: props.readonly,
     disabled: isDisabled.value,
@@ -189,15 +189,22 @@ const { validation, invalid, commitValidation } = useFieldValidation({
   },
 })
 
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
-  {
-    props,
-    slots,
-    invalid,
-    validation,
-    disabled: isDisabled,
-  },
-)
+const {
+  name,
+  labelId,
+  hasLabel,
+  describedBy,
+  formField,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+})
 
 const commit = (value: number) => {
   if (value === current.value) return

@@ -2,7 +2,7 @@ import type { injectComboboxRootContext, injectListboxRootContext } from 'reka-u
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type {
   ListBoxEntry,
   ListBoxItem,
@@ -136,7 +136,7 @@ export type ComboBoxProps<T extends ListBoxItem = ListBoxItem> = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ComboBox>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Props of the `#value` slot. */
 export type ComboBoxValueSlotProps<T extends ListBoxItem = ListBoxItem> = {

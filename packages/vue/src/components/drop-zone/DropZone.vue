@@ -53,7 +53,12 @@
           </svg>
         </slot>
       </span>
-      <span v-if="hasLabel" :id="labelId" data-slot="drop-zone-label" :class="ui.label()">
+      <span
+        v-if="hasLabel && !isLabelDelegated"
+        :id="labelId"
+        data-slot="drop-zone-label"
+        :class="ui.label()"
+      >
         <slot name="label" v-bind="slotProps">{{ label }}</slot>
       </span>
       <span
@@ -167,14 +172,23 @@ const { validation, invalid, commitValidation } = useFieldValidation({
   onReset: () => setFiles(props.defaultValue ?? []),
 })
 
-const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, FieldError } =
-  useFieldChrome({
-    props,
-    slots,
-    invalid,
-    validation,
-    disabled: isDisabled,
-  })
+const {
+  name,
+  id,
+  labelId,
+  descriptionId,
+  hasLabel,
+  isLabelDelegated,
+  hasDescription,
+  describedBy,
+  FieldError,
+} = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+})
 
 // Mirrors the selection into the file input, so native form submission and `required` see it
 const syncInput = () => {

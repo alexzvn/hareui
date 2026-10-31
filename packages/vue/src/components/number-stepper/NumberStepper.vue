@@ -321,15 +321,16 @@ const rootAttrs = computed(() => {
   return rest
 })
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
-  props,
-  slots,
-  invalid,
-  validation,
-  disabled: isDisabled,
-  required: () => props.required,
-  hideDescriptionWhenInvalid: true,
-})
+const { name, id, describedBy, formField, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
+    props,
+    slots,
+    invalid,
+    validation,
+    disabled: isDisabled,
+    required: () => props.required,
+    hideDescriptionWhenInvalid: true,
+  })
 
 // The buttons are named after the field: "Increase Quantity"
 const fieldName = computed(() => (attrs['aria-label'] as string | undefined) ?? props.label)
@@ -356,7 +357,7 @@ const decrementButton = computed(() =>
 const ui = useComponentUI('numberStepper', {
   theme,
   variantProps: () => ({
-    size: props.size,
+    size: props.size ?? formField.size.value,
     reversed: props.reversed,
   }),
   props,

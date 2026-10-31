@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
 import type { ModelModifiers } from '@/utils/modelModifiers'
@@ -101,7 +101,7 @@ export type NumberFieldProps = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<NumberField>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots of `NumberField`. */
 export type NumberFieldSlots = {

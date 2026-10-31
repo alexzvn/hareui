@@ -46,6 +46,7 @@ export * from './components/typography'
 export * from './components/number-field'
 export * from './components/disclosure'
 export * from './components/form'
+export * from './components/form-field'
 
 export type {
   ValidateFn,

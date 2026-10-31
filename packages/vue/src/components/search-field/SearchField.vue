@@ -187,7 +187,7 @@ const onClear = () => {
   emit('clear')
 }
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,

@@ -1,5 +1,5 @@
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ModelModifiers } from '@/utils/modelModifiers'
@@ -65,4 +65,4 @@ export type TextAreaProps = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<TextArea>
-} & FormFieldProps
+} & FormFieldValidationProps

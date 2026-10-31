@@ -126,7 +126,7 @@ const onFocusOut = (event: FocusEvent) => {
   focusState.isFocusVisible = false
 }
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,
@@ -149,7 +149,7 @@ provide(textFieldContextKey, {
   inputAttrs,
   model: value,
   modelModifiers: modifiers,
-  name: toRef(() => props.name),
+  name,
   type: toRef(() => props.type),
 })
 

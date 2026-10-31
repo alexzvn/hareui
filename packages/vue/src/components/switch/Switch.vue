@@ -86,7 +86,7 @@ const slots = useSlots()
 const ui = useComponentUI('switch', {
   theme,
   variantProps: () => ({
-    size: props.size,
+    size: props.size ?? formField.size.value,
   }),
   props,
 })
@@ -111,7 +111,7 @@ const { validation, invalid, commitValidation } = useFieldValidation({
   },
 })
 
-const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, formField, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,

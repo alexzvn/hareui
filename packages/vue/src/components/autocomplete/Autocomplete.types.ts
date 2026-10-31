@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type {
   ListBoxEntry,
   ListBoxItem,
@@ -138,7 +138,7 @@ export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Autocomplete> & { searchClearButton?: ClassValue }
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Props passed to the `#value` slot, for rendering the trigger's value. */
 export type AutocompleteValueSlotProps<T extends ListBoxItem = ListBoxItem> = {

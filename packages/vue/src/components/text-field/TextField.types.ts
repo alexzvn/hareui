@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { InputProps } from '@/components/input/Input.types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
@@ -83,7 +83,7 @@ export type TextFieldProps = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<TextField>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Props passed to the `TextField` default slot, for wiring a custom control to the field. */
 export type TextFieldSlotProps = {

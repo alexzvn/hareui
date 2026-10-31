@@ -143,7 +143,7 @@ const { validation, invalid, commitValidation } = useFieldValidation({
   },
 })
 
-const { id, describedBy, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,

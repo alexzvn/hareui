@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type {
   ListBoxEntry,
   ListBoxItem,
@@ -111,7 +111,7 @@ export type SelectProps<T extends ListBoxItem = ListBoxItem> = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Select>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Props passed to the `#value` slot, for rendering the trigger's value. */
 export type SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> = {

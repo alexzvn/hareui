@@ -233,7 +233,7 @@ const rootAttrs = computed(() => {
   return rest
 })
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,
