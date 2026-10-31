@@ -329,12 +329,18 @@ describe('useOverlay', () => {
     expect(dialogs()).toHaveLength(1)
   })
 
-  it('keeps a closed overlay rendered until its exit animation ends', async () => {
+  it('waits for the exit animation of a component without lifecycle events', async () => {
     let finish = () => {}
     const finished = new Promise<void>((resolve) => (finish = resolve))
 
+    const Panel = defineComponent({
+      props: { open: Boolean },
+      setup: (props) => () =>
+        h('div', { 'data-slot': 'panel', 'data-state': props.open ? 'open' : 'closed' }, 'Panel'),
+    })
+
     const exitAnimation = () => {
-      const target = document.querySelector('[data-slot=modal-backdrop][data-state=closed]')
+      const target = document.querySelector('[data-slot=panel][data-state=closed]')
       if (!target) return []
 
       return [{ effect: { target, getComputedTiming: () => ({ endTime: 200 }) }, finished }]
@@ -343,26 +349,22 @@ describe('useOverlay', () => {
     Object.defineProperty(document, 'getAnimations', { value: exitAnimation, configurable: true })
 
     mountApp()
-    const modal = overlay.create(ConfirmModal)
+    const panel = overlay.create(Panel)
 
-    const opened = modal.open()
+    void panel.open()
     await settle()
-    escapeKeydown()
-    await settle()
-
-    const onResolve = vi.fn<(value: unknown) => void>()
-    void opened.then(onResolve)
+    panel.close()
     await settle()
 
-    expect(modal.isOpen).toBe(false)
-    expect(modal.isMounted).toBe(true)
-    expect(onResolve).not.toHaveBeenCalled()
+    expect(panel.isOpen).toBe(false)
+    expect(panel.isMounted).toBe(true)
+    expect(document.querySelector('[data-slot=panel]')).not.toBeNull()
 
     finish()
     await settle()
 
-    expect(modal.isMounted).toBe(false)
-    expect(onResolve).toHaveBeenCalledWith(undefined)
+    expect(panel.isMounted).toBe(false)
+    expect(document.querySelector('[data-slot=panel]')).toBeNull()
 
     Reflect.deleteProperty(document, 'getAnimations')
   })

@@ -35,17 +35,46 @@ const hasCloseEvent = (component: Component): boolean => {
   return typeof emits === 'object' && emits !== null && 'close' in emits
 }
 
+// Overlays whose root emitted `enter`, i.e. a HareUI overlay (directly or as a wrapper's root): they unmount after
+// their own `after:leave`. Any other component falls back to the document's exit animations alone.
+const lifecycleIds = new Set<symbol>()
+const leaveResolvers = new Map<symbol, () => void>()
+
+// `after:leave` that arrived before the provider started waiting for it.
+const leftIds = new Set<symbol>()
+
+const settleLeave = (id: symbol) => {
+  const resolve = leaveResolvers.get(id)
+  leaveResolvers.delete(id)
+  if (resolve) return resolve()
+  leftIds.add(id)
+}
+
 const getListeners = (overlay: Overlay) => {
-  const onOpenChange = (value: boolean) => {
-    overlay.isOpen = value
+  const listeners: Record<string, (...args: never[]) => void> = {
+    'update:open': (value: boolean) => {
+      overlay.isOpen = value
+    },
+    enter: () => {
+      lifecycleIds.add(overlay.id)
+      leftIds.delete(overlay.id)
+    },
+    'after:leave': () => settleLeave(overlay.id),
   }
 
-  if (!hasCloseEvent(overlay.component)) return { 'update:open': onOpenChange }
+  if (hasCloseEvent(overlay.component))
+    listeners.close = (value?: unknown) => close(overlay.id, value)
 
-  return {
-    'update:open': onOpenChange,
-    close: (value?: unknown) => close(overlay.id, value),
-  }
+  return listeners
+}
+
+// A HareUI overlay's `after:leave` fires once its node is gone; any other component waits for the document's exit
+// animations instead.
+const afterLeave = (id: symbol): Promise<void> => {
+  if (!lifecycleIds.has(id)) return afterExitAnimations()
+  if (leftIds.delete(id)) return Promise.resolve()
+
+  return new Promise<void>((resolve) => leaveResolvers.set(id, resolve))
 }
 
 // One pending exit per overlay; reopening drops it, so a stale exit never unmounts a reopened (or re-closed) overlay.
@@ -54,10 +83,12 @@ const pendingExits = new Map<symbol, symbol>()
 const unmountAfterExit = async (id: symbol) => {
   const exit = Symbol('exit')
   pendingExits.set(id, exit)
-  await afterExitAnimations()
+  await afterLeave(id)
   if (pendingExits.get(id) !== exit) return
 
   pendingExits.delete(id)
+  lifecycleIds.delete(id)
+  leftIds.delete(id)
 
   // A dismissed overlay resolves its `open()` promises with `undefined`; one closed with a value already resolved them.
   close(id)
@@ -68,7 +99,12 @@ watch(
   closingIds,
   (ids) => {
     for (const id of pendingExits.keys()) {
-      if (!ids.includes(id)) pendingExits.delete(id)
+      if (ids.includes(id)) continue
+      pendingExits.delete(id)
+
+      // Reopened: the stale exit settles and then stops at its `pendingExits` check.
+      leaveResolvers.get(id)?.()
+      leaveResolvers.delete(id)
     }
 
     for (const id of ids) {
