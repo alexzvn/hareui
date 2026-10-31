@@ -204,7 +204,7 @@ Styles, tokens and SVG icons are translated from HeroUI v3 (https://github.com/h
    limitations under the License.
 ```
 
-The `App`, `Container`, `Dashboard*`, `Error`, `Footer`, `Header`, `Main`, `NavigationMenu` and `RichTable` components derive their structure, API and parts of their theme classes from Nuxt UI (https://github.com/nuxt/ui).
+The `App`, `Container`, `Dashboard*`, `Error`, `Footer`, `Header`, `Main`, `NavigationMenu` and `RichTable` components derive their structure, API and parts of their theme classes from Nuxt UI (https://github.com/nuxt/ui). The translated strings of the locale catalogs in `src/locale/` (every file except `en.ts`, `defineLocale.ts` and `index.ts`) are copied from Nuxt UI's locale catalogs.
 
 ```
 MIT License
