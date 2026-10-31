@@ -67,6 +67,14 @@ const PICKS: Record<string, Pick> = {
     crop: { x: 0, y: 0, width: 480, height: 220 },
   },
   container: { width: 360 },
+  // The trigger alone says little; the inline palette shows the search field and its results.
+  'command-palette': { demo: 'command-palette/inline' },
+  // Opening needs a right-click, so the controlled demo's button opens it.
+  'context-menu': {
+    demo: 'context-menu/controlled',
+    open: 'button',
+    overlay: '[data-slot="context-menu-popover"]',
+  },
   'dashboard-group': {
     demo: 'dashboard-group/app-layout-default',
     page: { width: 1024, height: 640 },
@@ -117,6 +125,7 @@ const PICKS: Record<string, Pick> = {
   'navigation-menu': { demo: 'navigation-menu/orientation' },
   main: { width: 360 },
   'rich-table': { width: 600 },
+  editor: { width: 440 },
   'list-view': { select: '[data-slot="list-view"]', width: 320 },
   // The first copy's leading logos, held still and without the edge fade, which paints the page background.
   marquee: {
@@ -124,6 +133,13 @@ const PICKS: Record<string, Pick> = {
     select: '[data-slot="marquee-content"]:first-child > :nth-child(-n+3)',
     width: 560,
   },
+  sidebar: {
+    demo: 'sidebar/basic',
+    page: { width: 1024, height: 640 },
+    crop: { x: 0, y: 0, width: 240, height: 320 },
+  },
+  timeline: { width: 300 },
+  toc: { select: '[data-slot="toc"]' },
   alert: { select: ':scope > [data-slot="alert-root"]:nth-of-type(2)', width: 380 },
   // The basic demo pairs the zone with an empty file panel; the zone alone reads better at card size.
   'drop-zone': { select: '[data-slot="drop-zone"]' },
