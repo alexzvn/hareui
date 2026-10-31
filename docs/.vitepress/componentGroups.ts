@@ -139,11 +139,6 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
 // Pages that get a "New" badge in the sidebar. Clear entries once they stop being new.
 export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'action-bar',
-  'carousel',
-  'code-block',
-  'command-palette',
-  'context-menu',
-  'editor',
   'form-field',
   'item-card',
   'item-card-group',
@@ -152,13 +147,6 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'metric',
   'metric-group',
   'number-value',
-  'rating',
-  'sidebar',
-  'splitter',
-  'stepper',
-  'timeline',
-  'toc',
-  'tree',
   'trend-chip',
   'widget',
 ])

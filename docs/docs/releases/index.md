@@ -3,10 +3,11 @@ title: All Releases
 description: Every @hareui/vue release, newest first.
 ---
 
-Release notes for `@hareui/vue`, newest first. Upgrades that need code changes have a [migration guide](./migrations/v0.3.0-v0.4.0.md).
+Release notes for `@hareui/vue`, newest first. Upgrades that need code changes have a migration guide: [v0.4.0 → v0.5.0](./migrations/v0.4.0-v0.5.0.md), [v0.3.0 → v0.4.0](./migrations/v0.3.0-v0.4.0.md).
 
 | Version            | Date       | Highlights                                                                                                                                                                                                                                    |
 | ------------------ | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [v0.5.0](./v0-5-0) | 2026-10-31 | Metric, MetricGroup, NumberValue, TrendChip, Widget, ItemCard, ListView, ActionBar, Marquee, FormField; 63 locales via `defineLocale()`; link fields on Button, Link and menu items; class-or-component icons                                 |
 | [v0.4.0](./v0-4-0) | 2026-10-30 | ContextMenu, Stepper, Timeline, Rating, Tree, Splitter, Sidebar, Toc; CommandPalette, Carousel, CodeBlock and Editor in their own entries; `useOverlay()`; grouped object props                                                               |
 | [v0.3.0](./v0-3-0) | 2026-10-24 | Charts in `@hareui/vue/charts`; CellSwitch, CellSlider, CellSelect, CellColorPicker, CheckboxButtonGroup, RadioButtonGroup, DropZone, InlineSelect, NativeSelect, NumberStepper; axe audit of every component and docs demo; faster rendering |
 | [v0.2.0](./v0-2-0) | 2026-10-21 | Dashboard and layout components, RichTable, NavigationMenu; `@hareui/vue/vite` plugin: component auto import with an optional prefix, build-time theme overrides; Form schema validation                                                      |
