@@ -140,6 +140,7 @@ const ui = useComponentUI('codeBlock', {
     copied: isCopied.value,
     filename: Boolean(props.filename),
     copy: Boolean(props.copy),
+    hideHeader: props.hideHeader,
   }),
   props,
 })
