@@ -17,7 +17,7 @@
           :aria-expanded="isExpanded(valueOf(item, index)) ? 'true' : 'false'"
           :aria-controls="`${id}-panel-${index}`"
           :disabled="isItemDisabled(item) || undefined"
-          :class="ui.trigger({ override: item.icon ? 'justify-start' : undefined })"
+          :class="ui.trigger({ class: item.icon ? 'justify-start' : undefined })"
           @click="toggle(item, index)"
         >
           <slot name="leading" :item="item" :index="index" :open="isExpanded(valueOf(item, index))">
