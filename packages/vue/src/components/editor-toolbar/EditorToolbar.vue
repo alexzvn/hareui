@@ -306,7 +306,7 @@ const getItemIcon = (item: object): IconValue | undefined => {
 const getCommandLabel = (command: EditorCommand) => {
   const defaults = getCommandDefaults(command)
 
-  return defaults && t(defaults.label, defaults.params)
+  return defaults && t(defaults.labelKey, defaults.params)
 }
 
 const getItemName = (item: EditorToolbarButtonBase) => {

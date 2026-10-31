@@ -11,14 +11,14 @@ import type { Locale } from '@/locale/defineLocale'
 export type AppProps = {
   /**
    * The reading direction of the application, inherited by every directional primitive.
-   * @defaultValue the `locale`'s `dir`, then 'ltr'
+   * @defaultValue the `locale`'s `dir`, then the enclosing `App`'s, then 'ltr'
    */
   dir?: ConfigProviderProps['dir']
   /**
    * The locale of the application. A `Locale` from `defineLocale()` translates the built-in strings and sets the
    * `Intl` formatting code and direction; a BCP 47 code string only sets `Intl` formatting (dates, numbers,
    * calendars) and keeps the inherited strings.
-   * @defaultValue English (`en`)
+   * @defaultValue the enclosing `App`'s strings, code and direction, then English (`en`)
    */
   locale?: Locale | string
   /** The global scroll-lock behaviour of overlays (`false` leaves the body scrollable). */

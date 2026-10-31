@@ -1,8 +1,8 @@
 <template>
   <ConfigProvider
     :use-id="() => useId()"
-    :dir="dir ?? localeObject?.dir"
-    :locale="typeof locale === 'string' ? locale : locale?.code"
+    :dir="resolvedDir"
+    :locale="resolvedCode"
     :scroll-body="scrollBody"
     :nonce="nonce"
   >
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { ConfigProvider } from 'reka-ui'
+import { ConfigProvider, useDirection, useLocale as useRekaLocale } from 'reka-ui'
 import { computed, inject, provide, useId } from 'vue'
 
 import { overlayHostKey } from '@/components/overlay-provider/overlayHost'
@@ -53,6 +53,14 @@ provide(
   localeKey,
   computed(() => localeObject.value ?? parentLocale?.value),
 )
+
+// The `Intl` code and direction this App sets, falling back to the enclosing App's (Reka's parent
+// `ConfigProvider`), so a nested App without `locale` keeps the parent's code and direction, not `en` / `ltr`.
+const resolvedCode = useRekaLocale(
+  computed(() => (typeof props.locale === 'string' ? props.locale : localeObject.value?.code)),
+)
+
+const resolvedDir = useDirection(computed(() => props.dir ?? localeObject.value?.dir))
 
 // `useOverlay()` keeps one app-wide registry: the outermost `App` renders it; a nested one would render each
 // overlay again.

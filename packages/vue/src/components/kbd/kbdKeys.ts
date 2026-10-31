@@ -54,5 +54,10 @@ export const kbdKeysMap: Record<KbdKey, string> = {
   alt: '⌥',
 }
 
-/** English name for each `KbdKey` (e.g. `ctrl` → `Control`); `Kbd` renders the active locale's `kbd` names as the symbol's `title`. */
-export const kbdKeysLabelMap: Record<KbdKey, string> = enMessages.kbd
+/**
+ * English name for each `KbdKey` (e.g. `ctrl` → `Control`); `Kbd` renders the active locale's `kbd` names as the
+ * symbol's `title`. A frozen copy, so writing to it cannot change the English fallback strings.
+ */
+export const kbdKeysLabelMap: Readonly<Record<KbdKey, string>> = Object.freeze({
+  ...enMessages.kbd,
+})

@@ -111,6 +111,7 @@ export const enMessages = {
     orderedList: 'Numbered list',
     paragraph: 'Paragraph',
     redo: 'Redo',
+    remove: 'Remove',
     strike: 'Strikethrough',
     taskList: 'Task list',
     underline: 'Underline',

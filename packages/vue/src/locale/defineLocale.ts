@@ -6,6 +6,13 @@ export type Direction = 'ltr' | 'rtl'
 /** Every built-in string, nested by component. Shape of the English catalog. */
 export type Messages = typeof enMessages
 
+type LeafPath<T> = {
+  [K in keyof T & string]: T[K] extends string ? K : `${K}.${LeafPath<T[K]>}`
+}[keyof T & string]
+
+/** The dotted key of a built-in string, e.g. `'modal.close'`. */
+export type MessageKey = LeafPath<Messages>
+
 /** Makes every nested key optional: a locale may translate any subset of `Messages`. */
 export type DeepPartial<T> = { [K in keyof T]?: T[K] extends string ? string : DeepPartial<T[K]> }
 

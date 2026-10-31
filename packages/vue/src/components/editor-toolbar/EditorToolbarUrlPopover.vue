@@ -16,13 +16,13 @@
         variant="secondary"
         full-width
         :placeholder="field.placeholder"
-        :aria-label="t(field.label)"
+        :aria-label="t(field.labelKey)"
         data-slot="editor-toolbar-url-input"
         @keydown.enter.prevent="submit"
       />
       <div data-slot="editor-toolbar-url-actions" :class="ui.actions">
         <Button v-if="kind === 'link' && isSet" size="sm" variant="tertiary" @click="apply('')">
-          Remove
+          {{ t('editorToolbar.remove') }}
         </Button>
         <Button size="sm" :disabled="!href" @click="submit">{{ t('editorToolbar.apply') }}</Button>
       </div>
@@ -38,20 +38,27 @@ import Button from '@/components/button/Button.vue'
 import Input from '@/components/input/Input.vue'
 import Popover from '@/components/popover/Popover.vue'
 import { useLocale } from '@/composables/useLocale'
+import type { MessageKey } from '@/locale/defineLocale'
 
 type UrlKind = 'link' | 'image'
+
+type UrlField = { attribute: string; labelKey: MessageKey; placeholder: string }
 
 const { t } = useLocale()
 
 // The mark or node each kind edits, the attribute holding its URL, and the field's label key.
 const FIELDS = {
-  link: { attribute: 'href', label: 'editorToolbar.linkUrl', placeholder: 'https://example.com' },
+  link: {
+    attribute: 'href',
+    labelKey: 'editorToolbar.linkUrl',
+    placeholder: 'https://example.com',
+  },
   image: {
     attribute: 'src',
-    label: 'editorToolbar.imageUrl',
+    labelKey: 'editorToolbar.imageUrl',
     placeholder: 'https://example.com/photo.jpg',
   },
-} as const satisfies Record<UrlKind, { attribute: string; label: string; placeholder: string }>
+} as const satisfies Record<UrlKind, UrlField>
 
 const props = defineProps<{
   editor: TiptapEditor
