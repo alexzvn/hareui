@@ -31,14 +31,14 @@ const escapeKeydown = () => {
   )
 }
 
-const pressOutside = () => {
+const pressOutside = (init: PointerEventInit = {}) => {
   const outside = document.createElement('button')
   outside.textContent = 'Outside'
   outside.dataset.outside = ''
   document.body.prepend(outside)
 
   outside.dispatchEvent(
-    new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
+    new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse', ...init }),
   )
 }
 
@@ -126,6 +126,19 @@ describe.each(dialogs)('%s events', (_, component, role) => {
     await settle()
 
     expect(events).toContain('close:prevent')
+    expect(dialog()).not.toBeNull()
+  })
+
+  it.each<[string, PointerEventInit]>([
+    ['a right click', { button: 2 }],
+    ['a Ctrl+click', { ctrlKey: true }],
+  ])('does not emit close:prevent on %s outside when not dismissible', async (_, init) => {
+    const { events } = mountDialog({ defaultOpen: true, dismissible: false })
+    await settle()
+    pressOutside(init)
+    await settle()
+
+    expect(events).not.toContain('close:prevent')
     expect(dialog()).not.toBeNull()
   })
 

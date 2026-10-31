@@ -95,36 +95,25 @@
       <slot />
     </div>
     <slot name="trailing" />
-    <CloseButton
+    <ResolvedCloseButton
       v-if="closeButton"
       data-slot="alert-close"
-      :aria-label="closeButtonOptions.label ?? t('alert.close')"
+      :close-button="closeButton"
+      label-key="alert.close"
       :class="ui.close()"
       @click="open = false"
-    >
-      <IconRenderer
-        v-if="closeButtonOptions.icon"
-        :icon="closeButtonOptions.icon"
-        data-slot="close-button-icon"
-      />
-    </CloseButton>
+    />
   </Primitive>
 </template>
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
-import { computed } from 'vue'
 
-import CloseButton from '@/components/close-button/CloseButton.vue'
+import ResolvedCloseButton from '@/components/close-button/ResolvedCloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
-import { useLocale } from '@/composables/useLocale'
-import { resolveCloseButton } from '@/utils/closeButton'
-import { IconRenderer } from '@/utils/icon'
 
 import type { AlertEmits, AlertProps, AlertSlots } from './Alert.types'
 import theme from './theme'
-
-const { t } = useLocale()
 
 const props = withDefaults(defineProps<AlertProps>(), {
   as: 'div',
@@ -135,7 +124,6 @@ const props = withDefaults(defineProps<AlertProps>(), {
 defineEmits<AlertEmits>()
 const open = defineModel<boolean>('open', { default: true })
 
-const closeButtonOptions = computed(() => resolveCloseButton(props.closeButton))
 const slots = defineSlots<AlertSlots>()
 
 const ui = useComponentUI('alert', {

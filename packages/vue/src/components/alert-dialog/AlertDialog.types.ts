@@ -2,6 +2,7 @@ import type { VNode } from 'vue'
 
 import type { PortalTarget } from '@/config'
 import type { CloseButtonProp } from '@/types/closeButton'
+import type { DialogEmits } from '@/types/dialog'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -89,17 +90,4 @@ export type AlertDialogSlots = {
 }
 
 /** Events emitted by `AlertDialog`. */
-export type AlertDialogEmits = {
-  /** Emitted when the open state changes. */
-  'update:open': [value: boolean]
-  /** Emitted when the open animation starts. */
-  enter: []
-  /** Emitted when the open animation finished, right after `enter` when there is none. */
-  'after:enter': []
-  /** Emitted when the close animation starts. */
-  leave: []
-  /** Emitted when the close animation finished and the dialog left the DOM. */
-  'after:leave': []
-  /** Emitted when Escape or an outside press tries to close the dialog while `dismissible` / `keyboardDismissible` is `false`. */
-  'close:prevent': []
-}
+export type AlertDialogEmits = DialogEmits

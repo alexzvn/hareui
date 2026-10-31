@@ -38,7 +38,7 @@ import theme from './theme'
 
 const { t } = useLocale()
 
-const props = withDefaults(defineProps<CloseButtonProps>(), { ariaLabel: undefined })
+const props = defineProps<CloseButtonProps>()
 defineSlots<CloseButtonSlots>()
 
 const ui = useComponentUI('closeButton', {

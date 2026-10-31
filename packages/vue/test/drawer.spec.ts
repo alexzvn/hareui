@@ -124,6 +124,28 @@ describe('drawer', () => {
     }
   })
 
+  it('emits close:prevent once when a swipe that would close it is blocked by dismissible=false', async () => {
+    const wrapper = mount(Drawer, { props: { defaultOpen: true, dismissible: false, title: 'T' } })
+    await nextTick()
+    const now = Date.now
+    const frozen = now() + 10_000
+    Date.now = () => frozen
+
+    try {
+      drag(dialog()!, 40)
+      await waitUnmount()
+      expect(wrapper.emitted('close:prevent')).toBeUndefined()
+
+      drag(dialog()!, 300)
+      await waitUnmount()
+      expect(wrapper.emitted('close:prevent')).toHaveLength(1)
+      expect(dialog()).not.toBeNull()
+    } finally {
+      Date.now = now
+      wrapper.unmount()
+    }
+  })
+
   it('Tab skips a scrollable body, like React Aria', async () => {
     // behaviour-final-check D2
     const wrapper = mount(Drawer, {

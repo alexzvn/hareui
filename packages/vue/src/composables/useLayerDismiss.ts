@@ -29,16 +29,17 @@ type LayerDismissOptions = {
    */
   shouldIgnoreSecondaryButton?: boolean
   /**
+   * Called when an Escape press or an outside press is blocked only because the Layer isn't dismissible
+   * (`isDismissible` / `isKeyboardDismissible` false). Never called for interactions that dismiss, nor for those kept
+   * open by the Layer stack, the pointer button or an earlier handler (Reka's modal content prevents right and
+   * Ctrl+left clicks outside).
+   */
+  onPrevent?: () => void
+  /**
    * Reka's DismissableLayer only starts listening for outside presses a task after the content mounts, so a press
    * right after opening is lost. React Aria listens as soon as the Layer is open: with this set, presses created
    * after the Layer opened (the opening press itself is older) dismiss it through `onDismiss`.
    */
-  /**
-   * Called when an Escape press or an outside press is blocked only because the Layer isn't dismissible
-   * (`isDismissible` / `isKeyboardDismissible` false). Never called for interactions that dismiss, nor for those kept
-   * open by the Layer stack or the pointer button.
-   */
-  onPrevent?: () => void
   earlyPress?: {
     /** The Layer's open state. */
     isOpen: MaybeRefOrGetter<boolean>
@@ -74,6 +75,9 @@ export const useLayerDismiss = (options: LayerDismissOptions) => {
   }
 
   const onInteractOutside = (event: OutsideEvent) => {
+    // Read before this handler prevents it: a press an earlier handler already kept from dismissing never closes the
+    // Layer, whatever its `dismissible` flag, so it isn't a blocked dismiss attempt.
+    const wasPrevented = event.defaultPrevented
     const isHandled = event.detail.originalEvent === handledPress
     const policy = resolvePolicy()
     if (!isHandled && shouldDismissOnOutside(event, policy)) return
@@ -81,7 +85,7 @@ export const useLayerDismiss = (options: LayerDismissOptions) => {
 
     // Focus moving out isn't a dismiss attempt; only a press the `dismissible` flag alone blocked counts.
     const isPress = event.type === POINTER_DOWN_OUTSIDE
-    if (isHandled || !isPress || !options.onPrevent) return
+    if (isHandled || wasPrevented || !isPress || !options.onPrevent) return
     if (shouldDismissOnOutside(event, { ...policy, isDismissible: true })) options.onPrevent()
   }
 

@@ -1,21 +1,14 @@
-import type { MaybeRefOrGetter, ShallowRef, Slot } from 'vue'
+import type { EmitFn, MaybeRefOrGetter, ShallowRef, Slot } from 'vue'
 import { computed, nextTick, ref, toValue, watch } from 'vue'
 
 import type { PortalTarget } from '@/config'
+import type { DialogEmits } from '@/types/dialog'
 
 import { useInertOutside } from './useInertOutside'
 import { useLayerDismiss } from './useLayerDismiss'
 import { usePortal } from './usePortal'
 import { useTabbableFocusLoop } from './useTabbableFocusLoop'
 import { useVisualViewport } from './useVisualViewport'
-
-/** The events every dialog shell emits; each component's `Emits` type declares them. */
-type DialogShellEmit = ((event: 'update:open', value: boolean) => void) &
-  ((event: 'enter') => void) &
-  ((event: 'after:enter') => void) &
-  ((event: 'leave') => void) &
-  ((event: 'after:leave') => void) &
-  ((event: 'close:prevent') => void)
 
 export type DialogShellOptions = {
   /** The component's props; reads `open`, `defaultOpen`, `title`, `portal` and `dismissible`. */
@@ -33,7 +26,8 @@ export type DialogShellOptions = {
   slots: { header?: Slot<never>; title?: Slot<never> }
   /** The `DialogContent` instance (the component's `useTemplateRef`). */
   dialogContent: Readonly<ShallowRef<{ $el: HTMLElement } | null>>
-  emit: DialogShellEmit
+  /** The component's `emit`; its `Emits` type includes `DialogEmits`. */
+  emit: EmitFn<DialogEmits>
   /** Whether Escape closes the dialog. Modal ties it to `dismissible`; Drawer and AlertDialog have `keyboardDismissible`. */
   keyboardDismissible: MaybeRefOrGetter<boolean | undefined>
   /**
@@ -88,7 +82,8 @@ export const useDialogShell = (options: DialogShellOptions) => {
 
   useInertOutside(dialogContent, openState)
 
-  // Reka's DialogContent already keeps right and Ctrl+left clicks outside from dismissing.
+  // Reka's DialogContent already keeps right and Ctrl+left clicks outside from dismissing, so those don't emit
+  // `close:prevent` either.
   const { onEscapeKeyDown, onInteractOutside } = useLayerDismiss({
     content: () => dialogContent.value?.$el,
     isDismissible: () => !!props.dismissible,

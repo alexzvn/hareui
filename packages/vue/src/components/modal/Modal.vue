@@ -71,17 +71,12 @@
               </VisuallyHidden>
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton
+                  <ResolvedCloseButton
                     data-slot="modal-close-trigger"
-                    :aria-label="closeButtonOptions.label ?? t('modal.close')"
+                    :close-button="closeButton"
+                    label-key="modal.close"
                     :class="ui.closeTrigger()"
-                  >
-                    <IconRenderer
-                      v-if="closeButtonOptions.icon"
-                      :icon="closeButtonOptions.icon"
-                      data-slot="close-button-icon"
-                    />
-                  </CloseButton>
+                  />
                 </slot>
               </DialogClose>
             </slot>
@@ -104,21 +99,16 @@ import {
   DialogTrigger,
   VisuallyHidden,
 } from 'reka-ui'
-import { computed, useSlots, useTemplateRef } from 'vue'
+import { useSlots, useTemplateRef } from 'vue'
 
-import CloseButton from '@/components/close-button/CloseButton.vue'
+import ResolvedCloseButton from '@/components/close-button/ResolvedCloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDialogShell } from '@/composables/useDialogShell'
-import { useLocale } from '@/composables/useLocale'
-import { resolveCloseButton } from '@/utils/closeButton'
-import { IconRenderer } from '@/utils/icon'
 
 import type { ModalProps, ModalSlots, ModalEmits } from './Modal.types'
 import theme from './theme'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
-const { t } = useLocale()
-
 const props = withDefaults(defineProps<ModalProps>(), {
   open: undefined,
   portal: undefined,
@@ -126,8 +116,6 @@ const props = withDefaults(defineProps<ModalProps>(), {
   dismissible: true,
   placement: 'auto',
 })
-
-const closeButtonOptions = computed(() => resolveCloseButton(props.closeButton))
 
 const emit = defineEmits<ModalEmits>()
 const slots = useSlots()

@@ -87,8 +87,6 @@ const unmountAfterExit = async (id: symbol) => {
   if (pendingExits.get(id) !== exit) return
 
   pendingExits.delete(id)
-  lifecycleIds.delete(id)
-  leftIds.delete(id)
 
   // A dismissed overlay resolves its `open()` promises with `undefined`; one closed with a value already resolved them.
   close(id)
@@ -102,7 +100,7 @@ watch(
       if (ids.includes(id)) continue
       pendingExits.delete(id)
 
-      // Reopened: the stale exit settles and then stops at its `pendingExits` check.
+      // Reopened, unmounted or removed: the stale exit settles and then stops at its `pendingExits` check.
       leaveResolvers.get(id)?.()
       leaveResolvers.delete(id)
     }
@@ -113,4 +111,16 @@ watch(
   },
   { flush: 'post', immediate: true },
 )
+
+const mountedIds = computed(() => mountedOverlays.value.map((overlay) => overlay.id))
+
+// However an overlay stops rendering (after its exit, `unmount(id)`, removal from `overlays`), its lifecycle tracking
+// goes with it: the next render may not emit `enter`, and a stale `after:leave` must not end a later exit early.
+watch(mountedIds, (ids, previousIds) => {
+  for (const id of previousIds) {
+    if (ids.includes(id)) continue
+    lifecycleIds.delete(id)
+    leftIds.delete(id)
+  }
+})
 </script>

@@ -87,19 +87,14 @@
       >
         <component :is="renderValue" :value="content.action.label" />
       </Button>
-      <CloseButton
+      <ResolvedCloseButton
         v-if="content.closeButton !== false"
         data-slot="toast-close"
-        :aria-label="closeButtonOptions.label ?? t('toast.close')"
+        :close-button="content.closeButton"
+        label-key="toast.close"
         :class="ui.close()"
         @click="props.close"
-      >
-        <IconRenderer
-          v-if="closeButtonOptions.icon"
-          :icon="closeButtonOptions.icon"
-          data-slot="close-button-icon"
-        />
-      </CloseButton>
+      />
     </template>
   </div>
 </template>
@@ -118,19 +113,14 @@ import {
 } from 'vue'
 
 import Button from '@/components/button/Button.vue'
-import CloseButton from '@/components/close-button/CloseButton.vue'
+import ResolvedCloseButton from '@/components/close-button/ResolvedCloseButton.vue'
 import Spinner from '@/components/spinner/Spinner.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
-import { useLocale } from '@/composables/useLocale'
-import { resolveCloseButton } from '@/utils/closeButton'
-import { IconRenderer } from '@/utils/icon'
 
 import renderValue from './renderValue'
 import theme from './theme'
 import type { ToastItemProps } from './ToastItem.types'
 import type { ToastContentValue } from './toastQueue'
-
-const { t } = useLocale()
 
 const props = defineProps<ToastItemProps>()
 
@@ -142,8 +132,6 @@ const emit = defineEmits<{
 }>()
 
 const content = computed(() => (props.toast.content ?? {}) as ToastContentValue)
-
-const closeButtonOptions = computed(() => resolveCloseButton(content.value.closeButton))
 
 const ui = useComponentUI('toast', {
   theme,

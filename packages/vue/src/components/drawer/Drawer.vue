@@ -27,7 +27,7 @@
             data-slot="drawer-dialog"
             :data-placement="placement"
             :aria-describedby="undefined"
-            :style="dismissible ? { touchAction: 'none' } : undefined"
+            style="touch-action: none"
             :class="ui.dialog()"
             @escape-key-down="onEscapeKeyDown"
             @interact-outside="onInteractOutside"
@@ -42,17 +42,12 @@
             <slot name="content" :close="close">
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton
+                  <ResolvedCloseButton
                     data-slot="drawer-close-trigger"
-                    :aria-label="closeButtonOptions.label ?? t('drawer.close')"
+                    :close-button="closeButton"
+                    label-key="drawer.close"
                     :class="ui.closeTrigger()"
-                  >
-                    <IconRenderer
-                      v-if="closeButtonOptions.icon"
-                      :icon="closeButtonOptions.icon"
-                      data-slot="close-button-icon"
-                    />
-                  </CloseButton>
+                  />
                 </slot>
               </DialogClose>
               <!-- Before the header so `handle + header` / `header + body` spacing selectors still match -->
@@ -115,19 +110,14 @@ import {
 } from 'reka-ui'
 import { computed, useSlots, useTemplateRef } from 'vue'
 
-import CloseButton from '@/components/close-button/CloseButton.vue'
+import ResolvedCloseButton from '@/components/close-button/ResolvedCloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDialogShell } from '@/composables/useDialogShell'
-import { useLocale } from '@/composables/useLocale'
-import { resolveCloseButton } from '@/utils/closeButton'
-import { IconRenderer } from '@/utils/icon'
 
 import type { DrawerProps, DrawerSlots, DrawerEmits } from './Drawer.types'
 import theme from './theme'
 
 // `open: undefined` stops Vue casting an absent boolean prop to `false`, so uncontrolled mode and `defaultOpen` apply
-const { t } = useLocale()
-
 const props = withDefaults(defineProps<DrawerProps>(), {
   open: undefined,
   portal: undefined,
@@ -136,8 +126,6 @@ const props = withDefaults(defineProps<DrawerProps>(), {
   keyboardDismissible: true,
   placement: 'bottom',
 })
-
-const closeButtonOptions = computed(() => resolveCloseButton(props.closeButton))
 
 const emit = defineEmits<DrawerEmits>()
 const slots = useSlots()
@@ -175,6 +163,8 @@ const {
 // Drag to dismiss, ported from HeroUI's `useDrawerDrag`: past an 8px threshold the panel follows the
 // pointer towards its edge; releasing beyond 30% of its size, or flicking faster than 0.5px/ms,
 // closes it, otherwise it springs back. Controls and the body are excluded so they keep working.
+// A drawer that isn't `dismissible` stays put but still tracks the gesture (hence its `touch-action: none`), so a
+// release that would have closed it emits `close:prevent`.
 const DRAG_THRESHOLD = 8
 const DISMISS_FRACTION = 0.3
 const VELOCITY_THRESHOLD = 0.5
@@ -211,7 +201,7 @@ const springBack = (el: HTMLElement) => {
 }
 
 const onDragStart = (event: PointerEvent) => {
-  if (!props.dismissible || event.button !== 0) return
+  if (event.button !== 0) return
   const target = event.target as HTMLElement
   const dialog = event.currentTarget as HTMLElement
   if (target.closest('[data-slot="drawer-dialog"]') !== dialog) return
@@ -240,7 +230,6 @@ const onDragMove = (event: PointerEvent) => {
   if (!isDragActive) {
     if (Math.abs(rawDelta) < DRAG_THRESHOLD) return
     isDragActive = true
-    el.style.transition = 'none'
     el.setPointerCapture(event.pointerId)
   }
 
@@ -253,6 +242,9 @@ const onDragMove = (event: PointerEvent) => {
     lastPos = pos
   }
 
+  if (!props.dismissible) return
+
+  el.style.transition = 'none'
   el.style.transform = `translate${isVertical.value ? 'Y' : 'X'}(${delta}px)`
 }
 
@@ -275,6 +267,12 @@ const onDragEnd = (event: PointerEvent, close: () => void) => {
 
   offset = 0
   velocity = 0
+
+  // The panel never moved, so there is nothing to spring back.
+  if (!props.dismissible) {
+    if (shouldDismiss) emit('close:prevent')
+    return
+  }
 
   if (shouldDismiss) {
     close()
