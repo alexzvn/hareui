@@ -103,4 +103,36 @@ describe('Marquee', () => {
     const wrapper = mount(Marquee, { props: { as: 'section' }, slots: { default: content } })
     expect(wrapper.element.tagName).toBe('SECTION')
   })
+
+  it('removes copies from the tab order when a patch makes a link focusable', async () => {
+    const href = ref<string>()
+    const wrapper = mount(Marquee, {
+      slots: { default: () => h('a', { href: href.value }, 'Figma') },
+    })
+
+    href.value = '/customers/figma'
+    await flushPromises()
+
+    const tabindexes = copies(wrapper.element).map((copy) =>
+      copy.querySelector('a')!.getAttribute('tabindex'),
+    )
+
+    expect(tabindexes).toEqual([null, '-1', '-1', '-1'])
+  })
+
+  it('keeps copies out of the tab order when a patch changes tabindex', async () => {
+    const tabindex = ref(0)
+    const wrapper = mount(Marquee, {
+      slots: { default: () => h('button', { tabindex: tabindex.value }, 'Figma') },
+    })
+
+    tabindex.value = 1
+    await flushPromises()
+
+    const tabindexes = copies(wrapper.element).map((copy) =>
+      copy.querySelector('button')!.getAttribute('tabindex'),
+    )
+
+    expect(tabindexes).toEqual(['1', '-1', '-1', '-1'])
+  })
 })

@@ -62,8 +62,11 @@ const removeCopiesFromTabOrder = () => {
   if (!el) return
 
   for (const copy of el.querySelectorAll('[data-slot="marquee-content"][aria-hidden="true"]')) {
-    for (const focusable of copy.querySelectorAll(FOCUSABLE))
+    for (const focusable of copy.querySelectorAll(FOCUSABLE)) {
+      // Writing `tabindex` again would retrigger the attribute observer.
+      if (focusable.getAttribute('tabindex') === '-1') continue
       focusable.setAttribute('tabindex', '-1')
+    }
   }
 }
 
@@ -75,7 +78,14 @@ onMounted(() => {
   if (!el || typeof MutationObserver === 'undefined') return
 
   observer = new MutationObserver(removeCopiesFromTabOrder)
-  observer.observe(el, { childList: true, subtree: true })
+
+  // Attribute patches can make an element focusable (`href`, `contenteditable`) or reset its `tabindex`.
+  observer.observe(el, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['href', 'tabindex', 'contenteditable'],
+  })
 })
 
 onBeforeUnmount(() => observer?.disconnect())
