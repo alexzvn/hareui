@@ -504,3 +504,14 @@ describe('Tabs item icon', () => {
     expect(icon.attributes('aria-hidden')).toBe('true')
   })
 })
+
+describe('Tabs #tab slot', () => {
+  it('a custom #tab replaces the default tab icon', () => {
+    const wrapper = mount(Tabs, {
+      props: { items: [{ label: 'Overview', value: 'overview', icon: 'icon-overview' }] },
+      slots: { tab: ({ item }: { item: { label?: string } }) => h('b', item.label) },
+    })
+
+    expect(wrapper.find('[data-slot=tabs-tab-icon]').exists()).toBe(false)
+  })
+})

@@ -45,15 +45,9 @@
                   aria-hidden="true"
                   :data-orientation="orientation"
                   :class="
-                    ui.separator({ override: isSeparatorHidden(index) ? 'opacity-0' : undefined })
+                    ui.separator({ class: isSeparatorHidden(index) ? 'opacity-0' : undefined })
                   "
                   data-slot="tabs-separator"
-                />
-                <IconRenderer
-                  v-if="item.icon"
-                  :icon="item.icon"
-                  :class="ui.tabIcon()"
-                  data-slot="tabs-tab-icon"
                 />
                 <slot
                   name="tab"
@@ -61,6 +55,12 @@
                   :index="index"
                   :selected="itemValue(item, index) === selectedValue"
                 >
+                  <IconRenderer
+                    v-if="item.icon"
+                    :icon="item.icon"
+                    :class="ui.tabIcon()"
+                    data-slot="tabs-tab-icon"
+                  />
                   {{ item.label }}
                 </slot>
               </button>
@@ -78,7 +78,7 @@
       </ScrollShadow>
       <button
         :aria-label="orientation === 'vertical' ? t('tabs.scrollUp') : t('tabs.scrollLeft')"
-        :class="ui.scrollPrev({ override: scrollState.before ? 'inline-flex' : undefined })"
+        :class="ui.scrollPrev({ class: scrollState.before ? 'inline-flex' : undefined })"
         tabindex="-1"
         type="button"
         @click="scrollByPage(-1)"
@@ -110,7 +110,7 @@
       </button>
       <button
         :aria-label="orientation === 'vertical' ? t('tabs.scrollDown') : t('tabs.scrollRight')"
-        :class="ui.scrollNext({ override: scrollState.after ? 'inline-flex' : undefined })"
+        :class="ui.scrollNext({ class: scrollState.after ? 'inline-flex' : undefined })"
         tabindex="-1"
         type="button"
         @click="scrollByPage(1)"

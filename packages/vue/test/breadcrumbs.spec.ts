@@ -202,3 +202,14 @@ describe('Breadcrumbs accessibility', () => {
     wrapper.unmount()
   })
 })
+
+describe('breadcrumbs #item slot', () => {
+  it('a custom #item replaces the default item icon', () => {
+    const wrapper = mount(Breadcrumbs, {
+      props: { items: [{ label: 'Home', href: '/', icon: 'icon-home' }, { label: 'Laptop' }] },
+      slots: { item: ({ item }: { item: { label?: string } }) => h('b', item.label) },
+    })
+
+    expect(wrapper.find('[data-slot=breadcrumbs-icon]').exists()).toBe(false)
+  })
+})

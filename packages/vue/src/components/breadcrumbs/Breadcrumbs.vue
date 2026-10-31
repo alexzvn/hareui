@@ -31,13 +31,13 @@
           :tabindex="isInert(item, index) ? undefined : 0"
           :class="ui.link()"
         >
-          <IconRenderer
-            v-if="item.icon"
-            :icon="item.icon"
-            data-slot="breadcrumbs-icon"
-            :class="ui.icon()"
-          />
           <slot name="item" :item="item" :index="index" :current="index === items.length - 1">
+            <IconRenderer
+              v-if="item.icon"
+              :icon="item.icon"
+              data-slot="breadcrumbs-icon"
+              :class="ui.icon()"
+            />
             {{ item.label }}
           </slot>
         </Link>
@@ -56,7 +56,7 @@ import Link from '@/components/link/Link.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useLocale } from '@/composables/useLocale'
 import { IconRenderer } from '@/utils/icon'
-import { LinkResolver } from '@/utils/link'
+import { hasLink, LinkResolver } from '@/utils/link'
 
 import type {
   BreadcrumbsItem,
@@ -77,8 +77,6 @@ const ui = useComponentUI('breadcrumbs', { theme: theme, variantProps: () => ({}
 // The current page (the last item) and disabled items render as a non-interactive `span`.
 const isInert = (item: T, index: number) =>
   props.disabled || !!item.disabled || index === props.items.length - 1
-
-const hasLink = (item: T) => item.to !== undefined || item.href !== undefined
 
 const CHEVRON_RIGHT =
   'M5.47 2.97a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L9.44 8 5.47 4.03a.75.75 0 0 1 0-1.06Z'
