@@ -1,5 +1,7 @@
 import type { InjectionKey, Ref } from 'vue'
 
+import type { ModelModifiers } from '@/utils/modelModifiers'
+
 /** State a `TextField` provides to the `Input`, `TextArea` and field parts rendered inside it. */
 export type TextFieldContext = {
   /** Id applied to the field's input. */
@@ -16,6 +18,11 @@ export type TextFieldContext = {
   inputAttrs: Readonly<Ref<Record<string, unknown>>>
   /** The field's value. An Input without its own `v-model` reads and writes it; one with its own `v-model` mirrors into it. */
   model: Ref<string | number | undefined>
+  /**
+   * The field's `v-model` modifiers. It applies `nullable` / `optional` itself; an Input or TextArea without its own
+   * `v-model` applies `lazy`, `trim` and `number` to its native control. Read once, as `v-model` modifiers are static.
+   */
+  modelModifiers: Readonly<ModelModifiers>
   name: Readonly<Ref<string | undefined>>
   type: Readonly<Ref<string>>
 }

@@ -2,6 +2,7 @@ import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 import type { ClassValue } from '@/utils/tv'
 
 import type theme from './theme'
@@ -18,6 +19,11 @@ export type TextAreaProps = {
   placeholder?: string
   /** The initial value when uncontrolled (no `v-model`). */
   defaultValue?: string | number
+  /**
+   * `v-model` modifiers: `trim`, `number`, `lazy` (update on change), `nullable` (empty → `null`), `optional`
+   * (empty → `undefined`). Inside a `TextField`, a TextArea without its own `v-model` follows the field's.
+   */
+  modelModifiers?: ModelModifiers
   /**
    * Visual variant of the textarea. Defaults to the surrounding `TextField` variant.
    * @defaultValue 'primary'

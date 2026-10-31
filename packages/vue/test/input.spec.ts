@@ -4,6 +4,7 @@ import { h } from 'vue'
 
 import Input from '@/components/input/Input.vue'
 import Label from '@/components/label/Label.vue'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 
 import { expectAccessible } from './a11y'
 
@@ -99,6 +100,70 @@ describe('Input', () => {
     expect(wrapper.get('input').attributes('aria-invalid')).toBe('true')
     await wrapper.get('input').setValue('abc')
     expect(wrapper.get('input').attributes('aria-invalid')).toBeUndefined()
+    wrapper.unmount()
+  })
+})
+
+describe('Input v-model modifiers', () => {
+  // Starts from a typed value, as clearing a field does
+  const typeInto = async (modelModifiers: ModelModifiers | undefined, text: string) => {
+    const wrapper = mount(Input, {
+      props: { modelValue: 'Ada', modelModifiers },
+      attrs: { 'aria-label': 'Name' },
+    })
+
+    await wrapper.get('input').setValue(text)
+    const emitted = wrapper.emitted('update:modelValue')?.at(-1)
+    wrapper.unmount()
+
+    return emitted
+  }
+
+  it('without modifiers emits the text as typed', async () => {
+    expect(await typeInto(undefined, ' 42 ')).toEqual([' 42 '])
+  })
+
+  it('without modifiers emits an emptied input as an empty string', async () => {
+    expect(await typeInto(undefined, '')).toEqual([''])
+  })
+
+  it('trim emits the text without surrounding whitespace', async () => {
+    expect(await typeInto({ trim: true }, '  Grace  ')).toEqual(['Grace'])
+  })
+
+  it('number emits numeric text as a number', async () => {
+    expect(await typeInto({ number: true }, '3.5')).toEqual([3.5])
+  })
+
+  it('number keeps text that is not a number', async () => {
+    expect(await typeInto({ number: true }, 'abc')).toEqual(['abc'])
+  })
+
+  it('nullable emits null for an emptied input', async () => {
+    expect(await typeInto({ nullable: true }, '')).toEqual([null])
+  })
+
+  it('optional emits undefined for an emptied input', async () => {
+    expect(await typeInto({ optional: true }, '')).toEqual([undefined])
+  })
+
+  it('trim with nullable emits null for whitespace-only text', async () => {
+    expect(await typeInto({ trim: true, nullable: true }, '   ')).toEqual([null])
+  })
+
+  it('lazy emits on change, not on input', async () => {
+    const wrapper = mount(Input, {
+      props: { modelModifiers: { lazy: true } },
+      attrs: { 'aria-label': 'Name' },
+    })
+
+    const input = wrapper.get('input')
+    input.element.value = 'Ada'
+    await input.trigger('input')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+    await input.trigger('change')
+    expect(wrapper.emitted('update:modelValue')).toEqual([['Ada']])
     wrapper.unmount()
   })
 })

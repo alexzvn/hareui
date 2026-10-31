@@ -97,6 +97,12 @@ Bind the value with `v-model` to synchronize with other components or perform cu
 
 <ComponentPreview name="number-field/controlled" />
 
+### Model Modifiers
+
+An emptied field commits `undefined`. Use `v-model.nullable` to commit `null` instead, for example when an API expects an explicit empty value. `v-model.optional` keeps `undefined`. `0` is always a value.
+
+<ComponentPreview name="number-field/model-modifiers" />
+
 ### Step Values
 
 Configure increment/decrement step values for precise control.

@@ -3,7 +3,7 @@
     v-bind="field?.inputAttrs.value"
     :id="id"
     ref="textarea"
-    v-model="value"
+    v-text-model="value"
     :name="name"
     :placeholder="placeholder"
     :disabled="disabled || undefined"
@@ -15,6 +15,7 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
     :class="ui.base()"
+    @update:model-value="value = $event"
   />
 </template>
 
@@ -25,6 +26,8 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { textFieldContextKey } from '@/components/text-field/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import type { ModelModifier } from '@/utils/modelModifiers'
+import { emptyModelValue, textModelDirective } from '@/utils/modelModifiers'
 
 import type { TextAreaProps } from './TextArea.types'
 import theme from './theme'
@@ -38,7 +41,9 @@ const props = withDefaults(defineProps<TextAreaProps>(), {
 })
 
 /** The textarea value. */
-const modelValue = defineModel<string | number>()
+const [modelValue, ownModifiers] = defineModel<string | number | null, ModelModifier>({
+  set: (v) => emptyModelValue(v, ownModifiers),
+})
 
 const field = inject(textFieldContextKey, null)
 
@@ -51,11 +56,14 @@ const hasVModel = ['modelValue', 'model-value', 'onUpdate:modelValue'].some(
 
 const ownModel = !field || hasVModel
 
-const value = computed({
+// `lazy` / `trim` / `number` act on the native textarea, so without its own v-model the TextArea takes the field's
+const vTextModel = textModelDirective(() => (ownModel ? ownModifiers : field!.modelModifiers))
+
+const value = computed<string | number | null | undefined>({
   get: () => (ownModel ? modelValue.value : field!.model.value),
   set: (v) => {
     if (ownModel) modelValue.value = v
-    if (field) field.model.value = v
+    if (field) field.model.value = v ?? undefined
   },
 })
 
@@ -65,7 +73,7 @@ if (field && ownModel) {
   watch(
     modelValue,
     (v) => {
-      field.model.value = v
+      field.model.value = v ?? undefined
     },
     { immediate: true },
   )

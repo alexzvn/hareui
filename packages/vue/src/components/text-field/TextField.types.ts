@@ -5,6 +5,7 @@ import type { FormFieldProps } from '@/components/form/types'
 import type { InputProps } from '@/components/input/Input.types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 import type { ClassValue } from '@/utils/tv'
 
 import type theme from './theme'
@@ -35,6 +36,11 @@ export type TextFieldProps = {
   placeholder?: string
   /** The initial value when uncontrolled (no `v-model`). */
   defaultValue?: string | number
+  /**
+   * `v-model` modifiers: `trim`, `number`, `lazy` (update on change), `nullable` (empty → `null`), `optional`
+   * (empty → `undefined`). The field's Input or TextArea applies them.
+   */
+  modelModifiers?: ModelModifiers
   /**
    * Visual variant of the input.
    * @defaultValue 'primary'

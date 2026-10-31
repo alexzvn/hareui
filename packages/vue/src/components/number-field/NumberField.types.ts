@@ -4,6 +4,7 @@ import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 import type { ClassValue } from '@/utils/tv'
 
 import type theme from './theme'
@@ -29,6 +30,11 @@ export type NumberFieldProps = {
   placeholder?: string
   /** The initial value when uncontrolled (no `v-model`). */
   defaultValue?: number
+  /**
+   * `v-model` modifiers: `nullable` sets the value to `null` when the input is emptied; `optional` keeps it
+   * `undefined`, the default.
+   */
+  modelModifiers?: Pick<ModelModifiers, 'nullable' | 'optional'>
   /** The smallest allowed value. */
   min?: number
   /** The largest allowed value. */

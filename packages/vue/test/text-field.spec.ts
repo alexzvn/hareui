@@ -4,7 +4,9 @@ import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
 import Input from '@/components/input/Input.vue'
+import TextArea from '@/components/text-area/TextArea.vue'
 import TextField from '@/components/text-field/TextField.vue'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 
 import { expectAccessible } from './a11y'
 
@@ -44,7 +46,7 @@ describe('TextField', () => {
       props: {
         label: 'Name',
         modelValue: 'a',
-        'onUpdate:modelValue': (v: string | number | undefined) =>
+        'onUpdate:modelValue': (v: string | number | null | undefined): Promise<void> =>
           wrapper.setProps({ modelValue: v }),
       },
     })
@@ -235,6 +237,80 @@ describe('TextField model parity', () => {
     expect((input.element as HTMLInputElement).value).toBe('jane')
     await input.setValue('janet')
     expect(wrapper.emitted('update:modelValue')).toEqual([['janet']])
+  })
+})
+
+describe('TextField v-model modifiers', () => {
+  const typeInto = async (modelModifiers: ModelModifiers | undefined, text: string) => {
+    const wrapper = mount(TextField, {
+      props: { label: 'Name', modelValue: 'Ada', modelModifiers },
+    })
+
+    await wrapper.get('input').setValue(text)
+    const emitted = wrapper.emitted('update:modelValue')?.at(-1)
+    wrapper.unmount()
+
+    return emitted
+  }
+
+  it('without modifiers emits an emptied input as an empty string', async () => {
+    expect(await typeInto(undefined, '')).toEqual([''])
+  })
+
+  it('trim emits the text without surrounding whitespace', async () => {
+    expect(await typeInto({ trim: true }, '  Grace  ')).toEqual(['Grace'])
+  })
+
+  it('number emits numeric text as a number', async () => {
+    expect(await typeInto({ number: true }, '42')).toEqual([42])
+  })
+
+  it('nullable emits null for an emptied input', async () => {
+    expect(await typeInto({ nullable: true }, '')).toEqual([null])
+  })
+
+  it('optional emits undefined for an emptied input', async () => {
+    expect(await typeInto({ optional: true }, '')).toEqual([undefined])
+  })
+
+  it('lazy emits on change, not on input', async () => {
+    const wrapper = mount(TextField, { props: { label: 'Name', modelModifiers: { lazy: true } } })
+    const input = wrapper.get('input')
+    input.element.value = 'Grace'
+    await input.trigger('input')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+    await input.trigger('change')
+    expect(wrapper.emitted('update:modelValue')).toEqual([['Grace']])
+    wrapper.unmount()
+  })
+
+  it('a TextArea in the field applies the field modifiers', async () => {
+    const wrapper = mount(TextField, {
+      props: { label: 'Bio', modelModifiers: { trim: true } },
+      slots: { default: () => h(TextArea) },
+    })
+
+    await wrapper.get('textarea').setValue('  Hello  ')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['Hello'])
+    wrapper.unmount()
+  })
+
+  it('a parent setting the value to null clears the typed text', async () => {
+    const wrapper = mount(TextField, {
+      props: {
+        label: 'Name',
+        modelModifiers: { nullable: true },
+        'onUpdate:modelValue': (v: string | number | null | undefined): Promise<void> =>
+          wrapper.setProps({ modelValue: v }),
+      },
+    })
+
+    const input = wrapper.get('input')
+    await input.setValue('Grace')
+    await wrapper.setProps({ modelValue: null })
+    expect(input.element.value).toBe('')
+    wrapper.unmount()
   })
 })
 

@@ -2,6 +2,7 @@ import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldProps } from '@/components/form/types'
 import type { ValidateFn } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 import type { ClassValue } from '@/utils/tv'
 
 import type theme from './theme'
@@ -23,6 +24,11 @@ export type InputProps = {
   placeholder?: string
   /** The initial value when uncontrolled (no `v-model`). */
   defaultValue?: string | number
+  /**
+   * `v-model` modifiers: `trim`, `number`, `lazy` (update on change), `nullable` (empty → `null`), `optional`
+   * (empty → `undefined`). Inside a `TextField`, an Input without its own `v-model` follows the field's.
+   */
+  modelModifiers?: ModelModifiers
   /**
    * Visual variant of the input. Defaults to the surrounding `TextField` variant.
    * @defaultValue 'primary'

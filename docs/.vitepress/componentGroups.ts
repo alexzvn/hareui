@@ -134,6 +134,7 @@ export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>([
   'drawer',
   'drop-zone',
   'dropdown',
+  'input',
   'link',
   'list-box',
   'modal',
@@ -142,6 +143,8 @@ export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>([
   'select',
   'switch',
   'tabs',
+  'text-area',
+  'text-field',
   'toast',
   'tooltip',
 ])

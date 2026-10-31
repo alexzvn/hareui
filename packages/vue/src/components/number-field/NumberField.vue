@@ -132,6 +132,8 @@ import { useLocale } from '@/composables/useLocale'
 import { useNumberValue } from '@/composables/useNumberValue'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
 import { splitFocusListeners } from '@/utils/formControlEvents'
+import type { ModelModifier } from '@/utils/modelModifiers'
+import { emptyModelValue } from '@/utils/modelModifiers'
 
 import type { NumberFieldProps, NumberFieldSlots } from './NumberField.types'
 import theme from './theme'
@@ -151,8 +153,12 @@ const slots = defineSlots<NumberFieldSlots>()
 const DecrementOutlet = useSlotOutlet(slots, 'decrement')
 const IncrementOutlet = useSlotOutlet(slots, 'increment')
 
-/** The numeric value; `undefined` while the input is empty. */
-const modelValue = defineModel<number | null>()
+type NumberModifier = Extract<ModelModifier, 'nullable' | 'optional'>
+
+/** The numeric value; `undefined` while the input is empty (`null` with `v-model.nullable`). */
+const [modelValue, modifiers] = defineModel<number | null, NumberModifier>({
+  set: (v) => emptyModelValue(v, modifiers),
+})
 
 const { effectiveStep, displayValue, defaultDisplayValue, formValue, commit, commitEmpty, reset } =
   useNumberValue({

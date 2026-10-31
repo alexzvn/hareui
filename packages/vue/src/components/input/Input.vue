@@ -3,7 +3,7 @@
     v-bind="field?.inputAttrs.value"
     :id="id"
     ref="input"
-    v-model="value"
+    v-text-model="value"
     :type="type"
     :name="name"
     :placeholder="placeholder"
@@ -16,6 +16,7 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-disabled="disabled ? 'true' : undefined"
     :class="ui.base()"
+    @update:model-value="value = $event"
   />
 </template>
 
@@ -26,6 +27,8 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { textFieldContextKey } from '@/components/text-field/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import type { ModelModifier } from '@/utils/modelModifiers'
+import { emptyModelValue, textModelDirective } from '@/utils/modelModifiers'
 
 import type { InputProps } from './Input.types'
 import theme from './theme'
@@ -40,7 +43,9 @@ const props = withDefaults(defineProps<InputProps>(), {
 })
 
 /** The input value. */
-const modelValue = defineModel<string | number>()
+const [modelValue, ownModifiers] = defineModel<string | number | null, ModelModifier>({
+  set: (v) => emptyModelValue(v, ownModifiers),
+})
 
 const field = inject(textFieldContextKey, null)
 
@@ -50,11 +55,14 @@ const vnodeProps = getCurrentInstance()?.vnode.props ?? {}
 const ownModel =
   !field || ['modelValue', 'model-value', 'onUpdate:modelValue'].some((key) => key in vnodeProps)
 
-const value = computed({
+// `lazy` / `trim` / `number` act on the native input, so without its own v-model the Input takes the field's
+const vTextModel = textModelDirective(() => (ownModel ? ownModifiers : field!.modelModifiers))
+
+const value = computed<string | number | null | undefined>({
   get: () => (ownModel ? modelValue.value : field!.model.value),
   set: (v) => {
     if (ownModel) modelValue.value = v
-    if (field) field.model.value = v
+    if (field) field.model.value = v ?? undefined
   },
 })
 
@@ -64,7 +72,7 @@ if (field && ownModel) {
   watch(
     modelValue,
     (v) => {
-      field.model.value = v
+      field.model.value = v ?? undefined
     },
     { immediate: true },
   )
