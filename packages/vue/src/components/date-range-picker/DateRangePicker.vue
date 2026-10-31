@@ -108,7 +108,7 @@
         feature="focusable"
         aria-hidden="true"
         tabindex="-1"
-        :name="part === 'start' ? (startName ?? fieldName) : endName"
+        :name="part === 'start' ? (startName ?? fieldName) : endInputName"
         :value="committed?.[part]?.toString() ?? ''"
         :required="required"
         :disabled="disabled"
@@ -205,10 +205,10 @@ import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
 
-// `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
-// controlled-valid/controlled-closed and hide validation errors / force the popover shut
 const { t } = useLocale()
 
+// `invalid: undefined`/`open: undefined`: an absent boolean would cast to `false`, which would count as
+// controlled-valid/controlled-closed and hide validation errors / force the popover shut
 const props = withDefaults(defineProps<DateRangePickerProps>(), {
   invalid: undefined,
   open: undefined,
@@ -355,6 +355,12 @@ const { validation, commitValidation } = useFieldValidation<DateRangeValue>({
 })
 
 const invalid = computed(() => props.invalid ?? validation.value.isInvalid)
+
+// Inside a named `FormField` without explicit names, the start takes the field name and the end `<name>End`,
+// so a submitted form carries both dates.
+const endInputName = computed(
+  () => props.endName ?? (fieldName.value ? `${fieldName.value}End` : undefined),
+)
 
 // Reka's matcher is single-argument and read once at setup; outside the calendar React Aria calls it with a `null` anchor.
 const fieldIsDateUnavailable = (date: DateValue) => props.isDateUnavailable?.(date, null) ?? false

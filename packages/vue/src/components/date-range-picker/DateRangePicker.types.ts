@@ -46,9 +46,15 @@ export type DateRangePickerProps = {
    * @defaultValue useId()
    */
   id?: string
-  /** The name of the start date, used when submitting a form. */
+  /**
+   * The name of the start date, used when submitting a form.
+   * @defaultValue the `FormField` name
+   */
   startName?: string
-  /** The name of the end date, used when submitting a form. */
+  /**
+   * The name of the end date, used when submitting a form.
+   * @defaultValue the `FormField` name followed by `End`
+   */
   endName?: string
   /** The initial range when uncontrolled (no `v-model`). */
   defaultValue?: DateRangeValue | null
