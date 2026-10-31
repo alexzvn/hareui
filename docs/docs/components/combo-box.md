@@ -239,6 +239,8 @@ app.use(
 
 ### Emits
 
+`change` fires when the value is committed: when an option is selected, or when typed text is committed with `allowsCustomValue`. Typing alone doesn't fire it. `highlight` emits the highlighted option, and `undefined` when the list closes.
+
 <ApiTable component="ComboBox" kind="emits" />
 
 ## Theme

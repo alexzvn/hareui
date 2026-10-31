@@ -74,6 +74,12 @@ Right-to-left catalogs: `ar`, `ckb`, `fa_ir`, `he`, `ug_cn`, `ur`.
 `defineLocale()` builds a locale from a name, a code and the labels you want to translate:
 
 ```vue
+<template>
+  <App :locale="fr">
+    <RouterView />
+  </App>
+</template>
+
 <script setup lang="ts">
 import { App, defineLocale } from '@hareui/vue'
 
@@ -86,12 +92,6 @@ const fr = defineLocale({
   },
 })
 </script>
-
-<template>
-  <App :locale="fr">
-    <RouterView />
-  </App>
-</template>
 ```
 
 To change a few labels of a shipped catalog, spread it:

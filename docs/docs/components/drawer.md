@@ -85,13 +85,13 @@ Bind `v-model:open` to open the drawer from anywhere, here a button outside it.
 
 ### Events
 
-| Event           | Fires when                                                                                  |
-| --------------- | ------------------------------------------------------------------------------------------- |
-| `enter`         | the open animation starts                                                                   |
-| `after:enter`   | the open animation ends                                                                     |
-| `leave`         | the close animation starts                                                                  |
-| `after:leave`   | the drawer has left the page                                                                |
-| `close:prevent` | Escape or a backdrop click is ignored because `keyboardDismissible` or `dismissible` is off |
+| Event           | Fires when                                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------------------------ |
+| `enter`         | the open animation starts                                                                                    |
+| `after:enter`   | the open animation ends                                                                                      |
+| `leave`         | the close animation starts                                                                                   |
+| `after:leave`   | the drawer has left the page                                                                                 |
+| `close:prevent` | Escape, a backdrop click or a closing swipe is ignored because `keyboardDismissible` or `dismissible` is off |
 
 Without an animation, `after:enter` and `after:leave` fire right away. This drawer ignores Escape and backdrop clicks,
 so try them to see `close:prevent`.
@@ -151,6 +151,8 @@ app.use(
 - `placement="top"` - Slides down from the top edge (the handle renders below the footer)
 - `placement="left"` - Slides in from the left edge
 - `placement="right"` - Slides in from the right edge
+
+In right-to-left layouts `left` and `right` still dock on that physical side.
 
 ### Interactive States
 
