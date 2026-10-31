@@ -137,6 +137,7 @@ export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>([
   'list-box',
   'modal',
   'number-field',
+  'popover',
   'select',
   'tabs',
   'toast',

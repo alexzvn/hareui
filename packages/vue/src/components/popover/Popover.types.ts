@@ -78,4 +78,6 @@ export type PopoverSlots = {
 export type PopoverEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]
+  /** Emitted when Escape or an outside press tries to close the popover while `dismissible` is `false`. */
+  'close:prevent': []
 }

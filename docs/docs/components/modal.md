@@ -96,6 +96,21 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 
 <ComponentPreview name="modal/custom-close-button" />
 
+### Events
+
+| Event           | Fires when                                                         |
+| --------------- | ------------------------------------------------------------------ |
+| `enter`         | the open animation starts                                          |
+| `after:enter`   | the open animation ends                                            |
+| `leave`         | the close animation starts                                         |
+| `after:leave`   | the modal has left the page                                        |
+| `close:prevent` | Escape or a backdrop click is ignored because `dismissible` is off |
+
+Without an animation, `after:enter` and `after:leave` fire right away. This modal ignores Escape and backdrop clicks,
+so try them to see `close:prevent`.
+
+<ComponentPreview name="modal/events" />
+
 ## Customization
 
 ### Tailwind CSS

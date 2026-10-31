@@ -100,4 +100,6 @@ export type AlertDialogEmits = {
   leave: []
   /** Emitted when the close animation finished and the dialog left the DOM. */
   'after:leave': []
+  /** Emitted when Escape or an outside press tries to close the dialog while `dismissible` / `keyboardDismissible` is `false`. */
+  'close:prevent': []
 }

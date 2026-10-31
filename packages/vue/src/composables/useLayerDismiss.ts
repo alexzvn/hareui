@@ -4,6 +4,9 @@ import { onScopeDispose, toValue, watch } from 'vue'
 import type { LayerDismissPolicy, OutsideEvent } from './nestedLayer'
 import { shouldDismissOnEscape, shouldDismissOnOutside, shouldDismissOnPress } from './nestedLayer'
 
+/** The event type Reka's DismissableLayer gives an outside `pointerdown`. */
+const POINTER_DOWN_OUTSIDE = 'dismissableLayer.pointerDownOutside'
+
 type LayerDismissOptions = {
   /**
    * The Layer's `[data-dismissable-layer]` element or Reka's positioning wrapper around it (a `*Content`
@@ -30,6 +33,12 @@ type LayerDismissOptions = {
    * right after opening is lost. React Aria listens as soon as the Layer is open: with this set, presses created
    * after the Layer opened (the opening press itself is older) dismiss it through `onDismiss`.
    */
+  /**
+   * Called when an Escape press or an outside press is blocked only because the Layer isn't dismissible
+   * (`isDismissible` / `isKeyboardDismissible` false). Never called for interactions that dismiss, nor for those kept
+   * open by the Layer stack or the pointer button.
+   */
+  onPrevent?: () => void
   earlyPress?: {
     /** The Layer's open state. */
     isOpen: MaybeRefOrGetter<boolean>
@@ -59,12 +68,21 @@ export const useLayerDismiss = (options: LayerDismissOptions) => {
   let handledPress: Event | undefined
 
   const onEscapeKeyDown = (event: KeyboardEvent) => {
-    if (!shouldDismissOnEscape(resolvePolicy())) event.preventDefault()
+    if (shouldDismissOnEscape(resolvePolicy())) return
+    event.preventDefault()
+    options.onPrevent?.()
   }
 
   const onInteractOutside = (event: OutsideEvent) => {
     const isHandled = event.detail.originalEvent === handledPress
-    if (isHandled || !shouldDismissOnOutside(event, resolvePolicy())) event.preventDefault()
+    const policy = resolvePolicy()
+    if (!isHandled && shouldDismissOnOutside(event, policy)) return
+    event.preventDefault()
+
+    // Focus moving out isn't a dismiss attempt; only a press the `dismissible` flag alone blocked counts.
+    const isPress = event.type === POINTER_DOWN_OUTSIDE
+    if (isHandled || !isPress || !options.onPrevent) return
+    if (shouldDismissOnOutside(event, { ...policy, isDismissible: true })) options.onPrevent()
   }
 
   const { earlyPress } = options

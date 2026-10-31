@@ -95,6 +95,7 @@ const { onEscapeKeyDown, onInteractOutside } = useLayerDismiss({
   content: () => contentRef.value?.$el,
   isDismissible: () => props.dismissible,
   shouldIgnoreSecondaryButton: true,
+  onPrevent: () => emit('close:prevent'),
   earlyPress: { isOpen, onDismiss: () => setOpen(false) },
 })
 

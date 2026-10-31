@@ -14,7 +14,8 @@ type DialogShellEmit = ((event: 'update:open', value: boolean) => void) &
   ((event: 'enter') => void) &
   ((event: 'after:enter') => void) &
   ((event: 'leave') => void) &
-  ((event: 'after:leave') => void)
+  ((event: 'after:leave') => void) &
+  ((event: 'close:prevent') => void)
 
 export type DialogShellOptions = {
   /** The component's props; reads `open`, `defaultOpen`, `title`, `portal` and `dismissible`. */
@@ -55,6 +56,7 @@ export type DialogShellOptions = {
  * - The page outside the content is `inert` exactly while the mirror is open and the content is mounted.
  * - `enter`, `after:enter`, `leave`, `after:leave` follow the Presence of the element `presenceListeners` is bound to
  *   (the one unmounted last), always in that order; `after:leave` waits until that element left the DOM.
+ * - `close:prevent` follows an Escape or outside press blocked only by the `dismissible` flags.
  * - On open, focus goes to the dialog element itself.
  * - `hasHeader` is `#header` slot, `headerExtras` or a title (`title` prop / `#title` slot); `showHeaderTitle` is a
  *   title without a `#header` slot.
@@ -91,6 +93,7 @@ export const useDialogShell = (options: DialogShellOptions) => {
     content: () => dialogContent.value?.$el,
     isDismissible: () => !!props.dismissible,
     isKeyboardDismissible: () => !!toValue(options.keyboardDismissible),
+    onPrevent: () => emit('close:prevent'),
   })
 
   // Reka's Presence skips `leave` when it unmounts without a running exit animation, so it's emitted on demand.

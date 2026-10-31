@@ -92,4 +92,6 @@ export type ModalEmits = {
   leave: []
   /** Emitted when the close animation finished and the modal left the DOM. */
   'after:leave': []
+  /** Emitted when Escape or an outside press tries to close the modal while `dismissible` is `false`. */
+  'close:prevent': []
 }

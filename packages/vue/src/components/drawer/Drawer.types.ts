@@ -88,4 +88,6 @@ export type DrawerEmits = {
   leave: []
   /** Emitted when the close animation finished and the drawer left the DOM. */
   'after:leave': []
+  /** Emitted when Escape or an outside press tries to close the drawer while `dismissible` / `keyboardDismissible` is `false`. */
+  'close:prevent': []
 }

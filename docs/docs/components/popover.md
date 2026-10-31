@@ -88,6 +88,10 @@ app.use(
 
 <ApiTable component="Popover" kind="slots" />
 
+### Emits
+
+<ApiTable component="Popover" kind="emits" />
+
 ## Theme
 
 <ApiTheme component="Popover" />

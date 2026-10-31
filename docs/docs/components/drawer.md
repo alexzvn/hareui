@@ -79,6 +79,21 @@ excluded from the body area to avoid scroll conflicts.
 
 <ComponentPreview name="drawer/custom-close-button" />
 
+### Events
+
+| Event           | Fires when                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| `enter`         | the open animation starts                                                                   |
+| `after:enter`   | the open animation ends                                                                     |
+| `leave`         | the close animation starts                                                                  |
+| `after:leave`   | the drawer has left the page                                                                |
+| `close:prevent` | Escape or a backdrop click is ignored because `keyboardDismissible` or `dismissible` is off |
+
+Without an animation, `after:enter` and `after:leave` fire right away. This drawer ignores Escape and backdrop clicks,
+so try them to see `close:prevent`.
+
+<ComponentPreview name="drawer/events" />
+
 ## Customization
 
 ### Tailwind CSS

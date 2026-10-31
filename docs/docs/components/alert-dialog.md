@@ -95,6 +95,21 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 
 <ComponentPreview name="alert-dialog/custom-close-button" />
 
+### Events
+
+| Event           | Fires when                            |
+| --------------- | ------------------------------------- |
+| `enter`         | the open animation starts             |
+| `after:enter`   | the open animation ends               |
+| `leave`         | the close animation starts            |
+| `after:leave`   | the dialog has left the page          |
+| `close:prevent` | Escape or a backdrop click is ignored |
+
+Without an animation, `after:enter` and `after:leave` fire right away. An alert dialog ignores Escape and backdrop
+clicks unless `keyboardDismissible` or `dismissible` is set, so try them to see `close:prevent`.
+
+<ComponentPreview name="alert-dialog/events" />
+
 ## Customization
 
 ### Tailwind CSS
