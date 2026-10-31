@@ -111,6 +111,7 @@ const PICKS: Record<string, Pick> = {
   'navigation-menu': { demo: 'navigation-menu/orientation' },
   main: { width: 360 },
   'rich-table': { width: 600 },
+  'list-view': { select: '[data-slot="list-view"]', width: 320 },
   alert: { select: ':scope > [data-slot="alert-root"]:nth-of-type(2)', width: 380 },
   // The basic demo pairs the zone with an empty file panel; the zone alone reads better at card size.
   'drop-zone': { select: '[data-slot="drop-zone"]' },
