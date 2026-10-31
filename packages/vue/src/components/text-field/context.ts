@@ -1,5 +1,6 @@
 import type { InjectionKey, Ref } from 'vue'
 
+import { isFocusListener } from '@/utils/formControlEvents'
 import type { ModelModifiers } from '@/utils/modelModifiers'
 
 /** State a `TextField` provides to the `Input`, `TextArea` and field parts rendered inside it. */
@@ -31,7 +32,8 @@ export type TextFieldContext = {
 export const textFieldContextKey: InjectionKey<TextFieldContext> = Symbol('hareui-textfield')
 
 // Attributes passed to a field component that belong to its input (as in HeroUI, where the field passes them to its
-// Input), matched case-insensitively so `maxlength` and `maxLength` both work. Everything else stays on the wrapper.
+// Input), matched case-insensitively so `maxlength` and `maxLength` both work. `@focus` / `@blur` listeners (with
+// any modifier) go to the input too. Everything else stays on the wrapper.
 const INPUT_ATTRS = new Set([
   'autofocus',
   'autocomplete',
@@ -58,8 +60,6 @@ const INPUT_ATTRS = new Set([
   'aria-activedescendant',
   'aria-autocomplete',
   'aria-haspopup',
-  'onfocus',
-  'onblur',
 ])
 
 /**
@@ -70,7 +70,7 @@ export const splitInputAttrs = (attrs: Record<string, unknown>) => {
   const input: Record<string, unknown> = {}
   const root: Record<string, unknown> = {}
   for (const [key, value] of Object.entries(attrs)) {
-    if (INPUT_ATTRS.has(key.toLowerCase())) {
+    if (INPUT_ATTRS.has(key.toLowerCase()) || isFocusListener(key)) {
       input[key] = value
       continue
     }

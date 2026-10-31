@@ -10,8 +10,8 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :class="ui.base()"
-    @focusin="onFieldFocusin"
-    @focusout="onFieldFocusout"
+    @focus.capture="onFieldFocusCapture"
+    @blur.capture="onFieldBlurCapture"
   >
     <FieldLabel :id="labelId" as="span" @click="triggerEl()?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
@@ -155,8 +155,8 @@
           @close-auto-focus="onCloseAutoFocus"
           @pointerdown="pressRelease.onPointerdown"
           @pointerup="pressRelease.onPointerup"
-          @focusin="onFieldFocusin"
-          @focusout="onFieldFocusout"
+          @focus.capture="onFieldFocusCapture"
+          @blur.capture="onFieldBlurCapture"
         >
           <ListBox
             ref="listBox"
@@ -258,10 +258,10 @@ defineOptions({ inheritAttrs: false })
 // The popover's options mount after the press that opens it, so the modality is tracked from here
 provide(keyboardModalityKey, useKeyboardModality())
 
-// Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides,
-// `loading` → no sentinel
 const { t } = useLocale()
 
+// Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides,
+// `loading` → no sentinel
 const props = withDefaults(defineProps<SelectProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
@@ -456,7 +456,7 @@ const onTriggerBlur = () => {
 }
 
 // `focus` / `blur` are the field's: focus moving between the trigger and the open list emits neither
-const { onFocusin: onFieldFocusin, onFocusout: onFieldFocusout } = useFieldFocus({
+const { onFocusCapture: onFieldFocusCapture, onBlurCapture: onFieldBlurCapture } = useFieldFocus({
   onFocus: (event) => emit('focus', event),
   onBlur: (event) => emit('blur', event),
 })

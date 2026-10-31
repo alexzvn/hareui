@@ -9,7 +9,7 @@ type ComboBoxInputEventsOptions = {
   input: Readonly<ShallowRef<HTMLInputElement | null>>
   /** The combo box root element; focus moving inside it or into `content` isn't a blur. */
   rootEl: () => HTMLElement | undefined
-  content: Readonly<ShallowRef<{ $el: HTMLElement } | null>>
+  content: Readonly<ShallowRef<{ $el: Node } | null>>
   isDisabled: Readonly<Ref<boolean>>
   isMultiple: () => boolean
   isFocused: Ref<boolean>
@@ -25,10 +25,6 @@ type ComboBoxInputEventsOptions = {
   close: () => void
   commitValue: () => void
   commitValidation: () => void
-  /** Focus entered the field. */
-  onFieldFocus: (event: FocusEvent) => void
-  /** Focus left the field (not to its button or popover). */
-  onFieldBlur: (event: FocusEvent) => void
 }
 
 // Typing, focus and blur on the input, and presses on the trigger button (RAC `useComboBox`)
@@ -98,7 +94,6 @@ export const useComboBoxInputEvents = (options: ComboBoxInputEventsOptions) => {
     isFocused.value = true
     snapshotOnFocus = takeSnapshot()
     if (props.menuTrigger === 'focus' && !shouldSkipFocusOpen) options.open(null, 'focus')
-    options.onFieldFocus(event)
   }
 
   // Focus moving to the trigger or into the popover isn't a blur of the field
@@ -116,7 +111,6 @@ export const useComboBoxInputEvents = (options: ComboBoxInputEventsOptions) => {
     options.commitValue()
 
     if (hasChangedSinceFocus()) options.commitValidation()
-    options.onFieldBlur(event)
   }
 
   // RAC: press start toggles, focus stays in the input

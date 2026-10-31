@@ -1,10 +1,11 @@
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 
+import type { ComboBoxHighlight } from '@/components/combo-box/ComboBox.types'
 import type { ListBoxItem, ListBoxValue } from '@/components/list-box/ListBox.types'
 import type { CollectionRow } from '@/components/list-box/listBoxCollection'
 import { useKeyboardModality } from '@/composables/useKeyboardModality'
 
-import type { AutocompleteHighlight, AutocompleteProps } from './Autocomplete.types'
+import type { AutocompleteProps } from './Autocomplete.types'
 
 /** What `useAutocompleteVirtualFocus` reads from the component. */
 export type AutocompleteVirtualFocusOptions = {
@@ -23,7 +24,7 @@ export type AutocompleteVirtualFocusOptions = {
   isDisabled: () => boolean
   isOpen: () => boolean
   /** Called with each new focused option, `undefined` once none is. */
-  onHighlight: (payload: AutocompleteHighlight | undefined) => void
+  onHighlight: (payload: ComboBoxHighlight | undefined) => void
 }
 
 /** Keys that move the virtual focus through the options. */

@@ -1,5 +1,6 @@
 import type { VNode } from 'vue'
 
+import type { ComboBoxHighlight } from '@/components/combo-box/ComboBox.types'
 import type { ValidationBehavior } from '@/components/form/context'
 import type { FormFieldValidationProps } from '@/components/form/types'
 import type {
@@ -42,7 +43,7 @@ export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
   defaultValue?: AutocompleteValue
   /**
    * Text shown in the trigger while nothing is selected.
-   * @defaultValue 'Select an item'
+   * @defaultValue the `App` locale's label, then 'en' ('Select an item')
    */
   placeholder?: string
   /** Label text rendered above the trigger. */
@@ -72,12 +73,12 @@ export type AutocompleteProps<T extends ListBoxItem = ListBoxItem> = {
   search?: boolean
   /**
    * Placeholder of the search field.
-   * @defaultValue 'Search...'
+   * @defaultValue the `App` locale's label, then 'en' ('Search...')
    */
   searchPlaceholder?: string
   /**
    * Accessible name of the search field.
-   * @defaultValue 'Search options'
+   * @defaultValue the `App` locale's label, then 'en' ('Search options')
    */
   searchLabel?: string
   /** The initial search text when uncontrolled (no `v-model:input-value`). */
@@ -203,13 +204,5 @@ export type AutocompleteEmits = {
   /** Focus left the field; moving between the trigger and the open popover doesn't count. Fires a task later. */
   blur: [event: FocusEvent]
   /** The highlighted option changed (arrow keys, hover, opening); `undefined` when none is highlighted. */
-  highlight: [payload: AutocompleteHighlight | undefined]
-}
-
-/** Payload of the `Autocomplete` `highlight` event. */
-export type AutocompleteHighlight = {
-  /** The highlighted option element. */
-  ref: HTMLElement
-  /** The highlighted option's `value`. */
-  value: ListBoxValue
+  highlight: [payload: ComboBoxHighlight | undefined]
 }

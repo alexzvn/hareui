@@ -1,8 +1,9 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
 import InlineSelect from '@/components/inline-select/InlineSelect.vue'
+import Select from '@/components/select/Select.vue'
 
 import { expectAccessible } from './a11y'
 
@@ -15,7 +16,9 @@ const items = [
 
 const trigger = '[data-slot=select-trigger]'
 const value = '[data-slot=select-value]'
-const flush = flushPromises
+
+// A task, not `flushPromises` (setImmediate): Select's `blur` settles in a `setTimeout`
+const flush = () => new Promise((r) => setTimeout(r, 0))
 const optionEls = () => [...document.querySelectorAll<HTMLElement>('[role=option]')]
 const focusedText = () => document.activeElement?.textContent?.trim()
 
@@ -312,5 +315,60 @@ describe('InlineSelect', () => {
     await nextTick()
     expect(document.querySelector('[role=listbox]')).toBeNull()
     wrapper.unmount()
+  })
+})
+
+describe('InlineSelect events', () => {
+  it('forwards focus when the trigger gains focus', async () => {
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'en' },
+      attrs: { 'aria-label': 'Language' },
+      attachTo: document.body,
+    })
+
+    ;(wrapper.get(trigger).element as HTMLElement).focus()
+    await flush()
+    expect(wrapper.emitted('focus')).toHaveLength(1)
+  })
+
+  it('forwards blur when focus leaves the trigger', async () => {
+    const outside = document.body.appendChild(document.createElement('button'))
+
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'en' },
+      attrs: { 'aria-label': 'Language' },
+      attachTo: document.body,
+    })
+
+    ;(wrapper.get(trigger).element as HTMLElement).focus()
+    await flush()
+    outside.focus()
+    await flush()
+    expect(wrapper.emitted('blur')).toHaveLength(1)
+  })
+
+  it('forwards change when the user picks an option', async () => {
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'en' },
+      attrs: { 'aria-label': 'Language' },
+      attachTo: document.body,
+    })
+
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+    document.querySelectorAll<HTMLElement>('[role=option]')[1].click()
+    await flush()
+    expect(wrapper.emitted('change')).toHaveLength(1)
+  })
+
+  it('emits null, not undefined, when the selection is cleared', async () => {
+    const wrapper = mount(InlineSelect, {
+      props: { items, defaultValue: 'en' },
+      attrs: { 'aria-label': 'Language' },
+    })
+
+    wrapper.findComponent(Select).vm.$emit('update:modelValue', undefined)
+    await flush()
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([null])
   })
 })

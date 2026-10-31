@@ -190,15 +190,18 @@ export type ComboBoxEmits = {
   loadMore: []
   /** The user changed the selection (an option, cleared text or custom text); not on `v-model` writes. */
   change: [event: Event]
-  /** Focus entered the field's input. */
+  /** Focus entered the field (its input) from outside it. */
   focus: [event: FocusEvent]
-  /** Focus left the field (moving to its button or popover doesn't count). */
+  /** Focus left the field; moving between the input, its button and the popover doesn't count. Fires a task later. */
   blur: [event: FocusEvent]
-  /** The highlighted option changed (arrow keys, hover, opening); `undefined` when none is highlighted. */
+  /**
+   * The highlighted option changed (arrow keys, hover, opening); `undefined` when none is highlighted, and once as
+   * the popover closes.
+   */
   highlight: [payload: ComboBoxHighlight | undefined]
 }
 
-/** Payload of the `ComboBox` `highlight` event. */
+/** Payload of the `ComboBox` and `Autocomplete` `highlight` event. */
 export type ComboBoxHighlight = {
   /** The highlighted option element. */
   ref: HTMLElement

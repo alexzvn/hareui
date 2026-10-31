@@ -39,7 +39,7 @@ export type SelectProps<T extends ListBoxItem = ListBoxItem> = {
   defaultValue?: SelectValue
   /**
    * Text shown in the trigger while nothing is selected.
-   * @defaultValue 'Select an item'
+   * @defaultValue the `App` locale's label, then 'en' ('Select an item')
    */
   placeholder?: string
   /** Label text rendered above the trigger. */

@@ -17,10 +17,13 @@ export type NavigationKey = 'ArrowDown' | 'ArrowUp' | 'Home' | 'End' | 'PageUp' 
 
 type ComboBoxHighlightOptions = {
   input: Readonly<ShallowRef<HTMLInputElement | null>>
-  content: Readonly<ShallowRef<{ $el: HTMLElement } | null>>
+  /** Closed, Reka's content renders Presence's comment placeholder, so `$el` isn't always an element. */
+  content: Readonly<ShallowRef<{ $el: Node } | null>>
   /** Every option, sections flattened. */
   options: ComputedRef<ListBoxItem[]>
-  /** Called with each new highlighted option, `undefined` once none is. */
+  /** Whether the popover is open: the closed popover highlights nothing. */
+  isOpen: () => boolean
+  /** Called with each new highlighted option, `undefined` once none is or the popover closes. */
   onHighlight: (payload: ComboBoxHighlight | undefined) => void
 }
 
@@ -40,7 +43,7 @@ const optionByStrategy = {
 
 // The highlighted option is RAC's virtual focus: DOM focus stays in the input while Reka highlights options
 export const useComboBoxHighlight = (highlightOptions: ComboBoxHighlightOptions) => {
-  const { input, content, options, onHighlight } = highlightOptions
+  const { input, content, options, isOpen, onHighlight } = highlightOptions
 
   // Reactive: the bridge mounts after ComboBox's first render, which already reads `highlighted`
   const listboxRef = shallowRef<ListboxContext>()
@@ -66,8 +69,8 @@ export const useComboBoxHighlight = (highlightOptions: ComboBoxHighlightOptions)
   })
 
   const enabledOptions = (): HTMLElement[] => {
-    const el = content.value?.$el as HTMLElement | undefined
-    if (!el) return []
+    const el = content.value?.$el
+    if (!(el instanceof HTMLElement)) return []
 
     return [...el.querySelectorAll<HTMLElement>('[role=option]:not([data-disabled])')]
   }
@@ -138,7 +141,15 @@ export const useComboBoxHighlight = (highlightOptions: ComboBoxHighlightOptions)
     return options.value.find((item) => String(item.value) === raw)?.value
   }
 
-  watch(highlighted, (el) => {
+  // Reka keeps its highlighted element after closing (detached once the list unmounts): the closed popover
+  // highlights nothing, as in RAC
+  const highlightedWhileOpen = computed(() => {
+    const el = highlighted.value
+
+    return isOpen() && el?.isConnected ? el : null
+  })
+
+  watch(highlightedWhileOpen, (el) => {
     const value = el ? itemValueOf(el) : undefined
     onHighlight(el && value !== undefined ? { ref: el, value } : undefined)
   })

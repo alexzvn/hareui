@@ -20,6 +20,8 @@
     :class="ui.base()"
     @update:model-value="onRekaValue"
     @update:open="onRekaOpen"
+    @focus.capture="onFieldFocusCapture"
+    @blur.capture="onFieldBlurCapture"
   >
     <RekaBridge @ready="onReady" />
     <FieldLabel :id="labelId" :for="id" :class="ui.label()" />
@@ -149,6 +151,8 @@
         :side-offset="8"
         :collision-padding="12"
         :class="ui.popover()"
+        @focus.capture="onFieldFocusCapture"
+        @blur.capture="onFieldBlurCapture"
       >
         <div
           :id="listboxId"
@@ -229,6 +233,7 @@ import { useCollectionModel } from '@/components/list-box/useCollectionModel'
 import { usePressRelease } from '@/components/select/pressRelease'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
@@ -253,9 +258,9 @@ import { useComboBoxOpenState } from './useComboBoxOpenState'
 
 defineOptions({ inheritAttrs: false })
 
-// Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const { t } = useLocale()
 
+// Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<ComboBoxProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
@@ -277,7 +282,7 @@ const inputModel = defineModel<string>('inputValue')
 
 const isMultiple = computed(() => props.selectionMode === 'multiple')
 const input = useTemplateRef<HTMLInputElement>('input')
-const content = useTemplateRef<{ $el: HTMLElement }>('content')
+const content = useTemplateRef<{ $el: Node }>('content')
 
 // ---- Collection and selection (`v-model` wins when bound) -------------------------------------------------------
 // Selected items keep selection order, as RAC (`[...selectedKeys]`)
@@ -320,6 +325,18 @@ const { isShowingAll, liveBlocks, filteredCount } = useComboBoxFilter({
   inputValue,
 })
 
+// The open state calls `highlightOnOpen` only once mounted, after the highlight below exists
+const { isOpen, blocks, visibleCount, open, close } = useComboBoxOpenState({
+  props,
+  isDisabled: disabled,
+  onUpdateOpen: (value) => emit('update:open', value),
+  optionCount: () => options.value.length,
+  filteredCount,
+  liveBlocks,
+  isShowingAll,
+  highlightOnOpen: (strategy) => highlightOnOpen(strategy),
+})
+
 const {
   onReady,
   highlighted,
@@ -336,18 +353,8 @@ const {
   input,
   content,
   options,
+  isOpen: () => isOpen.value,
   onHighlight: (payload) => emit('highlight', payload),
-})
-
-const { isOpen, blocks, visibleCount, open, close } = useComboBoxOpenState({
-  props,
-  isDisabled: disabled,
-  onUpdateOpen: (value) => emit('update:open', value),
-  optionCount: () => options.value.length,
-  filteredCount,
-  liveBlocks,
-  isShowingAll,
-  highlightOnOpen,
 })
 
 const isFocused = ref(false)
@@ -364,6 +371,7 @@ const { commitSelection, commitValue, revert } = useComboBoxCommit({
   resetInputValue,
   mirrorText,
   close,
+  onChange: (event) => emit('change', event),
 })
 
 // ---- Validation ---------------------------------------------------------------------------------------------------
@@ -437,8 +445,12 @@ const { onInput, onFocus, onBlur, onTriggerPointerdown, onTriggerClick } = useCo
   close,
   commitValue,
   commitValidation,
-  onFieldFocus: (event) => emit('focus', event),
-  onFieldBlur: (event) => emit('blur', event),
+})
+
+// `focus` / `blur` are the field's: focus moving between the input, its button and the popover emits neither
+const { onFocusCapture: onFieldFocusCapture, onBlurCapture: onFieldBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
 })
 
 const isTriggerHovered = ref(false)

@@ -10,8 +10,8 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :class="ui.base()"
-    @focusin="onFieldFocusin"
-    @focusout="onFieldFocusout"
+    @focus.capture="onFieldFocusCapture"
+    @blur.capture="onFieldBlurCapture"
   >
     <FieldLabel :id="labelId" as="span" :class="ui.label()" @click="button?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="setOpen">
@@ -173,8 +173,8 @@
           @focus-outside="onOutside"
           @escape-key-down="onEscapeKeyDown"
           @keydown="onPopoverKeydown"
-          @focusin="onFieldFocusin"
-          @focusout="onFieldFocusout"
+          @focus.capture="onFieldFocusCapture"
+          @blur.capture="onFieldBlurCapture"
         >
           <ListboxRoot
             class="contents"
@@ -324,9 +324,9 @@ import { useAutocompleteVirtualFocus } from './useAutocompleteVirtualFocus'
 
 defineOptions({ inheritAttrs: false })
 
-// Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const { t } = useLocale()
 
+// Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<AutocompleteProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
@@ -551,7 +551,7 @@ const {
   },
 })
 
-const { onFocusin: onFieldFocusin, onFocusout: onFieldFocusout } = useFieldFocus({
+const { onFocusCapture: onFieldFocusCapture, onBlurCapture: onFieldBlurCapture } = useFieldFocus({
   onFocus: (event) => emit('focus', event),
   onBlur: (event) => emit('blur', event),
 })
