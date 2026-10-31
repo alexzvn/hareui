@@ -61,6 +61,7 @@
         </DecrementOutlet>
       </NumberFieldDecrement>
       <NumberFieldInput
+        v-bind="fieldAttrs.focus"
         data-slot="number-field-input"
         :placeholder="placeholder"
         :required="required || undefined"
@@ -130,6 +131,7 @@ import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 import { useNumberValue } from '@/composables/useNumberValue'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
+import { splitFocusListeners } from '@/utils/formControlEvents'
 
 import type { NumberFieldProps, NumberFieldSlots } from './NumberField.types'
 import theme from './theme'
@@ -214,10 +216,12 @@ const onKeydownCapture = (event: KeyboardEvent) => {
 onMounted(() => root.value?.addEventListener('keydown', onKeydownCapture, true))
 onBeforeUnmount(() => root.value?.removeEventListener('keydown', onKeydownCapture, true))
 
-// `aria-label` / `aria-labelledby` name the input (as in HeroUI), not the wrapper div
+// `aria-label` / `aria-labelledby` name the input (as in HeroUI) and `@focus` / `@blur` listen on it; the rest stays
+// on the wrapper div
 const attrs = useAttrs()
+const fieldAttrs = computed(() => splitFocusListeners(attrs))
 const rootAttrs = computed(() => {
-  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
+  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = fieldAttrs.value.rest
   return rest
 })
 

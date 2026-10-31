@@ -188,6 +188,22 @@ export type ComboBoxEmits = {
   'update:inputValue': [value: string]
   /** The end of the option list scrolled into view while `loading` is false. */
   loadMore: []
+  /** The user changed the selection (an option, cleared text or custom text); not on `v-model` writes. */
+  change: [event: Event]
+  /** Focus entered the field's input. */
+  focus: [event: FocusEvent]
+  /** Focus left the field (moving to its button or popover doesn't count). */
+  blur: [event: FocusEvent]
+  /** The highlighted option changed (arrow keys, hover, opening); `undefined` when none is highlighted. */
+  highlight: [payload: ComboBoxHighlight | undefined]
+}
+
+/** Payload of the `ComboBox` `highlight` event. */
+export type ComboBoxHighlight = {
+  /** The highlighted option element. */
+  ref: HTMLElement
+  /** The highlighted option's `value`. */
+  value: ListBoxValue
 }
 
 /** Which option gets the virtual focus when the popover opens with nothing selected (RAC `FocusStrategy`). */

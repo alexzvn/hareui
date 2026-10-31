@@ -232,6 +232,7 @@ import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
+import { withChangeEvent } from '@/utils/formControlEvents'
 
 import type {
   ComboBoxEmits,
@@ -282,7 +283,7 @@ const content = useTemplateRef<{ $el: HTMLElement }>('content')
 // Selected items keep selection order, as RAC (`[...selectedKeys]`)
 const {
   options,
-  selection,
+  selection: modelSelection,
   selectedValues,
   selectedKey,
   selectedItems,
@@ -297,6 +298,9 @@ const {
   isMultiple: () => isMultiple.value,
   placeholder: () => props.valuePlaceholder,
 })
+
+// Writes through `selection` are the user's: they emit `change`
+const selection = withChangeEvent(modelSelection, (event) => emit('change', event))
 
 const selectedText = computed(() => resolveItemText(selectedKey.value))
 
@@ -328,7 +332,12 @@ const {
   selectHighlighted,
   itemValueOf,
   optionAttrs,
-} = useComboBoxHighlight({ input, content, options })
+} = useComboBoxHighlight({
+  input,
+  content,
+  options,
+  onHighlight: (payload) => emit('highlight', payload),
+})
 
 const { isOpen, blocks, visibleCount, open, close } = useComboBoxOpenState({
   props,
@@ -428,6 +437,8 @@ const { onInput, onFocus, onBlur, onTriggerPointerdown, onTriggerClick } = useCo
   close,
   commitValue,
   commitValidation,
+  onFieldFocus: (event) => emit('focus', event),
+  onFieldBlur: (event) => emit('blur', event),
 })
 
 const isTriggerHovered = ref(false)

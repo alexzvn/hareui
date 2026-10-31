@@ -196,4 +196,20 @@ export type AutocompleteEmits = {
   'update:inputValue': [value: string]
   /** The end of the option list scrolled into view while `loading` is false. */
   loadMore: []
+  /** The user changed the selection (an option, typeahead or clear); not on `v-model` writes or form reset. */
+  change: [event: Event]
+  /** Focus entered the field (the trigger or the open popover) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between the trigger and the open popover doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
+  /** The highlighted option changed (arrow keys, hover, opening); `undefined` when none is highlighted. */
+  highlight: [payload: AutocompleteHighlight | undefined]
+}
+
+/** Payload of the `Autocomplete` `highlight` event. */
+export type AutocompleteHighlight = {
+  /** The highlighted option element. */
+  ref: HTMLElement
+  /** The highlighted option's `value`. */
+  value: ListBoxValue
 }

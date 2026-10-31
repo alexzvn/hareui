@@ -86,6 +86,7 @@ import {
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { createChangeEvent } from '@/utils/formControlEvents'
 
 import type { CheckboxState, CheckboxProps, CheckboxSlots } from './Checkbox.types'
 import theme from './theme'
@@ -102,6 +103,8 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
 const emit = defineEmits<{
   /** Emitted when the checked state changes. */
   'update:modelValue': [value: boolean | 'indeterminate']
+  /** Emitted after the user toggles the checkbox (not on `v-model` writes or form reset). */
+  change: [event: Event]
 }>()
 
 defineSlots<CheckboxSlots>()
@@ -154,5 +157,6 @@ const onUpdate = (value: boolean | 'indeterminate') => {
   local.value = value
   emit('update:modelValue', value)
   commitValidation()
+  emit('change', createChangeEvent())
 }
 </script>

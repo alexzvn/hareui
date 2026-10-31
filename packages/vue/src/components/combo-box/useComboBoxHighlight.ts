@@ -1,11 +1,16 @@
 import type { ComputedRef, ShallowRef } from 'vue'
-import { computed, nextTick, onMounted, reactive, shallowRef } from 'vue'
+import { computed, nextTick, onMounted, reactive, shallowRef, watch } from 'vue'
 
 import type { ListBoxItem, ListBoxValue } from '@/components/list-box/ListBox.types'
 import type { CollectionRow } from '@/components/list-box/listBoxCollection'
 import { useKeyboardModality } from '@/composables/useKeyboardModality'
 
-import type { ComboboxContext, FocusStrategy, ListboxContext } from './ComboBox.types'
+import type {
+  ComboBoxHighlight,
+  ComboboxContext,
+  FocusStrategy,
+  ListboxContext,
+} from './ComboBox.types'
 
 /** Keys that move the virtual focus through the open list. */
 export type NavigationKey = 'ArrowDown' | 'ArrowUp' | 'Home' | 'End' | 'PageUp' | 'PageDown'
@@ -15,6 +20,8 @@ type ComboBoxHighlightOptions = {
   content: Readonly<ShallowRef<{ $el: HTMLElement } | null>>
   /** Every option, sections flattened. */
   options: ComputedRef<ListBoxItem[]>
+  /** Called with each new highlighted option, `undefined` once none is. */
+  onHighlight: (payload: ComboBoxHighlight | undefined) => void
 }
 
 const valueAttr = 'data-combo-box-value'
@@ -33,7 +40,7 @@ const optionByStrategy = {
 
 // The highlighted option is RAC's virtual focus: DOM focus stays in the input while Reka highlights options
 export const useComboBoxHighlight = (highlightOptions: ComboBoxHighlightOptions) => {
-  const { input, content, options } = highlightOptions
+  const { input, content, options, onHighlight } = highlightOptions
 
   // Reactive: the bridge mounts after ComboBox's first render, which already reads `highlighted`
   const listboxRef = shallowRef<ListboxContext>()
@@ -130,6 +137,11 @@ export const useComboBoxHighlight = (highlightOptions: ComboBoxHighlightOptions)
 
     return options.value.find((item) => String(item.value) === raw)?.value
   }
+
+  watch(highlighted, (el) => {
+    const value = el ? itemValueOf(el) : undefined
+    onHighlight(el && value !== undefined ? { ref: el, value } : undefined)
+  })
 
   // RAC `shouldFocusOnHover`: hover moves the virtual focus unless the last interaction was a keyboard one
   const onOptionPointermove = (event: PointerEvent) => {

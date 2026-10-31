@@ -195,6 +195,8 @@ NumberField sets these data attributes:
 
 <ApiTable component="NumberField" kind="emits" />
 
+`@focus` and `@blur` listeners go to the input, so they fire when the input gains and loses focus.
+
 ## Theme
 
 <ApiTheme component="NumberField" />

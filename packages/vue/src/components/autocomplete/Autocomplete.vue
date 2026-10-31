@@ -10,6 +10,8 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :class="ui.base()"
+    @focusin="onFieldFocusin"
+    @focusout="onFieldFocusout"
   >
     <FieldLabel :id="labelId" as="span" :class="ui.label()" @click="button?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="setOpen">
@@ -171,6 +173,8 @@
           @focus-outside="onOutside"
           @escape-key-down="onEscapeKeyDown"
           @keydown="onPopoverKeydown"
+          @focusin="onFieldFocusin"
+          @focusout="onFieldFocusout"
         >
           <ListboxRoot
             class="contents"
@@ -293,9 +297,11 @@ import { useCollectionModel } from '@/components/list-box/useCollectionModel'
 import { usePressRelease } from '@/components/select/pressRelease'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
+import { withChangeEvent } from '@/utils/formControlEvents'
 
 import type {
   AutocompleteEmits,
@@ -364,14 +370,13 @@ const searchInput = () => searchField.value?.input ?? undefined
 // Selected items keep selection order, as RAC (`[...selectedKeys]`)
 const {
   options,
-  selection,
+  selection: modelSelection,
   selectedValues,
   selectedKey,
   selectedItems,
   valueText,
   isPlaceholder,
   isSelected,
-  clear: clearSelection,
   reset,
 } = useCollectionModel<T>({
   items: () => props.items,
@@ -380,6 +385,9 @@ const {
   isMultiple: () => isMultiple.value,
   placeholder: () => props.placeholder ?? t('autocomplete.placeholder'),
 })
+
+// Writes through `selection` are the user's: they emit `change`
+const selection = withChangeEvent(modelSelection, (event) => emit('change', event))
 
 // ---- Validation -------------------------------------------------------------------------------------------------
 const { validation, invalid, commitValidation } = useFieldValidation<AutocompleteValue>({
@@ -455,6 +463,7 @@ const {
   virtualize: () => props.virtualize,
   isDisabled: () => disabled.value,
   isOpen: () => isOpen.value,
+  onHighlight: (payload) => emit('highlight', payload),
 })
 
 const { inputValue, blocks, setSearchText, onEscapeKeyDown } = useAutocompleteSearch<T>({
@@ -503,7 +512,7 @@ const onListUpdate = (value: unknown) => {
 const clear = () => {
   if (disabled.value || isPlaceholder.value) return
 
-  clearSelection()
+  selection.value = null
   commitValidation()
   emit('clear')
 }
@@ -540,6 +549,11 @@ const {
     currentValue: () => selectedValues.value[0],
     select: selectTypeaheadMatch,
   },
+})
+
+const { onFocusin: onFieldFocusin, onFocusout: onFieldFocusout } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
 })
 
 const pressRelease = usePressRelease()

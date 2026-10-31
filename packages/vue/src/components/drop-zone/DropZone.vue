@@ -118,6 +118,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useLocale } from '@/composables/useLocale'
+import { createChangeEvent } from '@/utils/formControlEvents'
 
 import { dropZoneContextKey } from './context'
 import type {
@@ -223,6 +224,7 @@ const addFiles = (incoming: File[]) => {
     const added = props.multiple ? accepted : accepted.slice(0, 1)
     setFiles(props.multiple ? [...files.value, ...added] : added)
     emit('add', added)
+    emit('change', createChangeEvent())
     commitValidation()
   }
 
@@ -234,6 +236,7 @@ const removeFile = (file: File | number) => {
   const index = typeof file === 'number' ? file : files.value.indexOf(file)
   if (index < 0 || index >= files.value.length) return
   setFiles(files.value.filter((_, i) => i !== index))
+  emit('change', createChangeEvent())
   commitValidation()
 }
 

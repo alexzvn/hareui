@@ -10,6 +10,8 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :class="ui.base()"
+    @focusin="onFieldFocusin"
+    @focusout="onFieldFocusout"
   >
     <FieldLabel :id="labelId" as="span" @click="triggerEl()?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
@@ -153,6 +155,8 @@
           @close-auto-focus="onCloseAutoFocus"
           @pointerdown="pressRelease.onPointerdown"
           @pointerup="pressRelease.onPointerup"
+          @focusin="onFieldFocusin"
+          @focusout="onFieldFocusout"
         >
           <ListBox
             ref="listBox"
@@ -236,10 +240,12 @@ import type { TypeaheadSource } from '@/components/list-box/useTypeahead'
 import { useTypeahead } from '@/components/list-box/useTypeahead'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { keyboardModalityKey, useKeyboardModality } from '@/composables/useKeyboardModality'
 import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
+import { withChangeEvent } from '@/utils/formControlEvents'
 
 import { usePressRelease } from './pressRelease'
 import type { SelectEmits, SelectProps, SelectSlots, SelectValue } from './Select.types'
@@ -280,14 +286,13 @@ const isMultiple = computed(() => props.selectionMode === 'multiple')
 // collection order (not RAC's selection order)
 const {
   options,
-  selection,
+  selection: modelSelection,
   selectedValues,
   selectedKey,
   selectedItems,
   valueText,
   isPlaceholder,
   isSelected,
-  clear: clearSelection,
   reset,
 } = useCollectionModel<T>({
   items: () => props.items,
@@ -297,6 +302,9 @@ const {
   placeholder: () => props.placeholder ?? t('select.placeholder'),
   order: 'collection',
 })
+
+// Writes through `selection` are the user's: they emit `change`
+const selection = withChangeEvent(modelSelection, (event) => emit('change', event))
 
 // Open state: the `open` prop wins when bound
 const uncontrolledOpen = ref(props.defaultOpen ?? false)
@@ -345,7 +353,7 @@ const onListUpdate = (value: ListBoxValue | ListBoxValue[] | null | undefined) =
 const clear = () => {
   if (disabled.value || isPlaceholder.value) return
 
-  clearSelection()
+  selection.value = null
   commitValidation()
   emit('clear')
 }
@@ -446,6 +454,12 @@ const onTriggerBlur = () => {
   interaction.isFocused = false
   interaction.isFocusVisible = false
 }
+
+// `focus` / `blur` are the field's: focus moving between the trigger and the open list emits neither
+const { onFocusin: onFieldFocusin, onFocusout: onFieldFocusout } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
+})
 
 // The validation composable focuses the first native control of an invalid field; the hidden <select> isn't
 // focusable for users, so hand focus to the trigger (RAC marks it `data-react-aria-prevent-focus`)

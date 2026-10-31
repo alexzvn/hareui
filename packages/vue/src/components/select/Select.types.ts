@@ -167,4 +167,10 @@ export type SelectEmits = {
   'update:open': [value: boolean]
   /** The end of the option list scrolled into view while `loading` is false (ListBox `load-more`). */
   loadMore: []
+  /** The selection changed through an option, typeahead or clear; not on `v-model` writes or form reset. */
+  change: [event: Event]
+  /** Focus entered the field (the trigger or the open list) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between the trigger and the open list doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

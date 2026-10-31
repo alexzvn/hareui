@@ -118,4 +118,6 @@ export type DropZoneEmits = {
   add: [files: File[]]
   /** Emitted with the files that didn't match `accept` or exceeded `maxSize`. */
   reject: [rejections: DropZoneRejection[]]
+  /** Emitted after files are added or removed (not on `v-model` writes or form reset), after `add`. */
+  change: [event: Event]
 }
