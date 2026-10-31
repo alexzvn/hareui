@@ -1,9 +1,10 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { h } from 'vue'
+import { defineComponent, h } from 'vue'
 
 import type {
   CommandPaletteGroup,
+  CommandPaletteItem,
   CommandPaletteProps,
 } from '@/components/command-palette/CommandPalette.types'
 import CommandPalette from '@/components/command-palette/CommandPalette.vue'
@@ -393,5 +394,48 @@ describe('CommandPalette match highlighting', () => {
     const label = document.querySelector('[data-slot=command-palette-item-label-base]')
     expect(label?.textContent).toBe('...sync your notes')
     wrapper.unmount()
+  })
+})
+
+describe('CommandPalette item links', () => {
+  // A minimal vue-router RouterLink: it hands the link state to its slot, whose single node becomes its root.
+  const routerStub = (navigate: (to: unknown) => void) =>
+    defineComponent({
+      props: { to: { type: [String, Object], required: true }, custom: Boolean, replace: Boolean },
+      setup(props, { slots }) {
+        return () => {
+          const nodes = slots.default?.({
+            href: `/app${props.to}`,
+            isActive: false,
+            isExactActive: false,
+            navigate: () => navigate(props.to),
+          })
+
+          return nodes?.length === 1 ? nodes[0] : nodes
+        }
+      },
+    })
+
+  const mountWithRouter = (item: CommandPaletteItem, navigate: (to: unknown) => void) =>
+    mount(CommandPalette, {
+      props: { groups: [{ id: 'links', items: [item] }] },
+      attachTo: document.body,
+      global: { components: { RouterLink: routerStub(navigate) } },
+    })
+
+  it('an item with `to` renders the RouterLink-resolved href', () => {
+    mountWithRouter({ label: 'Settings', to: '/settings' }, vi.fn())
+
+    expect(options()[0]!.getAttribute('href')).toBe('/app/settings')
+  })
+
+  it('a disabled link item does not navigate', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    mountWithRouter({ label: 'Settings', to: '/settings', disabled: true }, navigate)
+
+    options()[0]!.click()
+    await flushPromises()
+
+    expect(navigate).not.toHaveBeenCalled()
   })
 })
