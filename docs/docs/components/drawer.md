@@ -41,6 +41,8 @@ through props and named slots.
 
 ### Placement
 
+`placement` names a physical side of the screen: `left` and `right` stay the same in right-to-left layouts.
+
 <ComponentPreview name="drawer/placements" />
 
 ### Non-Dismissable
