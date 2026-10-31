@@ -87,7 +87,19 @@
       >
         <component :is="renderValue" :value="content.action.label" />
       </Button>
-      <CloseButton data-slot="toast-close" :class="ui.close()" @click="props.close" />
+      <CloseButton
+        v-if="content.closeButton !== false"
+        data-slot="toast-close"
+        :aria-label="closeButtonOptions.label"
+        :class="ui.close()"
+        @click="props.close"
+      >
+        <IconRenderer
+          v-if="closeButtonOptions.icon"
+          :icon="closeButtonOptions.icon"
+          data-slot="close-button-icon"
+        />
+      </CloseButton>
     </template>
   </div>
 </template>
@@ -109,6 +121,8 @@ import Button from '@/components/button/Button.vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
 import Spinner from '@/components/spinner/Spinner.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { resolveCloseButton } from '@/utils/closeButton'
+import { IconRenderer } from '@/utils/icon'
 
 import renderValue from './renderValue'
 import theme from './theme'
@@ -125,6 +139,8 @@ const emit = defineEmits<{
 }>()
 
 const content = computed(() => (props.toast.content ?? {}) as ToastContentValue)
+
+const closeButtonOptions = computed(() => resolveCloseButton(content.value.closeButton))
 
 const ui = useComponentUI('toast', {
   theme,

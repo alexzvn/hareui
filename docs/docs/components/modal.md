@@ -90,6 +90,12 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 
 <ComponentPreview name="modal/custom-portal" />
 
+### Custom Close Button
+
+`closeButton` takes `false` to hide the close button, or an object with an `icon` and a `label` (its accessible name) to customise it.
+
+<ComponentPreview name="modal/custom-close-button" />
+
 ## Customization
 
 ### Tailwind CSS
@@ -122,7 +128,7 @@ app.use(
 | `heading`      | `modal-heading`       | The title, which labels the dialog                                                                                          |
 | `body`         | `modal-body`          | The scrollable content area, rendered when `#body` is present                                                               |
 | `footer`       | `modal-footer`        | Footer section for actions, rendered when `#footer` is present                                                              |
-| `closeTrigger` | `modal-close-trigger` | The default close button, rendered when `closeButton` is `true`                                                             |
+| `closeTrigger` | `modal-close-trigger` | The default close button, rendered unless `closeButton` is `false`                                                          |
 
 ### Interactive States
 

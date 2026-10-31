@@ -41,7 +41,17 @@
             <slot name="content" :close="close">
               <DialogClose v-if="closeButton" as-child>
                 <slot name="close" :close="close">
-                  <CloseButton data-slot="drawer-close-trigger" :class="ui.closeTrigger()" />
+                  <CloseButton
+                    data-slot="drawer-close-trigger"
+                    :aria-label="closeButtonOptions.label"
+                    :class="ui.closeTrigger()"
+                  >
+                    <IconRenderer
+                      v-if="closeButtonOptions.icon"
+                      :icon="closeButtonOptions.icon"
+                      data-slot="close-button-icon"
+                    />
+                  </CloseButton>
                 </slot>
               </DialogClose>
               <!-- Before the header so `handle + header` / `header + body` spacing selectors still match -->
@@ -107,6 +117,8 @@ import { computed, useSlots, useTemplateRef } from 'vue'
 import CloseButton from '@/components/close-button/CloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDialogShell } from '@/composables/useDialogShell'
+import { resolveCloseButton } from '@/utils/closeButton'
+import { IconRenderer } from '@/utils/icon'
 
 import type { DrawerProps, DrawerSlots, DrawerEmits } from './Drawer.types'
 import theme from './theme'
@@ -120,6 +132,8 @@ const props = withDefaults(defineProps<DrawerProps>(), {
   keyboardDismissible: true,
   placement: 'bottom',
 })
+
+const closeButtonOptions = computed(() => resolveCloseButton(props.closeButton))
 
 const emit = defineEmits<DrawerEmits>()
 const slots = useSlots()

@@ -73,6 +73,12 @@ excluded from the body area to avoid scroll conflicts.
 
 <ComponentPreview name="drawer/backdrop-variants" />
 
+### Custom Close Button
+
+`closeButton` takes `false` to hide the close button, or an object with an `icon` and a `label` (its accessible name) to customise it.
+
+<ComponentPreview name="drawer/custom-close-button" />
+
 ## Customization
 
 ### Tailwind CSS
@@ -112,7 +118,7 @@ app.use(
 | `body`         | `drawer-body`          | Main scrollable content area, rendered when `#body` is present                                        |
 | `footer`       | `drawer-footer`        | Footer section for actions, rendered when `#footer` is present                                        |
 | `handle`       | `drawer-handle`        | Visual drag handle indicator (bar: `data-slot="drawer-handle-bar"`), rendered when `handle` is `true` |
-| `closeTrigger` | `drawer-close-trigger` | Close button, rendered when `closeButton` is `true`                                                   |
+| `closeTrigger` | `drawer-close-trigger` | Close button, rendered unless `closeButton` is `false`                                                |
 
 #### Backdrop Variants
 

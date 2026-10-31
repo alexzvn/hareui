@@ -4,6 +4,7 @@ import type { VNodeChild } from 'vue'
 import { h, nextTick, ref } from 'vue'
 
 import AlertDialog from '@/components/alert-dialog/AlertDialog.vue'
+import type { CloseButtonProp } from '@/types/closeButton'
 
 import { expectAccessible } from './a11y'
 
@@ -385,5 +386,43 @@ describe('alertDialog', () => {
       await nextTick()
       expect(dialog()!.contains(document.activeElement)).toBe(true)
     })
+  })
+})
+
+describe('alert-dialog closeButton', () => {
+  const closeTrigger = () =>
+    document.querySelector<HTMLButtonElement>('[data-slot=alert-dialog-close-trigger]')
+
+  const mountOpen = (closeButton?: CloseButtonProp) =>
+    mount(AlertDialog, {
+      props: {
+        defaultOpen: true,
+        title: 'T',
+        ...(closeButton === undefined ? {} : { closeButton }),
+      },
+      attachTo: document.body,
+    })
+
+  it('renders the default close button labelled "Close" by default', async () => {
+    const wrapper = mountOpen()
+    await nextTick()
+    expect(closeTrigger()?.getAttribute('aria-label')).toBe('Close')
+    expect(closeTrigger()?.querySelector('[data-slot=close-button-icon]')?.tagName).toBe('svg')
+    wrapper.unmount()
+  })
+
+  it('hides the close button with closeButton=false', async () => {
+    const wrapper = mountOpen(false)
+    await nextTick()
+    expect(closeTrigger()).toBeNull()
+    wrapper.unmount()
+  })
+
+  it('sets the close icon and aria-label from a closeButton object', async () => {
+    const wrapper = mountOpen({ icon: 'i-test-x', label: 'Dismiss' })
+    await nextTick()
+    expect(closeTrigger()?.getAttribute('aria-label')).toBe('Dismiss')
+    expect(closeTrigger()?.querySelector('span.i-test-x')?.getAttribute('aria-hidden')).toBe('true')
+    wrapper.unmount()
   })
 })
