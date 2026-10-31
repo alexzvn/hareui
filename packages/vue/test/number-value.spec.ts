@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
 import App from '@/components/app/App.vue'
@@ -107,5 +107,24 @@ describe('NumberValue', () => {
     const parts = [...wrapper.element.children].map((el) => el.getAttribute('data-slot'))
     expect(parts).toEqual(['number-value-prefix', 'number-value-value', 'number-value-suffix'])
     expect(wrapper.text()).toBe('From $99.99/month')
+  })
+
+  it('formats as a decimal when currency format has no currency code', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const wrapper = mount(NumberValue, {
+      props: { value: 1234.5, format: 'currency', locale: 'en-US' },
+    })
+
+    expect(wrapper.text()).toBe('1,234.5')
+    spy.mockRestore()
+  })
+
+  it('warns when currency format has no currency code', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    mount(NumberValue, { props: { value: 1, format: 'currency' } })
+
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('currency'))
+    spy.mockRestore()
   })
 })

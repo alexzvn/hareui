@@ -1,4 +1,4 @@
-import { useLocale } from 'reka-ui'
+import { useLocale as useRekaLocale } from 'reka-ui'
 import type { ComputedRef } from 'vue'
 import { computed } from 'vue'
 
@@ -27,7 +27,7 @@ export type RangeValue = {
  * The locale comes from Reka's `ConfigProvider` (default `'en'`).
  */
 export const useRangeValue = (options: () => RangeValueOptions): ComputedRef<RangeValue> => {
-  const locale = useLocale()
+  const locale = useRekaLocale()
 
   const format = createNumberFormatter()
 

@@ -24,7 +24,7 @@ export type NumberValueProps = {
    * @defaultValue 'decimal'
    */
   format?: NumberValueFormat
-  /** ISO 4217 currency code (e.g. `'USD'`). Required when `format` is `'currency'`. */
+  /** ISO 4217 currency code (e.g. `'USD'`). Required when `format` is `'currency'`; without it the number is formatted as a decimal and a dev warning is logged. */
   currency?: string
   /** Unit identifier (e.g. `'kilometer-per-hour'`). Required when `format` is `'unit'`. */
   unit?: string

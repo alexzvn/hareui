@@ -13,11 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import { useLocale } from 'reka-ui'
+import { useLocale as useRekaLocale } from 'reka-ui'
 import { computed, toRef } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { createNumberFormatter } from '@/utils/numberFormatter'
+import { warn } from '@/utils/warn'
 
 import type { NumberValueProps, NumberValueSlots } from './NumberValue.types'
 import theme from './theme'
@@ -27,7 +28,7 @@ defineSlots<NumberValueSlots>()
 
 const ui = useComponentUI('numberValue', { theme: theme, variantProps: () => ({}), props })
 
-const locale = useLocale(toRef(() => props.locale))
+const locale = useRekaLocale(toRef(() => props.locale))
 const formatNumber = createNumberFormatter()
 
 const formatted = computed(() => {
@@ -40,6 +41,15 @@ const formatted = computed(() => {
     minimumFractionDigits: props.minimumFractionDigits,
     maximumFractionDigits: props.maximumFractionDigits,
     ...props.options,
+  }
+
+  // Intl throws for the currency style without a currency code; render the plain number instead of crashing.
+  if (options.style === 'currency' && !options.currency) {
+    warn(
+      "NumberValue: `format: 'currency'` needs a `currency` code; falling back to decimal formatting.",
+    )
+
+    options.style = 'decimal'
   }
 
   return formatNumber(props.value, { locale: locale.value, options })
