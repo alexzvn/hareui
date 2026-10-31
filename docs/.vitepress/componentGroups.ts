@@ -33,7 +33,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'dashboard-sidebar-toggle',
     'dashboard-toolbar',
   ],
-  'Data Display': ['badge', 'chip', 'rich-table', 'table', 'timeline'],
+  'Data Display': ['badge', 'chip', 'number-value', 'rich-table', 'table', 'timeline'],
   'Date and Time': [
     'calendar',
     'date-field',
@@ -120,6 +120,7 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'command-palette',
   'context-menu',
   'editor',
+  'number-value',
   'rating',
   'sidebar',
   'splitter',

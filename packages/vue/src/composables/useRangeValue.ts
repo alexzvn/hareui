@@ -2,6 +2,8 @@ import { useLocale } from 'reka-ui'
 import type { ComputedRef } from 'vue'
 import { computed } from 'vue'
 
+import { createNumberFormatter } from '@/utils/numberFormatter'
+
 export type RangeValueOptions = {
   value: number
   minValue: number
@@ -27,18 +29,7 @@ export type RangeValue = {
 export const useRangeValue = (options: () => RangeValueOptions): ComputedRef<RangeValue> => {
   const locale = useLocale()
 
-  // Reused while locale and options are unchanged: a progress/meter value can tick every frame.
-  let formatter: Intl.NumberFormat | undefined
-  let formatterKey: string | undefined
-  const format = (value: number, formatOptions: Intl.NumberFormatOptions): string => {
-    const key = `${locale.value}|${JSON.stringify(formatOptions)}`
-    if (!formatter || key !== formatterKey) {
-      formatter = new Intl.NumberFormat(locale.value, formatOptions)
-      formatterKey = key
-    }
-
-    return formatter.format(value)
-  }
+  const format = createNumberFormatter()
 
   return computed(() => {
     const {
@@ -53,7 +44,11 @@ export const useRangeValue = (options: () => RangeValueOptions): ComputedRef<Ran
     const range = maxValue - minValue
     const fraction = range === 0 ? 0 : (clamped - minValue) / range
     const valueText =
-      valueLabel ?? format(formatOptions.style === 'percent' ? fraction : clamped, formatOptions)
+      valueLabel ??
+      format(formatOptions.style === 'percent' ? fraction : clamped, {
+        locale: locale.value,
+        options: formatOptions,
+      })
 
     return { clamped, percentage: fraction * 100, valueText }
   })

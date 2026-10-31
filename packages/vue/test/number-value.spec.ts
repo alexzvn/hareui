@@ -1,191 +1,111 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, nextTick, ref } from 'vue'
+import { describe, expect, it } from 'vitest'
+import { h } from 'vue'
 
-import type { NumberValue, NumberValueOptions } from '@/composables/useNumberValue'
-import { useNumberValue } from '@/composables/useNumberValue'
-import { clamp, snapNumber, snapValueToStep } from '@/utils/number'
+import App from '@/components/app/App.vue'
+import type { NumberValueProps } from '@/components/number-value/NumberValue.types'
+import NumberValue from '@/components/number-value/NumberValue.vue'
 
-describe('clamp', () => {
-  it('limits to the bounds and treats an absent bound as unlimited', () => {
-    expect(clamp(150, { min: 0, max: 100 })).toBe(100)
-    expect(clamp(-5, { min: 0, max: 100 })).toBe(0)
-    expect(clamp(50, { min: 0, max: 100 })).toBe(50)
-    expect(clamp(-1e9, { max: 10 })).toBe(-1e9)
-    expect(clamp(1e9, { min: 0 })).toBe(1e9)
-  })
-})
+const NBSP = '\u00a0'
 
-describe('snapValueToStep', () => {
-  it('snaps relative to min, rounding halves away from min', () => {
-    expect(snapValueToStep(7, { min: 1, max: 100, step: 5 })).toBe(6)
-    expect(snapValueToStep(8.5, { min: 1, max: 100, step: 5 })).toBe(11)
-    expect(snapValueToStep(-7, { min: -10, max: 10, step: 5 })).toBe(-5)
-    expect(snapValueToStep(-8, { min: -10, max: 10, step: 5 })).toBe(-10)
-    expect(snapValueToStep(12, { step: 5 })).toBe(10)
-  })
-
-  it('returns decimal steps without floating-point noise', () => {
-    expect(snapValueToStep(0.1 + 0.2, { min: 0, max: 1, step: 0.1 })).toBe(0.3)
-    expect(snapValueToStep(0.7, { min: 0, max: 1, step: 0.1 })).toBe(0.7)
-    expect(snapValueToStep(1.2, { min: 0, max: 10, step: 0.25 })).toBe(1.25)
-    expect(snapValueToStep(1.1, { min: 0, max: 10, step: 0.25 })).toBe(1)
-    expect(snapValueToStep(0.123, { min: 0, max: 1, step: 0.01 })).toBe(0.12)
-    expect(snapValueToStep(-0.64, { min: -1, max: 1, step: 0.1 })).toBe(-0.6)
-    expect(snapValueToStep(-0.66, { min: -1, max: 1, step: 0.1 })).toBe(-0.7)
-    expect(snapValueToStep(3.1e-7, { min: 0, max: 1, step: 1e-7 })).toBe(3e-7)
-  })
-
-  it('keeps the grid of a min with more decimals than the step', () => {
-    expect(snapValueToStep(2, { min: 0.5, max: 9.5, step: 1 })).toBe(2.5)
-    expect(snapValueToStep(0.31, { min: 0.05, max: 1, step: 0.1 })).toBe(0.35)
-  })
-
-  it('limits to min, and above max takes the last step at or below max', () => {
-    expect(snapValueToStep(-3, { min: 0, max: 10, step: 1 })).toBe(0)
-    expect(snapValueToStep(12, { min: 0, max: 10, step: 3 })).toBe(9)
-    expect(snapValueToStep(1.5, { min: 0.1, max: 1, step: 0.2 })).toBe(0.9)
-    expect(snapValueToStep(12, { max: 10, step: 3 })).toBe(9)
-
-    // no max: a page past an off-grid max stays on the grid (Slider clamps it afterwards)
-    expect(snapValueToStep(12, { min: 0, step: 3 })).toBe(12)
-  })
-})
-
-describe('snapNumber', () => {
-  it('only clamps without a step', () => {
-    expect(snapNumber(3.14159, { min: 0, max: 10 })).toBe(3.14159)
-    expect(snapNumber(42, { min: 0, max: 10 })).toBe(10)
-    expect(snapNumber(-42, { min: 0 })).toBe(0)
-  })
-
-  it('snaps and clamps with a step', () => {
-    expect(snapNumber(42, { min: 0, max: 10, step: 3 })).toBe(9)
-    expect(snapNumber(4.4, { min: 0, max: 10, step: 3 })).toBe(3)
-  })
-
-  it('passes empty values through', () => {
-    expect(snapNumber(null, { min: 0, max: 10, step: 1 })).toBeNull()
-    expect(snapNumber(undefined, { min: 0, max: 10, step: 1 })).toBeUndefined()
-    expect(snapNumber(Number.NaN, { min: 0, max: 10, step: 1 })).toBeNaN()
-  })
-})
-
-type Setup = {
-  modelValue?: number | null
-  defaultValue?: number
-  min?: number
-  max?: number
-  step?: number
-  formatOptions?: Intl.NumberFormatOptions
+const valueText = (props: NumberValueProps) => {
+  return mount(NumberValue, { props }).get('[data-slot="number-value-value"]').text()
 }
 
-const setup = (initial: Setup = {}) => {
-  const props = ref<Setup>({ ...initial })
-  const model = ref<number | null | undefined>(initial.modelValue)
-  const onCommit = vi.fn<() => void>()
-  let value!: NumberValue
+describe('NumberValue', () => {
+  it('renders a decimal number in English by default', () => {
+    expect(valueText({ value: 1234.5 })).toBe('1,234.5')
+  })
 
-  const options: NumberValueOptions = {
-    model,
-    defaultValue: () => props.value.defaultValue,
-    min: () => props.value.min,
-    max: () => props.value.max,
-    step: () => props.value.step,
-    formatOptions: () => props.value.formatOptions,
-    onCommit,
-  }
+  it('formats currency for the locale', () => {
+    expect(valueText({ value: 228441, format: 'currency', currency: 'USD', locale: 'en-US' })).toBe(
+      '$228,441.00',
+    )
 
-  const wrapper = mount(
-    defineComponent({
-      emits: ['update:modelValue'],
-      setup() {
-        value = useNumberValue(options)
-        return () => null
+    expect(valueText({ value: 228441, format: 'currency', currency: 'EUR', locale: 'de-DE' })).toBe(
+      `228.441,00${NBSP}€`,
+    )
+
+    expect(valueText({ value: 228441, format: 'currency', currency: 'JPY', locale: 'ja-JP' })).toBe(
+      '￥228,441',
+    )
+  })
+
+  it('formats a fraction as a percentage for the locale', () => {
+    expect(valueText({ value: 0.033, format: 'percent', maximumFractionDigits: 1 })).toBe('3.3%')
+
+    expect(
+      valueText({ value: 0.033, format: 'percent', maximumFractionDigits: 1, locale: 'fr-FR' }),
+    ).toBe(`3,3${NBSP}%`)
+  })
+
+  it('shortens large numbers with compact notation for the locale', () => {
+    expect(valueText({ value: 1234, notation: 'compact' })).toBe('1.2K')
+
+    expect(valueText({ value: 1_200_000, notation: 'compact', locale: 'de-DE' })).toBe(
+      `1,2${NBSP}Mio.`,
+    )
+  })
+
+  it('formats units for the locale', () => {
+    expect(valueText({ value: 120, format: 'unit', unit: 'kilometer-per-hour' })).toBe('120 km/h')
+
+    expect(valueText({ value: 1.5, format: 'unit', unit: 'liter', locale: 'de-DE' })).toBe('1,5 l')
+  })
+
+  it('applies signDisplay and the fraction digit limits', () => {
+    expect(valueText({ value: 42, signDisplay: 'always' })).toBe('+42')
+    expect(valueText({ value: 3, minimumFractionDigits: 2 })).toBe('3.00')
+    expect(valueText({ value: 3.14159, maximumFractionDigits: 2 })).toBe('3.14')
+  })
+
+  it('lets options override the flat props', () => {
+    expect(
+      valueText({
+        value: -1234.56,
+        format: 'currency',
+        currency: 'USD',
+        options: { currency: 'EUR', currencySign: 'accounting' },
+      }),
+    ).toBe('(€1,234.56)')
+  })
+
+  it('falls back to the App locale and prefers its own locale prop', () => {
+    const wrapper = mount(() =>
+      h(App, { locale: 'de-DE', toaster: null }, () => [
+        h('p', { id: 'inherited' }, h(NumberValue, { value: 1234.5 })),
+        h('p', { id: 'own' }, h(NumberValue, { value: 1234.5, locale: 'en-US' })),
+      ]),
+    )
+
+    expect(wrapper.get('#inherited').text()).toBe('1.234,5')
+    expect(wrapper.get('#own').text()).toBe('1,234.5')
+  })
+
+  it('passes the formatted string and the value to the default slot', () => {
+    const wrapper = mount(NumberValue, {
+      props: { value: 0.25, format: 'percent' },
+      slots: {
+        default: ({ formatted, value }: { formatted: string; value: number }) =>
+          h('b', `${formatted} of ${value}`),
       },
-    }),
-  )
-
-  return { wrapper, props, model, onCommit, value }
-}
-
-describe('useNumberValue', () => {
-  it('falls back to a 0.01 step for percent formats, without snapping to it', () => {
-    const { props, value } = setup({ defaultValue: 0.123, formatOptions: { style: 'percent' } })
-    expect(value.effectiveStep.value).toBe(0.01)
-    expect(value.defaultDisplayValue.value).toBe(0.123)
-    props.value = { ...props.value, step: 0.05 }
-    expect(value.effectiveStep.value).toBe(0.05)
-    expect(value.defaultDisplayValue.value).toBe(0.1)
-    props.value = { formatOptions: { style: 'decimal' } }
-    expect(value.effectiveStep.value).toBeUndefined()
-  })
-
-  it('displays the model and default clamped and snapped, and passes an empty model through', () => {
-    const { model, value } = setup({
-      modelValue: 0.1 + 0.2,
-      defaultValue: 99,
-      min: 0,
-      max: 1,
-      step: 0.1,
     })
 
-    expect(value.displayValue.value).toBe(0.3)
-    expect(value.defaultDisplayValue.value).toBe(1)
-    model.value = null
-    expect(value.displayValue.value).toBeNull()
-    model.value = undefined
-    expect(value.displayValue.value).toBeUndefined()
+    expect(wrapper.get('[data-slot="number-value-value"] b').text()).toBe('25% of 0.25')
   })
 
-  it('submits the snapped default while uncontrolled, and the model when controlled', () => {
-    expect(setup({ defaultValue: 7, step: 5 }).value.formValue.value).toBe(5)
-    expect(setup({ modelValue: 13, defaultValue: 7, step: 5 }).value.formValue.value).toBe(15)
-    expect(setup().value.formValue.value).toBeUndefined()
-  })
+  it('renders the prefix and suffix around the number only when given', () => {
+    const plain = mount(NumberValue, { props: { value: 5 } })
+    expect(plain.find('[data-slot="number-value-prefix"]').exists()).toBe(false)
+    expect(plain.find('[data-slot="number-value-suffix"]').exists()).toBe(false)
 
-  it('tracks committed values and external model changes in the form value', async () => {
-    const { model, onCommit, value, wrapper } = setup({ defaultValue: 2, min: 0, max: 10 })
-    value.commit(4)
-    expect(model.value).toBe(4)
-    expect(value.formValue.value).toBe(4)
-    expect(onCommit).toHaveBeenCalledTimes(1)
-    model.value = 42
-    await nextTick()
-    expect(value.formValue.value).toBe(10)
-    expect(onCommit).toHaveBeenCalledTimes(1)
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
-  })
+    const wrapper = mount(NumberValue, {
+      props: { value: 99.99, format: 'currency', currency: 'USD' },
+      slots: { prefix: () => 'From ', suffix: () => '/month' },
+    })
 
-  it('commits an emptied value once, emitting it when the model has no value to clear', () => {
-    const uncontrolled = setup({ defaultValue: 3 })
-    uncontrolled.value.commitEmpty()
-    expect(uncontrolled.value.formValue.value).toBeUndefined()
-    expect(uncontrolled.wrapper.emitted('update:modelValue')).toEqual([[undefined]])
-    expect(uncontrolled.onCommit).toHaveBeenCalledTimes(1)
-    uncontrolled.value.commitEmpty()
-    expect(uncontrolled.wrapper.emitted('update:modelValue')).toHaveLength(1)
-    expect(uncontrolled.onCommit).toHaveBeenCalledTimes(1)
-
-    const controlled = setup({ modelValue: 3 })
-    controlled.value.commitEmpty()
-    expect(controlled.model.value).toBeUndefined()
-    expect(controlled.value.formValue.value).toBeUndefined()
-    expect(controlled.wrapper.emitted('update:modelValue')).toBeUndefined()
-    expect(controlled.onCommit).toHaveBeenCalledTimes(1)
-  })
-
-  it('reset restores the snapped default to the model and the form value, without committing', () => {
-    const { model, onCommit, value } = setup({ defaultValue: 0.26, min: 0, max: 1, step: 0.25 })
-    value.commit(0.75)
-    value.reset()
-    expect(model.value).toBe(0.25)
-    expect(value.formValue.value).toBe(0.25)
-    expect(onCommit).toHaveBeenCalledTimes(1)
-
-    const empty = setup({ modelValue: 5 })
-    empty.value.reset()
-    expect(empty.model.value).toBeUndefined()
-    expect(empty.value.formValue.value).toBeUndefined()
+    const parts = [...wrapper.element.children].map((el) => el.getAttribute('data-slot'))
+    expect(parts).toEqual(['number-value-prefix', 'number-value-value', 'number-value-suffix'])
+    expect(wrapper.text()).toBe('From $99.99/month')
   })
 })
