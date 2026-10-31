@@ -128,6 +128,7 @@ export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>([
   'app',
   'autocomplete',
   'breadcrumbs',
+  'button',
   'checkbox',
   'combo-box',
   'context-menu',

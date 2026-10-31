@@ -53,6 +53,8 @@ export type FormContext = {
   validateOnInputDelay: Readonly<Ref<number>>
   /** The form's state, which `nested` forms read from. */
   state: Readonly<Ref<unknown>>
+  /** Whether a submission is in progress (`loadingAuto`): a `loadingAuto` submit `Button` shows pending meanwhile. */
+  loading: Readonly<Ref<boolean>>
   /** Reports a field's input, change, blur or focus; the form tracks it and validates the field per `validateOn`. */
   emit: (event: FormInputEvent) => void
   /** Registers a named field. Returns the unregister function. */
