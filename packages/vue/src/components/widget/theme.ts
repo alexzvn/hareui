@@ -9,7 +9,7 @@ export default {
     legendItemDot: 'size-2.5 shrink-0 rounded-full',
     legendItemLabel: 'text-xs text-muted',
     content:
-      'mx-1.5 mb-1.5 flex-1 overflow-hidden rounded-xl bg-surface p-4 shadow-[0_0_0_1px_rgb(0_0_0/0.03),0_1px_2px_0_rgb(0_0_0/0.04)] first:mt-1.5',
+      'mx-1.5 mb-1.5 flex-1 overflow-hidden rounded-xl bg-surface p-4 shadow-surface first:mt-1.5',
     footer: 'flex items-center gap-3 px-4 pt-3 pb-4',
   },
 }
