@@ -21,20 +21,16 @@ import { computed, h } from 'vue'
 
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
-import type { LinkTarget, ResolvedLink } from '@/utils/link'
-import { LinkResolver } from '@/utils/link'
+import type { ResolvedLink } from '@/utils/link'
+import { LINK_PROP_DEFAULTS, LinkResolver, pickLinkProps } from '@/utils/link'
 
 import type { LinkProps, LinkSlots } from './Link.types'
 import theme from './theme'
 
 const props = withDefaults(defineProps<LinkProps>(), {
+  ...LINK_PROP_DEFAULTS,
   as: 'a',
   iconPlacement: 'end',
-  download: undefined,
-  external: undefined,
-  replace: undefined,
-  exact: undefined,
-  active: undefined,
 })
 
 const slots = defineSlots<LinkSlots>()
@@ -43,19 +39,7 @@ const ui = useComponentUI('link', { theme: theme, variantProps: () => ({}), prop
 const isDisabled = useFieldsetDisabled(() => props.disabled)
 const showIcon = computed(() => props.icon || !!slots.icon)
 
-const linkTarget = computed((): LinkTarget => ({
-  as: props.as,
-  to: props.to,
-  href: props.href,
-  target: props.target,
-  rel: props.rel,
-  download: props.download,
-  external: props.external,
-  replace: props.replace,
-  exact: props.exact,
-  active: props.active,
-  disabled: isDisabled.value,
-}))
+const linkTarget = computed(() => ({ ...pickLinkProps(props), disabled: isDisabled.value }))
 
 // HeroUI's ExternalLinkIcon (9×9, viewBox 0 0 7 7).
 const defaultIcon = () =>

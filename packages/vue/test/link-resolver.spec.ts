@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h } from 'vue'
 
+import type { LinkBaseProps } from '@/types/link'
 import type { LinkTarget, ResolvedLink } from '@/utils/link'
 import { LinkResolver } from '@/utils/link'
 
@@ -41,6 +42,7 @@ type MountOptions = {
   current?: boolean
   attrs?: Record<string, unknown>
   RouterLink?: ReturnType<typeof routerStub>
+  router?: { resolve: (to: unknown) => { href: string } }
 }
 
 const mountLink = (link: LinkTarget, options: MountOptions = {}) => {
@@ -58,7 +60,12 @@ const mountLink = (link: LinkTarget, options: MountOptions = {}) => {
             ),
         },
       ),
-    { global: { components: options.RouterLink ? { RouterLink: options.RouterLink } : {} } },
+    {
+      global: {
+        components: options.RouterLink ? { RouterLink: options.RouterLink } : {},
+        config: { globalProperties: options.router ? { $router: options.router } : {} },
+      },
+    },
   )
 
   return wrapper
@@ -228,5 +235,104 @@ describe('LinkResolver aria-current', () => {
   it('with `current` off, leaves the exact route match unmarked', () => {
     const link = mountLink({ to: '/b' }, { RouterLink: anyRouter(), current: false })
     expect(link.attributes('aria-current')).toBeUndefined()
+  })
+})
+
+describe('LinkResolver regressions', () => {
+  it('renders `download: true` as a bare attribute, so the browser keeps the file name', () => {
+    const link = mountLink({ href: '/report.pdf', download: true })
+    expect(link.attributes('download')).toBe('')
+  })
+
+  it('sets no `download` attribute for `download: false`', () => {
+    const link = mountLink({ href: '/report.pdf', download: false })
+    expect(link.attributes('download')).toBeUndefined()
+  })
+
+  it('forwards `replace` and `external` to a custom `as` component', () => {
+    const Custom = defineComponent({
+      props: { to: String, replace: Boolean, external: Boolean },
+      setup:
+        (props, { slots }) =>
+        () =>
+          h(
+            'span',
+            { 'data-replace': String(props.replace), 'data-external': String(props.external) },
+            slots.default?.(),
+          ),
+    })
+
+    const link = mountLink({ as: Custom, to: '/a', replace: true, external: true })
+    expect(link.attributes('data-replace')).toBe('true')
+    expect(link.attributes('data-external')).toBe('true')
+  })
+
+  it('a disabled custom `as` renders a plain disabled anchor instead of the component', () => {
+    const Custom = defineComponent({
+      props: { to: String },
+      setup:
+        (props, { slots }) =>
+        () =>
+          h('span', { 'data-to': props.to }, slots.default?.()),
+    })
+
+    const link = mountLink({ as: Custom, to: '/a', disabled: true })
+    expect(link.element.tagName).toBe('A')
+    expect(link.attributes('data-to')).toBeUndefined()
+    expect(link.attributes('href')).toBeUndefined()
+    expect(link.attributes('aria-disabled')).toBe('true')
+  })
+
+  it('a disabled custom `as` without a destination keeps its element', () => {
+    const link = mountLink({ as: 'span', disabled: true })
+    expect(link.element.tagName).toBe('SPAN')
+    expect(link.attributes('aria-disabled')).toBe('true')
+  })
+
+  it.each([
+    ['`target="_blank"`', { target: '_blank' }],
+    ['`external`', { external: true }],
+  ])('resolves a route location `to` with %s through the router into an anchor', (_, extra) => {
+    const resolve = vi.fn<(to: unknown) => { href: string }>(() => ({ href: '/app/users/1' }))
+    const to = { name: 'user', params: { id: 1 } }
+    const link = mountLink({ to, ...extra }, { RouterLink: anyRouter(), router: { resolve } })
+
+    expect(link.element.tagName).toBe('A')
+    expect(link.attributes('href')).toBe('/app/users/1')
+    expect(resolve).toHaveBeenCalledWith(to)
+  })
+
+  it('warns and renders the fallback for a route location `to` without a router', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const link = mountLink({ to: { name: 'user' }, external: true })
+
+    expect(link.element.tagName).toBe('BUTTON')
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('vue-router'))
+    warn.mockRestore()
+  })
+})
+
+// vue-router declares its route locations as interfaces, which get no implicit index signature.
+// oxlint-disable-next-line typescript/consistent-type-definitions -- mirrors vue-router's `RouteLocationNamedRaw` interface; a type alias would get an index signature and hide the bug
+interface RouteLocationNamedRaw {
+  name?: string | symbol
+  params?: Record<string, string | number>
+  query?: Record<string, string | null>
+  hash?: string
+  path?: undefined
+  replace?: boolean
+  force?: boolean
+  state?: Record<string, unknown>
+}
+
+describe('LinkResolver `to` type', () => {
+  it('accepts a vue-router route location held in a variable', async () => {
+    const location: RouteLocationNamedRaw = { name: 'user', params: { id: 1 } }
+    const to: LinkBaseProps['to'] = location
+    const navigate = vi.fn<(to: unknown) => void>()
+    const link = mountLink({ to }, { RouterLink: routerStub(navigate) })
+
+    await link.trigger('click')
+    expect(navigate).toHaveBeenCalledWith(location)
   })
 })

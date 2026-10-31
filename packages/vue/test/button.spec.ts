@@ -299,6 +299,44 @@ describe('Button loadingAuto', () => {
     expect(wrapper.attributes('aria-busy')).toBeUndefined()
   })
 
+  it('clears pending when the click handler throws synchronously, passing the error to the app', async () => {
+    const error = new Error('offline')
+    const errorHandler = vi.fn<(error: unknown) => void>()
+    const wrapper = mount(Button, {
+      props: {
+        loadingAuto: true,
+        onClick: () => {
+          throw error
+        },
+      },
+      global: { config: { errorHandler } },
+    })
+
+    await wrapper.trigger('click')
+    await flushPromises()
+    expect(wrapper.attributes('aria-busy')).toBeUndefined()
+    expect(errorHandler).toHaveBeenCalledWith(error, expect.anything(), expect.anything())
+  })
+
+  it('unmounting while the click promise runs is safe', async () => {
+    const { promise, resolve } = Promise.withResolvers<void>()
+    const errorHandler = vi.fn<(error: unknown) => void>()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const wrapper = mount(Button, {
+      props: { loadingAuto: true, onClick: () => promise },
+      global: { config: { errorHandler } },
+    })
+
+    await wrapper.trigger('click')
+    wrapper.unmount()
+    resolve()
+    await flushPromises()
+    expect(errorHandler).not.toHaveBeenCalled()
+    expect(warn).not.toHaveBeenCalled()
+    warn.mockRestore()
+  })
+
   it('a submit button is pending while its Form submits, and stays focusable', async () => {
     const { promise, resolve } = Promise.withResolvers<void>()
     const wrapper = mount(

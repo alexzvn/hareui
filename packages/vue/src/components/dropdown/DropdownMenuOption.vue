@@ -136,7 +136,7 @@ import { computed, h, inject, renderSlot, shallowReactive } from 'vue'
 
 import Kbd from '@/components/kbd/Kbd.vue'
 import { IconRenderer } from '@/utils/icon'
-import { LinkResolver } from '@/utils/link'
+import { hasLink, LinkResolver } from '@/utils/link'
 
 import type { DropdownSelectionGroup } from './context'
 import { dropdownContextKey } from './context'
@@ -194,12 +194,7 @@ const component = computed(() => {
 })
 
 // Only plain action items render as links: submenu triggers and selectable items keep their menu element.
-const isLink = computed(
-  () =>
-    !props.submenu &&
-    !isSelectable.value &&
-    (props.item.to !== undefined || props.item.href !== undefined),
-)
+const isLink = computed(() => !props.submenu && !isSelectable.value && hasLink(props.item))
 
 // The item keeps its menu role (and Reka's own `aria-disabled`) when disabled, so the link's `role="link"` is dropped.
 const linkAttrs = ({ role: _role, ...attrs }: Record<string, unknown>) => attrs

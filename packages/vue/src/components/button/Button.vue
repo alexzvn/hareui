@@ -61,22 +61,17 @@ import Spinner from '@/components/spinner/Spinner.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { refElement } from '@/composables/useFirstChild'
 import { IconRenderer } from '@/utils/icon'
-import type { LinkTarget } from '@/utils/link'
-import { LinkResolver } from '@/utils/link'
+import { hasLink, LINK_PROP_DEFAULTS, LinkResolver, pickLinkProps } from '@/utils/link'
 
 import type { ButtonProps, ButtonSlots } from './Button.types'
 import theme from './theme'
 
 const props = withDefaults(defineProps<ButtonProps>(), {
+  ...LINK_PROP_DEFAULTS,
   as: 'button',
   type: 'button',
   disabled: undefined,
   fullWidth: undefined,
-  external: undefined,
-  download: undefined,
-  replace: undefined,
-  exact: undefined,
-  active: undefined,
 })
 
 const slots = defineSlots<ButtonSlots>()
@@ -137,22 +132,10 @@ const isDisabled = computed(
   () => isFieldsetDisabled.value && (!isFormPending.value || !!ownDisabled()),
 )
 
-const isLink = computed(() => props.to !== undefined || props.href !== undefined)
+const isLink = computed(() => hasLink(props))
 const isNativeButton = computed(() => !isLink.value && props.as === 'button')
 
-const linkTarget = computed((): LinkTarget => ({
-  as: props.as,
-  to: props.to,
-  href: props.href,
-  target: props.target,
-  rel: props.rel,
-  download: props.download,
-  external: props.external,
-  replace: props.replace,
-  exact: props.exact,
-  active: props.active,
-  disabled: isDisabled.value,
-}))
+const linkTarget = computed(() => ({ ...pickLinkProps(props), disabled: isDisabled.value }))
 
 const attrs = computed(() => {
   if (isNativeButton.value) {

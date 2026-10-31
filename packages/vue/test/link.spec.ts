@@ -221,4 +221,61 @@ describe('Link link props', () => {
     const wrapper = mount(Link, { props: { href: '/docs' } })
     expect(wrapper.attributes('download')).toBeUndefined()
   })
+
+  it('renders `download` without a value, so the browser keeps the file name', () => {
+    const wrapper = mount(Link, { props: { href: '/report.pdf', download: true } })
+    expect(wrapper.attributes('download')).toBe('')
+  })
+})
+
+// A router link component passed as `as`: it reads `to`, `replace` and `external` as props and navigates on click.
+const routerLinkAs = (navigate: (to: unknown) => void) =>
+  markRaw(
+    defineComponent({
+      props: { to: [String, Object], replace: Boolean, external: Boolean },
+      setup:
+        (props, { slots }) =>
+        () =>
+          h(
+            'a',
+            {
+              href: String(props.to),
+              'data-replace': String(props.replace),
+              'data-external': String(props.external),
+              onClick: () => navigate(props.to),
+            },
+            slots.default?.(),
+          ),
+    }),
+  )
+
+describe('Link with a router link component as `as`', () => {
+  it('forwards `replace` to it', () => {
+    const wrapper = mount(Link, {
+      props: { as: routerLinkAs(vi.fn<(to: unknown) => void>()), to: '/x', replace: true },
+    })
+
+    expect(wrapper.attributes('data-replace')).toBe('true')
+  })
+
+  it('forwards `external` to it', () => {
+    const wrapper = mount(Link, {
+      props: { as: routerLinkAs(vi.fn<(to: unknown) => void>()), to: '/x', external: true },
+    })
+
+    expect(wrapper.attributes('data-external')).toBe('true')
+  })
+
+  it('when disabled, renders no href, is aria-disabled and never navigates', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    const wrapper = mount(Link, {
+      props: { as: routerLinkAs(navigate), to: '/x', disabled: true },
+      slots: { default: () => 'Docs' },
+    })
+
+    expect(wrapper.attributes('href')).toBeUndefined()
+    expect(wrapper.attributes('aria-disabled')).toBe('true')
+    await wrapper.trigger('click')
+    expect(navigate).not.toHaveBeenCalled()
+  })
 })
