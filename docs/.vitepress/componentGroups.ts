@@ -103,6 +103,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
     'splitter',
     'surface',
     'toolbar',
+    'widget',
   ],
   Media: ['avatar', 'avatar-group', 'carousel'],
   Navigation: [
@@ -141,6 +142,7 @@ export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'toc',
   'tree',
   'trend-chip',
+  'widget',
 ])
 
 // Pages that get an "Updated" badge in the sidebar. Clear entries after the next release.
