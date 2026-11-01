@@ -487,3 +487,47 @@ describe('toast', () => {
     })
   })
 })
+
+describe('toast closeButton and action', () => {
+  afterEach(() => {
+    toastQueue.destroy()
+  })
+
+  it('renders the close button labelled "Close" by default', async () => {
+    const wrapper = mountProvider()
+    toast('Hi', { timeout: 0 })
+    await nextTick()
+    expect(wrapper.find('[data-slot=toast-close]').attributes('aria-label')).toBe('Close')
+    wrapper.unmount()
+  })
+
+  it('hides the close button with closeButton=false', async () => {
+    const wrapper = mountProvider()
+    toast('Hi', { timeout: 0, closeButton: false })
+    await nextTick()
+    expect(wrapper.find('[data-slot=toast-close]').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('sets the close icon and aria-label from a closeButton object', async () => {
+    const wrapper = mountProvider()
+    toast('Hi', { timeout: 0, closeButton: { icon: 'i-test-x', label: 'Dismiss' } })
+    await nextTick()
+    const close = wrapper.find('[data-slot=toast-close]')
+    expect(close.attributes('aria-label')).toBe('Dismiss')
+    expect(close.find('span.i-test-x').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('renders the action button and runs its onClick', async () => {
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+    const wrapper = mountProvider()
+    toast('Archived', { timeout: 0, action: { label: 'Undo', onClick } })
+    await nextTick()
+    const action = wrapper.find('[data-slot=toast-action-button]')
+    expect(action.text()).toBe('Undo')
+    await action.trigger('click')
+    expect(onClick).toHaveBeenCalledTimes(1)
+    wrapper.unmount()
+  })
+})

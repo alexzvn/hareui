@@ -1,14 +1,16 @@
 <template>
   <Carousel :items="FORECAST" thumbnails aria-label="Weekly forecast" class="w-full max-w-xs">
     <template #default="{ item }">
-      <Card
-        class="select-none"
-        :ui="{ content: 'flex aspect-video flex-col items-center justify-center gap-2' }"
-      >
-        <Icon aria-hidden="true" class="size-10 text-foreground" :icon="item.icon" />
-        <span class="text-3xl font-semibold tabular-nums">{{ item.high }}°</span>
-        <span class="text-sm text-muted">{{ item.day }}</span>
-      </Card>
+      <div class="p-1">
+        <Card
+          class="select-none"
+          :ui="{ content: 'flex aspect-video flex-col items-center justify-center gap-2' }"
+        >
+          <Icon aria-hidden="true" class="size-10 text-foreground" :icon="item.icon" />
+          <span class="text-3xl font-semibold tabular-nums">{{ item.high }}°</span>
+          <span class="text-sm text-muted">{{ item.day }}</span>
+        </Card>
+      </div>
     </template>
 
     <template #thumbnail="{ item: day, selected }">

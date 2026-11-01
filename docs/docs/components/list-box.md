@@ -76,6 +76,12 @@ const items: MyItem[] = [/* ... */]
 
 <ComponentPreview name="list-box/with-disabled-items" />
 
+### With Icons
+
+Set `icon` on an item to show an icon before its label. The `#item-leading` slot replaces it. Select, ComboBox and Autocomplete items accept it too.
+
+<ComponentPreview name="list-box/with-icons" />
+
 ### With Sections
 
 <ComponentPreview name="list-box/with-sections" />

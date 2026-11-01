@@ -62,6 +62,7 @@ import {
 } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
 
 import theme from './theme'
@@ -80,6 +81,8 @@ import type { QueuedToast, ToastContentValue as ToastContentValueType } from './
 import { toastQueue as defaultToastQueue } from './useToast'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<ToastProviderProps>(), {
   placement: 'bottom',
@@ -288,7 +291,9 @@ const activeToastCount = computed(() => visibleToasts.value.length - exitingKeys
 const regionLabel = computed(
   () =>
     props.ariaLabel ??
-    `${activeToastCount.value} notification${activeToastCount.value === 1 ? '' : 's'}.`,
+    t(activeToastCount.value === 1 ? 'toast.regionOne' : 'toast.regionMany', {
+      count: activeToastCount.value,
+    }),
 )
 
 const resolvedIsExpanded = computed(

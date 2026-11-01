@@ -54,7 +54,13 @@ bun add fuse.js
 
 ## Groups
 
-Pass `groups`, each with a unique `id`, an optional `label` and its `items`. An item shows a `label`, and optionally a `prefix`, a `suffix`, a `description`, a leading `icon`, `avatar` or `chip`, and `kbds` shortcuts. Icons are components (or class strings for icon-font utilities).
+Pass `groups`, each with a unique `id`, an optional `label` and its `items`. An item shows its `label` and can add:
+
+- `prefix` and `suffix` text around the label, and a `description` below it
+- a leading `icon`, `avatar` or `chip` (a status dot)
+- `kbds`, keyboard shortcuts at the end
+
+Icons are components or icon classes.
 
 <ComponentPreview name="command-palette/inline" />
 
@@ -138,7 +144,13 @@ Set `fuse.fuseOptions.includeMatches` to mark the matched characters in labels a
 
 ## Custom slots
 
-Items and groups with a `slot` render through `#<slot>`, `#<slot>-leading`, `#<slot>-label`, `#<slot>-description`, `#<slot>-trailing` and `#<slot>-group-label`. Items with `href` or `to` render as links.
+Set `slot` on an item or group to give it its own slots:
+
+- `#<slot>-leading`, `#<slot>-label`, `#<slot>-description` and `#<slot>-trailing` for the parts of an item
+- `#<slot>` for the whole item
+- `#<slot>-group-label` for a group's heading
+
+Items with `href` or `to` render as links.
 
 <ComponentPreview name="command-palette/custom-slot" />
 

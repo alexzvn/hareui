@@ -6,6 +6,8 @@ import type { BadgeProps } from '@/components/badge/Badge.types'
 import type { ChipProps } from '@/components/chip/Chip.types'
 import type { DropdownEntry } from '@/components/dropdown/Dropdown.types'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
+import type { IconValue } from '@/types/icon'
+import type { LinkBaseProps } from '@/types/link'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -16,9 +18,6 @@ export type { NavigationMenuPopoverProps } from './types'
 
 type NavigationMenu = typeof theme
 
-/** An icon: a class string (icon-font / CSS-mask utilities such as `i-lucide-house`) or a component. */
-export type NavigationMenuIconValue = string | Component
-
 /** A link inside an item's dropdown content (horizontal) or popover (collapsed vertical). */
 export type NavigationMenuChildItem = {
   /** Description, only shown when `orientation` is `horizontal`. */
@@ -28,11 +27,11 @@ export type NavigationMenuChildItem = {
 } & Omit<NavigationMenuItemFields, 'type' | 'ui'>
 
 /** The known fields of an item, kept apart from the index signature so `Omit` preserves them. */
-type NavigationMenuItemFields = {
+type NavigationMenuItemFields = LinkBaseProps & {
   /** The item text. */
   label?: string
   /** Leading icon: a class string or a component. */
-  icon?: NavigationMenuIconValue
+  icon?: IconValue
   /** Leading avatar, shown instead of the icon. */
   avatar?: AvatarProps
   /**
@@ -64,7 +63,7 @@ type NavigationMenuItemFields = {
    */
   actions?: DropdownEntry[]
   /** The icon at the end of the item, replacing the chevron shown for items with children. */
-  trailingIcon?: NavigationMenuIconValue
+  trailingIcon?: IconValue
   /**
    * The kind of item. `label` is a group heading (vertical only), `trigger` forces an item that has
    * children and a link to act as a collapsible button instead.
@@ -86,28 +85,8 @@ type NavigationMenuItemFields = {
   open?: boolean
   /** Called when the item is selected (clicked or activated with the keyboard). */
   onSelect?: (e: Event) => void
-  /** Whether the item is the current location. Overrides the router match. */
-  active?: boolean
-  /** Whether the item is disabled. */
-  disabled?: boolean
-  /** The URL to link to. A vue-router location is passed to `RouterLink` when the app has it, a string renders a plain anchor. */
-  href?: string
-  /** A route location (vue-router) or URL. */
-  to?: string | Record<string, unknown>
   /** The element or component to render the link as, e.g. a router link component. */
   as?: string | Component
-  /** The link `target`. `_blank` also shows the external icon. */
-  target?: '_blank' | '_parent' | '_self' | '_top' | (string & {}) | null
-  /** The link `rel`. Defaults to `noopener noreferrer` for `_blank`. */
-  rel?: string | null
-  /** The link `download` attribute. */
-  download?: boolean | string
-  /** Treat the link as external: never route it through `RouterLink`. */
-  external?: boolean
-  /** With a router, only match the exact route as active. */
-  exact?: boolean
-  /** With a router, replace the history entry instead of pushing. */
-  replace?: boolean
   /** Additional classes merged into the item's link. */
   class?: ClassValue
   /** Per-slot class overrides for this item. */
@@ -187,12 +166,12 @@ export type NavigationMenuProps<T extends NavigationMenuItem = NavigationMenuIte
   /** The value(s) open initially. Use when you do not need to control them. */
   defaultValue?: string | string[]
   /** The icon displayed to open an item with children, replacing the chevron. */
-  trailingIcon?: NavigationMenuIconValue
+  trailingIcon?: IconValue
   /**
    * The icon displayed after the label of `target="_blank"` items. `false` hides it.
    * @defaultValue true
    */
-  externalIcon?: boolean | NavigationMenuIconValue
+  externalIcon?: boolean | IconValue
   /** The items: a flat array, or an array of arrays to render groups separated by a divider (vertical). */
   items?: T[] | T[][]
   /**

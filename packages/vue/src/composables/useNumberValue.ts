@@ -27,8 +27,13 @@ export type NumberValue = {
   formValue: Readonly<Ref<number | null | undefined>>
   /** Commits a value from Reka's `update:modelValue`. */
   commit: (value: number | undefined) => void
-  /** Commits an emptied input as "no value"; does nothing when already empty. */
-  commitEmpty: () => void
+  /**
+   * Records the input's text, ahead of Reka: bind it as a capture-phase `blur` and `keydown` listener on an ancestor
+   * of the input.
+   */
+  captureInputText: (event: Event) => void
+  /** Commits "no value" when the text recorded by `captureInputText` was empty; does nothing when already empty. */
+  commitIfEmptied: () => void
   /** Restores the (snapped) default, for form reset. */
   reset: () => void
 }
@@ -90,6 +95,19 @@ export const useNumberValue = (options: NumberValueOptions): NumberValue => {
     onCommit?.()
   }
 
+  // Reka's blur / Enter handler rewrites the input from the model, and while a `v-model` parent hasn't re-rendered
+  // yet that model is still the old one: after a clear and a retype, the input reads '' although Reka just
+  // committed the typed number. So the text is read in the capture phase, before Reka's handler on the input.
+  let committedText: string | undefined
+
+  const captureInputText = (event: Event) => {
+    if (event.target instanceof HTMLInputElement) committedText = event.target.value
+  }
+
+  const commitIfEmptied = () => {
+    if (committedText === '') commitEmpty()
+  }
+
   const reset = () => {
     formValue.value = defaultDisplayValue.value
     model.value = formValue.value
@@ -101,7 +119,8 @@ export const useNumberValue = (options: NumberValueOptions): NumberValue => {
     defaultDisplayValue,
     formValue: readonly(formValue),
     commit,
-    commitEmpty,
+    captureInputText,
+    commitIfEmptied,
     reset,
   }
 }

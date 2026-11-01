@@ -3,8 +3,11 @@ import { describe, expect, it } from 'vitest'
 import type { ComponentOptions } from 'vue'
 import { defineComponent, h, nextTick, ref } from 'vue'
 
+import InputGroup from '@/components/input-group/InputGroup.vue'
 import Input from '@/components/input/Input.vue'
+import TextArea from '@/components/text-area/TextArea.vue'
 import TextField from '@/components/text-field/TextField.vue'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 
 import { expectAccessible } from './a11y'
 
@@ -44,7 +47,7 @@ describe('TextField', () => {
       props: {
         label: 'Name',
         modelValue: 'a',
-        'onUpdate:modelValue': (v: string | number | undefined) =>
+        'onUpdate:modelValue': (v: string | number | null | undefined): Promise<void> =>
           wrapper.setProps({ modelValue: v }),
       },
     })
@@ -235,6 +238,185 @@ describe('TextField model parity', () => {
     expect((input.element as HTMLInputElement).value).toBe('jane')
     await input.setValue('janet')
     expect(wrapper.emitted('update:modelValue')).toEqual([['janet']])
+  })
+})
+
+describe('TextField v-model modifiers', () => {
+  const typeInto = async (modelModifiers: ModelModifiers | undefined, text: string) => {
+    const wrapper = mount(TextField, {
+      props: { label: 'Name', modelValue: 'Ada', modelModifiers },
+    })
+
+    await wrapper.get('input').setValue(text)
+    const emitted = wrapper.emitted('update:modelValue')?.at(-1)
+    wrapper.unmount()
+
+    return emitted
+  }
+
+  it('without modifiers emits an emptied input as an empty string', async () => {
+    expect(await typeInto(undefined, '')).toEqual([''])
+  })
+
+  it('trim emits the text without surrounding whitespace', async () => {
+    expect(await typeInto({ trim: true }, '  Grace  ')).toEqual(['Grace'])
+  })
+
+  it('number emits numeric text as a number', async () => {
+    expect(await typeInto({ number: true }, '42')).toEqual([42])
+  })
+
+  it('nullable emits null for an emptied input', async () => {
+    expect(await typeInto({ nullable: true }, '')).toEqual([null])
+  })
+
+  it('optional emits undefined for an emptied input', async () => {
+    expect(await typeInto({ optional: true }, '')).toEqual([undefined])
+  })
+
+  it('lazy emits on change, not on input', async () => {
+    const wrapper = mount(TextField, { props: { label: 'Name', modelModifiers: { lazy: true } } })
+    const input = wrapper.get('input')
+    input.element.value = 'Grace'
+    await input.trigger('input')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+    await input.trigger('change')
+    expect(wrapper.emitted('update:modelValue')).toEqual([['Grace']])
+    wrapper.unmount()
+  })
+
+  it('a TextArea in the field applies the field modifiers', async () => {
+    const wrapper = mount(TextField, {
+      props: { label: 'Bio', modelModifiers: { trim: true } },
+      slots: { default: () => h(TextArea) },
+    })
+
+    await wrapper.get('textarea').setValue('  Hello  ')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['Hello'])
+    wrapper.unmount()
+  })
+
+  describe('an InputGroup in the field', () => {
+    const mountGroup = (modelModifiers: ModelModifiers) =>
+      mount(TextField, {
+        props: { label: 'Price', modelValue: '', modelModifiers },
+        slots: { default: () => h(InputGroup, { prefix: '$' }) },
+      })
+
+    it('applies lazy: emits on change, not on input', async () => {
+      const wrapper = mountGroup({ lazy: true })
+      const input = wrapper.get('input')
+      input.element.value = 'abc'
+      await input.trigger('input')
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+      await input.trigger('change')
+      expect(wrapper.emitted('update:modelValue')).toEqual([['abc']])
+      wrapper.unmount()
+    })
+
+    it('applies trim', async () => {
+      const wrapper = mountGroup({ trim: true })
+      await wrapper.get('input').setValue('  9.99  ')
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['9.99'])
+      wrapper.unmount()
+    })
+
+    it('applies number', async () => {
+      const wrapper = mountGroup({ number: true })
+      await wrapper.get('input').setValue('9.99')
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([9.99])
+      wrapper.unmount()
+    })
+  })
+
+  it('a parent setting the value to null clears the typed text', async () => {
+    const wrapper = mount(TextField, {
+      props: {
+        label: 'Name',
+        modelModifiers: { nullable: true },
+        'onUpdate:modelValue': (v: string | number | null | undefined): Promise<void> =>
+          wrapper.setProps({ modelValue: v }),
+      },
+    })
+
+    const input = wrapper.get('input')
+    await input.setValue('Grace')
+    await wrapper.setProps({ modelValue: null })
+    expect(input.element.value).toBe('')
+    wrapper.unmount()
+  })
+
+  describe('an inner control with its own nullable v-model', () => {
+    const mountNested = (
+      control: typeof Input | typeof InputGroup,
+      fieldModifiers: ModelModifiers,
+    ) => {
+      const fieldValue = ref<string | number | null | undefined>('')
+      const controlValue = ref<string | number | null | undefined>('')
+      const fieldEmits: unknown[] = []
+      const controlEmits: unknown[] = []
+      const wrapper = mount(
+        defineComponent({
+          setup: () => () =>
+            h(
+              TextField,
+              {
+                label: 'Name',
+                modelValue: fieldValue.value,
+                modelModifiers: fieldModifiers,
+                'onUpdate:modelValue': (v: string | number | null | undefined) => {
+                  fieldEmits.push(v)
+                  fieldValue.value = v
+                },
+              },
+              {
+                default: () =>
+                  h(control, {
+                    modelValue: controlValue.value,
+                    modelModifiers: { nullable: true },
+                    'onUpdate:modelValue': (v: string | number | null | undefined) => {
+                      controlEmits.push(v)
+                      controlValue.value = v
+                    },
+                  }),
+              },
+            ),
+        }),
+      )
+
+      return { wrapper, fieldEmits, controlEmits }
+    }
+
+    // A field without `nullable` can't hold `null`; it takes the cleared control's value as `undefined`
+    const cases: [
+      string,
+      string,
+      typeof Input | typeof InputGroup,
+      ModelModifiers,
+      null | undefined,
+    ][] = [
+      ['Input', 'nullable', Input, { nullable: true }, null],
+      ['InputGroup', 'nullable', InputGroup, { nullable: true }, null],
+      ['Input', 'unmodified', Input, {}, undefined],
+      ['InputGroup', 'unmodified', InputGroup, {}, undefined],
+    ]
+
+    it.each(cases)(
+      '%s: clearing emits one null from the control and no transient empty string from a %s field',
+      async (_, _name, control, fieldModifiers, cleared) => {
+        const { wrapper, fieldEmits, controlEmits } = mountNested(control, fieldModifiers)
+        const input = wrapper.get('input')
+        await input.setValue('a')
+        await input.setValue('')
+        await nextTick()
+
+        expect(controlEmits).toEqual(['a', null])
+        expect(fieldEmits).toStrictEqual(['a', cleared])
+        wrapper.unmount()
+      },
+    )
   })
 })
 

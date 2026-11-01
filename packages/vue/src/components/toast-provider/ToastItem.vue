@@ -87,7 +87,14 @@
       >
         <component :is="renderValue" :value="content.action.label" />
       </Button>
-      <CloseButton data-slot="toast-close" :class="ui.close()" @click="props.close" />
+      <ResolvedCloseButton
+        v-if="content.closeButton !== false"
+        data-slot="toast-close"
+        :close-button="content.closeButton"
+        label-key="toast.close"
+        :class="ui.close()"
+        @click="props.close"
+      />
     </template>
   </div>
 </template>
@@ -106,7 +113,7 @@ import {
 } from 'vue'
 
 import Button from '@/components/button/Button.vue'
-import CloseButton from '@/components/close-button/CloseButton.vue'
+import ResolvedCloseButton from '@/components/close-button/ResolvedCloseButton.vue'
 import Spinner from '@/components/spinner/Spinner.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 

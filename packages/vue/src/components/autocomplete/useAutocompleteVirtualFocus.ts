@@ -1,5 +1,6 @@
 import { computed, nextTick, reactive, ref, watch } from 'vue'
 
+import type { ComboBoxHighlight } from '@/components/combo-box/ComboBox.types'
 import type { ListBoxItem, ListBoxValue } from '@/components/list-box/ListBox.types'
 import type { CollectionRow } from '@/components/list-box/listBoxCollection'
 import { useKeyboardModality } from '@/composables/useKeyboardModality'
@@ -22,6 +23,8 @@ export type AutocompleteVirtualFocusOptions = {
   virtualize: () => AutocompleteProps['virtualize']
   isDisabled: () => boolean
   isOpen: () => boolean
+  /** Called with each new focused option, `undefined` once none is. */
+  onHighlight: (payload: ComboBoxHighlight | undefined) => void
 }
 
 /** Keys that move the virtual focus through the options. */
@@ -204,6 +207,28 @@ export const useAutocompleteVirtualFocus = (options: AutocompleteVirtualFocusOpt
   watch(isOpen, (isNowOpen) => {
     if (!isNowOpen) focusedKey.value = null
   })
+
+  // A virtualized row mounts a frame after its key is set (`revealVirtualRow`): look a missing one up once more
+  const emitHighlight = (value: ListBoxValue | null, isRetry = false) => {
+    if (value == null) {
+      options.onHighlight(undefined)
+      return
+    }
+
+    const option = document.getElementById(optionId(value))
+    if (option) {
+      options.onHighlight({ ref: option, value })
+      return
+    }
+
+    if (isRetry) return
+
+    requestAnimationFrame(() => {
+      if (focusedKey.value === value) emitHighlight(value, true)
+    })
+  }
+
+  watch(focusedKey, (value) => emitHighlight(value), { flush: 'post' })
 
   return {
     focusedKey,

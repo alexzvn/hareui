@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -69,7 +69,7 @@ export type CheckboxButtonGroupProps = {
   class?: ClassValue
   /** Per-slot class overrides, applied to every item. */
   ui?: ComponentSlots<CheckboxButtonGroup>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots of `CheckboxButtonGroup`: the items plus overrides for the label, description and error message. */
 export type CheckboxButtonGroupSlots = {

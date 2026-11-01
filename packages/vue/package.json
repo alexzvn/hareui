@@ -1,6 +1,6 @@
 {
   "name": "@hareui/vue",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "HareUI — Vue 3 port of HeroUI v3",
   "license": "MIT",
   "keywords": [
@@ -60,6 +60,10 @@
     "./editor": {
       "types": "./dist/editor.d.ts",
       "import": "./dist/editor.js"
+    },
+    "./locale": {
+      "types": "./dist/locale/index.d.ts",
+      "import": "./dist/locale/index.js"
     },
     "./vite": {
       "types": "./dist/vite.d.ts",

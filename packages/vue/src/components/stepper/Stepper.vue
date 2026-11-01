@@ -37,9 +37,9 @@
             :class="ui.indicator({ override: item.ui?.indicator })"
           >
             <slot name="indicator" :item="item" :index="index" :state="state" :ui="ui">
-              <component
-                :is="item.icon"
+              <IconRenderer
                 v-if="item.icon"
+                :icon="item.icon"
                 data-slot="stepper-icon"
                 :class="ui.icon({ override: item.ui?.icon })"
               />
@@ -159,6 +159,7 @@ import { computed, ref, watch } from 'vue'
 
 import { useActiveIndex } from '@/composables/useActiveIndex'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { IconRenderer } from '@/utils/icon'
 import { resolveSlotName } from '@/utils/slotName'
 
 import type {

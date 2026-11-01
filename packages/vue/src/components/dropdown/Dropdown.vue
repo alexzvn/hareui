@@ -54,12 +54,15 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useControllableOpen } from '@/composables/useControllableOpen'
+import { useLocale } from '@/composables/useLocale'
 
 import type { DropdownEmits, DropdownItem, DropdownProps, DropdownSlots } from './Dropdown.types'
 import { ensureLongPressDescription, LONG_PRESS_DESCRIPTION_ID } from './dropdown.utils'
 import DropdownMenuItems from './DropdownMenuItems.vue'
 import theme from './theme'
 import { useDropdownMenu } from './useDropdownMenu'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<DropdownProps<T>>(), {
   portal: undefined,
@@ -202,7 +205,7 @@ const onTriggerKeydownCapture = (event: KeyboardEvent) => {
 
 onMounted(() => {
   if (props.trigger === 'longPress') {
-    ensureLongPressDescription()
+    ensureLongPressDescription(t('dropdown.longPress'))
     describedBy.value = LONG_PRESS_DESCRIPTION_ID
   }
 })

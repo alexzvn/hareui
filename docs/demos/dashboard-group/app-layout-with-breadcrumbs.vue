@@ -52,10 +52,15 @@
                     <span class="sr-only">{{ item.collapsed }}</span>
                   </span>
                 </Tooltip>
-                <span v-else class="flex min-w-0 items-center gap-2">
-                  <Icon v-if="item.icon" :icon="item.icon" class="size-4 shrink-0" />
+                <template v-else>
+                  <component
+                    :is="item.icon"
+                    v-if="item.icon"
+                    aria-hidden="true"
+                    class="me-1 size-4 shrink-0"
+                  />
                   <span class="truncate">{{ item.label }}</span>
-                </span>
+                </template>
               </template>
             </Breadcrumbs>
           </template>
@@ -148,7 +153,7 @@ const footerItems: NavigationMenuItem[] = [
 // (`@max-xl`) the middle ancestors fold into a "…" crumb that links to the nearest one and names the hidden path
 // in a tooltip, under 24rem (`@max-sm`, a phone) Home folds into it too, and under 20rem (`@max-xs`) only the
 // current page is left.
-const breadcrumbs: (BreadcrumbsItem & { collapsed?: string; icon?: string })[] = [
+const breadcrumbs: (BreadcrumbsItem & { collapsed?: string })[] = [
   { label: 'Home', href: '#', class: '@max-sm:hidden' },
   {
     label: 'Design System',
@@ -164,6 +169,6 @@ const breadcrumbs: (BreadcrumbsItem & { collapsed?: string; icon?: string })[] =
   },
   { label: 'Projects', href: '#', class: '@max-xl:hidden' },
   { label: 'Design System', href: '#', class: '@max-xl:hidden' },
-  { label: 'Components', icon: 'gravity-ui:layout-columns' },
+  { label: 'Components', icon: gravityIcon('layout-columns') },
 ]
 </script>

@@ -44,6 +44,20 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 
 <ComponentPreview name="textarea/controlled" />
 
+### Model Modifiers
+
+`v-model` takes these modifiers. They combine, for example `v-model.lazy.nullable`.
+
+| Modifier   | Effect                                                  |
+| ---------- | ------------------------------------------------------- |
+| `trim`     | Removes spaces and blank lines at the start and end     |
+| `number`   | Turns the value into a number when it reads as one      |
+| `lazy`     | Updates when the textarea loses focus, not on every key |
+| `nullable` | An emptied textarea is `null`                           |
+| `optional` | An emptied textarea is `undefined`                      |
+
+<ComponentPreview name="textarea/model-modifiers" />
+
 ### Rows and Resizing
 
 <ComponentPreview name="textarea/rows" />

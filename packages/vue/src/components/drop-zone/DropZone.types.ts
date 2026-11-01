@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -40,7 +40,7 @@ export type DropZoneProps = {
   description?: string
   /**
    * The text of the button that opens the file picker.
-   * @defaultValue 'Select files'
+   * @defaultValue the `App` locale's label, then 'en' ('Select files')
    */
   triggerLabel?: string
   /** Error message rendered below the area while invalid. Defaults to the validation errors. */
@@ -76,7 +76,7 @@ export type DropZoneProps = {
   class?: ClassValue
   /** Per-slot class overrides. The file keys also style the file lists and items inside the drop zone. */
   ui?: ComponentSlots<DropZone>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Props passed to the `icon`, `label`, `description` and `trigger` slots. */
 export type DropZoneSlotProps = {
@@ -118,4 +118,6 @@ export type DropZoneEmits = {
   add: [files: File[]]
   /** Emitted with the files that didn't match `accept` or exceeded `maxSize`. */
   reject: [rejections: DropZoneRejection[]]
+  /** Emitted after files are added or removed (not on `v-model` writes or form reset), after `add`. */
+  change: [event: Event]
 }

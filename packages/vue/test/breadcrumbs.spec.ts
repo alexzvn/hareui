@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import { describe, expect, it, vi } from 'vitest'
+import { defineComponent, h } from 'vue'
 
 import type { BreadcrumbsProps, BreadcrumbsSlots } from '@/components/breadcrumbs/Breadcrumbs.types'
 import Breadcrumbs from '@/components/breadcrumbs/Breadcrumbs.vue'
@@ -43,6 +43,84 @@ describe('breadcrumbs', () => {
     const seps = wrapper.findAll('[data-slot=breadcrumbs-separator]')
     expect(seps).toHaveLength(2)
     expect(seps.every((sep) => sep.element.tagName === 'I')).toBe(true)
+  })
+})
+
+describe('breadcrumbs item links and icons', () => {
+  // A minimal vue-router RouterLink: it renders nothing itself and hands the link state to its slot.
+  const routerStub = (navigate: (to: unknown) => void) =>
+    defineComponent({
+      props: { to: { type: [String, Object], required: true }, custom: Boolean, replace: Boolean },
+      setup(props, { slots }) {
+        return () =>
+          slots.default?.({
+            href: `/app${props.to}`,
+            isActive: false,
+            isExactActive: false,
+            navigate: (event: MouseEvent) => {
+              event.preventDefault()
+              navigate(props.to)
+            },
+          })
+      },
+    })
+
+  const trail = [{ label: 'Home', to: '/home' }, { label: 'Laptop' }]
+
+  it('renders an item `to` as a plain anchor without a router', () => {
+    const wrapper = mount(Breadcrumbs, { props: { items: trail } })
+    const first = wrapper.findAll('[data-slot=link]')[0]!
+    expect(first.element.tagName).toBe('A')
+    expect(first.attributes('href')).toBe('/home')
+  })
+
+  it('routes an item `to` through RouterLink when the app registers it', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    const wrapper = mount(Breadcrumbs, {
+      props: { items: trail },
+      global: { components: { RouterLink: routerStub(navigate) } },
+    })
+
+    const first = wrapper.findAll('[data-slot=link]')[0]!
+    expect(first.attributes('href')).toBe('/app/home')
+    await first.trigger('click')
+    expect(navigate).toHaveBeenCalledWith('/home')
+  })
+
+  it('the current page ignores its `to`', () => {
+    const wrapper = mount(Breadcrumbs, {
+      props: {
+        items: [
+          { label: 'Home', to: '/home' },
+          { label: 'Laptop', to: '/laptop' },
+        ],
+      },
+    })
+
+    const current = wrapper.findAll('[data-slot=link]')[1]!
+    expect(current.element.tagName).toBe('SPAN')
+    expect(current.attributes('href')).toBeUndefined()
+  })
+
+  it('a disabled item renders without a link', () => {
+    const wrapper = mount(Breadcrumbs, {
+      props: { items: [{ label: 'Home', href: '/home', disabled: true }, { label: 'Laptop' }] },
+    })
+
+    const first = wrapper.findAll('[data-slot=link]')[0]!
+    expect(first.attributes('href')).toBeUndefined()
+    expect(first.attributes('aria-disabled')).toBe('true')
+  })
+
+  it('renders an item icon only when the item sets one', () => {
+    const StarIcon = { render: () => h('svg', { 'data-testid': 'star' }) }
+    const wrapper = mount(Breadcrumbs, {
+      props: { items: [{ label: 'Home', href: '/home', icon: StarIcon }, { label: 'Laptop' }] },
+    })
+
+    const links = wrapper.findAll('[data-slot=link]')
+    expect(links[0]!.find('[data-testid=star]').attributes('aria-hidden')).toBe('true')
+    expect(links[1]!.find('[data-slot=breadcrumbs-icon]').exists()).toBe(false)
   })
 })
 
@@ -122,5 +200,16 @@ describe('Breadcrumbs accessibility', () => {
     ).toEqual(['true', 'true'])
 
     wrapper.unmount()
+  })
+})
+
+describe('breadcrumbs #item slot', () => {
+  it('a custom #item replaces the default item icon', () => {
+    const wrapper = mount(Breadcrumbs, {
+      props: { items: [{ label: 'Home', href: '/', icon: 'icon-home' }, { label: 'Laptop' }] },
+      slots: { item: ({ item }: { item: { label?: string } }) => h('b', item.label) },
+    })
+
+    expect(wrapper.find('[data-slot=breadcrumbs-icon]').exists()).toBe(false)
   })
 })

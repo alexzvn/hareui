@@ -5,7 +5,6 @@ export type {
   CommandPaletteFuseOptions,
   CommandPaletteGroup,
   CommandPaletteGroupSlotProps,
-  CommandPaletteIcon,
   CommandPaletteItem,
   CommandPaletteItemSlotProps,
   CommandPaletteProps,

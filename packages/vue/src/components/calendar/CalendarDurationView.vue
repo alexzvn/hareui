@@ -17,7 +17,7 @@
       <button
         type="button"
         :data-slot="`${p}-nav-button`"
-        aria-label="Previous"
+        :aria-label="t('calendar.prev')"
         :disabled="view.isPrevDisabled.value || undefined"
         :data-disabled="view.isPrevDisabled.value ? '' : undefined"
         :class="cls('navButton')"
@@ -45,7 +45,7 @@
       <button
         type="button"
         :data-slot="`${p}-nav-button`"
-        aria-label="Next"
+        :aria-label="t('calendar.next')"
         :disabled="view.isNextDisabled.value || undefined"
         :data-disabled="view.isNextDisabled.value ? '' : undefined"
         :class="cls('navButton')"
@@ -179,9 +179,11 @@
 <script setup lang="ts">
 import { GregorianCalendar, isSameDay, toCalendar } from '@internationalized/date'
 import type { CalendarDate, DateValue } from '@internationalized/date'
-import { useDirection, useLocale } from 'reka-ui'
+import { useDirection, useLocale as useRekaLocale } from 'reka-ui'
 import { computed, toRef, useTemplateRef } from 'vue'
 import type { VNode } from 'vue'
+
+import { useLocale } from '@/composables/useLocale'
 
 import type {
   CalendarDurationCellSlotProps,
@@ -192,6 +194,8 @@ import type {
 import { useCalendarDurationView } from './useCalendarDurationView'
 import { makeRange, useRangeSelection } from './useRangeSelection'
 
+const { t } = useLocale()
+
 const props = defineProps<CalendarDurationViewProps>()
 const emit = defineEmits<{ select: [value: CalendarDurationValue] }>()
 
@@ -200,7 +204,7 @@ defineSlots<{
   cell?: (props: CalendarDurationCellSlotProps) => VNode[]
 }>()
 
-const locale = useLocale(toRef(() => props.locale))
+const locale = useRekaLocale(toRef(() => props.locale))
 const direction = useDirection(toRef(() => props.dir))
 const p = computed(() => (props.kind === 'range' ? 'range-calendar' : 'calendar'))
 const cls = (slot: string) => props.ui[slot]?.()

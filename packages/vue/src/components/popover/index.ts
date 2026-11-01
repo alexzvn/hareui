@@ -1,2 +1,9 @@
 export { default as Popover } from './Popover.vue'
-export type { PopoverEmits, PopoverProps, PopoverSlots } from './Popover.types'
+
+export type {
+  PopoverContentSlotProps,
+  PopoverEmits,
+  PopoverMode,
+  PopoverProps,
+  PopoverSlots,
+} from './Popover.types'

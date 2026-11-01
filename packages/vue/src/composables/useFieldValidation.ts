@@ -18,9 +18,13 @@ import {
   watch,
 } from 'vue'
 
-import type { FormInputEvent, ValidationBehavior, ValidationError } from '@/components/form/context'
+import { formFieldContextKey } from '@/components/form-field/context'
+import { getFormError } from '@/components/form-field/formError'
+import type { ValidationBehavior, ValidationError } from '@/components/form/context'
 import { formContextKey } from '@/components/form/context'
-import type { FormFieldProps, FormInputEvents } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
+import { useFormEvents } from '@/composables/useFormEvents'
+import { useLocale } from '@/composables/useLocale'
 
 /** Snapshot of the native `ValidityState` flags. */
 export type ValidationDetails = {
@@ -63,7 +67,7 @@ export type FieldValidationOptions<T> = {
   /** Called on form reset, to restore the initial value. */
   onReset?: () => void
   /** The field's form-validation props. */
-  formField?: FormFieldProps
+  formField?: FormFieldValidationProps
 }
 
 const VALID: ValidationDetails = {
@@ -153,13 +157,20 @@ export const useFieldValidation = <T>(
   /** Commits the current value's validation (native behavior), e.g. after a stepper press that fires no `change`. */
   commitValidation: () => void
 } => {
+  const { t } = useLocale()
   const form = inject(formContextKey, null)
+
+  // A surrounding `FormField` supplies the name, form-validation props and error state the field doesn't set itself
+  const wrapper = inject(formFieldContextKey, null)
+  const getName = () => options.name() ?? wrapper?.name.value
+  const getErrorPattern = () => options.formField?.errorPattern ?? wrapper?.errorPattern.value
+
   const behavior = computed(
     () => options.validationBehavior() ?? form?.validationBehavior.value ?? 'native',
   )
 
   const controlledError = computed<ValidationResult | null>(() => {
-    const invalid = options.invalid()
+    const invalid = options.invalid() ?? (wrapper?.errorProp.value ? true : undefined)
     return invalid === undefined
       ? null
       : { isInvalid: invalid, validationErrors: [], validationDetails: CUSTOM }
@@ -176,15 +187,9 @@ export const useFieldValidation = <T>(
 
   // The first form error for this field, by name or `errorPattern`
   const formError = computed(() => {
-    const name = options.name()
-    const pattern = options.formField?.errorPattern
-    if (!form || (!name && !pattern)) return null
+    if (!form) return null
 
-    const match = form.errors.value.find(
-      (error) =>
-        (!!name && error.name === name) ||
-        (!!pattern && error.name !== undefined && pattern.test(error.name)),
-    )
+    const match = getFormError(form.errors.value, { name: getName(), pattern: getErrorPattern() })
 
     return match ? errorResult([match.message]) : null
   })
@@ -212,7 +217,7 @@ export const useFieldValidation = <T>(
   )
 
   const serverError = computed(() => {
-    const name = options.name()
+    const name = getName()
     return isServerErrorCleared.value || !name
       ? null
       : errorResult(asArray(form?.validationErrors.value?.[name]))
@@ -243,7 +248,7 @@ export const useFieldValidation = <T>(
     const isNative = behavior.value === 'native'
     const message =
       isNative && realtime.value.isInvalid
-        ? realtime.value.validationErrors.join(' ') || 'Invalid value.'
+        ? realtime.value.validationErrors.join(' ') || t('validation.invalid')
         : ''
 
     for (const el of els) {
@@ -258,23 +263,10 @@ export const useFieldValidation = <T>(
 
   watch([realtime, () => options.value(), behavior], sync, { flush: 'post' })
 
-  // Reports a field event to the surrounding `Form`, which tracks it and validates the field per its `validateOn`
-  const emitFormEvent = (type: FormInputEvents, flags?: Omit<FormInputEvent, 'type' | 'name'>) => {
-    const name = options.name()
-    if (form && name) form.emit({ type, name, ...flags })
-  }
-
-  let inputTimer: ReturnType<typeof setTimeout> | undefined
-
-  // Tracked right away so a submit within the delay isn't followed by a late dirty mark or validation
-  const emitFormInput = (eager: boolean) => {
-    emitFormEvent('input', { validate: false })
-    clearTimeout(inputTimer)
-    const delay = options.formField?.validateOnInputDelay ?? form?.validateOnInputDelay.value ?? 0
-    inputTimer = setTimeout(() => emitFormEvent('input', { eager, track: false }), delay)
-  }
-
-  onBeforeUnmount(() => clearTimeout(inputTimer))
+  const { emitFormEvent, emitFormInput } = useFormEvents({
+    name: getName,
+    validateOnInputDelay: () => options.formField?.validateOnInputDelay,
+  })
 
   const commit = () => {
     isServerErrorCleared.value = true
@@ -315,7 +307,7 @@ export const useFieldValidation = <T>(
   }
 
   watch(
-    () => options.name(),
+    getName,
     (name) => {
       if (!form || !name) return
 
@@ -325,7 +317,7 @@ export const useFieldValidation = <T>(
             const root = options.root()
             return (root?.querySelector<HTMLElement>(FOCUSABLE) ?? root)?.id || undefined
           },
-          pattern: () => options.formField?.errorPattern,
+          pattern: getErrorPattern,
         }),
       )
     },
@@ -373,7 +365,9 @@ export const useFieldValidation = <T>(
 
     // Typing validates once the field was first left, unless `eagerValidation`
     const onInput = (event: Event) => {
-      if (fromUser(event)) emitFormInput(!!options.formField?.eagerValidation)
+      // Vue casts an absent boolean prop to `false`, so either side turns eager validation on
+      const eager = options.formField?.eagerValidation || wrapper?.eagerValidation.value
+      if (fromUser(event)) emitFormInput(!!eager)
     }
 
     const onFocusIn = (event: FocusEvent) => {

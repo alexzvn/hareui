@@ -2,7 +2,7 @@
   <Dropdown :items="items">
     <button data-slot="dropdown-trigger" type="button" :class="triggerClass">
       <Avatar
-        alt="Junior Garcia"
+        alt="Jane Doe"
         :delay-ms="600"
         fallback="JD"
         src="https://heroui-assets.nyc3.cdn.digitaloceanspaces.com/avatars/orange.jpg"

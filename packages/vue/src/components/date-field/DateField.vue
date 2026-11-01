@@ -25,6 +25,8 @@
     :class="ui.base()"
     @update:model-value="onUpdate"
     @update:placeholder="emit('update:placeholder', $event)"
+    @focus.capture="onFocusCapture"
+    @blur.capture="onBlurCapture"
   >
     <template #default="{ segments }">
       <!-- `as="span"`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
@@ -70,15 +72,26 @@ import DateInputGroup from '@/components/date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 
 import type { DateFieldEmits, DateFieldProps, DateFieldSlots } from './DateField.types'
 import theme from './theme'
+
+const { t } = useLocale()
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<DateFieldProps>(), { invalid: undefined })
 const emit = defineEmits<DateFieldEmits>()
 const slots = defineSlots<DateFieldSlots>()
+
+// `focus` / `blur` are the field's: moving between segments emits neither
+const { onFocusCapture, onBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
+})
+
 const disabled = useFieldsetDisabled(() => props.disabled)
 
 /** The selected date. Bind with `v-model`. */
@@ -104,12 +117,12 @@ const formatDateBoundary = (value: DateValue) => {
 // and fed into `validate` so it follows `validationBehavior` like any other error.
 const builtinValidate = (value: DateValue) => {
   if (props.minValue && value.compare(props.minValue) < 0)
-    return `Value must be ${formatDateBoundary(props.minValue)} or later.`
+    return t('validation.min', { value: formatDateBoundary(props.minValue) })
 
   if (props.maxValue && value.compare(props.maxValue) > 0)
-    return `Value must be ${formatDateBoundary(props.maxValue)} or earlier.`
+    return t('validation.max', { value: formatDateBoundary(props.maxValue) })
 
-  if (props.isDateUnavailable?.(value)) return 'Selected date unavailable.'
+  if (props.isDateUnavailable?.(value)) return t('validation.unavailable')
 
   return undefined
 }
@@ -148,7 +161,7 @@ const onUpdate = (value: DateValue | undefined) => {
   commitValidation()
 }
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+const { name, id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
   useFieldChrome({
     props,
     slots,

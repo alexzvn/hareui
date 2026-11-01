@@ -344,7 +344,7 @@ describe('TextField with a slotted Input', () => {
             default: () =>
               h(Input, {
                 modelValue: value.value,
-                'onUpdate:modelValue': (v: string | number | undefined) =>
+                'onUpdate:modelValue': (v: string | number | null | undefined) =>
                   (value.value = String(v)),
               }),
           },
@@ -372,7 +372,8 @@ describe('TextField with a slotted Input', () => {
           default: () =>
             h(Input, {
               modelValue: value.value,
-              'onUpdate:modelValue': (v: string | number | undefined) => (value.value = String(v)),
+              'onUpdate:modelValue': (v: string | number | null | undefined) =>
+                (value.value = String(v)),
             }),
         },
       ),

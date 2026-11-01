@@ -11,6 +11,7 @@ const isClosing = (animation: Animation): boolean => {
 }
 
 /**
+ * The fallback for overlay components whose root isn't a HareUI overlay (those report `after:leave` themselves).
  * Resolves once every finite animation or transition running on a closing overlay part has ended (or been cancelled),
  * so an overlay unmounts only after its exit animation. Resolves at once where the Web Animations API is missing.
  */

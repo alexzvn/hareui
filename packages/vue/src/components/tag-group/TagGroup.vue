@@ -97,7 +97,7 @@ const ui = useComponentUI('tagGroup', { theme: theme, variantProps: () => ({}), 
 
 const tagUi = useComponentUI('tag', {
   theme: tagTheme,
-  variantProps: () => ({ size: props.size, variant: props.variant }),
+  variantProps: () => ({ size: props.size ?? formField.size.value, variant: props.variant }),
   // Each tag's root (`base`) takes `ui.tag`.
   props: {
     get ui() {
@@ -303,12 +303,11 @@ const onListKeydown = (event: KeyboardEvent) => {
 }
 
 // HeroUI's TagGroup has no validation: its error is the always-mounted `ErrorMessage`, so the chrome gets no `invalid`.
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
-  {
+const { labelId, hasLabel, describedBy, formField, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
     props,
     slots,
     disabled: () => props.disabled,
     errorPart: 'errorMessage',
-  },
-)
+  })
 </script>

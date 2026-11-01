@@ -17,6 +17,7 @@ export default defineConfig({
         'src/code-block.ts',
         'src/command-palette.ts',
         'src/editor.ts',
+        'src/locale/index.ts',
         'src/vite.ts',
       ],
       formats: ['es'],

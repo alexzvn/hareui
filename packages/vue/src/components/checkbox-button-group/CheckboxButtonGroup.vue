@@ -90,15 +90,14 @@ const { validation, invalid, commitValidation } = useFieldValidation({
   },
 })
 
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
-  {
+const { name, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
     props,
     slots,
     invalid,
     validation,
     disabled: isDisabled,
-  },
-)
+  })
 
 provide(checkboxButtonGroupContextKey, {
   selected,

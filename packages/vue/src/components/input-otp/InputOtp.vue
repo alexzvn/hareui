@@ -29,6 +29,7 @@
         />
       </template>
       <input
+        v-bind="fieldAttrs.focus"
         :id="id"
         ref="input"
         type="text"
@@ -91,6 +92,7 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { splitFocusListeners } from '@/utils/formControlEvents'
 
 import type { InputOtpProps, InputOtpSlots, InputOtpEmits } from './InputOtp.types'
 import theme from './theme'
@@ -102,10 +104,12 @@ const emit = defineEmits<InputOtpEmits>()
 const slots = useSlots()
 defineSlots<InputOtpSlots>()
 
-// `aria-label` / `aria-labelledby` name the input (as the `input-otp` library spreads them onto it), not the wrapper div
+// `aria-label` / `aria-labelledby` name the input (as the `input-otp` library spreads them onto it) and `@focus` /
+// `@blur` listen on it; the rest stays on the wrapper div
 const attrs = useAttrs()
+const fieldAttrs = computed(() => splitFocusListeners(attrs))
 const rootAttrs = computed(() => {
-  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = attrs
+  const { 'aria-label': _label, 'aria-labelledby': _labelledby, ...rest } = fieldAttrs.value.rest
   return rest
 })
 
@@ -153,7 +157,7 @@ const ui = useComponentUI('inputOtp', {
   props,
 })
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,

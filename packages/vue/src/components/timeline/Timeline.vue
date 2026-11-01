@@ -31,7 +31,7 @@
               v-bind="entry.item.avatar"
               :class="ui.avatar({ override: entry.item.avatar.class })"
             />
-            <component :is="entry.item.icon" v-else-if="entry.item.icon" />
+            <IconRenderer v-else-if="entry.item.icon" :icon="entry.item.icon" />
           </slot>
         </span>
 
@@ -93,6 +93,7 @@ import { computed } from 'vue'
 import Avatar from '@/components/avatar/Avatar.vue'
 import { useActiveIndex } from '@/composables/useActiveIndex'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { IconRenderer } from '@/utils/icon'
 
 import theme from './theme'
 import type {

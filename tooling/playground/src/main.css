@@ -3,6 +3,7 @@
 
 /* Inter (same v4 wght-only variable file as next/font) + docs text rendering */
 @import "@fontsource-variable/inter";
+@plugin "@iconify/tailwind4";
 
 @theme {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;

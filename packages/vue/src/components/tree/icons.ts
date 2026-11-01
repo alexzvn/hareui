@@ -1,6 +1,3 @@
-import { h } from 'vue'
-import type { Component, FunctionalComponent } from 'vue'
-
 import { createSvgIcon } from '@/utils/icon'
 
 // gravity-ui icons (MIT): `chevron-right`, `folder`, `folder-open`.
@@ -16,17 +13,3 @@ const FOLDER_OPEN =
 export const ChevronRightIcon = createSvgIcon({ d: CHEVRON_RIGHT, size: 16 })
 export const FolderIcon = createSvgIcon({ d: FOLDER, size: 16 })
 export const FolderOpenIcon = createSvgIcon({ d: FOLDER_OPEN, size: 16 })
-
-/** Renders an icon prop: an icon class on an empty `span`, or a component, passing the attributes on. */
-export const TreeIcon: FunctionalComponent<{ icon: string | Component }> = (
-  { icon },
-  { attrs },
-) => {
-  if (typeof icon === 'string')
-    return h('span', { ...attrs, class: [icon, attrs.class], 'aria-hidden': 'true' })
-
-  return h(icon, attrs)
-}
-
-TreeIcon.props = ['icon']
-TreeIcon.inheritAttrs = false

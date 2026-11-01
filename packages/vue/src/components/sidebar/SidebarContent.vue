@@ -20,13 +20,13 @@
             variant="ghost"
             size="sm"
             icon-only
-            aria-label="Close sidebar"
+            :aria-label="t('sidebar.close')"
             v-bind="closeAttrs"
             data-slot="sidebar-close"
             :class="ui.close({ override: closeClass })"
             @click="emit('close')"
           >
-            <component :is="closeIcon" v-if="closeIcon" />
+            <IconRenderer v-if="closeIcon" :icon="closeIcon" />
             <svg v-else aria-hidden="true" viewBox="0 0 16 16">
               <path
                 fill="currentColor"
@@ -55,6 +55,8 @@ import { computed } from 'vue'
 
 import Button from '@/components/button/Button.vue'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
+import { useLocale } from '@/composables/useLocale'
+import { IconRenderer } from '@/utils/icon'
 
 import type {
   SidebarCloseProps,
@@ -78,6 +80,7 @@ const props = defineProps<{
 const emit = defineEmits<{ close: [] }>()
 
 const slots = defineSlots<Omit<SidebarSlots, 'rail' | 'content'>>()
+const { t } = useLocale()
 
 const hasTitle = computed(() => !!props.title || !!slots.title)
 const hasDescription = computed(() => !!props.description || !!slots.description)

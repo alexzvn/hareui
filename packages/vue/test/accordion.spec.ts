@@ -208,3 +208,35 @@ describe('Accordion accessibility', () => {
     wrapper.unmount()
   })
 })
+
+describe('accordion item icon', () => {
+  const iconItems = [
+    { value: 'a', label: 'A', icon: 'icon-a' },
+    { value: 'b', label: 'B' },
+  ]
+
+  it('renders an aria-hidden icon in the trigger when the item sets one', () => {
+    const wrapper = mount(Accordion, { props: { items: iconItems } })
+    const icon = wrapper
+      .findAll('[data-slot=accordion-trigger]')[0]!
+      .find('[data-slot=accordion-icon]')
+
+    expect(icon.attributes('aria-hidden')).toBe('true')
+  })
+
+  it('renders no icon element when the item has no icon', () => {
+    const wrapper = mount(Accordion, { props: { items: iconItems } })
+    const trigger = wrapper.findAll('[data-slot=accordion-trigger]')[1]!
+    expect(trigger.find('[data-slot=accordion-icon]').exists()).toBe(false)
+  })
+
+  it('#leading replaces the item icon', () => {
+    const wrapper = mount(Accordion, {
+      props: { items: iconItems },
+      slots: { leading: () => h('i', { 'data-testid': 'lead' }) },
+    })
+
+    expect(wrapper.find('[data-slot=accordion-icon]').exists()).toBe(false)
+    expect(wrapper.findAll('[data-testid=lead]')).toHaveLength(2)
+  })
+})

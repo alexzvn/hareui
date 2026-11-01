@@ -2,7 +2,7 @@ import type { VNode } from 'vue'
 
 import type checkboxTheme from '@/components/checkbox/theme'
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -81,7 +81,7 @@ export type CheckboxGroupProps<T extends CheckboxGroupItem = CheckboxGroupItem> 
   /** Per-slot class overrides. `item` is each checkbox's root; `content`, `control` and `indicator` are the `checkbox` theme's. */
   ui?: ComponentSlots<CheckboxGroup> &
     Pick<ComponentSlots<Checkbox>, 'content' | 'control' | 'indicator'> & { item?: ClassValue }
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots of `CheckboxGroup`: overrides for the group label, description and error, and for each item's label, description and indicator. */
 export type CheckboxGroupSlots<T extends CheckboxGroupItem = CheckboxGroupItem> = {

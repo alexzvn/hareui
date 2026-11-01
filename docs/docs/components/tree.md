@@ -41,7 +41,7 @@ Use the `#item-leading` slot to choose an icon per file type. Bind `ui.linkLeadi
 
 ### Custom icons
 
-Use `indicator-icon`, `expanded-icon` and `collapsed-icon` to replace the chevron and the folder icons. Each takes a component; an item's own `icon` still wins over the folder icons.
+Use `indicator-icon`, `expanded-icon` and `collapsed-icon` to replace the chevron and the folder icons. Each takes an icon class or a component; an item's own `icon` still wins over the folder icons.
 
 <ComponentPreview name="tree/custom-icons" />
 
@@ -109,7 +109,13 @@ Filter the `items` you pass, and open the folders that still have a match with `
 
 ### Per-item slots
 
-Set the `slot` field of an item to give it its own slots: `#<slot>`, `#<slot>-leading`, `#<slot>-label`, `#<slot>-trailing` and `#<slot>-wrapper`. Extra item fields are available in the slot props.
+Set the `slot` field of an item to give it its own slots:
+
+- `#<slot>-leading`, `#<slot>-label` and `#<slot>-trailing` for the parts of the row
+- `#<slot>` for the row content after the chevron
+- `#<slot>-wrapper` for the whole row, including the checkbox, chevron and guide lines
+
+Extra item fields are available in the slot props.
 
 <ComponentPreview name="tree/item-slot" />
 

@@ -1,5 +1,6 @@
 import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -16,6 +17,8 @@ export type ListBoxItem = {
   value: ListBoxValue
   /** The item label. */
   label?: string
+  /** Icon shown before the label (decorative, `aria-hidden`), unless `#item-leading` is used. */
+  icon?: IconValue
   /** Help text rendered below the label. */
   description?: string
   /** Text used for type-ahead. Defaults to `label`. */

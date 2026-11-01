@@ -1,7 +1,8 @@
 import type { PrimitiveProps } from 'reka-ui'
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
 import type { PortalTarget } from '@/config'
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -78,10 +79,10 @@ export type TocProps<T extends TocLink = TocLink> = {
    */
   highlight?: boolean | TocHighlight
   /**
-   * The icon of the collapsible trigger below the `lg` breakpoint (`list` variant). Defaults to an inline
-   * `chevron-down` from Gravity UI Icons.
+   * The icon of the collapsible trigger below the `lg` breakpoint (`list` variant): a class string or a component.
+   * Defaults to an inline `chevron-down` from Gravity UI Icons.
    */
-  trailingIcon?: Component
+  trailingIcon?: IconValue
   /**
    * The side of the page the `floating` variant sits on: the marks align to that edge and the panel opens towards
    * the other side.

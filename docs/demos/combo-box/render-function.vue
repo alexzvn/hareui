@@ -2,7 +2,7 @@
   <!-- Attributes fall through to the root element -->
   <ComboBox
     class="w-[256px]"
-    data-custom="foo"
+    data-testid="animal-picker"
     label="Favorite Animal"
     placeholder="Search animals..."
     :items="animals"

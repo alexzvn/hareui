@@ -22,7 +22,7 @@
             >Syncing {{ Math.floor((file.sent / file.bytes) * 100) }}%</span
           >
           <span v-else-if="status === 'complete'" class="text-success">Synced</span>
-          <span v-else class="text-danger">Your phone went offline during the sync.</span>
+          <span v-else class="text-danger">Phone went offline</span>
         </template>
         <Button
           v-if="file.offline"

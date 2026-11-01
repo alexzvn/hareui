@@ -8,9 +8,11 @@
     class="w-full max-w-xs"
     :ui="{ container: 'items-start transition-[height] duration-300' }"
   >
-    <Card :title="item.title" class="select-none">
-      <p class="text-sm text-muted">{{ item.text }}</p>
-    </Card>
+    <div class="p-1">
+      <Card :title="item.title" class="select-none">
+        <p class="text-sm text-muted">{{ item.text }}</p>
+      </Card>
+    </div>
   </Carousel>
 </template>
 

@@ -25,5 +25,9 @@ export default {
       '[&_[data-slot=overlay-arrow]]:stroke-border/40 [&_[data-slot=overlay-arrow]]:fill-(--overlay)',
     ],
     arrow: '',
+    // Shortcut wrapper after the text, separated from it by a middle dot; hidden on small (touch) screens.
+    kbds: "hidden shrink-0 items-center gap-0.5 align-middle lg:inline-flex not-first-of-type:before:me-1 not-first-of-type:before:ms-1 not-first-of-type:before:content-['·']",
+    // Compact key: 20px tall to fit the 12px tooltip text.
+    kbd: 'h-5 rounded-md px-1.5 text-xs',
   },
 }

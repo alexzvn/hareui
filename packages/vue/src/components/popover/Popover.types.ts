@@ -8,8 +8,38 @@ import type theme from './theme'
 
 type Popover = typeof theme
 
+/** How a `Popover` opens: on press (`click`) or while its trigger is hovered or focused (`hover`). */
+export type PopoverMode = 'click' | 'hover'
+
+/** Props of the `content` slot: `close` in click mode, none in hover mode. */
+export type PopoverContentSlotProps<M extends PopoverMode = PopoverMode> = [M] extends ['hover']
+  ? { close?: undefined }
+  : { close: () => void }
+
 /** Props of `Popover`, an overlay anchored to its trigger that shows rich content in context. */
-export type PopoverProps = {
+export type PopoverProps<M extends PopoverMode = PopoverMode> = {
+  /**
+   * How the popover opens: `click` toggles it on press; `hover` opens it while the trigger is hovered or focused,
+   * without moving focus or making the page inert.
+   * @defaultValue 'click'
+   */
+  mode?: M
+  /**
+   * In `hover` mode, the delay in milliseconds before the popover opens.
+   * @defaultValue 700
+   */
+  openDelay?: number
+  /**
+   * In `hover` mode, the delay in milliseconds before the popover closes once the pointer or focus left.
+   * @defaultValue 300
+   */
+  closeDelay?: number
+  /**
+   * In `hover` mode, lets a tap on the trigger open the popover at once and a second tap close it. Without it, a tap
+   * only opens the popover where tapping focuses the trigger (not in Safari on iOS), after `openDelay`.
+   * @defaultValue false
+   */
+  enableTouch?: boolean
   /**
    * The controlled open state of the popover.
    */
@@ -65,17 +95,19 @@ export type PopoverProps = {
 }
 
 /** Slots of `Popover`. */
-export type PopoverSlots = {
+export type PopoverSlots<M extends PopoverMode = PopoverMode> = {
   /** The trigger element. Receives the current open state. */
   default?: (props: { open: boolean }) => VNode[]
   /** Replaces the heading text derived from `title`. */
   title?: () => VNode[]
-  /** The popover's content. Receives a `close` callback. */
-  content?: (props: { close: () => void }) => VNode[]
+  /** The popover's content. Receives a `close` callback in `click` mode. */
+  content?: (props: PopoverContentSlotProps<M>) => VNode[]
 }
 
 /** Events emitted by `Popover`. */
 export type PopoverEmits = {
   /** Emitted when the open state changes. */
   'update:open': [value: boolean]
+  /** Emitted when Escape or an outside press tries to close the popover while `dismissible` is `false`. */
+  'close:prevent': []
 }

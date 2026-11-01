@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full max-w-4xl items-center justify-center gap-4">
+  <div class="flex h-full max-w-4xl flex-wrap items-center justify-center gap-4">
     <ToastProvider placement="bottom" :queue="notificationQueue" />
     <div class="flex justify-center gap-2">
       <Button

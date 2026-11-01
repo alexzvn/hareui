@@ -1,6 +1,6 @@
 <template>
-  <div class="w-[400px] space-y-3">
-    <TextArea full-width placeholder="Full width textarea" />
+  <div class="w-[400px]">
+    <TextArea full-width aria-label="Release notes" placeholder="What changed in this release?" />
   </div>
 </template>
 

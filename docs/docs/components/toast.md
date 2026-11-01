@@ -70,6 +70,12 @@ toast('Event created')
 
 <ComponentPreview name="toast/custom-queue" />
 
+### Close Button
+
+Every toast has a close button. Pass `closeButton: false` to hide it, or an object with an `icon` and a `label` (its accessible name) to customise it.
+
+<ComponentPreview name="toast/close-button" />
+
 ### Setup
 
 Render the provider once at the root of your app.
@@ -229,6 +235,7 @@ toast.resumeAll()
 | `indicator`   | `VNodeChild \| null`                                          | -           | Custom indicator icon (`null` hides it)                          |
 | `action`      | `{ label, onClick?, variant?, class? }`                       | -           | Action button                                                    |
 | `isLoading`   | `boolean`                                                     | `false`     | Shows a spinner in place of the indicator                        |
+| `closeButton` | `boolean \| { icon?, label? }`                                | `true`      | Hides (`false`) or customises the close button                   |
 | `timeout`     | `number`                                                      | `4000`      | Auto-dismiss timeout in milliseconds; `0` keeps the toast open   |
 | `onClose`     | `() => void`                                                  | -           | Called when the toast is dismissed, as its exit animation starts |
 

@@ -1,6 +1,7 @@
 import type { PrimitiveProps } from 'reka-ui'
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -21,8 +22,8 @@ export type StepperItem = {
   title?: string
   /** Secondary text under the title. */
   description?: string
-  /** An icon component shown in the indicator instead of the step number and the completed check. */
-  icon?: Component
+  /** An icon (a class string or a component) shown in the indicator instead of the step number and the completed check. */
+  icon?: IconValue
   /** Fallback content shown below the steps while this step is active, when no `#content` / `#<slot>` slot is set. */
   content?: string
   /**

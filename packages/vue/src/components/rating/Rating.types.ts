@@ -1,8 +1,9 @@
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -82,12 +83,12 @@ export type RatingProps = {
    * The icon of each item: a class string (such as `i-lucide-heart`) or a component. Defaults to the gravity-ui
    * `star-fill` icon.
    */
-  icon?: string | Component
+  icon?: IconValue
   /** The icon shown behind the filled part of each item. Defaults to `icon`. */
-  emptyIcon?: string | Component
+  emptyIcon?: IconValue
   /**
    * The accessible name of each selectable value.
-   * @defaultValue (value, length) => `${value} out of ${length}`
+   * @defaultValue the `App` locale's label, then 'en' (`{value} out of {length}`)
    */
   itemLabel?: (value: number, length: number) => string
   /**
@@ -111,7 +112,7 @@ export type RatingProps = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Rating>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Emits of `Rating`. */
 export type RatingEmits = {

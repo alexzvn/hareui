@@ -1,6 +1,7 @@
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
 import type { AvatarProps } from '@/components/avatar/Avatar.types'
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -25,8 +26,8 @@ export type TimelineItem = {
   title?: string
   /** Text shown under the title. */
   description?: string
-  /** Icon component rendered in the marker. */
-  icon?: Component
+  /** Icon rendered in the marker: a class string or a component. */
+  icon?: IconValue
   /** Avatar rendered in the marker, filling it, instead of the icon. */
   avatar?: AvatarProps
   /** The value matched against `v-model` / `defaultValue`, read from `valueKey`. */

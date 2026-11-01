@@ -4,7 +4,7 @@ import type { VNode } from 'vue'
 
 import type dateInputGroupTheme from '@/components/date-input-group/theme'
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
@@ -46,9 +46,15 @@ export type DateRangePickerProps = {
    * @defaultValue useId()
    */
   id?: string
-  /** The name of the start date, used when submitting a form. */
+  /**
+   * The name of the start date, used when submitting a form.
+   * @defaultValue the `FormField` name
+   */
   startName?: string
-  /** The name of the end date, used when submitting a form. */
+  /**
+   * The name of the end date, used when submitting a form.
+   * @defaultValue the `FormField` name followed by `End`
+   */
   endName?: string
   /** The initial range when uncontrolled (no `v-model`). */
   defaultValue?: DateRangeValue | null
@@ -141,7 +147,7 @@ export type DateRangePickerProps = {
       ComponentSlots<DateInputGroup>,
       'inputContainer' | 'input' | 'segment'
     >
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Props passed to `DateRangePicker`'s `calendar` slot. */
 export type DateRangePickerCalendarSlotProps = {

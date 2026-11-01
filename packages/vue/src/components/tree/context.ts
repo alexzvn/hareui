@@ -1,5 +1,7 @@
 import type { PrimitiveProps } from 'reka-ui'
-import type { Component, InjectionKey, Slots } from 'vue'
+import type { InjectionKey, Slots } from 'vue'
+
+import type { IconValue } from '@/types/icon'
 
 import type { TreeItem, TreeSelectEvent, TreeToggleEvent, TreeUI } from './Tree.types'
 
@@ -19,9 +21,9 @@ export type TreeContext = {
   hasCheckbox: () => boolean
   /** The chevron, expanded folder and collapsed folder icons. */
   icons: () => {
-    indicator: string | Component
-    expanded: string | Component
-    collapsed: string | Component
+    indicator: IconValue
+    expanded: IconValue
+    collapsed: IconValue
   }
   getKey: (item: TreeItem) => string
   getLabel: (item: TreeItem) => string

@@ -24,7 +24,7 @@
         ref="focusTarget"
         data-slot="drop-zone-focus-target"
         :disabled="isDisabled || undefined"
-        :aria-label="hasLabel ? undefined : 'Drop zone'"
+        :aria-label="hasLabel ? undefined : t('dropZone.label')"
         :aria-labelledby="hasLabel ? labelId : undefined"
         :aria-describedby="describedBy"
         :aria-invalid="invalid ? 'true' : undefined"
@@ -53,7 +53,12 @@
           </svg>
         </slot>
       </span>
-      <span v-if="hasLabel" :id="labelId" data-slot="drop-zone-label" :class="ui.label()">
+      <span
+        v-if="hasLabel && !isLabelDelegated"
+        :id="labelId"
+        data-slot="drop-zone-label"
+        :class="ui.label()"
+      >
         <slot name="label" v-bind="slotProps">{{ label }}</slot>
       </span>
       <span
@@ -72,7 +77,7 @@
           :class="ui.trigger()"
           @click="open"
         >
-          {{ triggerLabel }}
+          {{ triggerLabel ?? t('dropZone.trigger') }}
         </Button>
       </slot>
     </div>
@@ -117,6 +122,8 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
+import { createChangeEvent } from '@/utils/formControlEvents'
 
 import { dropZoneContextKey } from './context'
 import type {
@@ -131,11 +138,13 @@ import DropZoneFileList from './DropZoneFileList.vue'
 import theme from './theme'
 import { dragMatchesAccept, matchesAccept } from './utils'
 
+const { t } = useLocale()
+
 // `undefined` defaults keep uncontrolled mode and leave validation in charge of an unset `invalid`
 const props = withDefaults(defineProps<DropZoneProps>(), {
   modelValue: undefined,
   invalid: undefined,
-  triggerLabel: 'Select files',
+  triggerLabel: undefined,
 })
 
 const emit = defineEmits<DropZoneEmits>()
@@ -163,14 +172,23 @@ const { validation, invalid, commitValidation } = useFieldValidation({
   onReset: () => setFiles(props.defaultValue ?? []),
 })
 
-const { id, labelId, descriptionId, hasLabel, hasDescription, describedBy, FieldError } =
-  useFieldChrome({
-    props,
-    slots,
-    invalid,
-    validation,
-    disabled: isDisabled,
-  })
+const {
+  name,
+  id,
+  labelId,
+  descriptionId,
+  hasLabel,
+  isLabelDelegated,
+  hasDescription,
+  describedBy,
+  FieldError,
+} = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+})
 
 // Mirrors the selection into the file input, so native form submission and `required` see it
 const syncInput = () => {
@@ -220,6 +238,7 @@ const addFiles = (incoming: File[]) => {
     const added = props.multiple ? accepted : accepted.slice(0, 1)
     setFiles(props.multiple ? [...files.value, ...added] : added)
     emit('add', added)
+    emit('change', createChangeEvent())
     commitValidation()
   }
 
@@ -231,6 +250,7 @@ const removeFile = (file: File | number) => {
   const index = typeof file === 'number' ? file : files.value.indexOf(file)
   if (index < 0 || index >= files.value.length) return
   setFiles(files.value.filter((_, i) => i !== index))
+  emit('change', createChangeEvent())
   commitValidation()
 }
 

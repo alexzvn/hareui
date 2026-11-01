@@ -3,7 +3,7 @@ import type { VNode } from 'vue'
 
 import type dateInputGroupTheme from '@/components/date-input-group/theme'
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -108,7 +108,7 @@ export type TimeFieldProps = {
       ComponentSlots<DateInputGroup>,
       'input' | 'segment' | 'prefix' | 'suffix'
     >
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots of `TimeField`. */
 export type TimeFieldSlots = {
@@ -128,4 +128,8 @@ export type TimeFieldSlots = {
 export type TimeFieldEmits = {
   /** Emitted when the displayed placeholder time changes. */
   'update:placeholder': [value: TimeValue]
+  /** Focus entered the field (any segment) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between segments doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

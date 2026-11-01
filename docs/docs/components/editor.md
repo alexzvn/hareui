@@ -126,7 +126,15 @@ The popover runs the `link` or `image` handler with the URL (an empty `href` rem
 
 ### Floating menu and custom commands
 
-`layout="floating"` shows the toolbar beside an empty line. Pass `handlers` to the Editor to add commands: each one has `canExecute`, `execute` (return a command chain), `isActive` and optionally `isDisabled` and `isToggle`. Every toolbar inside the editor can then use the handler's key as `kind`.
+`layout="floating"` shows the toolbar beside an empty line. Pass `handlers` to the Editor to add commands. Each handler has:
+
+- `canExecute`: whether the command can run on the selection
+- `execute`: returns the command chain to run
+- `isActive`: whether the toolbar shows the item pressed
+- `isDisabled` (optional): an extra condition that disables the item
+- `isToggle` (optional): render the item as a toggle button
+
+Every toolbar inside the editor can then use the handler's key as `kind`.
 
 <ComponentPreview name="editor/custom-handlers" />
 
@@ -150,7 +158,12 @@ The toolbar can go anywhere the editor's slots reach, such as the footer of a re
 
 ## Extensions
 
-The editor loads the starter kit (paragraphs, headings, lists, quotes, code, links, underline, history and more), images and the placeholder. Configure the starter kit with `starter-kit` (`false` keeps a plain-text editor), images with `image`, and add any tiptap extension with `extensions`. `editor-props` reaches ProseMirror directly.
+The editor loads the starter kit (paragraphs, headings, lists, quotes, code, links, underline, history and more), images and the placeholder. These props change that:
+
+- `starter-kit` configures the starter kit; `false` keeps a plain-text editor.
+- `image` configures images.
+- `extensions` adds any tiptap extension.
+- `editor-props` passes options straight to ProseMirror.
 
 ## API Reference
 

@@ -58,6 +58,8 @@ export default {
       'group-data-[selection-mode=multiple]:[&_[data-slot=menu-item-indicator--dot]]:transition-all group-data-[selection-mode=multiple]:[&_[data-slot=menu-item-indicator--dot]]:duration-250',
     ],
     submenuIndicator: [...indicator, 'text-muted'],
+    // `item.icon`, in the leading position before the label
+    itemIcon: 'size-4 shrink-0 text-muted',
     section: 'flex flex-col items-start gap-0',
     header: 'w-full px-2 pt-1.5 pb-1 text-start text-xs font-medium text-muted',
     separator: 'h-px w-full shrink-0 rounded-sm border-t-0 border-b-0 bg-separator',
@@ -70,6 +72,7 @@ export default {
         item: '[&_[data-slot=label]]:text-danger',
         indicator: 'text-danger',
         submenuIndicator: 'text-danger',
+        itemIcon: 'text-danger',
       },
     },
   },

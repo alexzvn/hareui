@@ -5,6 +5,7 @@ import { h, ref } from 'vue'
 import type { CellSelectProps } from '@/components/cell-select/CellSelect.types'
 import CellSelect from '@/components/cell-select/CellSelect.vue'
 import Fieldset from '@/components/fieldset/Fieldset.vue'
+import Select from '@/components/select/Select.vue'
 
 import { expectAccessible } from './a11y'
 
@@ -269,5 +270,53 @@ describe('CellSelect', () => {
     await flush()
     expect(document.querySelector('[role=listbox]')).toBeNull()
     wrapper.unmount()
+  })
+})
+
+describe('CellSelect events', () => {
+  it('forwards focus when the trigger gains focus', async () => {
+    const wrapper = mount(CellSelect, {
+      props: { items, label: 'Theme', defaultValue: 'default' },
+      attachTo: document.body,
+    })
+
+    ;(wrapper.get(trigger).element as HTMLElement).focus()
+    await flush()
+    expect(wrapper.emitted('focus')).toHaveLength(1)
+  })
+
+  it('forwards blur when focus leaves the trigger', async () => {
+    const outside = document.body.appendChild(document.createElement('button'))
+
+    const wrapper = mount(CellSelect, {
+      props: { items, label: 'Theme', defaultValue: 'default' },
+      attachTo: document.body,
+    })
+
+    ;(wrapper.get(trigger).element as HTMLElement).focus()
+    await flush()
+    outside.focus()
+    await flush()
+    expect(wrapper.emitted('blur')).toHaveLength(1)
+  })
+
+  it('forwards change when the user picks an option', async () => {
+    const wrapper = mount(CellSelect, {
+      props: { items, label: 'Theme', defaultValue: 'default' },
+      attachTo: document.body,
+    })
+
+    await wrapper.get(trigger).trigger('click')
+    await flush()
+    document.querySelectorAll<HTMLElement>('[role=option]')[1].click()
+    await flush()
+    expect(wrapper.emitted('change')).toHaveLength(1)
+  })
+
+  it('emits null, not undefined, when the selection is cleared', async () => {
+    const wrapper = mount(CellSelect, { props: { items, label: 'Theme', defaultValue: 'default' } })
+    wrapper.findComponent(Select).vm.$emit('update:modelValue', undefined)
+    await flush()
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([null])
   })
 })

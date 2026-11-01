@@ -1,6 +1,6 @@
 <template>
-  <div class="w-[400px] space-y-3">
-    <Input full-width placeholder="Full width input" />
+  <div class="w-[400px]">
+    <Input full-width aria-label="Project name" placeholder="Project name" />
   </div>
 </template>
 

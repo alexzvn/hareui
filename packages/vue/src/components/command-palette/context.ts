@@ -1,13 +1,13 @@
 import type { AcceptableValue } from 'reka-ui'
 import type { ComputedRef, InjectionKey, Ref, Slots, VNode } from 'vue'
-import { Comment, Fragment, h, inject, isVNode } from 'vue'
+import { Comment, Fragment, h, inject } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentUI } from '@/types/tv'
 import { resolveSlotName } from '@/utils/slotName'
 
 import type {
   CommandPaletteGroup,
-  CommandPaletteIcon,
   CommandPaletteItem,
   CommandPaletteProps,
   CommandPaletteResolvedItem,
@@ -27,7 +27,7 @@ export type CommandPaletteContext = {
   /** The value `ListboxItem` gets for the item: its `valueKey` field, or the item without the search fields. */
   getValue: (item: CommandPaletteResolvedItem) => AcceptableValue
   /** The spinner of the input and of loading items. */
-  loadingIcon: ComputedRef<CommandPaletteIcon>
+  loadingIcon: ComputedRef<IconValue>
   onSelect: (payload: { event: Event; item: CommandPaletteResolvedItem }) => void
 }
 
@@ -76,22 +76,6 @@ export const SlotOutlet = (
 }
 
 SlotOutlet.props = ['name', 'slotProps']
-
-/**
- * Renders an icon. A string is applied as a class on an empty `<span>` (icon-font / CSS-mask utilities); a
- * component or render function is rendered as is and receives the themed `class`.
- */
-export const PaletteIcon = (props: { icon: CommandPaletteIcon; class?: string }) => {
-  const icon = props.icon
-  if (typeof icon === 'string')
-    return h('span', { 'aria-hidden': 'true', class: [icon, props.class] })
-
-  if (isVNode(icon)) return icon
-
-  return h(icon, { 'aria-hidden': 'true', class: props.class })
-}
-
-PaletteIcon.props = ['icon', 'class']
 
 /** Plain text with the matched runs wrapped in `<mark>`; never parsed as HTML. */
 export const Highlighted = (props: { segments?: HighlightSegment[]; text: string }) => {

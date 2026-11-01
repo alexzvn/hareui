@@ -66,8 +66,7 @@
         :class="itemUi.icon({ class: groupUi('icon') })"
       >
         <slot name="icon" v-bind="slotProps">
-          <span v-if="typeof icon === 'string'" :class="icon" />
-          <component :is="icon" v-else />
+          <IconRenderer v-if="icon" :icon="icon" />
         </slot>
       </span>
       <span
@@ -111,6 +110,7 @@ import { computed, inject, useSlots } from 'vue'
 import { submitOnEnter } from '@/composables/forwardRootClick'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { IconRenderer } from '@/utils/icon'
 
 import type {
   CheckboxButtonGroupItemProps,

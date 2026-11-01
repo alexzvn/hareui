@@ -7,6 +7,7 @@ export default {
     content: 'flex h-full grow flex-col items-start',
     title: 'text-sm leading-6 font-medium',
     description: 'text-sm text-muted',
+    close: 'shrink-0',
   },
   variants: {
     status: {

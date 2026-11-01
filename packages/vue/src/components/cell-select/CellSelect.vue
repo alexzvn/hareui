@@ -5,10 +5,13 @@
     :model-value="modelValue"
     :aria-labelledby="hasLabel ? labelId : undefined"
     :ui="selectUi"
-    @update:model-value="emit('update:modelValue', $event)"
+    @update:model-value="emit('update:modelValue', $event ?? null)"
     @update:open="emit('update:open', $event)"
     @clear="emit('clear')"
     @load-more="emit('loadMore')"
+    @change="emit('change', $event)"
+    @focus="emit('focus', $event)"
+    @blur="emit('blur', $event)"
   >
     <template #leading>
       <span v-if="hasLabel" :id="labelId" data-slot="cell-select-label" :class="ui.label()">

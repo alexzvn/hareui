@@ -1,5 +1,5 @@
 <template>
-  <span aria-label="Loading" data-slot="spinner" role="status" :class="ui.base()">
+  <span :aria-label="t('spinner.label')" data-slot="spinner" role="status" :class="ui.base()">
     <svg aria-hidden="true" data-slot="spinner-icon" viewBox="0 0 24 24">
       <defs>
         <linearGradient
@@ -46,9 +46,12 @@
 import { useId } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import type { SpinnerProps } from './Spinner.types'
 import theme from './theme'
+
+const { t } = useLocale()
 
 const props = defineProps<SpinnerProps>()
 

@@ -1,5 +1,5 @@
 <template>
-  <SwitchGroup class="overflow-x-auto" orientation="horizontal">
+  <SwitchGroup orientation="horizontal" :ui="{ items: 'flex-wrap' }">
     <Switch name="notifications" label="Notifications" />
     <Switch name="marketing" label="Marketing" />
     <Switch name="social" label="Social" />

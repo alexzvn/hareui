@@ -80,6 +80,7 @@ import Button from '@/components/button/Button.vue'
 import DashboardResizeHandle from '@/components/dashboard-resize-handle/DashboardResizeHandle.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { createDashboardSidebarState, useDashboard } from '@/composables/useDashboard'
+import { useLocale } from '@/composables/useLocale'
 import { useResizable } from '@/composables/useResizable'
 import { useSidebarMenu } from '@/composables/useSidebarMenu'
 
@@ -91,6 +92,8 @@ import type {
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<DashboardSidebarProps>(), {
   side: 'left',
@@ -213,7 +216,9 @@ const ui = useComponentUI('dashboardSidebar', {
   classSlot: 'root',
 })
 
-const menuTitle = computed(() => (props.menu as { title?: string } | undefined)?.title ?? 'Sidebar')
+const menuTitle = computed(
+  () => (props.menu as { title?: string } | undefined)?.title ?? t('dashboardSidebar.title'),
+)
 
 const { Menu, menuProps, menuClasses } = useSidebarMenu(() => ({
   mode: props.mode,
@@ -244,7 +249,7 @@ const resizeHandleSlotProps = computed<DashboardSidebarResizeHandleSlotProps>(()
   onTouchStart,
   onDoubleClick,
   onKeyDown,
-  attrs: { ...handleAttrs.value, 'aria-controls': id, 'aria-label': 'Resize sidebar' },
+  attrs: { ...handleAttrs.value, 'aria-controls': id, 'aria-label': t('dashboardSidebar.resize') },
   dragging: isDragging.value,
   ui: ui.value,
 }))
@@ -277,7 +282,7 @@ const Toggle: FunctionalComponent = () => {
       variant: 'ghost',
       size: 'sm',
       iconOnly: true,
-      'aria-label': 'Close sidebar',
+      'aria-label': t('dashboardSidebar.close'),
       ...custom,
       'data-slot': 'dashboard-sidebar-toggle',
       'data-idle': isToggleIdle.value || undefined,

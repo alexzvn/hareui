@@ -3,7 +3,7 @@ import type { VNode } from 'vue'
 
 import type dateInputGroupTheme from '@/components/date-input-group/theme'
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { PortalTarget } from '@/config'
 import type { ComponentSlots } from '@/types/tv'
@@ -129,7 +129,7 @@ export type DatePickerProps = {
       ComponentSlots<DateInputGroup>,
       'input' | 'segment'
     >
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots of `DatePicker`. */
 export type DatePickerSlots = {
@@ -157,4 +157,8 @@ export type DatePickerEmits = {
   'update:placeholder': [value: DateValue]
   /** Emitted when the popover open state changes. */
   'update:open': [value: boolean]
+  /** Focus entered the field (a segment, the trigger or the open calendar) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between its segments, trigger and calendar doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

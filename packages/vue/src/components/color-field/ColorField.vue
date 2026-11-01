@@ -8,6 +8,8 @@
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
     :class="ui.base()"
+    @focus.capture="onFocusCapture"
+    @blur.capture="onBlurCapture"
   >
     <FieldLabel :for="id" />
     <ColorFieldRoot
@@ -82,6 +84,7 @@ import { useColorPickerContext } from '@/components/color-picker/context'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
 
@@ -96,6 +99,13 @@ const props = withDefaults(defineProps<ColorFieldProps>(), { invalid: undefined 
 const disabled = useFieldsetDisabled(() => props.disabled)
 const emit = defineEmits<ColorFieldEmits>()
 const slots = useSlots()
+
+// `focus` / `blur` are the field's: moving between the input and its stepper buttons emits neither
+const { onFocusCapture, onBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
+})
+
 const PrefixOutlet = useSlotOutlet(slots, 'prefix')
 const SuffixOutlet = useSlotOutlet(slots, 'suffix')
 defineSlots<ColorFieldSlots>()
@@ -233,7 +243,7 @@ const rootAttrs = computed(() => {
   return rest
 })
 
-const { id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
+const { name, id, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome({
   props,
   slots,
   invalid,

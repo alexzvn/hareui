@@ -131,7 +131,7 @@ export type Form<S extends FormSchema> = {
 }
 
 /** Form-validation props shared by every field. */
-export type FormFieldProps = {
+export type FormFieldValidationProps = {
   /** Shows form errors whose name matches this pattern too, e.g. `/^tags\..+/` for errors on array items (`tags.0`). */
   errorPattern?: RegExp
   /**

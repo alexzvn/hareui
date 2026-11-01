@@ -1,9 +1,10 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
 import Input from '@/components/input/Input.vue'
 import Label from '@/components/label/Label.vue'
+import type { ModelModifiers } from '@/utils/modelModifiers'
 
 import { expectAccessible } from './a11y'
 
@@ -100,5 +101,111 @@ describe('Input', () => {
     await wrapper.get('input').setValue('abc')
     expect(wrapper.get('input').attributes('aria-invalid')).toBeUndefined()
     wrapper.unmount()
+  })
+})
+
+describe('Input v-model modifiers', () => {
+  // Starts from a typed value, as clearing a field does
+  const typeInto = async (modelModifiers: ModelModifiers | undefined, text: string) => {
+    const wrapper = mount(Input, {
+      props: { modelValue: 'Ada', modelModifiers },
+      attrs: { 'aria-label': 'Name' },
+    })
+
+    await wrapper.get('input').setValue(text)
+    const emitted = wrapper.emitted('update:modelValue')?.at(-1)
+    wrapper.unmount()
+
+    return emitted
+  }
+
+  it('without modifiers emits the text as typed', async () => {
+    expect(await typeInto(undefined, ' 42 ')).toEqual([' 42 '])
+  })
+
+  it('without modifiers emits an emptied input as an empty string', async () => {
+    expect(await typeInto(undefined, '')).toEqual([''])
+  })
+
+  it('trim emits the text without surrounding whitespace', async () => {
+    expect(await typeInto({ trim: true }, '  Grace  ')).toEqual(['Grace'])
+  })
+
+  it('number emits numeric text as a number', async () => {
+    expect(await typeInto({ number: true }, '3.5')).toEqual([3.5])
+  })
+
+  it('number keeps text that is not a number', async () => {
+    expect(await typeInto({ number: true }, 'abc')).toEqual(['abc'])
+  })
+
+  it('nullable emits null for an emptied input', async () => {
+    expect(await typeInto({ nullable: true }, '')).toEqual([null])
+  })
+
+  it('optional emits undefined for an emptied input', async () => {
+    expect(await typeInto({ optional: true }, '')).toEqual([undefined])
+  })
+
+  it('trim with nullable emits null for whitespace-only text', async () => {
+    expect(await typeInto({ trim: true, nullable: true }, '   ')).toEqual([null])
+  })
+
+  it('lazy emits on change, not on input', async () => {
+    const wrapper = mount(Input, {
+      props: { modelModifiers: { lazy: true } },
+      attrs: { 'aria-label': 'Name' },
+    })
+
+    const input = wrapper.get('input')
+    input.element.value = 'Ada'
+    await input.trigger('input')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+    await input.trigger('change')
+    expect(wrapper.emitted('update:modelValue')).toEqual([['Ada']])
+    wrapper.unmount()
+  })
+
+  describe('a focused input keeps its typed text while the model holds the normalised value', () => {
+    // Vue skips a focused control by checking `getRootNode() instanceof Document`; happy-dom's `document` isn't one
+    beforeEach(() => vi.stubGlobal('Document', document.constructor))
+    afterEach(() => vi.unstubAllGlobals())
+
+    // A parent bound with v-model, so the normalised value comes back as a prop. Only `input` fires: like the native
+    // `v-model`, a `change` (blur, Enter) writes the normalised value back to the control
+    const typeFocused = async (modelModifiers: ModelModifiers, text: string) => {
+      const wrapper = mount(Input, {
+        props: {
+          modelValue: '',
+          modelModifiers,
+          'onUpdate:modelValue': (v: string | number | null | undefined): Promise<void> =>
+            wrapper.setProps({ modelValue: v }),
+        },
+        attrs: { 'aria-label': 'Amount' },
+        attachTo: document.body,
+      })
+
+      const input = wrapper.get<HTMLInputElement>('input')
+      input.element.focus()
+      input.element.value = text
+      await input.trigger('input')
+
+      return { wrapper, input: input.element }
+    }
+
+    it('with trim', async () => {
+      const { wrapper, input } = await typeFocused({ trim: true }, '  Grace  ')
+      expect(wrapper.props('modelValue')).toBe('Grace')
+      expect(input.value).toBe('  Grace  ')
+      wrapper.unmount()
+    })
+
+    it('with number', async () => {
+      const { wrapper, input } = await typeFocused({ number: true }, '3.50')
+      expect(wrapper.props('modelValue')).toBe(3.5)
+      expect(input.value).toBe('3.50')
+      wrapper.unmount()
+    })
   })
 })

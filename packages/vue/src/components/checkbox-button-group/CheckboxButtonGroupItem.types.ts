@@ -1,5 +1,6 @@
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -14,7 +15,7 @@ export type CheckboxButtonGroupItemProps = {
   /** Help text rendered below the title. */
   description?: string
   /** Leading icon: an icon class (`i-lucide-cloud`) or a component. */
-  icon?: string | Component
+  icon?: IconValue
   /**
    * Whether the item is disabled.
    * @defaultValue false

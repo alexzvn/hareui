@@ -1,0 +1,24 @@
+{
+  "servers": {
+    "typescript-language-server": {
+      "fileTypes": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".vue"],
+      "initOptions": {
+        "hostInfo": "omp-coding-agent",
+        "plugins": [
+          {
+            "name": "@vue/typescript-plugin",
+            "location": ".",
+            "languages": ["vue"]
+          }
+        ]
+      }
+    },
+    "oxlint": {
+      "command": "oxlint",
+      "args": ["--lsp"],
+      "fileTypes": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".vue"],
+      "rootMarkers": [".oxlintrc.json"],
+      "isLinter": true
+    }
+  }
+}

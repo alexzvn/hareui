@@ -1,46 +1,40 @@
 <template>
   <Dropdown :items="items" @action="(key) => console.log(`Selected: ${key}`)">
     <Button variant="secondary"> Actions </Button>
-    <template #item-leading="{ item }">
-      <Icon
-        class="size-4 shrink-0"
-        :class="item.variant === 'danger' ? 'text-danger' : 'text-muted'"
-        :icon="item.icon"
-      />
-    </template>
   </Dropdown>
 </template>
 
 <script setup lang="ts">
-import type { DropdownEntry, DropdownItem } from '@hareui/vue'
+import type { DropdownEntry } from '@hareui/vue'
 import { Button, Dropdown } from '@hareui/vue'
 import { Icon } from '@iconify/vue'
+import { h } from 'vue'
 
-type IconItem = DropdownItem & { icon: string }
+const icon = (name: string) => () => h(Icon, { icon: `gravity-ui:${name}` })
 
-const items: DropdownEntry<IconItem>[] = [
+const items: DropdownEntry[] = [
   {
     value: 'new-file',
     label: 'New file',
-    icon: 'gravity-ui:square-plus',
+    icon: icon('square-plus'),
     kbd: { keys: ['command'], content: 'N' },
   },
   {
     value: 'open-file',
     label: 'Open file',
-    icon: 'gravity-ui:folder-open',
+    icon: icon('folder-open'),
     kbd: { keys: ['command'], content: 'O' },
   },
   {
     value: 'save-file',
     label: 'Save file',
-    icon: 'gravity-ui:floppy-disk',
+    icon: icon('floppy-disk'),
     kbd: { keys: ['command'], content: 'S' },
   },
   {
     value: 'delete-file',
     label: 'Delete file',
-    icon: 'gravity-ui:trash-bin',
+    icon: icon('trash-bin'),
     variant: 'danger',
     kbd: { keys: ['command', 'shift'], content: 'D' },
   },

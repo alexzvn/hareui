@@ -17,15 +17,17 @@
           :aria-expanded="isExpanded(valueOf(item, index)) ? 'true' : 'false'"
           :aria-controls="`${id}-panel-${index}`"
           :disabled="isItemDisabled(item) || undefined"
-          :class="ui.trigger()"
+          :class="ui.trigger({ class: item.icon ? 'justify-start' : undefined })"
           @click="toggle(item, index)"
         >
-          <slot
-            name="leading"
-            :item="item"
-            :index="index"
-            :open="isExpanded(valueOf(item, index))"
-          />
+          <slot name="leading" :item="item" :index="index" :open="isExpanded(valueOf(item, index))">
+            <IconRenderer
+              v-if="item.icon"
+              :icon="item.icon"
+              :class="ui.icon()"
+              data-slot="accordion-icon"
+            />
+          </slot>
           <slot name="label" :item="item" :index="index" :open="isExpanded(valueOf(item, index))">
             {{ item.label }}
           </slot>
@@ -77,6 +79,7 @@ import { useComponentUI } from '@/composables/useComponentUI'
 import { useExpandedValues } from '@/composables/useExpandedValues'
 import type { ExpandedValue } from '@/composables/useExpandedValues'
 import { animatePanel, onPanelReveal, setPanelStatic } from '@/utils/disclosurePanel'
+import { IconRenderer } from '@/utils/icon'
 
 import type {
   AccordionEmits,

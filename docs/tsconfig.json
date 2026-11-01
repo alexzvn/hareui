@@ -10,6 +10,7 @@
       "@hareui/vue/code-block": ["../packages/vue/src/code-block.ts"],
       "@hareui/vue/command-palette": ["../packages/vue/src/command-palette.ts"],
       "@hareui/vue/editor": ["../packages/vue/src/editor.ts"],
+      "@hareui/vue/locale": ["../packages/vue/src/locale/index.ts"],
       "@/*": ["../packages/vue/src/*"]
     },
     "noUnusedLocals": true,

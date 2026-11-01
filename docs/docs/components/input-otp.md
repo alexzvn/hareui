@@ -155,6 +155,8 @@ app.use(
 
 <ApiTable component="InputOtp" kind="emits" />
 
+`@focus` and `@blur` listeners go to the input, so they fire when the code field gains and loses focus.
+
 ## Theme
 
 <ApiTheme component="InputOtp" />

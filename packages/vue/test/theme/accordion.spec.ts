@@ -15,4 +15,27 @@ describe('Accordion theme', () => {
     expect(indicator.classes()).toContain('custom')
     expect(indicator.classes()).toContain('size-4')
   })
+
+  it('renders a string item icon as the icon class', () => {
+    const wrapper = mount(Accordion, {
+      props: { items: [{ value: 'a', label: 'A', icon: 'icon-a' }] },
+    })
+
+    expect(wrapper.get('[data-slot=accordion-icon]').classes()).toContain('icon-a')
+  })
+})
+
+describe('Accordion trigger layout', () => {
+  it('a user `ui.trigger` class wins over the icon layout class', () => {
+    const wrapper = mount(Accordion, {
+      props: {
+        items: [{ value: 'a', label: 'A', icon: 'icon-a' }],
+        ui: { trigger: 'justify-center' },
+      },
+    })
+
+    const classes = wrapper.get('[data-slot=accordion-trigger]').classes()
+    expect(classes).toContain('justify-center')
+    expect(classes).not.toContain('justify-start')
+  })
 })

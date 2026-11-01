@@ -68,7 +68,11 @@
           data-slot="calendar-year-picker-trigger"
           :data-open="isYearPickerOpen ? 'true' : undefined"
           :aria-expanded="isYearPickerOpen"
-          :aria-label="`${formatPanelHeading(resolvedLocale, resolveDisplayedMonth(grid))}, year selector`"
+          :aria-label="
+            t('calendar.yearSelector', {
+              heading: formatPanelHeading(resolvedLocale, resolveDisplayedMonth(grid)),
+            })
+          "
           :class="ui.yearPickerTrigger()"
           @click="isYearPickerOpen = !isYearPickerOpen"
         >
@@ -95,7 +99,12 @@
           >{{ formatPanelHeading(resolvedLocale, resolveDisplayedMonth(grid)) }}</component
         >
         <component :is="reka.Prev" :data-slot="`${prefix}-nav-button`" as-child>
-          <button ref="prevButton" type="button" aria-label="Previous" :class="ui.navButton()">
+          <button
+            ref="prevButton"
+            type="button"
+            :aria-label="t('calendar.prev')"
+            :class="ui.navButton()"
+          >
             <slot name="navIcon" direction="previous">
               <CalendarChevronIcon
                 direction="previous"
@@ -106,7 +115,12 @@
           </button>
         </component>
         <component :is="reka.Next" :data-slot="`${prefix}-nav-button`" as-child>
-          <button ref="nextButton" type="button" aria-label="Next" :class="ui.navButton()">
+          <button
+            ref="nextButton"
+            type="button"
+            :aria-label="t('calendar.next')"
+            :class="ui.navButton()"
+          >
             <slot name="navIcon" direction="next">
               <CalendarChevronIcon
                 direction="next"
@@ -147,7 +161,7 @@
             :data-slot="`${prefix}-nav-button`"
             as-child
           >
-            <button type="button" aria-label="Previous" :class="ui.navButton()">
+            <button type="button" :aria-label="t('calendar.prev')" :class="ui.navButton()">
               <slot name="navIcon" direction="previous">
                 <CalendarChevronIcon
                   direction="previous"
@@ -167,7 +181,7 @@
             :data-slot="`${prefix}-nav-button`"
             as-child
           >
-            <button type="button" aria-label="Next" :class="ui.navButton()">
+            <button type="button" :aria-label="t('calendar.next')" :class="ui.navButton()">
               <slot name="navIcon" direction="next">
                 <CalendarChevronIcon
                   direction="next"
@@ -230,6 +244,8 @@
 import type { DateValue } from '@internationalized/date'
 import { computed, ref, shallowRef, useTemplateRef } from 'vue'
 
+import { useLocale } from '@/composables/useLocale'
+
 import { weekStartsOnFromFirstDay } from './calendarBounds'
 import CalendarChevronIcon from './CalendarChevronIcon.vue'
 import type { CalendarDurationValue } from './CalendarDurationView.types'
@@ -246,6 +262,8 @@ import { isDurationView } from './useCalendarDurationView'
 import { useCalendarMonthKeys } from './useCalendarMonthKeys'
 import { useCalendarPlaceholder } from './useCalendarPlaceholder'
 import { useCalendarYearPicker, yearPickerLabel } from './useCalendarYearPicker'
+
+const { t } = useLocale()
 
 const props = defineProps<CalendarMonthShellProps<TValue>>()
 const emit = defineEmits<CalendarMonthShellEmits<TValue>>()

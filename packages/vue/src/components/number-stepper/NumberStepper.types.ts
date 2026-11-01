@@ -2,7 +2,7 @@ import type { VNode } from 'vue'
 
 import type { ButtonProps } from '@/components/button/Button.types'
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -93,7 +93,7 @@ export type NumberStepperProps = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<NumberStepper>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots for `NumberStepper`. */
 export type NumberStepperSlots = {
@@ -114,4 +114,12 @@ export type NumberStepperSlots = {
   description?: () => VNode[]
   /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
   error?: (props: ValidationResult) => VNode[]
+}
+
+/** Events emitted by `NumberStepper`. */
+export type NumberStepperEmits = {
+  /** Focus entered the field (the input or a stepper button) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between its input and buttons doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

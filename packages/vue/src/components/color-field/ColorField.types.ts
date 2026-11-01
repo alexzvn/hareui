@@ -2,7 +2,7 @@ import type { Color, ColorChannel, ColorSpace } from 'reka-ui'
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn, ValidationResult } from '@/composables/useFieldValidation'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -93,7 +93,7 @@ export type ColorFieldProps = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<ColorField>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots for `ColorField`. */
 export type ColorFieldSlots = {
@@ -116,4 +116,8 @@ export type ColorFieldEmits = {
    * input is cleared.
    */
   'update:modelValue': [value: string | Color | null]
+  /** Focus entered the field (the input or a stepper button) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between its input and buttons doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

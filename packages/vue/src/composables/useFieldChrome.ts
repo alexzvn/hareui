@@ -16,6 +16,7 @@ import FieldError from '@/components/field-error/FieldError.vue'
 import Label from '@/components/label/Label.vue'
 
 import type { ValidationResult } from './useFieldValidation'
+import { useFormField } from './useFormField'
 import { useSlotOutlet } from './useSlotOutlet'
 
 const VALID_RESULT: ValidationResult = {
@@ -46,8 +47,8 @@ type FieldChromeSlots = {
 }
 
 export type FieldChromeOptions = {
-  /** The component's props; reads `id` (unless `baseId` is given), `label`, `description` and `errorMessage`. */
-  props: { id?: string; label?: string; description?: string; errorMessage?: string }
+  /** The component's props; reads `id` (unless `baseId` is given), `name`, `label`, `description` and `errorMessage`. */
+  props: { id?: string; name?: string; label?: string; description?: string; errorMessage?: string }
   /**
    * Base of the returned `id` and the label / description / error ids, replacing `props.id ?? useId()`. For fields
    * whose `id` prop names an inner control while the chrome ids stay generated (e.g. ComboBox).
@@ -103,6 +104,10 @@ export type FieldChromeOptions = {
  *   validation errors; its text falls back to the joined validation errors. The `error` slot receives the validation
  *   result. `errorPart: 'errorMessage'`: the error shows whenever `errorMessage` or the `errorMessage` slot is given.
  * - Slot content wins over the matching prop; parts render the prop text when the slot is absent.
+ * - Inside a `FormField` (see `useFormField`): the field claims it; `id` falls back to the field's control id,
+ *   `hasLabel` / `labelId` name the field's label, the own label, description and error never render, `describedBy`
+ *   lists the field's parts after `ariaDescribedBy` and `describedByIds`, and the validation shows in the field.
+ *   `FieldLabel`'s `for` (absent: none, as for groups) is where the field's label points.
  *
  * Must be called in `setup`.
  */
@@ -111,8 +116,46 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
   const isMessagePart = options.errorPart === 'errorMessage'
   const errorSlot = isMessagePart ? 'errorMessage' : 'error'
   const autoId = useId()
-  const id = computed(() => toValue(options.baseId) ?? props.id ?? autoId)
-  const labelId = computed(() => `${id.value}-label`)
+
+  // `null` until a `FieldLabel` reports its `for` inside a FormField
+  const labelFor = shallowRef<string | undefined | null>(null)
+  const isInvalid = computed(() => !!toValue(options.invalid))
+  const validation = computed(() => toValue(options.validation) ?? VALID_RESULT)
+
+  // The validation shown in a surrounding FormField: the error message part's text, else the invalid state's errors.
+  // `undefined` (the FormField shows the `Form` error for its `name`) when the field reports no validity.
+  const reportedValidation = (): ValidationResult | undefined => {
+    if (isMessagePart && props.errorMessage)
+      return { ...VALID_RESULT, isInvalid: true, validationErrors: [props.errorMessage] }
+
+    if (options.invalid === undefined) return undefined
+    if (!isInvalid.value) return VALID_RESULT
+    const errors = props.errorMessage ? [props.errorMessage] : validation.value.validationErrors
+
+    return { ...validation.value, isInvalid: true, validationErrors: errors }
+  }
+
+  const formField = useFormField({
+    id: () => props.id,
+    name: () => props.name,
+    labelTarget: () => (labelFor.value === null ? id.value : labelFor.value),
+    validation: reportedValidation,
+    disabled: options.disabled,
+    required: options.required,
+  })
+
+  const isWrapped = formField.isInFormField
+
+  const id = computed(() => toValue(options.baseId) ?? props.id ?? formField.id.value ?? autoId)
+
+  // Inside a FormField, its label and description replace the field's own; the field's render when it has none
+  const isLabelDelegated = computed(() => isWrapped && !!formField.labelId.value)
+  const isDescriptionDelegated = computed(() => isWrapped && !!formField.descriptionId.value)
+
+  const labelId = computed(
+    () => (isLabelDelegated.value && formField.labelId.value) || `${id.value}-label`,
+  )
+
   const descriptionId = computed(() => `${id.value}-description`)
   const errorId = computed(() => `${id.value}-error`)
 
@@ -140,20 +183,22 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
       present.value = next
   })
 
-  const isInvalid = computed(() => !!toValue(options.invalid))
-  const validation = computed(() => toValue(options.validation) ?? VALID_RESULT)
-  const hasLabel = computed(() => !!(props.label || present.value.label))
+  const hasLabel = computed(() => isLabelDelegated.value || !!(props.label || present.value.label))
 
   const hasDescription = computed(
     () =>
+      !isDescriptionDelegated.value &&
       !!(props.description || present.value.description) &&
       !(options.hideDescriptionWhenInvalid && isInvalid.value),
   )
 
-  const hasMessageError = computed(() => props.errorMessage !== undefined || present.value.error)
+  const hasMessageError = computed(
+    () => !isWrapped && (props.errorMessage !== undefined || present.value.error),
+  )
 
   const hasInvalidError = computed(
     () =>
+      !isWrapped &&
       isInvalid.value &&
       !!(props.errorMessage || present.value.error || validation.value.validationErrors.length),
   )
@@ -172,10 +217,12 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
         ? [description, ...ids]
         : [...ids, description]
 
+    const parts = isWrapped
+      ? [formField.describedBy.value]
+      : [hasError.value ? errorId.value : undefined]
+
     return (
-      [toValue(options.ariaDescribedBy), ...around, hasError.value ? errorId.value : undefined]
-        .filter(Boolean)
-        .join(' ') || undefined
+      [toValue(options.ariaDescribedBy), ...around, ...parts].filter(Boolean).join(' ') || undefined
     )
   })
 
@@ -184,13 +231,25 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
   const DescriptionOutlet = useSlotOutlet(slots, 'description')
   const ErrorOutlet = useSlotOutlet(slots, errorSlot)
 
-  /** `<Label>` when the field has a label. Attrs (`for`, or `id` + `as="span"` for groups) pass to `Label`. */
+  /**
+   * `<Label>` when the field has a label. Attrs (`for`, or `id` + `as="span"` for groups) pass to `Label`. Inside a
+   * FormField it points the FormField's label at its `for`, and renders nothing while that label replaces it.
+   */
   const FieldLabel = defineComponent({
     name: 'FieldLabel',
     inheritAttrs: false,
     setup(_, { attrs }) {
+      if (isWrapped) {
+        const report = () => {
+          labelFor.value = (attrs.for as string | undefined) ?? undefined
+        }
+
+        report()
+        onBeforeUpdate(report)
+      }
+
       return () =>
-        hasLabel.value
+        hasLabel.value && !isLabelDelegated.value
           ? h(
               Label,
               {
@@ -249,10 +308,16 @@ export const useFieldChrome = (options: FieldChromeOptions) => {
     descriptionId,
     errorId,
     hasLabel,
+    /** Whether a surrounding FormField's label names the control, so a hand-rendered label must not render. */
+    isLabelDelegated,
     hasDescription,
     hasError,
     errorText,
     describedBy,
+    /** The control's own `name`, else the surrounding FormField's: bind it to the submitted input. */
+    name: formField.name,
+    /** The surrounding `FormField`'s values (e.g. `size`), empty outside one. */
+    formField,
     FieldLabel,
     FieldDescription,
     FieldError: FieldErrorPart,

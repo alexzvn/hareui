@@ -69,8 +69,7 @@ const showWarning = () => {
 
 const showDanger = () => {
   const id = toast.danger('Storage is full', {
-    description:
-      'Remove files to release space. Adding more text to demonstrate longer content display',
+    description: "You've used all 15 GB. Remove files or upgrade your plan to keep uploading.",
     indicator: h(Icon, { icon: 'gravity-ui:hard-drive' }),
     action: { label: 'Remove', variant: 'danger', onClick: () => toast.close(id) },
   })

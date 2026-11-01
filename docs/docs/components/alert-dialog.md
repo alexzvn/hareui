@@ -53,6 +53,8 @@ through props and named slots.
 
 ### Controlled State
 
+Bind `v-model:open` to open the dialog from anywhere, here a button outside it.
+
 <ComponentPreview name="alert-dialog/controlled" />
 
 ### Custom Icon
@@ -73,6 +75,9 @@ through props and named slots.
 
 ### Dismiss Behavior
 
+An alert dialog waits for an answer: by default, Escape and clicks on the backdrop don't close it. Set
+`keyboardDismissible` to close it with Escape, and `dismissible` to close it with a backdrop click.
+
 <ComponentPreview name="alert-dialog/dismiss-behavior" />
 
 ### Close Methods
@@ -88,6 +93,27 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 ### Custom Portal
 
 <ComponentPreview name="alert-dialog/custom-portal" />
+
+### Custom Close Button
+
+`closeButton` takes `false` to hide the close button, or an object with an `icon` and a `label` (its accessible name) to customise it.
+
+<ComponentPreview name="alert-dialog/custom-close-button" />
+
+### Events
+
+| Event           | Fires when                            |
+| --------------- | ------------------------------------- |
+| `enter`         | the open animation starts             |
+| `after:enter`   | the open animation ends               |
+| `leave`         | the close animation starts            |
+| `after:leave`   | the dialog has left the page          |
+| `close:prevent` | Escape or a backdrop click is ignored |
+
+Without an animation, `after:enter` and `after:leave` fire right away. An alert dialog ignores Escape and backdrop
+clicks unless `keyboardDismissible` or `dismissible` is set, so try them to see `close:prevent`.
+
+<ComponentPreview name="alert-dialog/events" />
 
 ## Customization
 
@@ -129,7 +155,7 @@ app.use(
 | `body`         | `alert-dialog-body`          | Main content area, rendered when `#body` is present                               |
 | `footer`       | `alert-dialog-footer`        | Footer section for actions, rendered when `#footer` is present                    |
 | `icon`         | `alert-dialog-icon`          | Icon container with status colors, rendered when `icon` is `true`                 |
-| `closeTrigger` | `alert-dialog-close-trigger` | Close button, rendered when `closeButton` is `true`                               |
+| `closeTrigger` | `alert-dialog-close-trigger` | Close button, rendered unless `closeButton` is `false`                            |
 
 The default status icon inside `icon` carries `data-slot="alert-dialog-default-icon"`.
 

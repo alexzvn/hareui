@@ -19,7 +19,7 @@
   </div>
   <div
     v-else
-    class="absolute inset-y-0 start-0"
+    :class="['absolute inset-y-0 start-0', !(isReady && visible) && 'pointer-events-none']"
     :style="{ width: width === undefined ? '100%' : `${width}px` }"
   >
     <iframe

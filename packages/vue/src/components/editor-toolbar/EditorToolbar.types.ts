@@ -2,7 +2,7 @@ import type { BubbleMenuPluginProps } from '@tiptap/extension-bubble-menu'
 import type { FloatingMenuPluginProps } from '@tiptap/extension-floating-menu'
 import type { Editor as TiptapEditor } from '@tiptap/vue-3'
 import type { PrimitiveProps } from 'reka-ui'
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
 import type { ButtonProps } from '@/components/button/Button.types'
 import type {
@@ -14,6 +14,7 @@ import type {
 import type { EditorCustomHandlers, EditorItem } from '@/components/editor/Editor.types'
 import type { ToggleButtonProps } from '@/components/toggle-button/ToggleButton.types'
 import type { TooltipProps } from '@/components/tooltip/Tooltip.types'
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -25,8 +26,8 @@ type EditorToolbar = typeof theme
 export type EditorToolbarButtonBase = {
   /** Visible text next to the icon. Without it the button is icon-only. */
   label?: string
-  /** Icon component. Command items without one get a built-in icon for their kind. */
-  icon?: Component
+  /** The icon: a class string or a component. Command items without one get a built-in icon for their kind. */
+  icon?: IconValue
   /**
    * Tooltip text, or the tooltip's props. Command items get their command name by default; `false`
    * hides it.
@@ -72,8 +73,8 @@ export type EditorToolbarDropdownActionItem = {
   label: string
   /** Secondary text under the label. */
   description?: string
-  /** Icon component. Command items without one get a built-in icon for their kind. */
-  icon?: Component
+  /** The icon: a class string or a component. Command items without one get a built-in icon for their kind. */
+  icon?: IconValue
   /** Disables the entry. */
   disabled?: boolean
   /** Keyboard shortcut shown at the end of the row. */

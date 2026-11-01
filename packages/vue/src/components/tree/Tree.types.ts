@@ -1,6 +1,7 @@
 import type { PrimitiveProps, TreeItemSelectEvent, TreeItemToggleEvent } from 'reka-ui'
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentUI, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -28,9 +29,9 @@ export type TreeItem = {
   /** The row text, read with the tree's `labelKey`. It is also the item's key unless `getKey` is set. */
   label?: string
   /** The icon before the label: an icon class or a component. Folders without one show `collapsedIcon` / `expandedIcon`. */
-  icon?: string | Component
+  icon?: IconValue
   /** An icon at the end of the row: an icon class or a component. */
-  trailingIcon?: string | Component
+  trailingIcon?: IconValue
   /** Whether the item starts expanded. Ignored when the tree's `defaultExpanded` is set. */
   defaultExpanded?: boolean
   /** Whether the item can't be selected, expanded or focused. */
@@ -98,11 +99,11 @@ export type TreeProps<T extends TreeItem = TreeItem, M extends boolean = false> 
    */
   labelKey?: string
   /** The chevron of folders, rotated 90° while expanded. Defaults to the gravity-ui `chevron-right` icon. */
-  indicatorIcon?: string | Component
+  indicatorIcon?: IconValue
   /** The icon of expanded folders without their own `icon`. Defaults to the gravity-ui `folder-open` icon. */
-  expandedIcon?: string | Component
+  expandedIcon?: IconValue
   /** The icon of collapsed folders without their own `icon`. Defaults to the gravity-ui `folder` icon. */
-  collapsedIcon?: string | Component
+  collapsedIcon?: IconValue
   /** The selected item (or items with `multiple`). Use `v-model` to control it. */
   modelValue?: M extends true ? T[] : T
   /** The item(s) selected on first render (uncontrolled). */

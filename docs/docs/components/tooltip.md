@@ -54,6 +54,14 @@ a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` an
 
 <ComponentPreview name="tooltip/custom-trigger" />
 
+### Keyboard Shortcuts
+
+`kbds` shows a keyboard shortcut after the text, one key per entry. A string that names a known key renders its
+symbol (`'command'` shows ⌘); any other string renders as written. Pass `Kbd` props for full control. The shortcut is hidden on screens narrower than the `lg` breakpoint, and
+when you use the `content` slot.
+
+<ComponentPreview name="tooltip/kbds" />
+
 ### Delays and Focus-Only Trigger
 
 `delay` (default `1500`) and `close-delay` (default `500`) are the defaults. The close delay applies only when the pointer leaves the trigger or tooltip; moving back in cancels it. Blur, press, Escape and another tooltip opening close it immediately. `trigger="focus"` opens the tooltip only when the trigger gets focus, and hovering neither opens nor closes it.

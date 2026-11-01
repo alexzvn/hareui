@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type {
   ListBoxEntry,
   ListBoxItem,
@@ -39,7 +39,7 @@ export type SelectProps<T extends ListBoxItem = ListBoxItem> = {
   defaultValue?: SelectValue
   /**
    * Text shown in the trigger while nothing is selected.
-   * @defaultValue 'Select an item'
+   * @defaultValue the `App` locale's label, then 'en' ('Select an item')
    */
   placeholder?: string
   /** Label text rendered above the trigger. */
@@ -111,7 +111,7 @@ export type SelectProps<T extends ListBoxItem = ListBoxItem> = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Select>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Props passed to the `#value` slot, for rendering the trigger's value. */
 export type SelectValueSlotProps<T extends ListBoxItem = ListBoxItem> = {
@@ -167,4 +167,10 @@ export type SelectEmits = {
   'update:open': [value: boolean]
   /** The end of the option list scrolled into view while `loading` is false (ListBox `load-more`). */
   loadMore: []
+  /** The selection changed through an option, typeahead or clear; not on `v-model` writes or form reset. */
+  change: [event: Event]
+  /** Focus entered the field (the trigger or the open list) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between the trigger and the open list doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

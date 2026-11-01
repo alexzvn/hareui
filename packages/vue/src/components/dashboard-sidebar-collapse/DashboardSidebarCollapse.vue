@@ -6,7 +6,9 @@
     :variant="variant"
     :size="size"
     :disabled="disabled"
-    :aria-label="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+    :aria-label="
+      collapsed ? t('dashboardSidebarCollapse.expand') : t('dashboardSidebarCollapse.collapse')
+    "
     :aria-expanded="!collapsed"
     :aria-controls="sidebar?.id.value"
     :class="ui.base()"
@@ -57,12 +59,15 @@ import { computed } from 'vue'
 import Button from '@/components/button/Button.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDashboard } from '@/composables/useDashboard'
+import { useLocale } from '@/composables/useLocale'
 
 import type {
   DashboardSidebarCollapseProps,
   DashboardSidebarCollapseSlots,
 } from './DashboardSidebarCollapse.types'
 import theme from './theme'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<DashboardSidebarCollapseProps>(), {
   as: 'button',

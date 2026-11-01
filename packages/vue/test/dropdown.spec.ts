@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { DropdownMenuSubContent } from 'reka-ui'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { h, nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 
 import type { DropdownEntry } from '@/components/dropdown/Dropdown.types'
 import Dropdown from '@/components/dropdown/Dropdown.vue'
@@ -599,5 +599,99 @@ describe('dropdown accessibility', () => {
     key(trigger(), 'ArrowUp')
     await settle()
     expect(menu()).toBeNull()
+  })
+})
+
+describe('dropdown item icons, links and onSelect', () => {
+  // A minimal vue-router RouterLink: it renders nothing itself and hands the link state to its slot.
+  const routerStub = (navigate: (to: unknown) => void) =>
+    defineComponent({
+      props: { to: { type: [String, Object], required: true }, custom: Boolean, replace: Boolean },
+      setup(props, { slots }) {
+        return () =>
+          slots.default?.({
+            href: `/app${props.to}`,
+            isActive: false,
+            isExactActive: false,
+            navigate: (event: MouseEvent) => {
+              event.preventDefault()
+              navigate(props.to)
+            },
+          })
+      },
+    })
+
+  const openWithRouter = (items: DropdownEntry[], navigate: (to: unknown) => void) => {
+    wrapper = mount(Dropdown, {
+      props: { defaultOpen: true, items },
+      slots: { default: () => h('button', 'Open') },
+      attachTo: document.body,
+      global: { components: { RouterLink: routerStub(navigate) } },
+    })
+
+    return wrapper
+  }
+
+  const StarIcon = { render: () => h('svg', { 'data-testid': 'star' }) }
+
+  it('renders an item icon only when the item sets one', async () => {
+    open({
+      items: [
+        { value: 'fav', label: 'Favourite', icon: StarIcon },
+        { value: 'plain', label: 'Plain' },
+      ],
+    })
+
+    await settle()
+    const icon = item('Favourite').querySelector('[data-testid=star]')
+    expect(icon?.getAttribute('aria-hidden')).toBe('true')
+    expect(item('Plain').querySelector('[data-slot=menu-item-icon]')).toBeNull()
+  })
+
+  it('renders an item with href as an anchor menu item', async () => {
+    open({ items: [{ value: 'docs', label: 'Docs', href: '/docs', target: '_blank' }] })
+    await settle()
+    const link = item('Docs')
+    expect(link.tagName).toBe('A')
+    expect(link.getAttribute('href')).toBe('/docs')
+    expect(link.getAttribute('target')).toBe('_blank')
+    expect(link.getAttribute('role')).toBe('menuitem')
+  })
+
+  it('routes an item `to` through RouterLink when the app registers it', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    openWithRouter([{ value: 'settings', label: 'Settings', to: '/settings' }], navigate)
+    await settle()
+    expect(item('Settings').getAttribute('href')).toBe('/app/settings')
+    item('Settings').click()
+    await settle()
+    expect(navigate).toHaveBeenCalledWith('/settings')
+  })
+
+  it('Enter on a link item follows the link and emits action', async () => {
+    const navigate = vi.fn<(to: unknown) => void>()
+    const w = openWithRouter([{ value: 'settings', label: 'Settings', to: '/settings' }], navigate)
+    await settle()
+    press(item('Settings'), 'Enter')
+    await settle()
+    expect(navigate).toHaveBeenCalledWith('/settings')
+    expect(w.emitted('action')).toEqual([['settings']])
+  })
+
+  it('a disabled link item has no href', async () => {
+    open({ items: [{ value: 'docs', label: 'Docs', href: '/docs', disabled: true }] })
+    await settle()
+    expect(item('Docs').hasAttribute('href')).toBe(false)
+    expect(item('Docs').getAttribute('aria-disabled')).toBe('true')
+  })
+
+  it('calls item onSelect with the event and still emits action', async () => {
+    const onSelect = vi.fn<(event: Event) => void>()
+    const w = open({ items: [{ value: 'copy', label: 'Copy', onSelect }] })
+    await settle()
+    item('Copy').click()
+    await settle()
+    expect(onSelect).toHaveBeenCalledWith(expect.any(Event))
+    expect(w.emitted('action')).toEqual([['copy']])
   })
 })

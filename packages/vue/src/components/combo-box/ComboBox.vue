@@ -20,6 +20,8 @@
     :class="ui.base()"
     @update:model-value="onRekaValue"
     @update:open="onRekaOpen"
+    @focus.capture="onFieldFocusCapture"
+    @blur.capture="onFieldBlurCapture"
   >
     <RekaBridge @ready="onReady" />
     <FieldLabel :id="labelId" :for="id" :class="ui.label()" />
@@ -72,7 +74,7 @@
         type="button"
         tabindex="-1"
         data-slot="combo-box-trigger"
-        aria-label="Show suggestions"
+        :aria-label="t('comboBox.trigger')"
         :aria-labelledby="hasLabel ? `${triggerId} ${labelId}` : undefined"
         aria-haspopup="listbox"
         :aria-expanded="isOpen ? 'true' : 'false'"
@@ -149,6 +151,8 @@
         :side-offset="8"
         :collision-padding="12"
         :class="ui.popover()"
+        @focus.capture="onFieldFocusCapture"
+        @blur.capture="onFieldBlurCapture"
       >
         <div
           :id="listboxId"
@@ -157,7 +161,7 @@
           data-slot="list-box"
           data-layout="stack"
           data-orientation="vertical"
-          aria-label="Suggestions"
+          :aria-label="t('comboBox.suggestions')"
           :aria-labelledby="hasLabel ? `${listboxId} ${labelId}` : undefined"
           :aria-multiselectable="isMultiple ? 'true' : undefined"
           :data-empty="visibleCount ? undefined : 'true'"
@@ -229,8 +233,11 @@ import { useCollectionModel } from '@/components/list-box/useCollectionModel'
 import { usePressRelease } from '@/components/select/pressRelease'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
+import { withChangeEvent } from '@/utils/formControlEvents'
 
 import type {
   ComboBoxEmits,
@@ -250,6 +257,8 @@ import { useComboBoxKeyboard } from './useComboBoxKeyboard'
 import { useComboBoxOpenState } from './useComboBoxOpenState'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 // Absent booleans stay `undefined`: `open` → uncontrolled, `invalid` → validation decides, `loading` → no sentinel
 const props = withDefaults(defineProps<ComboBoxProps<T>>(), {
@@ -273,13 +282,13 @@ const inputModel = defineModel<string>('inputValue')
 
 const isMultiple = computed(() => props.selectionMode === 'multiple')
 const input = useTemplateRef<HTMLInputElement>('input')
-const content = useTemplateRef<{ $el: HTMLElement }>('content')
+const content = useTemplateRef<{ $el: Node }>('content')
 
 // ---- Collection and selection (`v-model` wins when bound) -------------------------------------------------------
 // Selected items keep selection order, as RAC (`[...selectedKeys]`)
 const {
   options,
-  selection,
+  selection: modelSelection,
   selectedValues,
   selectedKey,
   selectedItems,
@@ -294,6 +303,9 @@ const {
   isMultiple: () => isMultiple.value,
   placeholder: () => props.valuePlaceholder,
 })
+
+// Writes through `selection` are the user's: they emit `change`
+const selection = withChangeEvent(modelSelection, (event) => emit('change', event))
 
 const selectedText = computed(() => resolveItemText(selectedKey.value))
 
@@ -313,6 +325,18 @@ const { isShowingAll, liveBlocks, filteredCount } = useComboBoxFilter({
   inputValue,
 })
 
+// The open state calls `highlightOnOpen` only once mounted, after the highlight below exists
+const { isOpen, blocks, visibleCount, open, close } = useComboBoxOpenState({
+  props,
+  isDisabled: disabled,
+  onUpdateOpen: (value) => emit('update:open', value),
+  optionCount: () => options.value.length,
+  filteredCount,
+  liveBlocks,
+  isShowingAll,
+  highlightOnOpen: (strategy) => highlightOnOpen(strategy),
+})
+
 const {
   onReady,
   highlighted,
@@ -325,17 +349,12 @@ const {
   selectHighlighted,
   itemValueOf,
   optionAttrs,
-} = useComboBoxHighlight({ input, content, options })
-
-const { isOpen, blocks, visibleCount, open, close } = useComboBoxOpenState({
-  props,
-  isDisabled: disabled,
-  onUpdateOpen: (value) => emit('update:open', value),
-  optionCount: () => options.value.length,
-  filteredCount,
-  liveBlocks,
-  isShowingAll,
-  highlightOnOpen,
+} = useComboBoxHighlight({
+  input,
+  content,
+  options,
+  isOpen: () => isOpen.value,
+  onHighlight: (payload) => emit('highlight', payload),
 })
 
 const isFocused = ref(false)
@@ -352,6 +371,7 @@ const { commitSelection, commitValue, revert } = useComboBoxCommit({
   resetInputValue,
   mirrorText,
   close,
+  onChange: (event) => emit('change', event),
 })
 
 // ---- Validation ---------------------------------------------------------------------------------------------------
@@ -427,6 +447,12 @@ const { onInput, onFocus, onBlur, onTriggerPointerdown, onTriggerClick } = useCo
   commitValidation,
 })
 
+// `focus` / `blur` are the field's: focus moving between the input, its button and the popover emits neither
+const { onFocusCapture: onFieldFocusCapture, onBlurCapture: onFieldBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
+})
+
 const isTriggerHovered = ref(false)
 
 // ---- Selection from the list (Reka ComboboxItem / ListboxRoot) --------------------------------------------------
@@ -481,8 +507,8 @@ const valueId = `${autoId}-value`
 const shouldShowValue = computed(() => isMultiple.value || !!slots.value)
 
 // Chrome ids derive from `autoId` even with an `id` prop (that one names the input)
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
-  {
+const { name, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+  useFieldChrome({
     props,
     baseId: autoId,
     slots,
@@ -493,8 +519,7 @@ const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError
     hideDescriptionWhenInvalid: true,
     ariaDescribedBy: () => attrs['aria-describedby'] as string | undefined,
     describedByIds: () => [shouldShowValue.value && valueId],
-  },
-)
+  })
 
 const inputLabelledBy = computed(
   () =>

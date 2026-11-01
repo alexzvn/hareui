@@ -45,7 +45,7 @@
                   aria-hidden="true"
                   :data-orientation="orientation"
                   :class="
-                    ui.separator({ override: isSeparatorHidden(index) ? 'opacity-0' : undefined })
+                    ui.separator({ class: isSeparatorHidden(index) ? 'opacity-0' : undefined })
                   "
                   data-slot="tabs-separator"
                 />
@@ -55,6 +55,12 @@
                   :index="index"
                   :selected="itemValue(item, index) === selectedValue"
                 >
+                  <IconRenderer
+                    v-if="item.icon"
+                    :icon="item.icon"
+                    :class="ui.tabIcon()"
+                    data-slot="tabs-tab-icon"
+                  />
                   {{ item.label }}
                 </slot>
               </button>
@@ -71,8 +77,8 @@
         </TabsList>
       </ScrollShadow>
       <button
-        :aria-label="orientation === 'vertical' ? 'Scroll tabs up' : 'Scroll tabs left'"
-        :class="ui.scrollPrev({ override: scrollState.before ? 'inline-flex' : undefined })"
+        :aria-label="orientation === 'vertical' ? t('tabs.scrollUp') : t('tabs.scrollLeft')"
+        :class="ui.scrollPrev({ class: scrollState.before ? 'inline-flex' : undefined })"
         tabindex="-1"
         type="button"
         @click="scrollByPage(-1)"
@@ -103,8 +109,8 @@
         </svg>
       </button>
       <button
-        :aria-label="orientation === 'vertical' ? 'Scroll tabs down' : 'Scroll tabs right'"
-        :class="ui.scrollNext({ override: scrollState.after ? 'inline-flex' : undefined })"
+        :aria-label="orientation === 'vertical' ? t('tabs.scrollDown') : t('tabs.scrollRight')"
+        :class="ui.scrollNext({ class: scrollState.after ? 'inline-flex' : undefined })"
         tabindex="-1"
         type="button"
         @click="scrollByPage(1)"
@@ -161,9 +167,13 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, wa
 import type { ScrollShadowVisibility } from '@/components/scroll-shadow/ScrollShadow.types'
 import ScrollShadow from '@/components/scroll-shadow/ScrollShadow.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
+import { IconRenderer } from '@/utils/icon'
 
 import type { TabsItem, TabsProps, TabsSlots } from './Tabs.types'
 import theme from './theme'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<TabsProps<T>>(), {
   orientation: 'horizontal',

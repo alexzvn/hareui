@@ -51,10 +51,13 @@ import { computed } from 'vue'
 
 import Button from '@/components/button/Button.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 import { resolveAs } from '@/utils/resolveAs'
 
 import type { ErrorClearProps, ErrorProps, ErrorSlots, ErrorEmits } from './Error.types'
 import theme from './theme'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<ErrorProps>(), {
   as: 'main',
@@ -80,7 +83,7 @@ const clearProps = computed<ErrorClearProps>(() =>
   typeof props.clear === 'object' ? props.clear : {},
 )
 
-const clearLabel = computed(() => clearProps.value.label ?? 'Back to home')
+const clearLabel = computed(() => clearProps.value.label ?? t('error.clear'))
 
 const clearButtonProps = computed(() => {
   const { label: _label, ...button } = clearProps.value

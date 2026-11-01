@@ -94,6 +94,12 @@ Bind the value with `v-model` to synchronize counters, previews, or formatting.
 
 <ComponentPreview name="textfield/controlled" />
 
+### Model Modifiers
+
+Modifiers on the field's `v-model` apply to the input inside it, including a [TextArea](/docs/components/text-area). They work as on [Input](/docs/components/input#model-modifiers).
+
+<ComponentPreview name="textfield/model-modifiers" />
+
 ### Error Message
 
 <ComponentPreview name="textfield/with-error" />

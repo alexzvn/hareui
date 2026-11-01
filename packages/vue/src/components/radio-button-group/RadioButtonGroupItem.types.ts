@@ -1,5 +1,6 @@
-import type { Component, VNode } from 'vue'
+import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -14,7 +15,7 @@ export type RadioButtonGroupItemProps = {
   /** Help text rendered below the title. */
   description?: string
   /** Leading icon: a class string (such as `i-lucide-truck`) or a component. */
-  icon?: string | Component
+  icon?: IconValue
   /**
    * Whether the item is disabled.
    * @defaultValue false

@@ -12,7 +12,7 @@
     :required="required"
     data-slot="slider"
     role="group"
-    :aria-labelledby="hasLabel ? labelId : undefined"
+    :aria-labelledby="labelledBy"
     :class="ui.base()"
     @update:model-value="onUpdate"
     @value-commit="onCommit"
@@ -23,10 +23,15 @@
     @gotpointercapture="captureOnDraggedThumb"
   >
     <!-- Split so slot content is only forwarded (and force-updated) when the slot is actually passed. -->
-    <Label v-if="hasLabel && $slots.label" :id="labelId" :disabled="isDisabled" :class="ui.label()">
+    <Label
+      v-if="hasOwnLabel && $slots.label"
+      :id="labelId"
+      :disabled="isDisabled"
+      :class="ui.label()"
+    >
       <slot name="label">{{ label }}</slot>
     </Label>
-    <Label v-else-if="hasLabel" :id="labelId" :disabled="isDisabled" :class="ui.label()">{{
+    <Label v-else-if="hasOwnLabel" :id="labelId" :disabled="isDisabled" :class="ui.label()">{{
       label
     }}</Label>
     <output
@@ -69,8 +74,10 @@
             thumbRefs[index] = el
           }
         "
-        :aria-labelledby="hasLabel ? labelId : undefined"
-        :aria-label="hasLabel ? undefined : ($attrs['aria-label'] as string | undefined)"
+        :aria-labelledby="labelledBy"
+        :aria-label="labelledBy ? undefined : ($attrs['aria-label'] as string | undefined)"
+        :aria-describedby="formField.describedBy.value"
+        :aria-invalid="formField.invalid.value ? 'true' : undefined"
         :aria-valuetext="formattedValues[index]"
         :aria-disabled="isDisabled ? 'true' : undefined"
         :class="ui.thumb()"
@@ -80,12 +87,12 @@
       />
     </SliderTrack>
     <!-- RAC submits one entry per thumb under the plain `name` (Reka would post `name[0]`, `name[1]`) -->
-    <template v-if="name">
+    <template v-if="inputName">
       <input
         v-for="(value, index) in current"
         :key="index"
         type="hidden"
-        :name="name"
+        :name="inputName"
         :value="value"
         :disabled="isDisabled"
       />
@@ -101,6 +108,7 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import Label from '@/components/label/Label.vue'
 import { captureOnDraggedThumb } from '@/composables/thumbPointerCapture'
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useFormField } from '@/composables/useFormField'
 import { clamp, snapValueToStep } from '@/utils/number'
 
 import type { SliderProps, SliderSlots } from './Slider.types'
@@ -126,10 +134,22 @@ const slots = useSlots()
 
 const ui = useComponentUI('slider', { theme: theme, variantProps: () => ({}), props })
 
+// Inside a FormField the field's label names the slider (its own label only renders when the field has none), and
+// the field's description, hint, help and error describe each thumb
+const formField = useFormField({
+  id: () => props.id,
+  name: () => props.name,
+  labelTarget: () => undefined,
+  disabled: () => isDisabled.value,
+  required: () => props.required,
+})
+
 const autoId = useId()
-const id = computed(() => props.id ?? autoId)
+const id = computed(() => formField.id.value ?? autoId)
 const labelId = computed(() => `${id.value}-label`)
-const hasLabel = computed(() => !!(props.label || slots.label))
+const hasOwnLabel = computed(() => !!(props.label || slots.label) && !formField.labelId.value)
+const labelledBy = computed(() => (hasOwnLabel.value ? labelId.value : formField.labelId.value))
+const inputName = computed(() => formField.name.value)
 
 // Reka's `SliderRoot` always works with `number[]`; a plain number renders a single thumb, an array a range.
 const toArray = (value: number | number[] | undefined): number[] | undefined => {

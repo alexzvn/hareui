@@ -1,6 +1,7 @@
 import type { PrimitiveProps } from 'reka-ui'
 import type { VNode } from 'vue'
 
+import type { CloseButtonProp } from '@/types/closeButton'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -29,10 +30,22 @@ export type AlertProps = {
    * @defaultValue true
    */
   indicator?: boolean
+  /**
+   * Renders a close button; an object customises its `icon` and `label` (accessible name). Clicking it sets
+   * `open` to `false`.
+   * @defaultValue false
+   */
+  closeButton?: CloseButtonProp
   /** Additional classes merged into the root element. */
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<Alert>
+}
+
+/** Events emitted by `Alert`. */
+export type AlertEmits = {
+  /** Emitted when the close button hides the alert (`v-model:open`, default `true`). */
+  'update:open': [value: boolean]
 }
 
 /** Slots of `Alert`, for replacing its parts or adding leading, trailing and extra content. */

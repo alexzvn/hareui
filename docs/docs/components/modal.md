@@ -90,6 +90,27 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 
 <ComponentPreview name="modal/custom-portal" />
 
+### Custom Close Button
+
+`closeButton` takes `false` to hide the close button, or an object with an `icon` and a `label` (its accessible name) to customise it.
+
+<ComponentPreview name="modal/custom-close-button" />
+
+### Events
+
+| Event           | Fires when                                                         |
+| --------------- | ------------------------------------------------------------------ |
+| `enter`         | the open animation starts                                          |
+| `after:enter`   | the open animation ends                                            |
+| `leave`         | the close animation starts                                         |
+| `after:leave`   | the modal has left the page                                        |
+| `close:prevent` | Escape or a backdrop click is ignored because `dismissible` is off |
+
+Without an animation, `after:enter` and `after:leave` fire right away. This modal ignores Escape and backdrop clicks,
+so try them to see `close:prevent`.
+
+<ComponentPreview name="modal/events" />
+
 ## Customization
 
 ### Tailwind CSS
@@ -122,7 +143,7 @@ app.use(
 | `heading`      | `modal-heading`       | The title, which labels the dialog                                                                                          |
 | `body`         | `modal-body`          | The scrollable content area, rendered when `#body` is present                                                               |
 | `footer`       | `modal-footer`        | Footer section for actions, rendered when `#footer` is present                                                              |
-| `closeTrigger` | `modal-close-trigger` | The default close button, rendered when `closeButton` is `true`                                                             |
+| `closeTrigger` | `modal-close-trigger` | The default close button, rendered unless `closeButton` is `false`                                                          |
 
 ### Interactive States
 

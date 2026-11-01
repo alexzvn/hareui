@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { ValidationBehavior } from '@/components/form/context'
-import type { FormFieldProps } from '@/components/form/types'
+import type { FormFieldValidationProps } from '@/components/form/types'
 import type { ValidateFn } from '@/composables/useFieldValidation'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
@@ -78,7 +78,7 @@ export type InputGroupProps = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<InputGroup>
-} & FormFieldProps
+} & FormFieldValidationProps
 
 /** Slots of `InputGroup`. */
 export type InputGroupSlots = {

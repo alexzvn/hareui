@@ -1,2 +1,7 @@
 export { default as NumberStepper } from './NumberStepper.vue'
-export type { NumberStepperProps, NumberStepperSlots } from './NumberStepper.types'
+
+export type {
+  NumberStepperEmits,
+  NumberStepperProps,
+  NumberStepperSlots,
+} from './NumberStepper.types'

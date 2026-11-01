@@ -138,7 +138,7 @@
         <tr v-else>
           <td :colspan="columnCount" data-slot="rich-table-empty" :class="ui.empty()">
             <slot name="empty">
-              {{ props.empty || 'No data' }}
+              {{ props.empty || t('richTable.noData') }}
             </slot>
           </td>
         </tr>
@@ -206,6 +206,7 @@ import type { ComponentPublicInstance } from 'vue'
 import { computed, useTemplateRef } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import type { RichTableData, RichTableProps, RichTableSlots } from './RichTable.types'
 import {
@@ -224,6 +225,8 @@ import { useRichTableColumnLayout } from './useRichTableColumnLayout'
 import { useRichTablePinnedEdges } from './useRichTablePinnedEdges'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<RichTableProps<T>>(), {
   as: 'div',

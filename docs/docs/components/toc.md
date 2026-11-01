@@ -51,7 +51,9 @@ Use the `title` prop to change the heading of the list. Defaults to `On this pag
 
 ### Slots
 
-Use the `leading` and `trailing` slots around the title, the `link` slot to change the text of each link (it gets `link`, `active` and `level`), and the `top` and `bottom` slots for content around the list, such as a "back to top" link. The `bottom` slot is hidden below `lg`.
+- `leading` and `trailing` sit around the title.
+- `link` changes the text of each link. It gets `link`, `active` and `level`.
+- `top` and `bottom` hold content around the list, such as a "back to top" link. `bottom` is hidden below `lg`.
 
 <ComponentPreview name="toc/slots" />
 

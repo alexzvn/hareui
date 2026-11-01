@@ -55,10 +55,13 @@
               :ui="{ item: 'min-w-0 shrink', link: 'min-w-0' }"
             >
               <template #item="{ item }">
-                <span class="flex min-w-0 items-center gap-2">
-                  <Icon :icon="item.icon" class="size-4 shrink-0" />
-                  <span class="truncate">{{ item.label }}</span>
-                </span>
+                <component
+                  :is="item.icon"
+                  v-if="item.icon"
+                  aria-hidden="true"
+                  class="me-1 size-4 shrink-0"
+                />
+                <span class="truncate">{{ item.label }}</span>
               </template>
             </Breadcrumbs>
           </template>
@@ -149,7 +152,5 @@ const footerItems: NavigationMenuItem[] = [
   { label: 'Help', icon: gravityIcon('circle-question'), href: '#' },
 ]
 
-type Crumb = BreadcrumbsItem & { icon: string }
-
-const breadcrumbs: Crumb[] = [{ label: 'Dashboard', icon: 'gravity-ui:house' }]
+const breadcrumbs: BreadcrumbsItem[] = [{ label: 'Dashboard', icon: gravityIcon('house') }]
 </script>

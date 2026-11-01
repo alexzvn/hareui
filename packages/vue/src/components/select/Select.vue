@@ -10,6 +10,8 @@
     :data-invalid="invalid ? 'true' : undefined"
     :data-required="required ? 'true' : undefined"
     :class="ui.base()"
+    @focus.capture="onFieldFocusCapture"
+    @blur.capture="onFieldBlurCapture"
   >
     <FieldLabel :id="labelId" as="span" @click="triggerEl()?.focus()" />
     <PopoverRoot :open="isOpen" :modal="false" @update:open="onRootOpenChange">
@@ -153,6 +155,8 @@
           @close-auto-focus="onCloseAutoFocus"
           @pointerdown="pressRelease.onPointerdown"
           @pointerup="pressRelease.onPointerup"
+          @focus.capture="onFieldFocusCapture"
+          @blur.capture="onFieldBlurCapture"
         >
           <ListBox
             ref="listBox"
@@ -236,9 +240,12 @@ import type { TypeaheadSource } from '@/components/list-box/useTypeahead'
 import { useTypeahead } from '@/components/list-box/useTypeahead'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { keyboardModalityKey, useKeyboardModality } from '@/composables/useKeyboardModality'
+import { useLocale } from '@/composables/useLocale'
 import { usePortal } from '@/composables/usePortal'
+import { withChangeEvent } from '@/utils/formControlEvents'
 
 import { usePressRelease } from './pressRelease'
 import type { SelectEmits, SelectProps, SelectSlots, SelectValue } from './Select.types'
@@ -251,13 +258,15 @@ defineOptions({ inheritAttrs: false })
 // The popover's options mount after the press that opens it, so the modality is tracked from here
 provide(keyboardModalityKey, useKeyboardModality())
 
+const { t } = useLocale()
+
 // Absent booleans stay `undefined` (not `false`): `open` → uncontrolled, `invalid` → validation decides,
 // `loading` → no sentinel
 const props = withDefaults(defineProps<SelectProps<T>>(), {
   portal: undefined,
   selectionMode: 'single',
   defaultValue: undefined,
-  placeholder: 'Select an item',
+  placeholder: undefined,
   side: 'bottom',
   align: 'center',
   open: undefined,
@@ -277,23 +286,25 @@ const isMultiple = computed(() => props.selectionMode === 'multiple')
 // collection order (not RAC's selection order)
 const {
   options,
-  selection,
+  selection: modelSelection,
   selectedValues,
   selectedKey,
   selectedItems,
   valueText,
   isPlaceholder,
   isSelected,
-  clear: clearSelection,
   reset,
 } = useCollectionModel<T>({
   items: () => props.items,
   model: modelValue,
   defaultValue: () => props.defaultValue,
   isMultiple: () => isMultiple.value,
-  placeholder: () => props.placeholder,
+  placeholder: () => props.placeholder ?? t('select.placeholder'),
   order: 'collection',
 })
+
+// Writes through `selection` are the user's: they emit `change`
+const selection = withChangeEvent(modelSelection, (event) => emit('change', event))
 
 // Open state: the `open` prop wins when bound
 const uncontrolledOpen = ref(props.defaultOpen ?? false)
@@ -342,7 +353,7 @@ const onListUpdate = (value: ListBoxValue | ListBoxValue[] | null | undefined) =
 const clear = () => {
   if (disabled.value || isPlaceholder.value) return
 
-  clearSelection()
+  selection.value = null
   commitValidation()
   emit('clear')
 }
@@ -444,6 +455,12 @@ const onTriggerBlur = () => {
   interaction.isFocusVisible = false
 }
 
+// `focus` / `blur` are the field's: focus moving between the trigger and the open list emits neither
+const { onFocusCapture: onFieldFocusCapture, onBlurCapture: onFieldBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
+})
+
 // The validation composable focuses the first native control of an invalid field; the hidden <select> isn't
 // focusable for users, so hand focus to the trigger (RAC marks it `data-react-aria-prevent-focus`)
 const onHiddenInvalid = () => {
@@ -458,7 +475,7 @@ const onHiddenInvalid = () => {
 
 const attrs = useAttrs()
 
-const { id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
+const { name, id, labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } =
   useFieldChrome({
     props,
     slots,

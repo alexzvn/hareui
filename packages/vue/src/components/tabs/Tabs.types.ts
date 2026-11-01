@@ -1,5 +1,6 @@
 import type { VNode } from 'vue'
 
+import type { IconValue } from '@/types/icon'
 import type { ComponentSlots, ComponentVariants } from '@/types/tv'
 import type { ClassValue } from '@/utils/tv'
 
@@ -11,6 +12,8 @@ type Tabs = typeof theme
 export type TabsItem = {
   /** The tab's label, shown in the trigger unless `#tab` is used. */
   label?: string
+  /** Icon shown before the label (decorative, `aria-hidden`). */
+  icon?: IconValue
   /** The value identifying this tab. Defaults to the item's index (as a string). */
   value?: string | number
   /** Whether this tab is disabled. */

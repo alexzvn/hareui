@@ -1,5 +1,5 @@
 <template>
-  <Primitive :as="as" data-slot="alert-root" :class="ui.base()">
+  <Primitive v-if="open" :as="as" data-slot="alert-root" :class="ui.base()">
     <slot name="leading" />
     <div v-if="indicator" data-slot="alert-indicator" :class="ui.indicator()">
       <slot name="indicator">
@@ -95,18 +95,35 @@
       <slot />
     </div>
     <slot name="trailing" />
+    <ResolvedCloseButton
+      v-if="closeButton"
+      data-slot="alert-close"
+      :close-button="closeButton"
+      label-key="alert.close"
+      :class="ui.close()"
+      @click="open = false"
+    />
   </Primitive>
 </template>
 
 <script setup lang="ts">
 import { Primitive } from 'reka-ui'
 
+import ResolvedCloseButton from '@/components/close-button/ResolvedCloseButton.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 
-import type { AlertProps, AlertSlots } from './Alert.types'
+import type { AlertEmits, AlertProps, AlertSlots } from './Alert.types'
 import theme from './theme'
 
-const props = withDefaults(defineProps<AlertProps>(), { as: 'div', indicator: true })
+const props = withDefaults(defineProps<AlertProps>(), {
+  as: 'div',
+  indicator: true,
+  closeButton: false,
+})
+
+defineEmits<AlertEmits>()
+const open = defineModel<boolean>('open', { default: true })
+
 const slots = defineSlots<AlertSlots>()
 
 const ui = useComponentUI('alert', {

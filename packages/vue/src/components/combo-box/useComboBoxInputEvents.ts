@@ -9,7 +9,7 @@ type ComboBoxInputEventsOptions = {
   input: Readonly<ShallowRef<HTMLInputElement | null>>
   /** The combo box root element; focus moving inside it or into `content` isn't a blur. */
   rootEl: () => HTMLElement | undefined
-  content: Readonly<ShallowRef<{ $el: HTMLElement } | null>>
+  content: Readonly<ShallowRef<{ $el: Node } | null>>
   isDisabled: Readonly<Ref<boolean>>
   isMultiple: () => boolean
   isFocused: Ref<boolean>

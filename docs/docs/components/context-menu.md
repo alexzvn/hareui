@@ -105,13 +105,23 @@ An item with nested `items` opens a submenu. Sections can carry their own `selec
 
 ### With Icons
 
-Use the `#item-leading` slot for icons or avatars. Extra fields on an item (such as `icon`) are passed through to the slots. `variant: 'danger'` colours destructive items.
+Set `icon` on an item to show an icon before its label. It takes an icon class or a component. The `#item-leading` slot replaces it, for avatars or anything else. `variant: 'danger'` colours destructive items.
 
 <ComponentPreview name="context-menu/with-icons" />
 
+### With Links
+
+An item with `to` or `href` renders as a link. Clicking it, or pressing Enter or Space on it, follows the link. With vue-router installed, `to` navigates client-side.
+
+`onSelect` on an item runs when the item is chosen, before the `action` event. Call `event.preventDefault()` in it to keep the menu open.
+
+<ComponentPreview name="context-menu/with-links" />
+
 ### With Custom Slots
 
-`#content-top` and `#content-bottom` render inside the menu, above and below the items. `#item-label`, `#item-description` and `#item-trailing` replace parts of each item, and `#item` replaces the whole item content.
+- `#content-top` and `#content-bottom` render inside the menu, above and below the items.
+- `#item-label`, `#item-description` and `#item-trailing` replace parts of each item.
+- `#item` replaces the whole item content.
 
 <ComponentPreview name="context-menu/with-custom-slots" />
 
@@ -156,6 +166,7 @@ app.use(
 | `item`             | `menu-item`            | Menu item; per-item classes go in `item.class`                                          |
 | `indicator`        | `menu-item-indicator`  | Selection indicator (`menu-item-indicator--checkmark` / `menu-item-indicator--dot` SVG) |
 | `submenuIndicator` | `submenu-indicator`    | Submenu chevron                                                                         |
+| `itemIcon`         | `menu-item-icon`       | `item.icon`, before the label                                                           |
 | `section`          | -                      | Section group (`<section role="group">`, labelled by its header)                        |
 | `header`           | `header`               | Section header, labels the group                                                        |
 | `separator`        | `separator`            | Divider between entries                                                                 |

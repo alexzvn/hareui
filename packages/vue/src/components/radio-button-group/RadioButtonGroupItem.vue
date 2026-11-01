@@ -35,8 +35,7 @@
         :class="cls('icon')"
       >
         <slot name="icon" v-bind="slotProps">
-          <span v-if="typeof icon === 'string'" :class="icon" />
-          <component :is="icon" v-else />
+          <IconRenderer v-if="icon" :icon="icon" />
         </slot>
       </span>
       <span data-slot="radio-button-group-item-text" :class="cls('itemText')">
@@ -78,6 +77,7 @@ import radioGroupTheme from '@/components/radio-group/theme'
 import { submitOnEnter } from '@/composables/forwardRootClick'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { IconRenderer } from '@/utils/icon'
 
 import { useRadioButtonGroup } from './context'
 import type {

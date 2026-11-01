@@ -4,7 +4,7 @@
       v-for="(key, index) in keyList"
       :key="index"
       :class="ui.abbr()"
-      :title="kbdKeysLabelMap[key]"
+      :title="t(`kbd.${key}`)"
       >{{ kbdKeysMap[key] }}</abbr
     ><span v-if="slots.default" :class="ui.content()"><slot /></span>
   </Primitive>
@@ -15,10 +15,13 @@ import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
+import { useLocale } from '@/composables/useLocale'
 
 import type { KbdProps, KbdSlots } from './Kbd.types'
-import { kbdKeysLabelMap, kbdKeysMap } from './kbdKeys'
+import { kbdKeysMap } from './kbdKeys'
 import theme from './theme'
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<KbdProps>(), { as: 'kbd' })
 const slots = defineSlots<KbdSlots>()

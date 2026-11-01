@@ -1,8 +1,21 @@
 export { createHareUI, hareUIConfigKey } from './config'
 export type { HareUIConfig, PortalTarget } from './config'
+export { defineLocale } from './locale/defineLocale'
+
+export type {
+  DeepPartial,
+  DefineLocaleOptions,
+  Direction,
+  Locale,
+  Messages,
+} from './locale/defineLocale'
+
 export * as themes from './components/themes'
 export type { Themes } from './components/themes'
 export type * from './types/tv'
+export type { IconValue } from './types/icon'
+export type { CloseButtonOptions, CloseButtonProp } from './types/closeButton'
+export type { LinkBaseProps } from './types/link'
 export { tv } from './utils/tv'
 
 export * from './components/button'
@@ -33,6 +46,7 @@ export * from './components/typography'
 export * from './components/number-field'
 export * from './components/disclosure'
 export * from './components/form'
+export * from './components/form-field'
 
 export type {
   ValidateFn,
@@ -148,9 +162,19 @@ export * from './components/inline-select'
 export * from './components/drop-zone'
 export * from './components/splitter'
 export * from './components/timeline'
+export * from './components/trend-chip'
 export * from './components/rating'
 export * from './components/stepper'
 export * from './components/tree'
 export * from './components/sidebar'
 export * from './components/context-menu'
 export * from './components/toc'
+export * from './components/widget'
+export * from './components/marquee'
+export * from './components/number-value'
+export * from './components/metric'
+export * from './components/metric-group'
+export * from './components/action-bar'
+export * from './components/item-card'
+export * from './components/item-card-group'
+export * from './components/list-view'

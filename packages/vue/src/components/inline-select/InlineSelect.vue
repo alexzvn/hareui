@@ -4,9 +4,12 @@
     v-bind="selectProps"
     :model-value="modelValue"
     :ui="selectUi"
-    @update:model-value="emit('update:modelValue', $event)"
+    @update:model-value="emit('update:modelValue', $event ?? null)"
     @update:open="emit('update:open', $event)"
     @load-more="emit('loadMore')"
+    @change="emit('change', $event)"
+    @focus="emit('focus', $event)"
+    @blur="emit('blur', $event)"
   >
     <template #indicator="state">
       <slot name="indicator" v-bind="state">

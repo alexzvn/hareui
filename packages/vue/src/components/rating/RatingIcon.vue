@@ -1,6 +1,5 @@
 <template>
-  <span v-if="typeof icon === 'string'" :class="icon" />
-  <component :is="icon" v-else-if="icon" />
+  <IconRenderer v-if="icon" :icon="icon" />
   <!-- gravity-ui `star-fill` -->
   <svg v-else aria-hidden="true" fill="currentColor" viewBox="0 0 16 16">
     <path
@@ -10,10 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import type { Component } from 'vue'
+import type { IconValue } from '@/types/icon'
+import { IconRenderer } from '@/utils/icon'
 
 defineProps<{
-  /** A class string or a component; the star when absent. */
-  icon?: string | Component
+  /** The item icon; the star when absent. */
+  icon?: IconValue
 }>()
 </script>

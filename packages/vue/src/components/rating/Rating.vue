@@ -63,7 +63,7 @@
           :key="fraction"
           :value="value"
           :disabled="readonly"
-          :aria-label="itemLabel(value, length)"
+          :aria-label="itemLabel ? itemLabel(value, length) : t('rating.item', { value, length })"
           data-slot="rating-step"
           :data-value="value"
           :style="{ width: `${fraction * 100}%`, zIndex: steps.length - index }"
@@ -89,11 +89,14 @@ import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
 import { useFieldValidation } from '@/composables/useFieldValidation'
+import { useLocale } from '@/composables/useLocale'
 import { clamp, roundToPrecision } from '@/utils/number'
 
 import type { RatingEmits, RatingProps, RatingSlots } from './Rating.types'
 import RatingIcon from './RatingIcon.vue'
 import theme from './theme'
+
+const { t } = useLocale()
 
 // `invalid: undefined`: an absent boolean would cast to `false`, which counts as controlled-valid and hides validation errors
 const props = withDefaults(defineProps<RatingProps>(), {
@@ -103,7 +106,7 @@ const props = withDefaults(defineProps<RatingProps>(), {
   step: 1,
   orientation: 'horizontal',
   invalid: undefined,
-  itemLabel: (value: number, length: number) => `${value} out of ${length}`,
+  itemLabel: undefined,
 })
 
 const emit = defineEmits<RatingEmits>()
@@ -118,7 +121,7 @@ const ui = useComponentUI('rating', {
   theme,
   variantProps: () => ({
     color: props.color,
-    size: props.size,
+    size: props.size ?? formField.size.value,
     orientation: props.orientation,
     readonly: props.readonly,
     disabled: isDisabled.value,
@@ -186,15 +189,22 @@ const { validation, invalid, commitValidation } = useFieldValidation({
   },
 })
 
-const { labelId, hasLabel, describedBy, FieldLabel, FieldDescription, FieldError } = useFieldChrome(
-  {
-    props,
-    slots,
-    invalid,
-    validation,
-    disabled: isDisabled,
-  },
-)
+const {
+  name,
+  labelId,
+  hasLabel,
+  describedBy,
+  formField,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} = useFieldChrome({
+  props,
+  slots,
+  invalid,
+  validation,
+  disabled: isDisabled,
+})
 
 const commit = (value: number) => {
   if (value === current.value) return

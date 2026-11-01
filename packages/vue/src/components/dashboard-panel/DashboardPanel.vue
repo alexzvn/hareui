@@ -37,6 +37,7 @@ import { computed, useId, useTemplateRef } from 'vue'
 import DashboardResizeHandle from '@/components/dashboard-resize-handle/DashboardResizeHandle.vue'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useDashboard } from '@/composables/useDashboard'
+import { useLocale } from '@/composables/useLocale'
 import { useResizable } from '@/composables/useResizable'
 
 import type {
@@ -47,6 +48,8 @@ import type {
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
+
+const { t } = useLocale()
 
 const props = withDefaults(defineProps<DashboardPanelProps>(), {
   minSize: 15,
@@ -101,7 +104,7 @@ const resizeHandleSlotProps = computed<DashboardPanelResizeHandleSlotProps>(() =
   onTouchStart,
   onDoubleClick,
   onKeyDown,
-  attrs: { ...handleAttrs.value, 'aria-controls': id, 'aria-label': 'Resize panel' },
+  attrs: { ...handleAttrs.value, 'aria-controls': id, 'aria-label': t('dashboardPanel.resize') },
   dragging: isDragging.value,
 }))
 </script>
