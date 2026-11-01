@@ -83,6 +83,18 @@ describe('FormField', () => {
     expect(w.get('[role=alert]').text()).toBe('Slot Required')
   })
 
+  it('references the hint from aria-describedby only when the label renders it', () => {
+    const field = (props: Record<string, string>) =>
+      mountAttached(() => h(FormField, props, { default: () => h(Input) }))
+
+    const withoutLabel = field({ hint: 'Optional', description: 'Work address' })
+    expect(descriptions(withoutLabel.get('input').element)).toEqual(['Work address'])
+    withoutLabel.unmount()
+
+    const withLabel = field({ label: 'Email', hint: 'Optional' })
+    expect(descriptions(withLabel.get('input').element)).toEqual(['Optional'])
+  })
+
   it('shows the error as an alert in place of the help', () => {
     const w = mount(FormField, { props: { help: 'Pick a strong one', error: 'Too short' } })
 

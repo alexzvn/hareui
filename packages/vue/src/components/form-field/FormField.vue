@@ -163,7 +163,7 @@ const describedBy = computed(
   () =>
     [
       present.value.description && descriptionId,
-      present.value.hint && hintId,
+      present.value.label && present.value.hint && hintId,
       !isErrorShown.value && present.value.help && helpId,
       isErrorShown.value && errorId,
     ]
