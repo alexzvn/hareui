@@ -80,6 +80,10 @@ card. A disabled card never navigates or calls `@click`.
 
 <ComponentPreview name="item-card/pressable" />
 
+The title names the press target. Without a title, an `aria-label` or `aria-labelledby` on the card moves to the press
+target and names it, and failing that the description does. A card with no name at all renders no press target, since
+it would be a control with no accessible name.
+
 ### A stack of cards
 
 Separate cards with a gap for a list where every row stands on its own. To share one surface with dividers, use an [ItemCardGroup](./item-card-group).

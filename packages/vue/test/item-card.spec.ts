@@ -265,4 +265,61 @@ describe('ItemCard with an action control', () => {
     expect(onToggle).toHaveBeenCalledOnce()
     expect(onClick).not.toHaveBeenCalled()
   })
+
+  it('names the press target with the description when there is no title', async () => {
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+    const wrapper = mount(ItemCard, {
+      props: { icon: Glyph, description: 'Nightly at 02:00', onClick },
+      attachTo: document.body,
+    })
+
+    await expectAccessible(wrapper)
+    await wrapper.find('button').trigger('click')
+    expect(onClick).toHaveBeenCalledOnce()
+    wrapper.unmount()
+  })
+
+  it('renders no unnamed press target without a title or description', async () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const wrapper = mount(ItemCard, {
+      props: { icon: Glyph, onClick: vi.fn<(event: MouseEvent) => void>() },
+      attachTo: document.body,
+    })
+
+    expect(wrapper.find('button').exists()).toBe(false)
+    await expectAccessible(wrapper)
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('needs a `title`, `description`'))
+    spy.mockRestore()
+    wrapper.unmount()
+  })
+
+  it('is accessible with a pressable title slot', async () => {
+    const wrapper = mount(ItemCard, {
+      props: { icon: Glyph, onClick: vi.fn<(event: MouseEvent) => void>() },
+      slots: { title: () => 'Backups' },
+      attachTo: document.body,
+    })
+
+    expect(wrapper.find('button').text()).toBe('Backups')
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('names the press target with an aria-label attr when there is no title or description', async () => {
+    const onClick = vi.fn<(event: MouseEvent) => void>()
+    const wrapper = mount(ItemCard, {
+      props: { icon: Glyph, onClick },
+      attrs: { 'aria-label': 'Backups' },
+      attachTo: document.body,
+    })
+
+    const button = wrapper.find('button')
+    expect(button.attributes('aria-label')).toBe('Backups')
+    expect(wrapper.find('[data-slot="item-card"]').attributes('aria-label')).toBeUndefined()
+    await expectAccessible(wrapper)
+    await button.trigger('click')
+    expect(onClick).toHaveBeenCalledOnce()
+    wrapper.unmount()
+  })
 })
