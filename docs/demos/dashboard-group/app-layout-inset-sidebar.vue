@@ -55,6 +55,12 @@
               :ui="{ item: 'min-w-0 shrink', link: 'min-w-0' }"
             >
               <template #item="{ item }">
+                <component
+                  :is="item.icon"
+                  v-if="item.icon"
+                  aria-hidden="true"
+                  class="me-1 size-4 shrink-0"
+                />
                 <span class="truncate">{{ item.label }}</span>
               </template>
             </Breadcrumbs>

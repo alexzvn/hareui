@@ -52,7 +52,15 @@
                     <span class="sr-only">{{ item.collapsed }}</span>
                   </span>
                 </Tooltip>
-                <span v-else class="truncate">{{ item.label }}</span>
+                <template v-else>
+                  <component
+                    :is="item.icon"
+                    v-if="item.icon"
+                    aria-hidden="true"
+                    class="me-1 size-4 shrink-0"
+                  />
+                  <span class="truncate">{{ item.label }}</span>
+                </template>
               </template>
             </Breadcrumbs>
           </template>
