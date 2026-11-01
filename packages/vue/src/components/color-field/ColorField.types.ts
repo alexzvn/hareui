@@ -116,4 +116,8 @@ export type ColorFieldEmits = {
    * input is cleared.
    */
   'update:modelValue': [value: string | Color | null]
+  /** Focus entered the field (the input or a stepper button) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between its input and buttons doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

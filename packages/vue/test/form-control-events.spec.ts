@@ -1,17 +1,23 @@
-import type { ComponentMountingOptions } from '@vue/test-utils'
+import { CalendarDate, Time } from '@internationalized/date'
+import type { ComponentMountingOptions, VueWrapper } from '@vue/test-utils'
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick, ref } from 'vue'
 
 import Autocomplete from '@/components/autocomplete/Autocomplete.vue'
 import Checkbox from '@/components/checkbox/Checkbox.vue'
+import ColorField from '@/components/color-field/ColorField.vue'
 import ComboBox from '@/components/combo-box/ComboBox.vue'
+import DateField from '@/components/date-field/DateField.vue'
+import DatePicker from '@/components/date-picker/DatePicker.vue'
 import DropZone from '@/components/drop-zone/DropZone.vue'
 import InputOtp from '@/components/input-otp/InputOtp.vue'
 import NumberField from '@/components/number-field/NumberField.vue'
+import NumberStepper from '@/components/number-stepper/NumberStepper.vue'
 import Select from '@/components/select/Select.vue'
 import Switch from '@/components/switch/Switch.vue'
 import TextField from '@/components/text-field/TextField.vue'
+import TimeField from '@/components/time-field/TimeField.vue'
 
 const items = [
   { value: 'cat', label: 'Cat' },
@@ -506,4 +512,98 @@ describe('DropZone change', () => {
     expect(zone.emitted('reject')).toHaveLength(1)
     expect(zone.emitted('change')).toBeUndefined()
   })
+})
+
+describe('field-level focus / blur of composite fields', () => {
+  const record = () => {
+    const events: string[] = []
+    const attrs = {
+      onFocus: (event: FocusEvent) => events.push(event.type),
+      onBlur: (event: FocusEvent) => events.push(event.type),
+    }
+
+    return { events, attrs }
+  }
+
+  type MountWithListeners = (attrs: ReturnType<typeof record>['attrs']) => VueWrapper
+  const attachTo = document.body
+
+  const segmentedFields: [string, MountWithListeners][] = [
+    [
+      'DateField',
+      (attrs) =>
+        mount(DateField, {
+          props: { label: 'Date', modelValue: new CalendarDate(2024, 5, 6) },
+          attrs,
+          attachTo,
+        }),
+    ],
+    [
+      'TimeField',
+      (attrs) =>
+        mount(TimeField, {
+          props: { label: 'Time', modelValue: new Time(9, 30) },
+          attrs,
+          attachTo,
+        }),
+    ],
+    [
+      'DatePicker',
+      (attrs) =>
+        mount(DatePicker, {
+          props: { label: 'Date', modelValue: new CalendarDate(2024, 5, 6) },
+          attrs,
+          attachTo,
+        }),
+    ],
+  ]
+
+  it.each(segmentedFields)(
+    '%s emits focus once entering the segments and blur once leaving them',
+    async (_, mountField) => {
+      const { events, attrs } = record()
+      const wrapper = mountField(attrs)
+      const segments = [...document.querySelectorAll<HTMLElement>('[role=spinbutton]')]
+      expect(segments.length).toBeGreaterThan(1)
+
+      segments[0]!.focus()
+      segments[1]!.focus()
+      await flush()
+      segments[1]!.blur()
+      await flush()
+
+      expect(events).toEqual(['focus', 'blur'])
+      wrapper.unmount()
+    },
+  )
+
+  const inputFields: [string, MountWithListeners, string][] = [
+    [
+      'ColorField',
+      (attrs) => mount(ColorField, { props: { label: 'Color' }, attrs, attachTo }),
+      '[data-slot=color-field] input',
+    ],
+    [
+      'NumberStepper',
+      (attrs) => mount(NumberStepper, { props: { label: 'Count' }, attrs, attachTo }),
+      '[data-slot=number-stepper-input]',
+    ],
+  ]
+
+  it.each(inputFields)(
+    '%s emits focus and blur once from its input',
+    async (_, mountField, selector) => {
+      const { events, attrs } = record()
+      const wrapper = mountField(attrs)
+      const input = wrapper.get<HTMLInputElement>(selector).element
+
+      input.focus()
+      await flush()
+      input.blur()
+      await flush()
+
+      expect(events).toEqual(['focus', 'blur'])
+      wrapper.unmount()
+    },
+  )
 })

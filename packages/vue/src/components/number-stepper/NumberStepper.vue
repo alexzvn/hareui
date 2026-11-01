@@ -8,6 +8,8 @@
     :data-required="required ? 'true' : undefined"
     :data-readonly="readonly ? 'true' : undefined"
     :class="ui.base()"
+    @focus.capture="onFocusCapture"
+    @blur.capture="onBlurCapture"
   >
     <FieldLabel :for="id" />
     <NumberFieldRoot
@@ -202,12 +204,17 @@ import Button from '@/components/button/Button.vue'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 import { useNumberValue } from '@/composables/useNumberValue'
 import { useSlotOutlet } from '@/composables/useSlotOutlet'
 
-import type { NumberStepperProps, NumberStepperSlots } from './NumberStepper.types'
+import type {
+  NumberStepperEmits,
+  NumberStepperProps,
+  NumberStepperSlots,
+} from './NumberStepper.types'
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
@@ -222,6 +229,14 @@ const props = withDefaults(defineProps<NumberStepperProps>(), {
 })
 
 const slots = defineSlots<NumberStepperSlots>()
+const emit = defineEmits<NumberStepperEmits>()
+
+// `focus` / `blur` are the field's: moving between the input and its buttons emits neither
+const { onFocusCapture, onBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
+})
+
 const DecrementOutlet = useSlotOutlet(slots, 'decrement')
 const IncrementOutlet = useSlotOutlet(slots, 'increment')
 const ValueOutlet = useSlotOutlet(slots, 'value')

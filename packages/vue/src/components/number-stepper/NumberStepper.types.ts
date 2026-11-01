@@ -115,3 +115,11 @@ export type NumberStepperSlots = {
   /** Error content, rendered while invalid. Replaces the `errorMessage` prop. */
   error?: (props: ValidationResult) => VNode[]
 }
+
+/** Events emitted by `NumberStepper`. */
+export type NumberStepperEmits = {
+  /** Focus entered the field (the input or a stepper button) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between its input and buttons doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
+}

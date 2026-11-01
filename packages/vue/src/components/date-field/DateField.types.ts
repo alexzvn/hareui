@@ -132,4 +132,8 @@ export type DateFieldSlots = {
 export type DateFieldEmits = {
   /** Emitted when the displayed placeholder date changes. */
   'update:placeholder': [value: DateValue]
+  /** Focus entered the field (any segment) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between segments doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

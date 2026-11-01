@@ -157,4 +157,8 @@ export type DatePickerEmits = {
   'update:placeholder': [value: DateValue]
   /** Emitted when the popover open state changes. */
   'update:open': [value: boolean]
+  /** Focus entered the field (a segment, the trigger or the open calendar) from outside it. */
+  focus: [event: FocusEvent]
+  /** Focus left the field; moving between its segments, trigger and calendar doesn't count. Fires a task later. */
+  blur: [event: FocusEvent]
 }

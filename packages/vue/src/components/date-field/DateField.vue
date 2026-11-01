@@ -25,6 +25,8 @@
     :class="ui.base()"
     @update:model-value="onUpdate"
     @update:placeholder="emit('update:placeholder', $event)"
+    @focus.capture="onFocusCapture"
+    @blur.capture="onBlurCapture"
   >
     <template #default="{ segments }">
       <!-- `as="span"`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
@@ -70,6 +72,7 @@ import DateInputGroup from '@/components/date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useLocale } from '@/composables/useLocale'
 
@@ -82,6 +85,13 @@ const { t } = useLocale()
 const props = withDefaults(defineProps<DateFieldProps>(), { invalid: undefined })
 const emit = defineEmits<DateFieldEmits>()
 const slots = defineSlots<DateFieldSlots>()
+
+// `focus` / `blur` are the field's: moving between segments emits neither
+const { onFocusCapture, onBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
+})
+
 const disabled = useFieldsetDisabled(() => props.disabled)
 
 /** The selected date. Bind with `v-model`. */

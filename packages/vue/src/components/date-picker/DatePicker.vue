@@ -30,6 +30,8 @@
       @update:model-value="onFieldUpdate"
       @update:placeholder="emit('update:placeholder', $event)"
       @keydown.capture="onFieldKeydown"
+      @focus.capture="onFocusCapture"
+      @blur.capture="onBlurCapture"
     >
       <template #default="{ segments }">
         <!-- `as` falls through to Reka `Label`: the group label names the input group via aria-labelledby, not a single form control (HeroUI renders a span) -->
@@ -106,6 +108,8 @@
         @open-auto-focus="onOpenAutoFocus"
         @close-auto-focus="onCloseAutoFocus"
         @escape-key-down="onEscapeKeyDown"
+        @focus.capture="onFocusCapture"
+        @blur.capture="onBlurCapture"
       >
         <slot name="calendar" :value="modelValue" :on-select="onCalendarSelect">
           <!--
@@ -157,6 +161,7 @@ import DateInputGroup from '@/components/date-input-group/DateInputGroup.vue'
 import { useFieldsetDisabled } from '@/components/fieldset/context'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useFieldChrome } from '@/composables/useFieldChrome'
+import { useFieldFocus } from '@/composables/useFieldFocus'
 import { useFieldValidation } from '@/composables/useFieldValidation'
 import { useInertOutside } from '@/composables/useInertOutside'
 import { useLocale } from '@/composables/useLocale'
@@ -182,6 +187,12 @@ const portalTarget = usePortal(() => props.portal)
 defineOptions({ inheritAttrs: false })
 const emit = defineEmits<DatePickerEmits>()
 const slots = defineSlots<DatePickerSlots>()
+
+// `focus` / `blur` are the field's: moving between segments, the trigger and the calendar emits neither
+const { onFocusCapture, onBlurCapture } = useFieldFocus({
+  onFocus: (event) => emit('focus', event),
+  onBlur: (event) => emit('blur', event),
+})
 
 /** The selected date. Bind with `v-model`. */
 const modelValue = defineModel<DateValue | null>()
