@@ -80,14 +80,14 @@ export default {
         handle: 'pb-0',
       },
       left: {
-        content: 'ltr:justify-start rtl:justify-end',
+        content: 'justify-start rtl:justify-end',
         dialog: [
           'h-full rounded-none w-80 max-w-[85vw] sm:w-96',
           '[&:where([data-state=open])]:slide-in-from-left [&:where([data-state=closed])]:slide-out-to-left',
         ],
       },
       right: {
-        content: 'ltr:justify-end rtl:justify-start',
+        content: 'justify-end rtl:justify-start',
         dialog: [
           'h-full rounded-none w-80 max-w-[85vw] sm:w-96',
           '[&:where([data-state=open])]:slide-in-from-right [&:where([data-state=closed])]:slide-out-to-right',
