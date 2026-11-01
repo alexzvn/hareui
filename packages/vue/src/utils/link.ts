@@ -158,9 +158,14 @@ export const LinkResolver = defineComponent({
 
       const to = link.to
 
-      // A disabled custom component with a destination (a router or framework link) would still navigate, so it gets
-      // the plain anchor; without one (e.g. a `span`) it stays as is.
-      if (link.as && link.as !== 'a' && link.as !== 'button' && !(isDisabled && hasLink(link))) {
+      // A custom component (a router or framework link) renders as is. With a destination, a plain tag (e.g. `span`)
+      // can't navigate and a disabled component still would, so both get the plain anchor; a tag without one stays.
+      if (
+        link.as &&
+        link.as !== 'a' &&
+        link.as !== 'button' &&
+        !(hasLink(link) && (isDisabled || typeof link.as === 'string'))
+      ) {
         return render({
           as: link.as,
           active: activeOverride ?? false,

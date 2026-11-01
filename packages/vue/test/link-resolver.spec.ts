@@ -94,6 +94,12 @@ describe('LinkResolver without a router', () => {
     expect(link.element.tagName).toBe('DIV')
   })
 
+  it('renders a plain tag `as` with a destination as an anchor', () => {
+    const link = mountLink({ as: 'span', href: '/a' })
+    expect(link.element.tagName).toBe('A')
+    expect(link.attributes('href')).toBe('/a')
+  })
+
   it('takes the active state from `active`', () => {
     const link = mountLink({ href: '/a', active: true })
     expect(link.attributes('data-active')).toBe('true')

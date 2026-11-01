@@ -153,6 +153,19 @@ describe('Button', () => {
     wrapper.unmount()
   })
 
+  it('a plain tag `as` with an href renders a real link, not an inert element', () => {
+    const wrapper = mount(Button, { props: { as: 'span', href: '/x' } })
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('/x')
+  })
+
+  it('as="div" without a destination keeps role="button" and tabindex 0', () => {
+    const wrapper = mount(Button, { props: { as: 'div' } })
+    expect(wrapper.element.tagName).toBe('DIV')
+    expect(wrapper.attributes('role')).toBe('button')
+    expect(wrapper.attributes('tabindex')).toBe('0')
+  })
+
   it('as="div" disabled leaves the tab order and ignores Enter, Space and clicks', async () => {
     const onClick = vi.fn<(event: MouseEvent) => void>()
     const wrapper = mount(Button, {

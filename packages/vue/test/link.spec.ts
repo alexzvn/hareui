@@ -103,6 +103,12 @@ describe('Link', () => {
     wrapper.unmount()
   })
 
+  it('a plain tag `as` with an href renders a real link', () => {
+    const wrapper = mount(Link, { props: { as: 'span', href: '/x' } })
+    expect(wrapper.element.tagName).toBe('A')
+    expect(wrapper.attributes('href')).toBe('/x')
+  })
+
   it('a link with an href is a native, focusable link that needs no extra role', () => {
     const wrapper = mount(Link, {
       props: { href: '/docs' },
