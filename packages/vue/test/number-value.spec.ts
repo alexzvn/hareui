@@ -120,6 +120,20 @@ describe('NumberValue', () => {
     spy.mockRestore()
   })
 
+  it.each([
+    ['unit format without a unit', { format: 'unit' }],
+    ['an invalid currency code', { format: 'currency', currency: 'US' }],
+    ['an invalid unit', { format: 'unit', unit: 'parsec-per-fortnight' }],
+  ] as const)('formats as a decimal and warns for %s', (_, props) => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const wrapper = mount(NumberValue, { props: { value: 1234.5, locale: 'en-US', ...props } })
+
+    expect(wrapper.text()).toBe('1,234.5')
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('falling back to decimal formatting'))
+    spy.mockRestore()
+  })
+
   it('warns when currency format has no currency code', () => {
     const spy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     mount(NumberValue, { props: { value: 1, format: 'currency' } })

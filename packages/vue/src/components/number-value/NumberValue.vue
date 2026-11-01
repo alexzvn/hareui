@@ -52,6 +52,20 @@ const formatted = computed(() => {
     options.style = 'decimal'
   }
 
-  return formatNumber(props.value, { locale: locale.value, options })
+  // Intl also throws for a unit style without a unit and for malformed currency or unit codes.
+  try {
+    return formatNumber(props.value, { locale: locale.value, options })
+  } catch (error) {
+    if (!(error instanceof RangeError || error instanceof TypeError)) throw error
+
+    warn(
+      `NumberValue: invalid number format options (${error.message}); falling back to decimal formatting.`,
+    )
+
+    return formatNumber(props.value, {
+      locale: locale.value,
+      options: { ...options, style: 'decimal', currency: undefined, unit: undefined },
+    })
+  }
 })
 </script>
