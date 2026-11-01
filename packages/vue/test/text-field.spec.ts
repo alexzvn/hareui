@@ -347,6 +347,77 @@ describe('TextField v-model modifiers', () => {
     expect(input.element.value).toBe('')
     wrapper.unmount()
   })
+
+  describe('an inner control with its own nullable v-model', () => {
+    const mountNested = (
+      control: typeof Input | typeof InputGroup,
+      fieldModifiers: ModelModifiers,
+    ) => {
+      const fieldValue = ref<string | number | null | undefined>('')
+      const controlValue = ref<string | number | null | undefined>('')
+      const fieldEmits: unknown[] = []
+      const controlEmits: unknown[] = []
+      const wrapper = mount(
+        defineComponent({
+          setup: () => () =>
+            h(
+              TextField,
+              {
+                label: 'Name',
+                modelValue: fieldValue.value,
+                modelModifiers: fieldModifiers,
+                'onUpdate:modelValue': (v: string | number | null | undefined) => {
+                  fieldEmits.push(v)
+                  fieldValue.value = v
+                },
+              },
+              {
+                default: () =>
+                  h(control, {
+                    modelValue: controlValue.value,
+                    modelModifiers: { nullable: true },
+                    'onUpdate:modelValue': (v: string | number | null | undefined) => {
+                      controlEmits.push(v)
+                      controlValue.value = v
+                    },
+                  }),
+              },
+            ),
+        }),
+      )
+
+      return { wrapper, fieldEmits, controlEmits }
+    }
+
+    // A field without `nullable` can't hold `null`; it takes the cleared control's value as `undefined`
+    const cases: [
+      string,
+      string,
+      typeof Input | typeof InputGroup,
+      ModelModifiers,
+      null | undefined,
+    ][] = [
+      ['Input', 'nullable', Input, { nullable: true }, null],
+      ['InputGroup', 'nullable', InputGroup, { nullable: true }, null],
+      ['Input', 'unmodified', Input, {}, undefined],
+      ['InputGroup', 'unmodified', InputGroup, {}, undefined],
+    ]
+
+    it.each(cases)(
+      '%s: clearing emits one null from the control and no transient empty string from a %s field',
+      async (_, _name, control, fieldModifiers, cleared) => {
+        const { wrapper, fieldEmits, controlEmits } = mountNested(control, fieldModifiers)
+        const input = wrapper.get('input')
+        await input.setValue('a')
+        await input.setValue('')
+        await nextTick()
+
+        expect(controlEmits).toEqual(['a', null])
+        expect(fieldEmits).toStrictEqual(['a', cleared])
+        wrapper.unmount()
+      },
+    )
+  })
 })
 
 describe('TextField label / description / error slots', () => {

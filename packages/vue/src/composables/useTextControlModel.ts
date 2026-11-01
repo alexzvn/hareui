@@ -3,7 +3,7 @@ import { computed, getCurrentInstance, inject, watch } from 'vue'
 
 import { textFieldContextKey } from '@/components/text-field/context'
 import type { ModelModifiers } from '@/utils/modelModifiers'
-import { createTextModelDirective } from '@/utils/modelModifiers'
+import { createTextModelDirective, toEmptyModelValue } from '@/utils/modelModifiers'
 
 type TextValue = string | number | null | undefined
 
@@ -41,8 +41,16 @@ export const useTextControlModel = (options: UseTextControlModelOptions) => {
   const value = computed<TextValue>({
     get: () => (isOwnModel ? model.value : field!.model.value),
     set: (v) => {
-      if (isOwnModel) model.value = v
-      if (field) field.model.value = v ?? undefined
+      if (!isOwnModel) {
+        field!.model.value = v ?? undefined
+        return
+      }
+
+      model.value = v
+
+      // Mirror what the control's own `nullable` / `optional` store, not the raw text: a cleared `nullable` control
+      // would otherwise pass the field a transient ''
+      if (field) field.model.value = toEmptyModelValue(v, modifiers) ?? undefined
     },
   })
 
@@ -57,9 +65,11 @@ export const useTextControlModel = (options: UseTextControlModelOptions) => {
       { immediate: true },
     )
 
-    // The field writes its model on form reset; pass that back to the parent's v-model
+    // The field writes its model on form reset; pass that back to the parent's v-model. Compare as the control's
+    // `nullable` / `optional` would store it, so the field echoing a cleared value back ('' / undefined for `null`)
+    // doesn't emit the control's empty value a second time
     watch(field.model, (v) => {
-      if (v !== model.value) model.value = v
+      if (toEmptyModelValue(v, modifiers) !== model.value) model.value = v
     })
   }
 
