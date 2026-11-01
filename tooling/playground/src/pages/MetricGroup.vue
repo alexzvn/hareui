@@ -2,9 +2,9 @@
 import { Metric, MetricGroup } from '@hareui/vue'
 
 const items = [
-  { title: 'Views', value: 18240, trend: { value: '+9%' } },
-  { title: 'Visitors', value: 4031, trend: { value: '+2%' } },
-  { title: 'Bounce', value: 0.38, trend: { value: '+1%', trend: 'down' as const } },
+  { title: 'Views', value: 18240, trend: { label: '+9%' } },
+  { title: 'Visitors', value: 4031, trend: { label: '+2%' } },
+  { title: 'Bounce', value: 0.38, trend: { label: '+1%', trend: 'down' as const } },
 ]
 </script>
 

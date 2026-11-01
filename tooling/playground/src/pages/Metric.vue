@@ -25,7 +25,7 @@ const spark = [12, 14, 13, 17, 16, 19, 18, 22, 21, 24].map((value, index) => ({ 
     <section>
       <h2 class="mb-2 text-sm font-medium text-muted">Variants</h2>
       <div class="grid grid-cols-4 gap-3">
-        <Metric v-for="variant in variants" :key="variant" :variant="variant" :title="variant" :value="1234" :trend="{ value: '+2%' }" />
+        <Metric v-for="variant in variants" :key="variant" :variant="variant" :title="variant" :value="1234" :trend="{ label: '+2%' }" />
       </div>
     </section>
 
@@ -48,16 +48,16 @@ const spark = [12, 14, 13, 17, 16, 19, 18, 22, 21, 24].map((value, index) => ({ 
     <section>
       <h2 class="mb-2 text-sm font-medium text-muted">Trends, currency, compact</h2>
       <div class="grid grid-cols-3 gap-3">
-        <Metric title="Up" :value="98000" :format="{ format: 'currency', currency: 'USD' }" :trend="{ value: '+4.2%' }" />
-        <Metric title="Down" :value="1200000" :format="{ notation: 'compact' }" :trend="{ value: '-1.1%', trend: 'down' }" />
-        <Metric title="Neutral" :value="7" :trend="{ value: '0%', trend: 'neutral', variant: 'tertiary' }" />
+        <Metric title="Up" :value="98000" :format="{ format: 'currency', currency: 'USD' }" :trend="{ label: '+4.2%' }" />
+        <Metric title="Down" :value="1200000" :format="{ notation: 'compact' }" :trend="{ label: '-1.1%', trend: 'down' }" />
+        <Metric title="Neutral" :value="7" :trend="{ label: '0%', trend: 'neutral', variant: 'tertiary' }" />
       </div>
     </section>
 
     <section>
       <h2 class="mb-2 text-sm font-medium text-muted">Chart, actions, footer</h2>
       <div class="grid grid-cols-3 gap-3">
-        <Metric title="Sparkline" :value="24" :trend="{ value: '+12%' }" :actions="actions" @action="lastAction = String($event)">
+        <Metric title="Sparkline" :value="24" :trend="{ label: '+12%' }" :actions="actions" @action="lastAction = String($event)">
           <template #chart>
             <AreaChart
               :data="spark"
@@ -79,7 +79,7 @@ const spark = [12, 14, 13, 17, 16, 19, 18, 22, 21, 24].map((value, index) => ({ 
             <AreaChart :data="spark" index="day" :series="{ value: { name: 'Value' } }" sparkline :height="80" aria-label="Value" />
           </template>
         </Metric>
-        <Metric title="Inline chart" :value="24" :trend="{ value: '+12%' }" chart-placement="inline">
+        <Metric title="Inline chart" :value="24" :trend="{ label: '+12%' }" chart-placement="inline">
           <template #chart>
             <AreaChart :data="spark" index="day" :series="{ value: { name: 'Value' } }" sparkline :height="70" aria-label="Value" />
           </template>
