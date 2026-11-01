@@ -35,5 +35,6 @@ jobs:
             echo "Tag $GITHUB_REF_NAME does not match package version v$version"
             exit 1
           fi
-      - run: npm publish
+      - run: bun run --cwd packages/vue prepublishOnly
+      - run: npm stage publish
         working-directory: packages/vue
