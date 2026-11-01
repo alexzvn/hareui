@@ -33,7 +33,7 @@ Alert is composed through props and named slots, rendered in a fixed order: `#le
 - The indicator renders by default with the status icon; set `:indicator="false"` to omit it.
 - The title and description render only when their prop or slot is provided.
 
-`ui` keys: `base`, `indicator`, `content`, `title`, `description`.
+`ui` keys: `base`, `indicator`, `content`, `title`, `description`, `close`.
 
 ## Examples
 

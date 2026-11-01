@@ -239,7 +239,7 @@ app.use(
 
 ### Emits
 
-`change` fires when the selection changes: an option is picked, the text is cleared, or typed text is committed with `allowsCustomValue`. Typing alone doesn't fire it. Its argument is a plain `Event` with no value, so read the value from `v-model`. `highlight` emits the highlighted option, and `undefined` when the list closes.
+`change` fires when the selection changes: an option is picked, the text is cleared, or typed text is committed with `allowsCustomValue`. Typing alone doesn't fire it. Its argument is a plain `Event` with no value, so read the value from `v-model`. Committed custom text sets `v-model` to `null`, so with `allowsCustomValue` read the text from `v-model:input-value`. `highlight` emits the highlighted option, and `undefined` when the list closes.
 
 <ApiTable component="ComboBox" kind="emits" />
 
