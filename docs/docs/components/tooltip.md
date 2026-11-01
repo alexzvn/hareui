@@ -56,8 +56,8 @@ a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` an
 
 ### Keyboard Shortcuts
 
-`kbds` shows a keyboard shortcut after the text, one key per entry. Pass a string for a plain key, or `Kbd` props for a
-modifier key: `{ keys: 'command' }` shows ⌘. The shortcut is hidden on screens narrower than the `lg` breakpoint, and
+`kbds` shows a keyboard shortcut after the text, one key per entry. A string that names a known key renders its
+symbol (`'command'` shows ⌘); any other string renders as written. Pass `Kbd` props for full control. The shortcut is hidden on screens narrower than the `lg` breakpoint, and
 when you use the `content` slot.
 
 <ComponentPreview name="tooltip/kbds" />

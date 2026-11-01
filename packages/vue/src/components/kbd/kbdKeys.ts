@@ -61,3 +61,6 @@ export const kbdKeysMap: Record<KbdKey, string> = {
 export const kbdKeysLabelMap: Readonly<Record<KbdKey, string>> = Object.freeze({
   ...enMessages.kbd,
 })
+
+/** Whether `key` names a `KbdKey`, so it renders as its symbol rather than literal text. */
+export const isKbdKey = (key: string): key is KbdKey => Object.hasOwn(kbdKeysMap, key)

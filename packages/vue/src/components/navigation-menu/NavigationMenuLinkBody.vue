@@ -159,7 +159,7 @@ import Avatar from '@/components/avatar/Avatar.vue'
 import Badge from '@/components/badge/Badge.vue'
 import Chip from '@/components/chip/Chip.vue'
 import Kbd from '@/components/kbd/Kbd.vue'
-import { kbdKeysMap } from '@/components/kbd/kbdKeys'
+import { isKbdKey } from '@/components/kbd/kbdKeys'
 import { IconRenderer } from '@/utils/icon'
 
 import { SlotOutlet, slotName, useNavigationMenu } from './context'
@@ -215,8 +215,6 @@ const badgeProps = computed(() =>
 )
 
 const chipProps = computed(() => (typeof props.item.chip === 'object' ? props.item.chip : {}))
-
-const isKbdKey = (key: string): key is keyof typeof kbdKeysMap => key in kbdKeysMap
 
 // Known keys render as their symbols; anything else is joined into literal text.
 const kbd = computed(() => {

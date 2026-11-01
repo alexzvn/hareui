@@ -28,16 +28,12 @@
               <span v-if="text">{{ text }}</span>
               <span v-if="kbds?.length" data-slot="kbds" :class="ui.kbds()">
                 <Kbd
-                  v-for="(kbd, index) in kbds"
+                  v-for="(kbd, index) in kbdItems"
                   :key="index"
-                  v-bind="typeof kbd === 'string' ? {} : kbd"
-                  :ui="
-                    typeof kbd === 'string'
-                      ? { base: ui.kbd() }
-                      : { ...kbd.ui, base: ui.kbd({ class: kbd.ui?.base }) }
-                  "
+                  v-bind="kbd.props"
+                  :ui="{ ...kbd.props.ui, base: ui.kbd({ override: kbd.props.ui?.base }) }"
                 >
-                  <template v-if="typeof kbd === 'string'">{{ kbd }}</template>
+                  <template v-if="kbd.text" #default>{{ kbd.text }}</template>
                 </Kbd>
               </span>
             </slot>
@@ -73,6 +69,8 @@ import {
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 
 import { Kbd } from '@/components/kbd'
+import type { KbdProps } from '@/components/kbd'
+import { isKbdKey } from '@/components/kbd/kbdKeys'
 import { TOOLTIP_OPEN_EVENT } from '@/composables/nestedLayer'
 import { useComponentUI } from '@/composables/useComponentUI'
 import { usePortal } from '@/composables/usePortal'
@@ -98,6 +96,14 @@ const emit = defineEmits<TooltipEmits>()
 defineSlots<TooltipSlots>()
 
 const ui = useComponentUI('tooltip', { theme: theme, variantProps: () => ({}), props })
+
+// A known key name renders as its symbol (e.g. `command` → `⌘`); any other string as literal text.
+const kbdItems = computed(() =>
+  (props.kbds ?? []).map((kbd): { props: KbdProps; text: string } => {
+    if (typeof kbd !== 'string') return { props: kbd, text: '' }
+    return isKbdKey(kbd) ? { props: { keys: [kbd] }, text: '' } : { props: {}, text: kbd }
+  }),
+)
 
 // The arrow SVG is 12px tall. Reka's PopperContent adds the arrow's height to `sideOffset`, but
 // React Aria measures `offset` from the trigger to the tooltip body (the arrow overlaps the gap),

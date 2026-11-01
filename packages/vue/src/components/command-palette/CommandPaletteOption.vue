@@ -146,7 +146,7 @@ import Avatar from '@/components/avatar/Avatar.vue'
 import Badge from '@/components/badge/Badge.vue'
 import Kbd from '@/components/kbd/Kbd.vue'
 import type { KbdKey } from '@/components/kbd/kbdKeys'
-import { kbdKeysMap } from '@/components/kbd/kbdKeys'
+import { isKbdKey } from '@/components/kbd/kbdKeys'
 import { get } from '@/utils/get'
 import { IconRenderer } from '@/utils/icon'
 import { LinkResolver } from '@/utils/link'
@@ -212,8 +212,6 @@ const highlights = computed(() => {
 })
 
 const chipProps = computed(() => (typeof props.item.chip === 'object' ? props.item.chip : {}))
-
-const isKbdKey = (key: string): key is KbdKey => key in kbdKeysMap
 
 // One `Kbd` per entry: a known key renders as its symbol, anything else as text.
 const kbds = computed(() =>
