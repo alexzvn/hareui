@@ -182,8 +182,13 @@ const onOpenAutoFocus = (event: Event) => {
   dialogRef.value?.focus()
 }
 
-// A hover card doesn't move focus, so it gets no `open-auto-focus` handler.
-const contentListeners = computed(() => (isHover.value ? {} : { onOpenAutoFocus }))
+// A hover card doesn't move focus, so it gets no `open-auto-focus` handler. Reka's HoverCardContent never
+// emits `interact-outside`, only its parts, so route those through the same dismiss guard.
+const contentListeners = computed(() =>
+  isHover.value
+    ? { onPointerDownOutside: onInteractOutside, onFocusOutside: onInteractOutside }
+    : { onOpenAutoFocus },
+)
 
 // The arrow SVG is 12px tall. Reka's PopperContent adds the arrow's height to `sideOffset`, but
 // React Aria measures `offset` from the trigger to the popover body (the arrow overlaps the gap),

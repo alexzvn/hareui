@@ -156,6 +156,21 @@ describe('popover', () => {
     expect(w.emitted('update:open')).toBeUndefined()
   })
 
+  it('keeps a non-dismissible hover card open on an outside press and emits close:prevent once', async () => {
+    const w = mountPopover({ mode: 'hover', defaultOpen: true, dismissible: false })
+    await settle()
+    await new Promise((r) => setTimeout(r, 0))
+
+    outside!.dispatchEvent(
+      new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
+    )
+
+    await settle()
+    expect(w.emitted('update:open')).toBeUndefined()
+    expect(content()).not.toBeNull()
+    expect(w.emitted('close:prevent')).toHaveLength(1)
+  })
+
   it('passes axe while closed', async () => {
     const w = mountPopover()
     await settle()
