@@ -59,7 +59,7 @@ Label renders a single `<label>` element.
 
 ### Tailwind CSS
 
-Pass utilities through `class` (root) or `:ui="{ base: '…' }"`; they are merged with tailwind-merge, so conflicting utilities replace the defaults.
+Pass utilities through `class` on the root, or through `:ui="{ base: '…' }"`. They are merged with tailwind-merge, so conflicting utilities replace the defaults.
 
 <ComponentPreview name="label/custom-styles" />
 
@@ -94,7 +94,10 @@ app.use(
 - `disabled` prop, or an ancestor with `[data-disabled="true"]` — disabled styling
 - `invalid` prop, or an ancestor with `[data-invalid="true"]` / `[aria-invalid="true"]` — danger text color
 
-**Note**: The parent-driven asterisk excludes parents with `role="group"`, `role="radiogroup"` or `role="checkboxgroup"`, and items with `data-slot="radio"` or `data-slot="checkbox"`, preventing duplicate asterisks in group components.
+**Note**: The parent-driven asterisk skips these parents, to avoid duplicate asterisks in group components:
+
+- groups: `role="group"`, `role="radiogroup"` or `role="checkboxgroup"`
+- items: `data-slot="radio"` or `data-slot="checkbox"`
 
 ## API Reference
 

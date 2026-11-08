@@ -59,6 +59,9 @@ export const ckb = defineLocale({
     dropZone: {
       removeFile: '{filename} بسڕەوە',
     },
+    editorMenu: {
+      noResults: 'هیچ ئەنجامێک نییە',
+    },
     error: {
       clear: 'گەڕانەوە بۆ سەرەتا',
     },
@@ -87,6 +90,9 @@ export const ckb = defineLocale({
       nextLabel: 'دواتر',
       prev: 'پەڕەی پێشوو',
       prevLabel: 'پێشتر',
+    },
+    promptInput: {
+      retry: 'دووبارە هەوڵ بدەرەوە',
     },
     richTable: {
       noData: 'هیچ داتایەک نییە',

@@ -20,7 +20,7 @@ import { Main } from '@hareui/vue'
 
 ### Within `App.vue`
 
-Use `Main` around your page content, below the [`Header`](/docs/components/header), and set `--header-height` on an ancestor such as `:root` to the height of your header. The variable set by `Header` itself only applies inside the header.
+Use `Main` around your page content, below the [`Header`](/docs/components/header). Set `--header-height` to the height of your header on an ancestor such as `:root`. The variable set by `Header` itself only applies inside the header.
 
 ```vue
 <template>

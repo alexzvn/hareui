@@ -58,6 +58,9 @@ export const lo = defineLocale({
     dropZone: {
       removeFile: 'ລົບ {filename}',
     },
+    editorMenu: {
+      noResults: 'ບໍ່ມີຜົນລັບ',
+    },
     error: {
       clear: 'ກັບໄປໜ້າຫຼັກ',
     },
@@ -86,6 +89,9 @@ export const lo = defineLocale({
       nextLabel: 'ຕໍ່ໄປ',
       prev: 'ໜ້າກ່ອນໜ້າ',
       prevLabel: 'ກ່ອນໜ້າ',
+    },
+    promptInput: {
+      retry: 'ລອງໃໝ່',
     },
     richTable: {
       noData: 'ບໍ່ມີຂໍ້ມູນ',

@@ -19,7 +19,11 @@ import { InlineSelect } from '@hareui/vue'
 
 ## Anatomy
 
-InlineSelect is a [Select](/docs/components/select) with a ghost trigger: no border or shadow, a background only on hover, just the value and a small indicator. It takes the same `items`, `v-model`, slots and form props. The popover holds a [ListBox](/docs/components/list-box) and opens at the bottom end of the trigger. The root is named `inline-select`; the inner parts keep Select's `select-*` names.
+InlineSelect is a [Select](/docs/components/select) with a ghost trigger. The trigger has no border or shadow and gets a background only on hover. It shows just the value and a small indicator.
+
+It takes the same `items`, `v-model`, slots and form props as Select. The popover holds a [ListBox](/docs/components/list-box) and opens at the bottom end of the trigger.
+
+The root's `data-slot` is `inline-select`. The inner parts keep Select's `select-*` names.
 
 ```vue
 <template>
@@ -52,7 +56,7 @@ There is no visible label. Give the trigger a name with `aria-label`, or point `
 
 ### Environment Switcher
 
-Put content before the value with the `#leading` slot, here a status dot for the current environment. Show the same dot in each option with `#item-leading`; the `description` of each item adds its URL.
+Put content before the value with the `#leading` slot, here a status dot for the current environment. Show the same dot in each option with `#item-leading`. Each item's `description` adds its URL.
 
 <ComponentPreview name="inline-select/environment-switcher" />
 
@@ -70,7 +74,7 @@ Set `selection-mode="multiple"` to pick several options. `v-model` becomes an ar
 
 ### Placements
 
-The popover opens below the trigger, aligned to its end. Change it with `side` and `align`; each option here applies one pair. The popover flips to the opposite side when there isn't enough room.
+The popover opens below the trigger, aligned to its end. Change it with `side` and `align`. Each option here applies one pair. The popover flips to the opposite side when there isn't enough room.
 
 <ComponentPreview name="inline-select/placements" />
 
@@ -84,7 +88,7 @@ The root is `inline-flex`, so the trigger text sits on the same baseline as the 
 
 ### Tailwind CSS
 
-Pass classes per part with `ui`, or on the root with `class`. Set the popover width with `ui.popover`; it is never narrower than the trigger.
+Pass classes per part with `ui`, or on the root with `class`. Set the popover width with `ui.popover`. It is never narrower than the trigger.
 
 ```vue
 <template>
@@ -130,7 +134,7 @@ The InlineSelect classes are merged over the Select theme, so `ui.select` overri
 ### Slots
 
 - `base` → `[data-slot="inline-select"]` – root (`inline-flex`), sets the CSS variables
-- `trigger` → `[data-slot="select-trigger"]` – ghost button, `text-sm text-muted`; on hover the text turns `text-foreground` over a rounded `--field-hover` background
+- `trigger` → `[data-slot="select-trigger"]` – ghost button in `text-sm text-muted`. On hover the text turns `text-foreground` over a rounded `--field-hover` background
 - `value` → `[data-slot="select-value"]` – selected label(s), truncated at `--inline-select-value-max-width`
 - `indicator` → `[data-slot="select-indicator"]` – icon, positioned in the flow and not rotated when open
 - `popover` → `[data-slot="select-popover"]` – dropdown panel
@@ -165,10 +169,10 @@ The InlineSelect classes are merged over the Select theme, so `ui.select` overri
 
 InlineSelect behaves like [Select](/docs/components/select) and follows the ARIA listbox pattern:
 
-- The trigger is a `<button>` with `aria-haspopup="listbox"`. Name it with `aria-label` or `aria-labelledby`; the current value is added to its accessible name
+- The trigger is a `<button>` with `aria-haspopup="listbox"`. Name it with `aria-label` or `aria-labelledby`. The current value is added to its accessible name
 - Click, <kbd>Enter</kbd> or <kbd>Space</kbd> opens the list on the selected option, else the first
 - <kbd>↓</kbd> opens the list on the selected option, else the first. <kbd>↑</kbd> opens it on the selected option, else the last
-- <kbd>↑</kbd> / <kbd>↓</kbd> move between options, <kbd>Enter</kbd> selects, <kbd>Esc</kbd> closes; focus returns to the trigger
+- <kbd>↑</kbd> / <kbd>↓</kbd> move between options, <kbd>Enter</kbd> selects and <kbd>Esc</kbd> closes. Focus then returns to the trigger
 - In single selection, typing on the closed trigger selects the first option that starts with the typed text
 - Icons in `#leading` and the indicator are decorative: mark your own icons `aria-hidden="true"`
 - A hidden native `<select>` carries `name`, form data and `required` validation

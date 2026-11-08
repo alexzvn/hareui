@@ -30,7 +30,7 @@ import { DisclosureGroup } from '@hareui/vue'
 </template>
 ```
 
-Each `Disclosure` inside the group is identified by its `value`; the group's
+Each `Disclosure` inside the group is identified by its `value`. The group's
 `v-model` holds the expanded values. Anything else can sit between the disclosures (e.g. a
 `Separator`).
 
@@ -81,7 +81,7 @@ app.use(
 
 The component supports both CSS pseudo-classes and data attributes for flexibility:
 
-- **Disabled**: `[data-disabled="true"]` on the group; every child Disclosure's trigger gets `:disabled`
+- **Disabled**: `[data-disabled="true"]` on the group. Every child Disclosure's trigger gets `:disabled`
 - **Expanded Management**: Automatically manages `[data-expanded]` states on child Disclosure items
 
 ## API Reference
@@ -107,7 +107,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 | `onExpandedChange` | `(keys: ExpandedValue[]) => void`   | -       | Called with the new expanded values                        |
 | `multiple`         | `MaybeRefOrGetter<boolean>`         | `false` | Keep previously expanded disclosures open while navigating |
 
-Returns `currentIndex`, `isPrevDisabled`, `isNextDisabled` (computed refs) and `onPrevious`, `onNext`.
+Returns:
+
+- `currentIndex`, `isPrevDisabled` and `isNextDisabled`: computed refs
+- `onPrevious` and `onNext`: functions that expand the previous or next disclosure
 
 ## Theme
 

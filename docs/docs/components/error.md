@@ -18,7 +18,12 @@ import { Error } from '@hareui/vue'
 Importing `Error` shadows the global `Error` constructor in that file. If you also need the constructor, rename the import: `import { Error as ErrorPage } from '@hareui/vue'`.
 :::
 
-Use the `error` prop to display an error. It accepts an object with `statusCode`, `statusMessage` and `message` (thrown by `createError`), or `status` and `statusText`, as thrown by H3. The message is hidden when it is the same as the status message.
+Use the `error` prop to display an error. It accepts either shape:
+
+- `statusCode`, `statusMessage` and `message`. `createError` throws this shape.
+- `status` and `statusText`, as thrown by H3.
+
+The message is hidden when it is the same as the status message.
 
 <ComponentPreview name="error/basic" minHeight="400px" />
 

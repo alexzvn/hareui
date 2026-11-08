@@ -18,9 +18,8 @@ import { Drawer } from '@hareui/vue'
 
 ## Anatomy
 
-A single `Drawer` component owns the whole structure. The first child is the trigger
-(`as-child`, merged directly onto its own root element); everything else is supplied
-through props and named slots.
+A single `Drawer` component owns the whole structure. The first child becomes the trigger, merged onto its own root element.
+Everything else comes from props and named slots.
 
 ```vue
 <Drawer handle placement="bottom" title="Heading">
@@ -33,9 +32,8 @@ through props and named slots.
 </Drawer>
 ```
 
-`handle` adds the optional drag handle, `closeButton` (on by default) the close button.
-`ui` keys: `backdrop`, `content`, `dialog`, `handle`, `header`, `heading`, `body`, `footer`,
-`closeTrigger`.
+- `handle`: adds the optional drag handle.
+- `closeButton`: the close button, on by default.
 
 ## Examples
 
@@ -79,7 +77,7 @@ Bind `v-model:open` to open the drawer from anywhere, here a button outside it.
 
 ### Custom Close Button
 
-`closeButton` takes `false` to hide the close button, or an object with an `icon` and a `label` (its accessible name) to customise it.
+Set `closeButton` to `false` to hide the close button. To customise it, pass an object with an `icon` and a `label`. The `label` is its accessible name.
 
 <ComponentPreview name="drawer/custom-close-button" />
 
@@ -159,10 +157,9 @@ In right-to-left layouts `left` and `right` still dock on that physical side.
 - **Focus**: `:focus-visible` - applied to the trigger and close button
 - **Hover**: `:hover` - applied to the close button on hover
 - **Active**: `:active` - applied to the trigger and close button when pressed
-- **Entering / Exiting**: `data-[state=open]` / `data-[state=closed]` on `backdrop`, `content`
-  and `dialog`. The panel slide is a
-  CSS animation (the panel waits for animations, not transitions, before unmounting) with fixed
-  durations (250ms in, 200ms out) and easing
+- **Entering / Exiting**: `data-[state=open]` / `data-[state=closed]` on the backdrop, content and dialog parts.
+  The panel slides with a CSS animation: 250ms in, 200ms out, with fixed easing.
+  The panel waits for animations, not transitions, before unmounting.
 - **Placement**: `data-placement="top|bottom|left|right"` on `content` and `dialog`
 
 ## API Reference
@@ -189,13 +186,13 @@ Implements the [WAI-ARIA Dialog pattern](https://www.w3.org/WAI/ARIA/apg/pattern
 with focus management, keyboard handling and scroll lock:
 
 - **Focus trap**: focus is locked within the drawer while open
-- **Keyboard**: `Escape` closes it (unless `keyboardDismissible` is `false`), `Tab` cycles elements.
+- **Keyboard**: `Escape` closes it, unless `keyboardDismissible` is `false`. `Tab` cycles elements.
   A scrollable body is not a tab stop of its own
 - **Screen readers**: the dialog always has an accessible name, either the rendered title or a
   visually hidden one
 - **Scroll lock**: body scroll is disabled while open
-- **Drag to dismiss**: pointer drags towards the drawer's edge on the handle, header and footer
-  areas close it (when `dismissible`); controls and the body are excluded
+- **Drag to dismiss**: dragging the handle, header or footer towards the drawer's edge closes it, when `dismissible`.
+  Controls and the body don't start a drag
 
 ## Related Components
 

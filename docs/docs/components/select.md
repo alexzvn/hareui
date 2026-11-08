@@ -124,7 +124,7 @@ Bind `v-model:open` to open and close the popover from outside.
 
 ### Asynchronous Loading
 
-Bind `loading` and listen to `load-more`: it fires whenever the end of the list scrolls into view while `loading` is false. The `#loading` slot shows after the last option while loading.
+Bind `loading` and listen to `load-more`. It fires whenever the end of the list scrolls into view while `loading` is false. The `#loading` slot shows after the last option while loading.
 
 <ComponentPreview name="select/asynchronous-loading" />
 
@@ -204,10 +204,13 @@ app.use(
 
 Select follows the ARIA listbox pattern:
 
-- The trigger opens the list with click, Enter, Space or the arrow keys; focus moves into the list (to the selected option, else the first one, or the last one with ArrowUp). A mouse press opens on press start, so you can drag onto an option and release to select it
+- The trigger opens the list with click, Enter, Space or the arrow keys
+- Opening moves focus to the selected option, else to the first one. ArrowUp moves it to the last one
+- A mouse press opens on press start, so you can drag onto an option and release to select it
 - Typing on the closed trigger selects the first matching option, starting from the selected one (typeahead)
 - Closing returns focus to the trigger, unless an outside press moved it to another element
-- `aria-labelledby` combines the label and the current value; description and error are linked with `aria-describedby`
+- `aria-labelledby` combines the label and the current value
+- The description and error are linked with `aria-describedby`
 - A hidden native `<select>` carries `name`, form data and native `required` validation
 
 ## Related Components

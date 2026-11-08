@@ -20,7 +20,7 @@ import { TimeField } from '@hareui/vue'
 
 ## Anatomy
 
-TimeField renders a [Label](/docs/components/label), a group holding an optional prefix, the segmented time input and an optional suffix, then a [Description](/docs/components/description) and a [FieldError](/docs/components/field-error). The text parts come from props; each can be replaced with a slot.
+TimeField renders a [Label](/docs/components/label), then a group holding an optional prefix, the segmented time input and an optional suffix. A [Description](/docs/components/description) and a [FieldError](/docs/components/field-error) follow. The text parts come from props, and each can be replaced with a slot.
 
 ```vue
 <template>
@@ -87,7 +87,7 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 
 ### Validation
 
-Set `invalid` with `error-message` to control the state yourself, or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form).
+Set `invalid` with `error-message` to control the state yourself. Or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form).
 
 <ComponentPreview name="time-field/invalid" />
 
@@ -142,7 +142,7 @@ app.use(
 - `segment` → `[data-slot="date-input-group-segment"]` – each individual time part
 - `suffix` → `[data-slot="date-input-group-suffix"]` – content after the segments
 
-> **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options. `group`, `input`, `segment`, `prefix` and `suffix` all belong to the internal `date-input-group` part shared with [DateField](/docs/components/date-field).
+> **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options. The group, input, segment, prefix and suffix keys belong to the internal `date-input-group` part shared with [DateField](/docs/components/date-field).
 
 ### Interactive States
 
@@ -178,9 +178,14 @@ TimeField sets these data attributes:
 
 - The label's `for` points to the field's id (auto-generated with `useId()` unless `id` is set)
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the field and every segment; the error is announced via `role="alert"`
-- Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments, <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
-- `min-value` and `max-value` mark the field invalid on their own — no need to compute `invalid` yourself just for native-range feedback
+- `invalid` sets `aria-invalid="true"` on the field and every segment. The error is announced via `role="alert"`.
+- Keyboard:
+  - <kbd>←</kbd>/<kbd>→</kbd> move between segments.
+  - <kbd>↑</kbd>/<kbd>↓</kbd> increment or decrement the focused segment. A 12-hour hour stays within its AM/PM period.
+  - <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount.
+  - <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum or maximum.
+  - Digits type directly into the focused segment and auto-advance.
+- `min-value` and `max-value` mark the field invalid on their own. You don't need to compute `invalid` for range feedback.
 
 ## Related Components
 

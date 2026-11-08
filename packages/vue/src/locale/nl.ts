@@ -58,6 +58,9 @@ export const nl = defineLocale({
     dropZone: {
       removeFile: '{filename} verwijderen',
     },
+    editorMenu: {
+      noResults: 'Geen resultaten',
+    },
     error: {
       clear: 'Terug naar home',
     },
@@ -86,6 +89,9 @@ export const nl = defineLocale({
       nextLabel: 'Volgende',
       prev: 'Vorige pagina',
       prevLabel: 'Vorige',
+    },
+    promptInput: {
+      retry: 'Opnieuw proberen',
     },
     richTable: {
       noData: 'Geen gegevens',

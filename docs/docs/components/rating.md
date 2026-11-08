@@ -49,7 +49,7 @@ The `color` prop sets the color of the filled icons.
 
 ### Sizes
 
-`size` sets the icon size and the gap between icons: `sm`, `md` (default) or `lg`.
+`size` sets the icon size and the gap between icons. It takes `sm`, `md` (default) or `lg`.
 
 <ComponentPreview name="rating/sizes" />
 
@@ -61,7 +61,7 @@ The `color` prop sets the color of the filled icons.
 
 ### Half Steps
 
-`step` divides each icon: `0.5` picks a half on the left part of an icon and a whole on the right part. `0.25` and `0.1` are also accepted.
+`step` divides each icon. With `0.5`, the left part of an icon picks a half and the right part a whole. `0.25` and `0.1` also work.
 
 <ComponentPreview name="rating/half-steps" />
 
@@ -117,7 +117,7 @@ A read-only rating fills any fraction, such as an average of `4.3`, whatever its
 
 ### Icon Per Item
 
-The `#item` slot renders each icon. It receives the item's 1-based `index` and `filled`, which is `false` for the empty layer and `true` for the filled one.
+The `#item` slot renders each icon. It receives the item's 1-based `index` and a `filled` flag. `filled` is `false` for the empty layer and `true` for the filled one.
 
 <ComponentPreview name="rating/item-slot" />
 
@@ -175,11 +175,11 @@ app.use(
 
 ### Interactive States
 
-- **Disabled**: `aria-disabled="true"` on the root; the icons dim to 50%
+- **Disabled**: `aria-disabled="true"` on the root. The icons dim to 50%
 - **Read only**: `[data-readonly="true"]` and `aria-readonly="true"` on the root
 - **Invalid**: `[data-invalid="true"]` and `aria-invalid="true"` on the root
 - **Required**: `[data-required="true"]` on the root
-- **Pressed**: a pressed item shrinks to 80%; the fill animates its width over 100ms. Both are off when the user prefers reduced motion
+- **Pressed**: a pressed item shrinks to 80%, and the fill animates its width over 100ms. Both are off when the user prefers reduced motion
 
 ## API Reference
 
@@ -201,9 +201,13 @@ app.use(
 
 ## Accessibility
 
-- The root is a `radiogroup`, named by `label` (through `aria-labelledby`) or by your `aria-label`; the description and error are linked through `aria-describedby`
+- The root is a `radiogroup`, named by `label` through `aria-labelledby`, or by your `aria-label`
+- The description and error are linked through `aria-describedby`
 - Each step is a `radio` named by `item-label`, `"3 out of 5"` by default
-- Keyboard: <kbd>Tab</kbd> enters and leaves the rating as one stop; arrow keys move and select the previous or next step; <kbd>Home</kbd> and <kbd>End</kbd> select the lowest and highest value; <kbd>Space</kbd> on the current value clears it when `clearable`
+- <kbd>Tab</kbd> enters and leaves the rating as one stop
+- Arrow keys move to the previous or next step and select it
+- <kbd>Home</kbd> and <kbd>End</kbd> select the lowest and highest value
+- <kbd>Space</kbd> on the current value clears it when `clearable`
 - A read-only rating keeps its radios out of the tab order
 
 ## Related Components

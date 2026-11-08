@@ -67,8 +67,7 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | -------- | ----------- | ---------------------- |
 | `base`   | `surface`   | Base surface container |
 
-The `variant` prop sets the background (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`): `transparent`, `default`,
-`secondary`, `tertiary`.
+The `variant` prop sets the background: transparent, default, secondary or tertiary. To restyle it, use `class`, `ui` or `createHareUI`.
 
 ## API Reference
 

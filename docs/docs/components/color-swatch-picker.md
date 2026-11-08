@@ -20,7 +20,7 @@ import { ColorSwatchPicker } from '@hareui/vue'
 
 ## Items
 
-Pass the swatches as `items`: a hex/CSS color string, or `{ value, label?, disabled? }` to set the accessible name or disable one swatch. Each item renders a [ColorSwatch](/docs/components/color-swatch) plus a check indicator. Selection is matched by color, so `#8b5cf6` and `#8B5CF6` are the same item.
+Pass the swatches as `items`. Each one is a hex or CSS color string. Use an object `{ value, label?, disabled? }` to give a swatch an accessible name or disable it. Each item renders a [ColorSwatch](/docs/components/color-swatch) plus a check indicator. Selection is matched by color, so `#8b5cf6` and `#8B5CF6` are the same item.
 
 ```vue
 <ColorSwatchPicker v-model="color" :items="['#F43F5E', { value: '#3B82F6', label: 'Sky' }]" />
@@ -56,7 +56,7 @@ Pass the swatches as `items`: a hex/CSS color string, or `{ value, label?, disab
 
 ### Custom Indicator
 
-The `indicator` slot replaces the check icon; the `default` slot replaces the whole item content and receives `{ value, label, selected }`.
+The `indicator` slot replaces the check icon. The `default` slot replaces the whole item content and receives `{ value, label, selected }`.
 
 <ComponentPreview name="color-swatch-picker/custom-indicator" />
 

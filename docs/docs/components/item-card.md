@@ -8,7 +8,7 @@ links:
 
 ## Usage
 
-Set the `icon`, `title` and `description` props, and put a control in the `#action` slot.
+Set the `icon`, `title` and `description` props. Put a control in the `#action` slot.
 
 ```ts
 import { ItemCard } from '@hareui/vue'
@@ -72,17 +72,14 @@ An [InlineSelect](./inline-select) fits the action slot, with single or multiple
 ### Links and buttons
 
 - With `to` or `href` the title renders a link, through `RouterLink` when the app has vue-router.
-- With a `@click` listener the title renders a `button`. The card itself stays the `as` element (`div` by default).
+- With a `@click` listener the title renders a `button`. The card itself stays the `as` element, a `div` by default.
 
-Either way the link or button stretches over the whole card, which gets a hover and press highlight and a focus ring.
-The `#action` slot sits above it, so it can still hold a switch, a select or a button: clicking them doesn't press the
-card. A disabled card never navigates or calls `@click`.
+Either way the link or button stretches over the whole card. The card gets a hover and press highlight and a focus ring.
+
+The `#action` slot sits above it, so it can still hold a switch, a select or a button. Clicking them doesn't press the card.
+A disabled card never navigates or calls `@click`.
 
 <ComponentPreview name="item-card/pressable" />
-
-The title names the press target. Without a title, an `aria-label` or `aria-labelledby` on the card moves to the press
-target and names it, and failing that the description does. A card with no name at all renders no press target, since
-it would be a control with no accessible name.
 
 ### A stack of cards
 
@@ -105,9 +102,11 @@ Restyle the icon box with `ui.icon` and fill it with the `#icon` slot. The actio
 ## Accessibility
 
 - The icon is decorative and hidden from screen readers.
-- A card with `href` or `to` holds a link; a card with a `@click` listener holds a button. Both are named by the title,
-  described by the description and reached with Tab; controls in the `#action` slot are separate tab stops, never
-  nested inside the link or button.
+- A card with `href` or `to` holds a link. A card with a `@click` listener holds a button.
+- The link or button is named by the title, described by the description and reached with Tab.
+- Without a title, an `aria-label` or `aria-labelledby` on the card moves to the link or button and names it. Failing that, the description names it.
+- A card with no name at all renders no link or button, since it would be a control with no accessible name.
+- Controls in the `#action` slot are separate tab stops, never nested inside the link or button.
 - Give a control in the `#action` slot its own `aria-label`, as the switch and select examples do.
 
 ## API Reference

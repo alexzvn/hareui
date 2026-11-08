@@ -38,7 +38,7 @@ bun add d3-scale d3-shape
 
 Pass the same `series` and `colors` as the chart. The legend names and colors each row the way the chart does, so you can place it anywhere, such as a card header.
 
-Inside a chart, set the chart's `legend` prop instead (`true`, `'top'`, `'bottom'`, `'left'` or `'right'`). The chart renders a `ChartLegend` for you, and clicking a row hides that series.
+Inside a chart, set the chart's `legend` prop instead. It takes `true` or a position: `'top'`, `'bottom'`, `'left'` or `'right'`. The chart renders a `ChartLegend` for you, and clicking a row hides that series.
 
 ## Anatomy
 
@@ -64,11 +64,17 @@ Inside a chart, set the chart's `legend` prop instead (`true`, `'top'`, `'bottom
 
 ### Slices with Values
 
-For pie and radial charts, pass `data` and `index` instead of `series`. Each row is one datum. `show-value` adds its value and `show-percent` its share of the visible total. Use `orientation="vertical"` for a list beside the chart.
+For pie and radial charts, pass `data` and `index` instead of `series`. Each row is one datum.
+
+- `show-value` adds the datum's value.
+- `show-percent` adds its share of the visible total.
+- `orientation="vertical"` stacks the rows into a list beside the chart.
 
 <ComponentPreview name="chart-legend/donut-breakdown" />
 
-Slice colors follow the chart: the row's `fill` field, then a `colors` map keyed by name, then the palette by position. `value.key` picks the value field when the rows have more than one number, and `value.formatter` formats the values.
+Slice colors follow the chart. A row uses its `fill` field first, then a `colors` map keyed by name, then the palette by position.
+
+Set `value.key` to pick the value field when the rows have more than one number. Set `value.formatter` to format the values.
 
 ### Toggle Series
 
@@ -78,7 +84,11 @@ Set `toggleable` to turn each row into a button. Bind the same list with `v-mode
 
 ### Custom Items
 
-Use the `#item` slot to replace the content of each row. It receives the row (`key`, `name`, `color`, `hidden`, and `value` and `percent` for slices), its `index`, and `toggle`. With `toggleable`, the slot renders inside the row's button.
+Use the `#item` slot to replace the content of each row. With `toggleable`, the slot renders inside the row's button. The slot receives:
+
+- `item`: the row, with `key`, `name`, `color` and `hidden`. Slice rows also carry `value` and `percent`.
+- `index`: the row's position.
+- `toggle`: shows or hides the row's series.
 
 <ComponentPreview name="chart-legend/custom-item" />
 
@@ -173,7 +183,7 @@ The list sets `[data-orientation="horizontal"]` or `[data-orientation="vertical"
 
 - The legend is a list (`<ul>` and `<li>`), so screen readers announce the number of rows.
 - With `toggleable`, each row is a `<button>` with `aria-pressed`: pressed while its series is shown. Tab moves between rows, and Enter or Space toggles one.
-- Indicators are `aria-hidden`; the label text names each series.
+- Indicators are `aria-hidden`. The label text names each series.
 - Without `toggleable`, rows are plain text and take no focus.
 
 ## Related Components

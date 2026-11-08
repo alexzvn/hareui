@@ -15,6 +15,9 @@ const entries = {
   'code-block.ts': '@hareui/vue/code-block',
   'command-palette.ts': '@hareui/vue/command-palette',
   'editor.ts': '@hareui/vue/editor',
+  'editor-drag-handle.ts': '@hareui/vue/editor-drag-handle',
+  'map.ts': '@hareui/vue/map',
+  'markdown.ts': '@hareui/vue/markdown',
 }
 
 /**

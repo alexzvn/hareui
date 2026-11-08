@@ -199,13 +199,14 @@ Calendar sets these data attributes:
 ### Limitations
 
 - Week and day views (`visible-duration`) use their own grid rather than the month grid. They have
-  their own alignment, paging, `page-behavior` and keyboard navigation; the year picker,
-  `number-of-months` and `fixed-weeks` only apply to the month view.
+  their own alignment, paging, `page-behavior` and keyboard navigation.
+- The year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
 - `fixed-weeks` is boolean only: it always shows 6 weeks, with no other week count.
-- Keyboard and selection details: Home/End and PageUp/PageDown (Shift: by year) page the view,
-  prev/next buttons keep the focused day of the month, outside-month days are inert, and
-  re-selecting the selected date keeps it selected (single selection) while still emitting
-  `update:modelValue` with it.
+- Home/End and PageUp/PageDown page the view. With Shift, they page by year.
+- The prev/next buttons keep the focused day of the month.
+- Days outside the month are inert.
+- Re-selecting the selected date keeps it selected in single selection. It still emits
+  `update:modelValue` with that date.
 
 ## API Reference
 

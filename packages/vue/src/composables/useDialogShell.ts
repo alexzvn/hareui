@@ -1,5 +1,5 @@
 import type { EmitFn, MaybeRefOrGetter, ShallowRef, Slot } from 'vue'
-import { computed, nextTick, ref, toValue, watch } from 'vue'
+import { computed, nextTick, readonly, ref, toValue, watch } from 'vue'
 
 import type { PortalTarget } from '@/config'
 import type { DialogEmits } from '@/types/dialog'
@@ -138,6 +138,8 @@ export const useDialogShell = (options: DialogShellOptions) => {
     visualViewportStyle,
     showHeaderTitle,
     hasHeader,
+    /** The open-state mirror, for a component that drives its own open/close motion (Sheet). */
+    isOpen: readonly(openState),
     /** `DialogRoot`'s `@update:open`. */
     onOpenChange,
     onEscapeKeyDown,

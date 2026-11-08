@@ -58,6 +58,9 @@ export const ru = defineLocale({
     dropZone: {
       removeFile: 'Удалить {filename}',
     },
+    editorMenu: {
+      noResults: 'Нет результатов',
+    },
     error: {
       clear: 'Вернуться на главную',
     },
@@ -86,6 +89,9 @@ export const ru = defineLocale({
       nextLabel: 'Далее',
       prev: 'Предыдущая страница',
       prevLabel: 'Назад',
+    },
+    promptInput: {
+      retry: 'Повторить попытку',
     },
     richTable: {
       noData: 'Нет данных',

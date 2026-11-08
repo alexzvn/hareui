@@ -58,6 +58,9 @@ export const th = defineLocale({
     dropZone: {
       removeFile: 'ลบ {filename}',
     },
+    editorMenu: {
+      noResults: 'ไม่มีผลลัพธ์',
+    },
     error: {
       clear: 'กลับไปยังหน้าหลัก',
     },
@@ -86,6 +89,9 @@ export const th = defineLocale({
       nextLabel: 'ถัดไป',
       prev: 'หน้าที่แล้ว',
       prevLabel: 'ย้อนกลับ',
+    },
+    promptInput: {
+      retry: 'ลองอีกครั้ง',
     },
     richTable: {
       noData: 'ไม่มีข้อมูล',

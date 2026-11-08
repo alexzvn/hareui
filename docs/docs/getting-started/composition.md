@@ -33,7 +33,9 @@ Named slots replace separate sub-components:
 
 ## Scoped Slot Props
 
-Some slots expose internal state as scoped slot props, so you can render different content depending on what the component is doing — no render-prop wrapper needed. `Button`'s `leading`, `default`, and `trailing` slots all receive `{ pending }`:
+Some slots pass internal state to your template as scoped slot props. You can render different content depending on what the component is doing, with no wrapper component.
+
+For example, the `leading`, `default` and `trailing` slots of `Button` all receive `{ pending }`:
 
 ```vue
 <template>
@@ -53,11 +55,11 @@ const isSaving = ref(false)
 </script>
 ```
 
-By default the `leading` slot renders a `Spinner` while `pending` is true — overriding the slot replaces that default entirely, so check `pending` yourself if you still want a loading indicator.
+By default, the `leading` slot shows a `Spinner` while the button is pending. Your own `#leading` content replaces that spinner. Check `pending` yourself if you still want a loading indicator.
 
 ## The `as` Prop
 
-Components with a non-interactive root (`Button`, `Card`, `Chip`) accept an `as` prop to change the rendered element while keeping the same classes and `data-slot` attributes:
+`Button`, `Card` and `Chip` accept an `as` prop to change the rendered element. The classes and `data-slot` attributes stay the same:
 
 ```vue
 <template>
@@ -66,7 +68,7 @@ Components with a non-interactive root (`Button`, `Card`, `Chip`) accept an `as`
 </template>
 ```
 
-When `as` is not `"button"`, `Button` swaps the native `disabled` attribute for `aria-disabled="true"` + `tabindex="-1"` so the element stays accessible as a link.
+When `as` is not `"button"`, a disabled `Button` has no native `disabled` attribute. It gets `aria-disabled="true"` and `tabindex="-1"` instead, so it stays accessible as a link.
 
 ## Combining Slots, `:ui`, and `as`
 

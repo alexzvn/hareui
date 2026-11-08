@@ -27,10 +27,8 @@ import { ToggleButton, ToggleButtonGroup } from '@hareui/vue'
 </template>
 ```
 
-The `separator` prop draws dividers between buttons: every ToggleButton renders the divider and the first one hides it. Each ToggleButton's
-`value` is what the group's `v-model` holds.
-
-`ui` keys: `base`, `separator`, plus `button`, which is added to each ToggleButton in the group.
+The `separator` prop draws dividers between buttons. Every ToggleButton renders the divider, and the first one hides it.
+Each ToggleButton's `value` is what the group's `v-model` holds.
 
 ## Examples
 

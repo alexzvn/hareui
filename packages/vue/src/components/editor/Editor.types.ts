@@ -50,6 +50,16 @@ type EditorCommandOptions = {
    * handler run without it does nothing.
    */
   src: string
+  /**
+   * The position just before the block, for `kind: 'duplicate' | 'delete' | 'moveUp' | 'moveDown'`: the `pos` an
+   * `EditorDragHandle` gives. Without it, the top-level block at the cursor.
+   */
+  pos: number
+  /**
+   * The trigger character to type, for `kind: 'suggestion'` (default `/`) and `kind: 'mention'` (default `@`). A space
+   * goes before it when the cursor follows other text.
+   */
+  char: string
 }
 
 /** The command a toolbar item runs: its `kind` plus the options that kind reads. */
@@ -94,6 +104,12 @@ export type EditorHandlerKind =
   | 'undo'
   | 'redo'
   | 'clearFormatting'
+  | 'duplicate'
+  | 'delete'
+  | 'moveUp'
+  | 'moveDown'
+  | 'suggestion'
+  | 'mention'
 
 /** The built-in handlers plus the custom ones from the `handlers` prop. */
 export type EditorHandlers<H extends EditorCustomHandlers = EditorCustomHandlers> = Record<
@@ -109,6 +125,10 @@ export type EditorItem<H extends EditorCustomHandlers = EditorCustomHandlers> =
   | ({ kind: 'heading' } & Pick<EditorCommandOptions, 'level'>)
   | ({ kind: 'link' } & Partial<Pick<EditorCommandOptions, 'href'>>)
   | ({ kind: 'image' } & Partial<Pick<EditorCommandOptions, 'src'>>)
+  | ({ kind: 'duplicate' | 'delete' | 'moveUp' | 'moveDown' } & Partial<
+      Pick<EditorCommandOptions, 'pos'>
+    >)
+  | ({ kind: 'suggestion' | 'mention' } & Partial<Pick<EditorCommandOptions, 'char'>>)
   | {
       kind:
         | 'blockquote'
@@ -176,6 +196,13 @@ export type EditorProps<H extends EditorCustomHandlers = EditorCustomHandlers> =
    * @defaultValue true
    */
   image?: boolean | Partial<ImageOptions>
+  /**
+   * Adds the mention node, the inline `@name` tokens an `EditorMentionMenu` inserts; `false` leaves it out. A mention
+   * renders as its trigger character plus its label, in HTML and in plain text. Restyle it through `ui.base` and the
+   * `.mention` class. Read when the editor is created.
+   * @defaultValue true
+   */
+  mention?: boolean
   /** Extra tiptap extensions, added after the built-in ones. Read when the editor is created. */
   extensions?: Extensions
   /** Handlers that override or add command kinds, shared with every toolbar inside the editor. */

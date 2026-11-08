@@ -19,7 +19,11 @@ import { InputOtp } from '@hareui/vue'
 
 ## Anatomy
 
-The OTP box is built on the [input-otp](https://github.com/guilhermerodz/input-otp) library: a single real `<input>` (invisible, but fully interactive) overlays a row of decorative slots, so typing, <kbd>Backspace</kbd>, arrow keys and paste are native browser text-editing behavior rather than custom per-slot focus management. `InputOtp` bundles that box together with a `Label`, `Description` and `FieldError`, following the same field convention as [SearchField](/docs/components/search-field) and [NumberField](/docs/components/number-field). Slots are laid out with `groups`, an array of slot counts per visual group; a separator is rendered between each group.
+The OTP box is built on the [input-otp](https://github.com/guilhermerodz/input-otp) library. A single real `<input>` overlays a row of decorative slots. It is invisible but fully interactive. So typing, <kbd>Backspace</kbd>, arrow keys and paste behave like any browser text field.
+
+`InputOtp` bundles that box with a label, a description and a `FieldError`. It follows the same field convention as [SearchField](/docs/components/search-field) and [NumberField](/docs/components/number-field).
+
+Lay out the slots with `groups`, an array of slot counts per visual group. A separator is rendered between groups.
 
 ```vue
 <template>
@@ -95,7 +99,7 @@ A complete two-factor authentication form with validation and submission.
 
 ### With Pattern
 
-Use the `pattern` prop to restrict input to specific characters: `'digits'`, `'chars'` or `'alphanumeric'`.
+Use the `pattern` prop to restrict input to specific characters. It takes `'digits'`, `'chars'` or `'alphanumeric'`.
 
 <ComponentPreview name="input-otp/with-pattern" />
 
@@ -126,7 +130,7 @@ app.use(
 ### Slots
 
 - `base` → root `<div>` — HareUI-only flex-col wrapper around the label, box, description and error
-- `root` → `[data-input-otp-container]` — the box; `relative flex w-full items-center gap-2`
+- `root` → `[data-input-otp-container]` — the box (`relative flex w-full items-center gap-2`)
 - `group` → `[data-slot="input-otp-group"]` — one per entry in `groups`
 - `slot` → `[data-slot="input-otp-slot"]` — a single character cell
 - `slotValue` → `[data-slot="input-otp-slot-value"]` — the rendered character
@@ -163,9 +167,10 @@ app.use(
 
 ## Accessibility
 
-- A single native `<input>` carries focus, typing, selection and paste, so standard text-editing shortcuts (<kbd>Backspace</kbd>, arrow keys, <kbd>Home</kbd>/<kbd>End</kbd>, select-and-retype) work without extra wiring. As in input-otp, moving the caret onto a filled slot selects its character, so typing or pasting replaces it (on a full field, the last slot)
+- A single native `<input>` carries focus, typing, selection and paste. Standard text-editing shortcuts work without extra wiring: <kbd>Backspace</kbd>, arrow keys, <kbd>Home</kbd>/<kbd>End</kbd> and select-and-retype
+- As in input-otp, moving the caret onto a filled slot selects its character, so typing or pasting replaces it. On a full field, that is the last slot
 - `autocomplete="one-time-code"` lets browsers and password managers offer SMS-delivered codes
-- `label` associates with the input through `for`/`id`; `description` and `error-message` are wired via `aria-describedby`
+- `label` is associated with the input through `for`/`id`. `description` and `error-message` are wired through `aria-describedby`
 - With `name`, the input submits its value with a form like any text field
 - `required` and `pattern` participate in native HTML5 constraint validation alongside `validate`
 

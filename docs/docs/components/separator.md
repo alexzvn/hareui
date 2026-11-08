@@ -73,10 +73,10 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | -------- | ----------- | --------------------- |
 | `base`   | `separator` | The separator element |
 
-These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
+These props control styling. Style it through `class`, `ui` or `createHareUI`:
 
 - `orientation`: `horizontal` (default, full width / 1px height), `vertical` (full height / 1px width)
-- `variant`: `default` (standard contrast), `secondary` (medium contrast), `tertiary` (subtle contrast)
+- `variant`: `default` for standard contrast, `secondary` for medium contrast, `tertiary` for subtle contrast
 
 ## API Reference
 

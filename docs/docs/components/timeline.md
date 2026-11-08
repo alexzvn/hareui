@@ -31,7 +31,9 @@ import { Timeline } from '@hareui/vue'
 </Timeline>
 ```
 
-The timeline renders an `ol` with one `li` per event. Connectors between events are decorative, and so are markers that only show an icon or an avatar. It records what already happened rather than walking people through a task; for steps they move through themselves, reach for the stepper.
+The timeline renders an `ol` with one `li` per event. Connectors between events are decorative. So are markers that only show an icon or an avatar.
+
+A timeline records what already happened. For steps people move through themselves, reach for the [Stepper](./stepper).
 
 ### Size
 
@@ -47,13 +49,18 @@ Use the `density` prop to set the space between events: `compact` (12px) or `com
 
 ### Status
 
-Use the `status` field of an item to set the tone of its marker: `default`, `current`, `success`, `warning`, `danger` or `muted`. A `current` event gets `aria-current="true"`.
+Use the `status` field of an item to set the tone of its marker. A `current` event gets `aria-current="true"`. The tones are:
+
+- `default`, `current` and `muted`
+- `success`, `warning` and `danger`
 
 <ComponentPreview name="timeline/status" />
 
 ### Active event
 
-Use `v-model` to mark how far along the timeline you are. The value is matched against each item's `value` (or the key set with `value-key`); a number that no item has is an event index. The active event gets `aria-current="true"`, the events before it are completed, and the connectors between completed events are filled. Use `default-value` when you don't need to control it.
+Use `v-model` to mark how far along the timeline you are. The value is matched against each item's `value`, or the key set with `value-key`. A number that no item has is an event index.
+
+The active event gets `aria-current="true"`. The events before it are completed, and the connectors between completed events are filled. Use `default-value` when you don't need to control it.
 
 <ComponentPreview name="timeline/model" />
 
@@ -83,7 +90,7 @@ Use `axis="center"` to put the rail in the middle of a vertical timeline. The co
 
 ### Placement
 
-Use the `placement` prop to choose the side the content takes on a centred axis: `end` (the default), `start`, or `alternate`, which switches sides every event. An item's `side` field overrides it.
+Use the `placement` prop to choose which side the content takes on a centred axis. It defaults to `end`. Set `start` for the other side, or `alternate` to switch sides every event. An item's `side` field overrides it.
 
 <ComponentPreview name="timeline/placement" />
 
@@ -97,7 +104,7 @@ Use the `avatar` field of an item to show an [Avatar](./avatar) in the marker in
 
 ### Custom marker
 
-Use the `#indicator` slot to replace the content of every marker. The `state` slot prop is `active`, `completed` or `undefined`.
+Use the `#indicator` slot to replace the content of every marker. The `state` slot prop is active or completed. It is `undefined` for upcoming events and when nothing is active.
 
 <ComponentPreview name="timeline/indicator-slot" />
 

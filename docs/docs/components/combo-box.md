@@ -112,7 +112,7 @@ Bind `v-model:input-value` to read or set the text in the input.
 
 ### Asynchronous Loading
 
-Bind `v-model:input-value` to refetch as the user types and set `:filter="false"` so the fetched `items` are shown as they are. Bind `loading` and listen to `load-more`: it fires whenever the end of the list scrolls into view while `loading` is false. The `#loading` slot shows after the last option while loading.
+Bind `v-model:input-value` to refetch as the user types. Set `:filter="false"` so the fetched `items` are shown as they are. Bind `loading` and listen to `load-more`. It fires whenever the end of the list scrolls into view while not loading. The `#loading` slot shows after the last option while loading.
 
 <ComponentPreview name="combo-box/asynchronous-loading" />
 
@@ -140,7 +140,7 @@ Pass `filter` to replace the default case- and accent-insensitive "contains" mat
 
 ### Render Function
 
-ComboBox has no `render` prop; attributes such as `data-testid` fall through to the root.
+ComboBox has no `render` prop. Attributes such as `data-testid` fall through to the root.
 
 <ComponentPreview name="combo-box/render-function" />
 
@@ -183,7 +183,7 @@ Use the `readonly` prop to make the ComboBox read-only. The selected value can b
 
 ### Multiple Selection
 
-Set `selection-mode="multiple"` to allow selecting more than one option. `v-model` is then an array, and the selected values are listed below the input (`value-placeholder` while empty; customize with `#value`).
+Set `selection-mode="multiple"` to allow selecting more than one option. `v-model` is then an array, and the selected values are listed below the input. While nothing is selected it shows `value-placeholder`. Use the `#value` slot to customize the list.
 
 <ComponentPreview name="combo-box/multiple-selection" />
 
@@ -239,7 +239,9 @@ app.use(
 
 ### Emits
 
-`change` fires when the selection changes: an option is picked, the text is cleared, or typed text is committed with `allowsCustomValue`. Typing alone doesn't fire it. Its argument is a plain `Event` with no value, so read the value from `v-model`. Committed custom text sets `v-model` to `null`, so with `allowsCustomValue` read the text from `v-model:input-value`. `highlight` emits the highlighted option, and `undefined` when the list closes.
+`change` fires when the selection changes. That happens when an option is picked, the text is cleared, or custom text is committed. Typing alone doesn't fire it. Its argument is a plain `Event` with no value, so read the value from `v-model`.
+
+Committed custom text sets `v-model` to `null`. With `allowsCustomValue`, read the text from `v-model:input-value`. `highlight` emits the highlighted option, and `undefined` when the list closes.
 
 <ApiTable component="ComboBox" kind="emits" />
 
@@ -251,11 +253,14 @@ app.use(
 
 ComboBox follows the ARIA combobox pattern:
 
-- Focus stays in the input; the arrow keys, Home / End and Page Up / Page Down move a virtual focus through the options (`aria-activedescendant`), Enter selects, Escape reverts the text and closes
-- Typing filters the options; on blur, text that matches no option reverts to the selected option (unless `allows-custom-value`). Clearing the text clears the selection
+- Focus stays in the input. The arrow keys, Home / End and Page Up / Page Down move a virtual focus through the options (`aria-activedescendant`)
+- Enter selects. Escape reverts the text and closes the list
+- Typing filters the options. On blur, text that matches no option reverts to the selected option, unless `allows-custom-value` is set
+- Clearing the text clears the selection
 - The trigger button is not in the tab order and keeps focus in the input
 - The label, description and error are linked to the input with `aria-labelledby` / `aria-describedby`
-- With `name`, the selected value (or text) is submitted with forms; `required` uses native validation
+- With `name`, the selected value (or text) is submitted with forms
+- `required` uses native validation
 
 ## Related Components
 

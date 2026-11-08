@@ -19,9 +19,9 @@ import { Accordion } from '@hareui/vue'
 
 ## Anatomy
 
-Accordion renders one item per `items` entry: a heading with a trigger button (leading content,
-label, indicator) and a collapsible panel holding the body. Customize it through `items`, slots and
-`ui` keys:
+Accordion renders one item per `items` entry. Each item has a heading with a trigger button and a
+collapsible panel for the body. The trigger holds leading content, the label and the indicator.
+Customize items with slots:
 
 ```vue
 <template>

@@ -1,0 +1,13 @@
+[
+  { "id": "sheet-placement-bottom", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-placement-top", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-placement-left", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-placement-right", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-variant-opaque", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-variant-blur", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-variant-transparent", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-detached-bottom", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-detached-right", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-snap-points", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] },
+  { "id": "sheet-scrollable", "component": "sheet", "actions": [], "overlay": true, "ignoreSlots": [] }
+]

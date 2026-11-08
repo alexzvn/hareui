@@ -13,11 +13,24 @@
 
       <thead data-slot="rich-table-header" :class="ui.thead()">
         <tr
-          v-for="headerGroup in tableApi.getHeaderGroups()"
+          v-for="(headerGroup, headerGroupIndex) in tableApi.getHeaderGroups()"
           :key="headerGroup.id"
           data-slot="rich-table-header-row"
           :class="ui.tr()"
         >
+          <th
+            v-if="props.reorderable && headerGroupIndex === 0"
+            scope="col"
+            :rowspan="tableApi.getHeaderGroups().length"
+            :data-pinned="dragColumnPinned"
+            data-slot="rich-table-drag-column"
+            :class="ui.dragColumn()"
+          >
+            <span data-slot="rich-table-drag-column-label" :class="ui.dragColumnLabel()">
+              {{ t('richTable.dragColumn') }}
+            </span>
+          </th>
+
           <th
             v-for="header in headerGroup.headers"
             :key="header.id"
@@ -36,6 +49,9 @@
               getColumnStyles(header.column, header.getSize()),
               resolveStyle(getColumnMeta(header.column)?.style?.th, header),
             ]"
+            v-bind="getHeaderAttributes(header)"
+            @pointerdown="onHeaderPointerDown($event, header)"
+            @keydown.capture="onHeaderKeyDown($event, header)"
           >
             <slot :name="`${header.id}-header`" v-bind="header.getContext()">
               <FlexRender
@@ -73,12 +89,34 @@
                 data-slot="rich-table-row"
                 :class="ui.tr({ override: resolveValue(props.meta?.class?.tr, entry.row) })"
                 :style="resolveStyle(props.meta?.style?.tr, entry.row)"
+                v-bind="getRowAttributes(entry.row)"
                 @click="onRowSelect($event, entry.row)"
                 @keydown.self.exact.enter.space="onRowSelect($event, entry.row)"
                 @pointerenter="onRowHover($event, entry.row)"
                 @pointerleave="onRowHover($event, null)"
                 @contextmenu="onRowContextmenu($event, entry.row)"
               >
+                <td
+                  v-if="props.reorderable"
+                  :data-pinned="dragColumnPinned"
+                  data-slot="rich-table-drag-cell"
+                  :class="ui.dragCell()"
+                >
+                  <button
+                    v-if="entry.row.depth === 0"
+                    type="button"
+                    :disabled="isRowOrderLocked"
+                    :aria-label="t('dragAndDrop.handle', { item: getRowLabel(entry.row) })"
+                    :aria-description="t('dragAndDrop.instructions')"
+                    data-slot="rich-table-drag-handle"
+                    :class="ui.dragHandle()"
+                    @pointerdown="onHandlePointerDown($event, entry.row.id)"
+                    @keydown.capture="onHandleKeyDown($event, entry.row.id)"
+                  >
+                    <GripIcon />
+                  </button>
+                </td>
+
                 <td
                   v-for="cell in entry.row.getVisibleCells()"
                   :key="cell.id"
@@ -117,11 +155,7 @@
                 @vue:mounted="onExpandedRowMounted"
                 @vue:unmounted="onExpandedRowUnmounted"
               >
-                <td
-                  :colspan="entry.row.getVisibleCells().length"
-                  data-slot="rich-table-cell"
-                  :class="ui.td()"
-                >
+                <td :colspan="columnCount" data-slot="rich-table-cell" :class="ui.td()">
                   <slot name="expanded" :row="entry.row" />
                 </td>
               </tr>
@@ -148,11 +182,19 @@
 
       <tfoot v-if="hasFooter" data-slot="rich-table-footer" :class="ui.tfoot()">
         <tr
-          v-for="footerGroup in tableApi.getFooterGroups()"
+          v-for="(footerGroup, footerGroupIndex) in tableApi.getFooterGroups()"
           :key="footerGroup.id"
           data-slot="rich-table-footer-row"
           :class="ui.tr()"
         >
+          <td
+            v-if="props.reorderable && footerGroupIndex === 0"
+            :rowspan="tableApi.getFooterGroups().length"
+            :data-pinned="dragColumnPinned"
+            data-slot="rich-table-drag-column"
+            :class="ui.dragColumn()"
+          />
+
           <th
             v-for="header in footerGroup.headers"
             :key="header.id"
@@ -181,6 +223,8 @@
         </tr>
       </tfoot>
     </table>
+
+    <div aria-hidden="true" data-slot="rich-table-corners" :class="ui.corners()" />
   </Primitive>
 </template>
 
@@ -203,12 +247,18 @@ import type {
 import { FlexRender } from '@tanstack/vue-table'
 import { Primitive } from 'reka-ui'
 import type { ComponentPublicInstance } from 'vue'
-import { computed, useTemplateRef } from 'vue'
+import { computed, useTemplateRef, watch } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useLocale } from '@/composables/useLocale'
+import { GripIcon } from '@/utils/gripIcon'
 
-import type { RichTableData, RichTableProps, RichTableSlots } from './RichTable.types'
+import type {
+  RichTableData,
+  RichTableEmits,
+  RichTableProps,
+  RichTableSlots,
+} from './RichTable.types'
 import {
   defaultCell,
   getCellRenderer,
@@ -222,7 +272,9 @@ import theme from './theme'
 import { useRichTableApi } from './useRichTableApi'
 import { useRichTableBodyRows } from './useRichTableBodyRows'
 import { useRichTableColumnLayout } from './useRichTableColumnLayout'
+import { useRichTableColumnReorder } from './useRichTableColumnReorder'
 import { useRichTablePinnedEdges } from './useRichTablePinnedEdges'
+import { DRAG_COLUMN_WIDTH, useRichTableRowReorder } from './useRichTableRowReorder'
 
 defineOptions({ inheritAttrs: false })
 
@@ -236,6 +288,8 @@ const props = withDefaults(defineProps<RichTableProps<T>>(), {
   // Boolean props default to `false` when absent, which would switch off every `autoReset*` option: keep it unset.
   autoResetAll: undefined,
 })
+
+const emit = defineEmits<RichTableEmits<T>>()
 
 const slots = defineSlots<RichTableSlots<T>>()
 
@@ -322,16 +376,27 @@ const ui = useComponentUI('richTable', {
 const hasFooter = computed(() => hasColumnFooter(columns.value))
 
 const rows = computed(() => tableApi.getRowModel().rows)
-const columnCount = computed(() => tableApi.getVisibleLeafColumns().length)
 
-const { bodyEntries, indexAttribute, measureRowRef, onExpandedRowMounted, onExpandedRowUnmounted } =
-  useRichTableBodyRows({
-    table: tableApi,
-    rows,
-    virtualize: () => props.virtualize,
-    isExternalScroll,
-    getRootElement,
-  })
+// The drag handle column sits outside TanStack's columns, so full-width cells span it too
+const columnCount = computed(
+  () => tableApi.getVisibleLeafColumns().length + (props.reorderable ? 1 : 0),
+)
+
+const {
+  bodyEntries,
+  displayRows,
+  scrollToRow,
+  indexAttribute,
+  measureRowRef,
+  onExpandedRowMounted,
+  onExpandedRowUnmounted,
+} = useRichTableBodyRows({
+  table: tableApi,
+  rows,
+  virtualize: () => props.virtualize,
+  isExternalScroll,
+  getRootElement,
+})
 
 const detached = useRichTablePinnedEdges({
   getScrollElement: getRootElement,
@@ -339,11 +404,51 @@ const detached = useRichTablePinnedEdges({
   isExternalScroll,
 })
 
+// With left-pinned columns, the drag handle column (`reorderable`) sticks too, before them
+const dragColumnPinned = computed(() =>
+  props.reorderable && tableApi.getLeftVisibleLeafColumns().length > 0 ? 'left' : undefined,
+)
+
 const { getColumnEdge, getColumnStyles, columnLayouts } = useRichTableColumnLayout({
   table: tableApi,
   detached,
   isResizingEnabled: () => !!props.features?.columnSizing?.enableColumnResizing,
+  getLeadingWidth: () => (dragColumnPinned.value ? DRAG_COLUMN_WIDTH : 0),
 })
+
+const {
+  isLocked: isRowOrderLocked,
+  getRowLabel,
+  getRowAttributes,
+  onHandlePointerDown,
+  onHandleKeyDown,
+} = useRichTableRowReorder({
+  table: tableApi,
+  rows: displayRows,
+  isEnabled: () => !!props.reorderable,
+  getRootElement,
+  scrollToRow,
+  onReorder: (event) => {
+    emit('update:data', event.data)
+    emit('reorder', event)
+  },
+})
+
+const { getHeaderAttributes, onHeaderPointerDown, onHeaderKeyDown } = useRichTableColumnReorder({
+  table: tableApi,
+  isEnabled: () => !!props.reorderableColumns,
+  getRootElement,
+})
+
+// TanStack clears `isResizingColumn` once the pointer is released, after writing the final sizes
+watch(
+  () => tableApi.getState().columnSizingInfo.isResizingColumn,
+  (resizingColumn, previousResizingColumn) => {
+    if (previousResizingColumn && !resizingColumn) {
+      emit('columnResizeEnd', tableApi.getState().columnSizing)
+    }
+  },
+)
 
 const onRowSelect = (e: Event, row: Row<T>) => {
   if (!props.onSelect) return

@@ -10,7 +10,7 @@ export default defineConfig({
     // `@/` is the library's internal alias for packages/vue/src, needed because the playground compiles the library from source.
     alias: [
       {
-        find: /^@hareui\/vue\/(charts|carousel|code-block|command-palette|editor)$/,
+        find: /^@hareui\/vue\/(charts|carousel|code-block|command-palette|editor|editor-drag-handle|map|markdown)$/,
         replacement: fileURLToPath(new URL('../../packages/vue/src/$1.ts', import.meta.url)),
       },
       {

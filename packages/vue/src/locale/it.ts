@@ -58,6 +58,9 @@ export const it = defineLocale({
     dropZone: {
       removeFile: 'Rimuovi {filename}',
     },
+    editorMenu: {
+      noResults: 'Nessun risultato',
+    },
     error: {
       clear: 'Torna alla home',
     },
@@ -86,6 +89,9 @@ export const it = defineLocale({
       nextLabel: 'Successiva',
       prev: 'Pagina precedente',
       prevLabel: 'Precedente',
+    },
+    promptInput: {
+      retry: 'Riprova',
     },
     richTable: {
       noData: 'Nessun dato',

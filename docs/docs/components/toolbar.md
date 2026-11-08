@@ -62,7 +62,7 @@ The root carries `data-slot="toolbar"` and `data-orientation`.
 | `separatorHorizontal` | Classes added to each horizontal Separator inside the toolbar |
 | `buttonGroup`         | Classes added to each ButtonGroup inside the toolbar          |
 
-Variants: `orientation` (`horizontal`, `vertical`) and `attached` (surface background with full rounding).
+Use the `orientation` prop to lay the toolbar out `horizontal` or `vertical`. Set `attached` for a surface background with full rounding.
 
 Inside a Toolbar, ToggleButtonGroups and ButtonGroups take the toolbar's orientation and Separators take the perpendicular
 one, unless they set `orientation` themselves.

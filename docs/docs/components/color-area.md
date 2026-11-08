@@ -51,7 +51,7 @@ Use `color-space` to set the color space (RGB, HSL, HSB) and the `channel` of `x
 
 ### Controlled
 
-Bind the value with `v-model`. The committed value is always a `Color` object; use `colorToString(color, 'hex')` to read it as a string. Inside a ColorPicker the area reads and writes the picker's colour instead.
+Bind the value with `v-model`. The committed value is always a `Color` object. Use `colorToString(color, 'hex')` to read it as a string. Inside a ColorPicker, the area reads and writes the picker's colour instead.
 
 <ComponentPreview name="color-area/controlled" />
 

@@ -20,6 +20,7 @@
         v-if="ctx.slots[slotName('wrapper')]"
         :scope="scopeOf(state)"
         :data-index="attrs['data-index']"
+        v-bind="dragAttrs"
       />
       <component
         :is="ctx.linkAs()"
@@ -30,6 +31,7 @@
         data-slot="tree-link"
         :style="{ '--tree-level': level }"
         :class="ui.link({ override: [item.ui?.link, item.class] })"
+        v-bind="dragAttrs"
       >
         <span
           v-for="guide in level - 1"
@@ -109,6 +111,14 @@
             />
           </span>
         </template>
+        <span
+          v-if="dropIndicator"
+          aria-hidden="true"
+          data-slot="tree-drop-indicator"
+          :data-position="dropIndicator.position"
+          :style="{ '--tree-level': dropIndicator.level }"
+          :class="ui.dropIndicator({ override: item.ui?.dropIndicator })"
+        />
       </component>
       <DeferredClose
         v-if="ctx.isNested()"
@@ -176,8 +186,17 @@ const ui = computed(() => ctx.ui())
 
 const label = computed(() => ctx.getLabel(props.item))
 const isExpandable = computed(() => !!props.item.children?.length)
+const key = computed(() => ctx.getKey(props.item))
 const isFolder = computed(() => Array.isArray(props.item.children))
 const isRowDisabled = computed(() => ctx.isDisabled() || !!props.item.disabled)
+
+const dragAttrs = computed(() =>
+  ctx.isDraggable() ? ctx.getDragAttrs(key.value, isRowDisabled.value) : {},
+)
+
+const dropIndicator = computed(() =>
+  ctx.isDraggable() ? ctx.getDropIndicator(key.value) : undefined,
+)
 
 type ItemState = {
   isExpanded: boolean

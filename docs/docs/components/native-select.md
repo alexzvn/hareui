@@ -50,13 +50,19 @@ NativeSelect renders a [Label](/docs/components/label), a trigger holding the `<
 | —           | `description`             | [Description](/docs/components/description) (iff `description` / `#description`)                               |
 | —           | `field-error`             | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
-An item is a string, an option object `{ value, label?, disabled? }`, or a group `{ label, items, disabled? }` rendered as an `<optgroup>`. `placeholder` adds a first option with an empty value.
+Each entry in `items` is one of:
+
+- a string
+- an option object: `{ value, label?, disabled? }`
+- a group: `{ label, items, disabled? }`, rendered as an `<optgroup>`
+
+`placeholder` adds a first option with an empty value.
 
 ## Examples
 
 ### Controlled
 
-Bind the selected value with `v-model`. The value is always a string; the placeholder option sets it to `''`.
+Bind the selected value with `v-model`. The value is always a string. The placeholder option sets it to `''`.
 
 <ComponentPreview name="native-select/controlled" />
 
@@ -84,7 +90,7 @@ The `<select>` takes part in native form submission under its `name`. With `requ
 
 ### Invalid State
 
-Set `invalid` with `error-message` to control the state yourself, or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form). The description is hidden while the error shows.
+Set `invalid` with `error-message` to control the state yourself. Or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form). The description is hidden while the error shows.
 
 <ComponentPreview name="native-select/invalid" />
 
@@ -140,7 +146,11 @@ app.use(
 - `select` → `[data-slot="native-select-select"]` – the `<select>` with field styling
 - `indicator` → `[data-slot="native-select-indicator"]` – the icon, absolutely positioned at the end
 
-The select's background follows `--native-select-bg-current`, so a plain `bg-*` class in `ui.select` wins in every state. The `secondary` variant reads `--native-select-bg`, `--native-select-bg-hover` and `--native-select-bg-focus`.
+The select's background follows `--native-select-bg-current`, so a plain `bg-*` class in `ui.select` wins in every state. The `secondary` variant reads these variables:
+
+- `--native-select-bg`
+- `--native-select-bg-hover`
+- `--native-select-bg-focus`
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes.
 
@@ -176,8 +186,8 @@ The select's background follows `--native-select-bg-current`, so a plain `bg-*` 
 - The control is a real `<select>`, so the browser and screen readers handle keyboard, typeahead and announcements
 - The label's `for` points to the select id (generated unless `id` is set)
 - `aria-describedby` lists the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the select; the error is announced via `role="alert"`
-- Without a visible label, pass `aria-label`; it lands on the `<select>`
+- `invalid` sets `aria-invalid="true"` on the select. The error is announced via `role="alert"`
+- Without a visible label, pass `aria-label`. It lands on the `<select>`
 - The indicator is decorative (`aria-hidden`)
 
 ## Related Components

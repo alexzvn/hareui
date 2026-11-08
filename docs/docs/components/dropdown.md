@@ -227,10 +227,10 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 Implements the [WAI-ARIA Menu pattern](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/):
 
-- Full keyboard navigation (arrow keys, `Home` / `End`, typeahead using `textValue` or `label`)
+- Full keyboard navigation: arrow keys, `Home` / `End`, and typeahead. Typeahead matches `textValue`, or `label` when unset
 - Selectable items use `role="menuitemradio"` (single) or `role="menuitemcheckbox"` (multiple) with
   `aria-checked`
-- Item labels name the item; descriptions and keyboard shortcuts describe it
+- Item labels name the item. Descriptions and keyboard shortcuts describe it
 - Focus moves into the menu on open and returns to the trigger on close
 - Disabled items are skipped
 - Long press support, announced through the trigger's `aria-describedby`

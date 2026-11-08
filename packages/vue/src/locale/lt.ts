@@ -58,6 +58,9 @@ export const lt = defineLocale({
     dropZone: {
       removeFile: 'Pašalinti {filename}',
     },
+    editorMenu: {
+      noResults: 'Rezultatų nėra',
+    },
     error: {
       clear: 'Grįžti į pradžią',
     },
@@ -86,6 +89,9 @@ export const lt = defineLocale({
       nextLabel: 'Pirmyn',
       prev: 'Ankstesnis puslapis',
       prevLabel: 'Atgal',
+    },
+    promptInput: {
+      retry: 'Bandyti dar kartą',
     },
     richTable: {
       noData: 'Nėra duomenų',

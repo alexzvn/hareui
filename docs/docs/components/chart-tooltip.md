@@ -44,7 +44,7 @@ bun add d3-scale d3-shape
 
 <ComponentPreview name="chart-tooltip/basic" />
 
-Inside a chart, `ChartTooltip` renders `ChartTooltipContent` for the hovered point. Use the panel directly for static content, or pass it to the `#content` slot of `ChartTooltip` to customize it.
+Inside a chart, `ChartTooltip` renders `ChartTooltipContent` for the hovered point. Use the panel directly for static content. To customize it inside a chart, pass it to the `#content` slot of `ChartTooltip`.
 
 ## Anatomy
 
@@ -74,7 +74,9 @@ Inside a chart, `ChartTooltip` renders `ChartTooltipContent` for the hovered poi
 
 ### From Payload
 
-Pass `label` and `payload` and leave the default slot empty. The panel builds the header and one row per entry. The indicator takes the entry's `color`, then `stroke`, then `fill`, so bar series that only set `fill` work too.
+Pass `label` and `payload` and leave the default slot empty. The panel builds the header and one row per entry.
+
+The indicator takes the entry's `color`, then `stroke`, then `fill`. Bar series that only set `fill` work too.
 
 <ComponentPreview name="chart-tooltip/from-payload" />
 
@@ -86,13 +88,13 @@ Indicators accept any CSS color. `--chart-1` to `--chart-5` step the accent's li
 
 ### Formatting
 
-Use `label-formatter` for the header and `value-formatter` for each value. Both receive the raw value, so a numeric `label` can become `Week 27`. Without a formatter, values print as-is (`8000`, not `8,000`).
+Use `label-formatter` for the header and `value-formatter` for each value. Both receive the raw value, so a numeric `label` can become `Week 27`. Without a formatter, values print as-is: `8000`, not `8,000`.
 
 <ComponentPreview name="chart-tooltip/formatting" />
 
 ### Hidden State
 
-Set `:active="false"` to render nothing. Turn the switch off to see it. `ChartTooltip` hides the panel on its own; set `active` only when you render the panel yourself.
+Set `:active="false"` to render nothing. Turn the switch off to see it. `ChartTooltip` hides the panel on its own. Set `active` only when you render the panel yourself.
 
 <ComponentPreview name="chart-tooltip/hidden-state" />
 
@@ -198,7 +200,7 @@ The panel sets `[data-indicator="dot"]` or `[data-indicator="line"]`, so you can
 
 - `ChartTooltip` wraps the panel in a polite live region (`role="status"`, `aria-live="polite"`), so screen readers announce the hovered values. It shows the panel on hover and when the user moves through the chart with the arrow keys.
 - With `:panel="false"` the region stays visually hidden and is only read by screen readers. The panel itself has no role.
-- Indicators are `aria-hidden`; the label text names each series.
+- Indicators are `aria-hidden`. The label text names each series.
 - Don't rely on color alone: keep a label on every row.
 
 ## Related Components

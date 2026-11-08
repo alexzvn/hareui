@@ -27,7 +27,7 @@ For validation, labels, and error messages, see **[TextField](/docs/components/t
 | -------- | ----------- | --------- |
 | `base`   | `input`     | `<input>` |
 
-Attributes not declared as props (`aria-label`, `min`, `max`, `autocomplete`, listeners…) fall through to the `<input>`.
+Attributes and listeners that aren't props fall through to the `<input>`. Examples are `aria-label`, `min` and `autocomplete`.
 
 ## Examples
 
@@ -99,7 +99,13 @@ app.use(
 
 ### CSS Variables
 
-The input reads the field tokens `--field-border`, `--field-border-hover`, `--field-border-focus`, `--field-focus` and `--border-width-field`; the `secondary` variant adds `--input-bg`, `--input-bg-hover` and `--input-bg-focus`.
+The input reads these field tokens:
+
+- `--field-border`, `--field-border-hover` and `--field-border-focus`
+- `--field-focus`
+- `--border-width-field`
+
+The `secondary` variant adds the `--input-bg` token and its hover and focus versions.
 
 ## Styling Reference
 
@@ -125,7 +131,11 @@ The input reads the field tokens `--field-border`, `--field-border-hover`, `--fi
 
 <ApiTable component="Input" kind="emits" />
 
-> For labels, descriptions and error messages, use **[TextField](/docs/components/text-field)**; an `Input` placed in its default slot inherits the field's id, `aria-describedby`, `invalid`, `disabled`, `required`, `variant` and `fullWidth`.
+> For labels, descriptions and error messages, use **[TextField](/docs/components/text-field)**. An `Input` placed in its default slot inherits from the field:
+>
+> - the id and `aria-describedby`
+> - `invalid`, `disabled` and `required`
+> - `variant` and `fullWidth`
 
 ## Theme
 

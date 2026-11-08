@@ -20,7 +20,9 @@ import { ColorSlider } from '@hareui/vue'
 
 ## Anatomy
 
-ColorSlider renders a [Label](/docs/components/label), an output with the formatted channel value, and a track with a thumb. The label comes from the `label` prop (or `#label`); the output is shown whenever there is a label (`show-output` overrides that). Without a label, pass `aria-label`.
+ColorSlider renders a [Label](/docs/components/label), an output with the formatted channel value, and a track with a thumb.
+
+The label comes from the `label` prop or the `#label` slot. The output shows whenever there is a label, and `show-output` overrides that. Without a label, pass `aria-label`.
 
 ```vue
 <template>
@@ -55,7 +57,7 @@ ColorSlider renders a [Label](/docs/components/label), an output with the format
 
 ### Controlled
 
-Bind the color with `v-model`. It accepts a string or a `Color` and always commits a `Color` in the channel's colour space; use `colorToString(color, 'hsl')` to read it as a string.
+Bind the color with `v-model`. It accepts a string or a `Color`, and always commits a `Color` in the channel's colour space. Use `colorToString(color, 'hsl')` to read it as a string.
 
 <ComponentPreview name="color-slider/controlled" />
 
@@ -106,7 +108,7 @@ app.use(
 - `base` → `[data-slot="color-slider"]` – grid root
 - `label` → `[data-slot="label"]`
 - `output` → `[data-slot="color-slider-output"]`
-- `track` → `[data-slot="color-slider-track"]` – gradient track; `::before` / `::after` are the edge caps
+- `track` → `[data-slot="color-slider-track"]` – gradient track. Its `::before` and `::after` are the edge caps
 - `thumb` → `[data-slot="color-slider-thumb"]`
 
 ### Interactive States
@@ -138,7 +140,7 @@ app.use(
 
 - The thumb is a `role="slider"` labelled by the channel name, with a localised `aria-valuetext`
 - Keyboard: arrow keys, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>PageUp</kbd> and <kbd>PageDown</kbd>
-- `name` submits the channel value through a hidden input (e.g. `200` for hue, `0.5` for alpha); the alpha thumb's `aria-valuenow` uses the same 0–1 scale
+- `name` submits the channel value through a hidden input, such as `200` for hue or `0.5` for alpha. The alpha thumb's `aria-valuenow` uses the same 0–1 scale
 
 ## Related Components
 

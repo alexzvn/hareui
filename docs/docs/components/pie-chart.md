@@ -40,7 +40,9 @@ bun add d3-scale d3-shape
 
 ## Slices
 
-Slices start at 3 o'clock and run counter-clockwise, in row order. Colors follow the chart palette by position (`--chart-3`, `--chart-1`, `--chart-4`, `--chart-2`, `--chart-5`). Set `colors` to an array for another palette, or to a map of slice name to color. A `fill` field in a row wins over both.
+Slices start at 3 o'clock and run counter-clockwise, in row order. Colors follow the chart palette by position: `--chart-3`, `--chart-1`, `--chart-4`, `--chart-2`, then `--chart-5`.
+
+Set `colors` to an array for another palette, or to a map of slice name to color. A `fill` field in a row wins over both.
 
 ```vue
 <PieChart
@@ -50,11 +52,26 @@ Slices start at 3 o'clock and run counter-clockwise, in row order. Colors follow
 />
 ```
 
-`donut` cuts a hole in the middle and rounds the slices (`inner-radius="68%"`, `:corner-radius="12"`, `:padding-angle="-20"`, so the rounded ends overlap). `inner-radius`, `outer-radius`, `corner-radius`, `padding-angle`, `start-angle` and `end-angle` set each value on their own and win over `donut`. Radii take pixels or a percentage of half the shorter chart side.
+`donut` cuts a hole in the middle and rounds the slices so their ends overlap. It sets these values:
+
+- `inner-radius="68%"`
+- `:corner-radius="12"`
+- `:padding-angle="-20"`
+
+To set one value yourself, use these props. Each wins over `donut`.
+
+- `inner-radius` and `outer-radius`
+- `corner-radius` and `padding-angle`
+- `start-angle` and `end-angle`
+
+Radii take pixels or a percentage of half the shorter chart side.
 
 ## Center
 
-The `#center` slot puts HTML in the middle of the chart, such as a total inside a donut. It receives `total`, the sum of the visible slices, and `active`, the hovered slice (`name`, `value`, `percent`, `color`) or `null`.
+The `#center` slot puts HTML in the middle of the chart, such as a total inside a donut. It receives:
+
+- `total`: the sum of the visible slices
+- `active`: the hovered slice (`name`, `value`, `percent`, `color`), or `null`.
 
 ```vue
 <PieChart :data="data" index="format" donut>
@@ -67,11 +84,15 @@ The `#center` slot puts HTML in the middle of the chart, such as a total inside 
 
 ## Tooltip
 
-Hovering a slice shows its name and value. `tooltip` takes `false`, or `ChartTooltip` props such as `indicator` and `labelFormatter`. `value.formatter` formats the values. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
+Hovering a slice shows its name and value. `tooltip` takes `false` to hide it. It also takes `ChartTooltip` props, such as `indicator` and `labelFormatter`. `value.formatter` formats the values. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
 
 ## Legend
 
-Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `showValue` and `showPercent`, plus a `position`; the chart's `value.formatter` formats the legend values too. Clicking an item hides or shows its slice; bind `v-model:hidden` to read or set the hidden names. Use `#legend-item` to redraw each row, or `#legend` to replace the list.
+Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart. `true` puts it at the bottom. You can also pass `'top'`, `'left'` or `'right'`.
+
+An object sets `ChartLegend` props, such as `showValue` and `showPercent`. It also takes a `position`. The chart's `value.formatter` formats the legend values too.
+
+Clicking an item hides or shows its slice. Bind `v-model:hidden` to read or set the hidden names. Use `#legend-item` to redraw each row, or `#legend` to replace the list.
 
 ## Examples
 
@@ -115,7 +136,7 @@ A donut with the total in the hole and a legend on the right that lists each val
 
 ### Tailwind CSS
 
-Use `class` for the container and `ui` for the drawn parts. Slice colors come from `colors` or a `fill` field in each row, which accept any CSS color or the `--chart-1` to `--chart-5` tokens.
+Use `class` for the container and `ui` for the drawn parts. Slice colors come from `colors` or a `fill` field in each row. Both accept any CSS color, including the `--chart-1` to `--chart-5` tokens.
 
 ```vue
 <PieChart
@@ -160,7 +181,9 @@ Without `index`, the chart draws only the parts you put in its default slot. Use
 
 <ComponentPreview name="pie-chart/composition" />
 
-`ChartPie` draws one ring from `data-key` and `name-key`, using its own `data` or the chart's. A `ChartCell` per slice sets its color, in row order. Put a `ChartLabel` inside a `ChartPie` to label each slice, or directly in the chart with `position="center"` for text in the middle. With several pies, the tooltip shows the slice under the pointer. With `index` set, parts in the default slot draw over the generated pie.
+`ChartPie` draws one ring from `data-key` and `name-key`. It uses its own `data` or the chart's. A `ChartCell` per slice sets its color, in row order.
+
+Put a `ChartLabel` inside a `ChartPie` to label each slice. Put one directly in the chart with `position="center"` for text in the middle. With several pies, the tooltip shows the slice under the pointer. With `index` set, parts in the default slot draw over the generated pie.
 
 | `ui` key  | `data-slot`             | Element  | Description                                                                                 |
 | --------- | ----------------------- | -------- | ------------------------------------------------------------------------------------------- |
@@ -178,7 +201,7 @@ Without `index`, the chart draws only the parts you put in its default slot. Use
 
 ### Slots
 
-- `base` → `[data-slot="pie-chart"]` – block container; the chart fills its width unless you set `width`
+- `base` → `[data-slot="pie-chart"]` – block container. The chart fills its width unless you set `width`
 - `surface` → `[data-slot="chart-surface"]` – the `<svg>`, with a focus ring when focused from the keyboard
 - `overlay` → `[data-slot="chart-overlay"]` – layer over the svg that positions the tooltip and the center content
 - `series` → `[data-slot="chart-pie"]` – group around each pie, empty by default
@@ -186,7 +209,7 @@ Without `index`, the chart draws only the parts you put in its default slot. Use
 - `label` → `[data-slot="chart-label"]` – `ChartLabel` text, 10px muted
 - `center` → `[data-slot="chart-center"]` – `#center` content, a centered column on the middle of the chart that lets the pointer through
 - `tooltip` → `[data-slot="chart-tooltip-wrapper"]` – floating wrapper around the tooltip panel
-- `legend` → `[data-slot="chart-legend"]` – legend drawn from the `legend` prop; with it, `base` becomes a flex row or column
+- `legend` → `[data-slot="chart-legend"]` – legend drawn from the `legend` prop. With it, `base` becomes a flex row or column
 
 ## API Reference
 

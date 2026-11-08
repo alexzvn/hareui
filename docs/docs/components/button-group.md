@@ -27,12 +27,9 @@ import { Button, ButtonGroup } from '@hareui/vue'
 </template>
 ```
 
-> **ButtonGroup** wraps multiple Button components together, applying consistent styling, spacing, and automatic border radius handling. It passes `size`, `variant`, `disabled` and `fullWidth` to its Buttons through provide/inject.
+> **ButtonGroup** wraps multiple Button components together, applying consistent styling, spacing, and automatic border radius handling.
 
 With the `separator` prop, every Button in the group renders the divider and the first Button hides it.
-
-`ui` keys: `base`, `separator`, plus `button` and `buttonOutline`, which are classes added to each grouped
-Button (`buttonOutline` only to `variant="outline"` Buttons).
 
 ## Examples
 
@@ -94,12 +91,12 @@ app.use(
 
 Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
-| `ui` key        | `data-slot`              | Description                                  |
-| --------------- | ------------------------ | -------------------------------------------- |
-| `base`          | `button-group`           | Base button group container                  |
-| `separator`     | `button-group-separator` | Separator element between buttons            |
-| `button`        | `button`                 | Classes added to each grouped Button         |
-| `buttonOutline` | `button`                 | Classes added to each grouped outline Button |
+| `ui` key        | `data-slot`              | Description                                              |
+| --------------- | ------------------------ | -------------------------------------------------------- |
+| `base`          | `button-group`           | Base button group container                              |
+| `separator`     | `button-group-separator` | Separator element between buttons                        |
+| `button`        | `button`                 | Classes added to each grouped Button                     |
+| `buttonOutline` | `button`                 | Classes added to each grouped `variant="outline"` Button |
 
 The ButtonGroup component automatically applies border radius to buttons:
 

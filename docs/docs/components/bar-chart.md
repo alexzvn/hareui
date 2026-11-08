@@ -40,7 +40,9 @@ bun add d3-scale d3-shape
 
 ## Series
 
-Pass `series` to choose the fields, their names and their order. Use a map of key to config, or an array of keys and `{ key, ...config }` objects. Colors follow the chart palette by position (`--chart-3`, `--chart-1`, `--chart-4`, `--chart-2`, `--chart-5`); set `colors` for a different palette, or `color` on one series.
+Pass `series` to choose the fields, their names and their order. Use a map of key to config, or an array of keys and `{ key, ...config }` objects.
+
+Colors follow the chart palette by position: `--chart-3`, then `--chart-1`, `--chart-4`, `--chart-2` and `--chart-5`. Set `colors` for a different palette, or `color` on one series.
 
 ```vue
 <BarChart
@@ -50,7 +52,14 @@ Pass `series` to choose the fields, their names and their order. Use a map of ke
 />
 ```
 
-Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`, `radius`, `barSize`, `fillOpacity` and `stack`. Series without a stack sit side by side in each category. `bar` on the root sizes the bars (`{ size, maxSize, gap, categoryGap }`; unset keys keep their defaults), and `radius` (4 by default) rounds the outer end of each bar.
+Each series takes these keys:
+
+- `name`, `color` and `hide`
+- `tooltip`, `valueFormatter` and `yAxis`
+- `radius`, `barSize` and `fillOpacity`
+- `stack`
+
+Series without a stack sit side by side in each category. Size the bars with `bar` on the root: `{ size, maxSize, gap, categoryGap }`. Unset keys keep their defaults. `radius` rounds the outer end of each bar, 4 by default.
 
 ## Layout
 
@@ -62,7 +71,9 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 
 ## Axes and Formatting
 
-`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. The y axis fits its widest label. A series with `yAxis: 'right'` draws against a second y axis on the right; set its props with `y-axis.right`.
+`x-axis` and `grid` take `false` to hide the part. They also take an object of `ChartXAxis` or `ChartGrid` props. `y-axis` takes `{ left, right }`. Each side is `false` or an object of `ChartYAxis` props. The y axis fits its widest label.
+
+A series with `yAxis: 'right'` draws against a second y axis on the right. Set that axis's props with `y-axis.right`.
 
 - `value-formatter` formats values in the tooltip and on the value axis. It receives the series key (`''` on the axis).
 - `index-formatter` formats the categories on the category axis and in the tooltip header.
@@ -78,11 +89,15 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 
 ## Tooltip
 
-`tooltip` takes `false`, or `ChartTooltip` props such as `indicator`, `cursor`, `labelFormatter` and `valueFormatter`. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
+Set `tooltip` to `false` to hide it. Or pass `ChartTooltip` props, such as `indicator`, `cursor` or `valueFormatter`. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
 
 ## Legend
 
-Set `legend` to draw a [ChartLegend](./chart-legend) beside the plot: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `indicator`, plus a `position`. Use `#legend-item` to redraw each row, or `#legend` to replace the list. Clicking an item hides or shows its series; bind `v-model:hidden` to read or set the hidden keys. To place the legend elsewhere, such as a card header, render `<ChartLegend :series="series" />` with the same `series` and `colors`.
+Set `legend` to draw a [ChartLegend](./chart-legend) beside the plot. `true` puts it at the bottom. Pass `'top'`, `'left'` or `'right'` for another side. An object sets `ChartLegend` props, such as `indicator`, plus a `position`.
+
+Use `#legend-item` to redraw each row, or `#legend` to replace the list. Clicking an item hides or shows its series. Bind `v-model:hidden` to read or set the hidden keys.
+
+To place the legend elsewhere, such as a card header, render `<ChartLegend :series="series" />`. Give it the same `series` and `colors` as the chart.
 
 ## Examples
 
@@ -132,7 +147,7 @@ A bar chart without a y axis (`:y-axis="{ left: false }"`) works as a compact tr
 
 ### Tailwind CSS
 
-Use `class` for the container and `ui` for the drawn parts. Series colors come from `colors` or each series' `color`, which accept any CSS color or the `--chart-1` to `--chart-5` tokens.
+Use `class` for the container and `ui` for the drawn parts. Series colors come from `colors` or each series' `color`. Both accept any CSS color or the `--chart-1` to `--chart-5` tokens.
 
 ```vue
 <BarChart :data="data" :ui="{ tick: 'fill-foreground', grid: 'stroke-accent/20' }">
@@ -174,7 +189,11 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 </template>
 ```
 
-Parts always draw in the same order (grid, series, axes, cursor), so template order doesn't matter. With `index` or `series` set, parts in the default slot draw next to the generated ones: turn a generated part off (for example `:x-axis="false"`) before adding your own. Hand-placed parts still read the root's `index` and `series`, so `<ChartXAxis />` picks up the categories and `<ChartBar data-key="sales" />` its name and color. The [AreaChart page](./area-chart#composition) has a full example built from parts.
+Parts always draw in the same order: grid, series, axes, then cursor. Template order doesn't matter.
+
+With `index` or `series` set, parts in the default slot draw next to the generated ones. Turn a generated part off before adding your own, for example with `:x-axis="false"`.
+
+Hand-placed parts still read the root's `index` and `series`. So `<ChartXAxis />` picks up the categories, and `<ChartBar data-key="sales" />` picks up its name and color. The [AreaChart page](./area-chart#composition) has a full example built from parts.
 
 `ChartBar` takes `ChartCell` children to color single bars, for example to highlight the current month:
 
@@ -207,19 +226,19 @@ Parts always draw in the same order (grid, series, axes, cursor), so template or
 
 ### Slots
 
-- `base` → `[data-slot="bar-chart"]` – block container; the chart fills its width unless you set `width`
+- `base` → `[data-slot="bar-chart"]` – block container. The chart fills its width unless you set `width`
 - `surface` → `[data-slot="chart-surface"]` – the `<svg>`
 - `overlay` → `[data-slot="chart-overlay"]` – layer over the svg that positions the tooltip
-- `grid` → `[data-slot="chart-grid"]` – lines behind the plot; `stroke-muted` at 0.15 stroke opacity
+- `grid` → `[data-slot="chart-grid"]` – lines behind the plot, `stroke-muted` at 0.15 stroke opacity
 - `axis` → `[data-slot="chart-x-axis"]` – one group per axis (`chart-y-axis` for y)
 - `axisLine` → `[data-slot="chart-axis-line"]` – axis line, hidden
 - `tickLine` → `[data-slot="chart-tick-line"]` – tick marks, hidden
-- `tick` → `[data-slot="chart-tick"]` – axis label text; `fill-muted text-[10px]`
+- `tick` → `[data-slot="chart-tick"]` – axis label text, `fill-muted text-[10px]`
 - `series` → `[data-slot="chart-bar"]` – group around each series, empty by default
 - `cursor` → `[data-slot="chart-cursor"]` – hover guide: a `fill-current` band at `opacity-5` across the hovered category
-- `label` → `[data-slot="chart-label"]` – `ChartLabel` text; `fill-muted text-[10px]`
+- `label` → `[data-slot="chart-label"]` – `ChartLabel` text, `fill-muted text-[10px]`
 - `tooltip` → `[data-slot="chart-tooltip-wrapper"]` – floating wrapper around the tooltip panel
-- `legend` → `[data-slot="chart-legend"]` – legend drawn from the `legend` prop; with it, `base` becomes a flex row or column
+- `legend` → `[data-slot="chart-legend"]` – legend drawn from the `legend` prop. With it, `base` becomes a flex row or column
 
 ## API Reference
 

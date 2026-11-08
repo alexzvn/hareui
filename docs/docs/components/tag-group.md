@@ -82,7 +82,7 @@ Tags can be disabled individually (`items[].disabled`), or by id via `disabled-k
 
 ### Selection Modes
 
-`selection-mode` is `'none'` (default), `'single'` or `'multiple'`. Bind the selected ids with `v-model:selected`.
+Set `selection-mode` to `'single'` or `'multiple'` to make tags selectable. It defaults to `'none'`. Bind the selected ids with `v-model:selected`.
 
 <ComponentPreview name="tag-group/selection-modes" />
 
@@ -92,7 +92,7 @@ Tags can be disabled individually (`items[].disabled`), or by id via `disabled-k
 
 ### With Remove Button
 
-Set `removable` to show a remove button on every (non-disabled) tag. It emits `remove` with the removed id(s) — also fired by pressing Delete / Backspace while a tag is focused, in which case the whole current selection is removed if the focused tag is part of it. Use the `#removeButton` slot to replace the default close icon.
+Set `removable` to show a remove button on every tag that isn't disabled. It emits `remove` with the removed ids. Pressing Delete or Backspace on a focused tag emits it too. If that tag is part of the selection, the whole selection is removed. Use the `#removeButton` slot to replace the default close icon.
 
 <ComponentPreview name="tag-group/with-remove-button" />
 
@@ -102,7 +102,7 @@ Set `removable` to show a remove button on every (non-disabled) tag. It emits `r
 
 ### With List Data
 
-Keep the items in a `ref`, remove them on `@remove`, and render an `EmptyState` in the `#empty` slot once the list is empty.
+Keep the items in a `ref` and remove them on `@remove`. Once the list is empty, render an `EmptyState` in the `#empty` slot.
 
 <ComponentPreview name="tag-group/with-list-data" />
 
@@ -114,7 +114,7 @@ Attributes on `TagGroup` (other than `aria-label`) fall through to the root elem
 
 ## EmptyState
 
-`EmptyState` is the small muted placeholder for empty collections (TagGroup, ListBox, Table). It renders "No results found" by default; pass your own text in the default slot. Use it in TagGroup's `#empty` slot.
+`EmptyState` is the small muted placeholder for empty collections such as TagGroup, ListBox and Table. It shows "No results found" by default. Pass your own text in the default slot. Use it in TagGroup's `#empty` slot.
 
 ```vue
 <template>
@@ -159,8 +159,8 @@ app.use(
 
 ### Interactive States
 
-- **Selected**: `aria-selected="true"` / `[data-selected="true"]` on a tag (only meaningful when `selection-mode` isn't `'none'`)
-- **Disabled**: `aria-disabled="true"` / `[data-disabled="true"]` on a tag; its remove button is also disabled
+- **Selected**: `aria-selected="true"` / `[data-selected="true"]` on a tag. Only applies when tags are selectable.
+- **Disabled**: `aria-disabled="true"` / `[data-disabled="true"]` on a tag. Its remove button is disabled too.
 - **Pressed**: `[data-pressed="true"]` on a tag
 - **Focus**: `[data-focus-visible="true"]` on a tag
 - **Empty**: `[data-empty="true"]` on the list when `items` is empty
@@ -191,11 +191,17 @@ app.use(
 
 ## Accessibility
 
-- The list has `role="grid"`; each tag has `role="row"` wrapping a `role="gridcell"`
+- The list has `role="grid"`. Each tag has `role="row"` wrapping a `role="gridcell"`.
 - `aria-multiselectable` is set on the list when `selection-mode` is `'multiple'`
-- `label` names the list through `aria-labelledby`; without one, pass `aria-label`
+- `label` names the list through `aria-labelledby`. Without one, pass `aria-label`.
 - `description` and `error-message` are both referenced by the list's `aria-describedby`
-- Keyboard: Arrow keys move roving focus between tags, skipping disabled ones; Home / End jump to the first / last enabled tag; Enter / Space toggles selection; in `multiple` mode Shift+Arrow / Home / End and Shift+click select a range and Meta/Ctrl+A selects every enabled tag; Delete / Backspace removes the focused tag (or the whole selection, if it's part of it) when `removable`, and focus moves to the next tag (else the previous one, else the list); Escape clears the selection
+- Keyboard:
+  - Arrow keys move roving focus between tags, skipping disabled ones.
+  - Home / End jump to the first / last enabled tag.
+  - Enter / Space toggles selection.
+  - In `multiple` mode, Shift+Arrow, Shift+Home/End and Shift+click select a range. Meta/Ctrl+A selects every enabled tag.
+  - When `removable`, Delete / Backspace removes the focused tag, or the whole selection if the tag is part of it. Focus moves to the next tag, else the previous one, else the list.
+  - Escape clears the selection.
 
 ## Related Components
 

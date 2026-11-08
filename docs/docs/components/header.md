@@ -18,7 +18,7 @@ The `Header` component renders a sticky `<header>` element. Fill the bar with th
 - `default`: the navigation, centered from the `lg` breakpoint
 - `right`: actions
 
-On mobile, the `body` slot fills the menu; `content` replaces the whole menu. Add `class="border-b border-separator"` to separate the header from the page.
+On mobile, the `body` slot fills the menu. The `content` slot replaces the whole menu. Add `class="border-b border-separator"` to separate the header from the page.
 
 <ComponentPreview name="header/basic" contain="18rem" />
 
@@ -60,7 +60,9 @@ Use the `to` prop to change the link of the title. Defaults to `/`. Use the `lef
 
 ### Mode
 
-Use the `mode` prop to change how the menu opens on mobile: `modal` (default), `slideover` or `drawer`. Use the `menu` prop to pass props to the underlying component, e.g. `:menu="{ placement: 'left' }"` to open the slideover from the left.
+Use the `mode` prop to change how the menu opens on mobile. It takes `modal` (default), `slideover` or `drawer`.
+
+Use the `menu` prop to pass props to the underlying component. For example, `:menu="{ placement: 'left' }"` opens the slideover from the left.
 
 <ComponentPreview name="header/mode" contain="18rem" />
 
@@ -181,7 +183,12 @@ app.use(
 | `header`     | `header-menu-header`                 | The menu's own header row (title and toggle), `modal` and `slideover` only                                                               |
 | `body`       | `header-menu-body`                   | The scrollable menu body                                                                                                                 |
 
-The `--header-height` CSS variable holds the height of the header. While the menu is open, its position is exposed as `--header-menu-top`, `--header-menu-left`, `--header-menu-width` and `--header-menu-height`.
+The `--header-height` CSS variable holds the height of the header. While the menu is open, its position is exposed in these variables:
+
+- `--header-menu-top`
+- `--header-menu-left`
+- `--header-menu-width`
+- `--header-menu-height`
 
 ## API Reference
 
@@ -203,7 +210,7 @@ The `--header-height` CSS variable holds the height of the header. While the men
 
 ## Accessibility
 
-- The toggle has `aria-expanded` and swaps its `aria-label` between `open-label` and `close-label`.
+- The toggle has `aria-expanded`. Its `aria-label` switches between the `open-label` and `close-label` props.
 - The menu is a dialog: focus is trapped while it is open, Escape closes it and focus returns to the toggle.
   `menu-title` names the dialog.
 - The title link's `aria-label` is the `title` prop.

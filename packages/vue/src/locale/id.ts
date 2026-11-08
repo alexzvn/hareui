@@ -58,6 +58,9 @@ export const id = defineLocale({
     dropZone: {
       removeFile: 'Hapus {filename}',
     },
+    editorMenu: {
+      noResults: 'Tidak ada hasil',
+    },
     error: {
       clear: 'Kembali ke beranda',
     },
@@ -86,6 +89,9 @@ export const id = defineLocale({
       nextLabel: 'Berikutnya',
       prev: 'Halaman sebelumnya',
       prevLabel: 'Sebelumnya',
+    },
+    promptInput: {
+      retry: 'Coba lagi',
     },
     richTable: {
       noData: 'Tidak ada data',

@@ -61,7 +61,7 @@ createApp(App).use(createHareUI()).mount('#app')
 
 ### Portal Target
 
-Overlays (Modal, AlertDialog, Drawer, Popover, Tooltip, Toast, ColorPicker, Dropdown and its submenus, Select, ComboBox, Autocomplete, DatePicker, DateRangePicker) portal to `document.body` by default. `portal` sets the default for all of them; a component's own `portal` prop still wins.
+These overlays portal to `document.body` by default: Modal, AlertDialog, Drawer, Popover, Tooltip, Toast, ColorPicker, Dropdown and its submenus, Select, ComboBox, Autocomplete, DatePicker and DateRangePicker. The `portal` option sets the default for all of them. A component's own `portal` prop still wins.
 
 ```ts [main.ts]
 // Vue app mounted inside a shadow root (e.g. a browser extension panel)
@@ -75,9 +75,16 @@ createApp(App)
   .mount(mountPoint)
 ```
 
-`portal` accepts `true` (`document.body`), a selector string, an element, or `false` (render in place). A selector is looked up with `document.querySelector`, so it can't find an element inside a shadow root; pass the element itself, as above.
+`portal` accepts:
 
-For a shadow root, inject the compiled stylesheet into it (e.g. `import css from './main.css?inline'` into a `<style>` appended to `shadow`). The theme tokens default to the light theme on `:host` (add `dark` to the host for the dark theme), and the Tailwind custom properties that a shadow root can't register with `@property` get their initial values there too.
+- `true`: `document.body`
+- a selector string, looked up with `document.querySelector`
+- an element
+- `false`: render in place
+
+A selector can't find an element inside a shadow root, so pass the element itself, as above.
+
+For a shadow root, also inject the compiled stylesheet into it. For example, `import css from './main.css?inline'` and put it in a `<style>` appended to `shadow`. The stylesheet applies the light theme on `:host`. Add the `dark` class to the host for the dark theme. Tailwind custom properties that a shadow root can't register with `@property` also get their initial values on `:host`.
 
 ## Vite Plugin (Optional)
 

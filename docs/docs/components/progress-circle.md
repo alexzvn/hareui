@@ -18,14 +18,12 @@ import { ProgressCircle } from '@hareui/vue'
 
 ## Anatomy
 
-The track, track circle and fill circle are rendered by the component: an SVG with a background circle and a
-progress arc. The root carries `role="progressbar"` and `aria-value*` attributes.
+ProgressCircle draws an SVG with a background circle and a progress arc. You only pass the value and a label.
+The root has `role="progressbar"` and `aria-value*` attributes, so screen readers announce the progress.
 
 ```vue
 <ProgressCircle aria-label="Loading" :value="60" />
 ```
-
-`ui` keys: `base`, `track`, `trackCircle`, `fillCircle`.
 
 ## Examples
 
@@ -49,8 +47,8 @@ Use `indeterminate` when progress cannot be determined.
 
 ### Custom SVG Props
 
-Use `stroke-width` to change the thickness of both circles; the radius follows (`18 - strokeWidth / 2` in the
-36×36 viewBox), so the circle always fits the SVG.
+Use `stroke-width` to change the thickness of both circles. The radius shrinks to match, so the circle always fits
+the SVG.
 
 <ComponentPreview name="progress-circle/custom-svg" />
 
@@ -93,7 +91,7 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | `trackCircle` | `progress-circle-track-circle` | Background circle |
 | `fillCircle`  | `progress-circle-fill-circle`  | Progress arc      |
 
-These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
+These props control styling. Style it through `class`, `ui` or `createHareUI`:
 
 - `size`: `sm`, `md` (default), `lg`
 - `color`: `default`, `accent` (default), `success`, `warning`, `danger`

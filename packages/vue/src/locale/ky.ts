@@ -58,6 +58,9 @@ export const ky = defineLocale({
     dropZone: {
       removeFile: '{filename} өчүрүү',
     },
+    editorMenu: {
+      noResults: 'Натыйжа жок',
+    },
     error: {
       clear: 'Башкы бетке кайтуу',
     },
@@ -86,6 +89,9 @@ export const ky = defineLocale({
       nextLabel: 'Кийинки',
       prev: 'Алдыңкы бет',
       prevLabel: 'Алдыңкы',
+    },
+    promptInput: {
+      retry: 'Кайра аракет кылуу',
     },
     richTable: {
       noData: 'Маалымат жок',

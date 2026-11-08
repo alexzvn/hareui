@@ -24,7 +24,7 @@ import { DashboardSidebarToggle } from '@hareui/vue'
 </DashboardSidebarToggle>
 ```
 
-`ui` keys: `base`. Native button attributes (`aria-label`, `@click`, ...) fall through to the button.
+Native button attributes (`aria-label`, `@click`, ...) fall through to the button.
 
 ## Examples
 
@@ -69,6 +69,14 @@ app.use(
   }),
 )
 ```
+
+## Styling Reference
+
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
+
+| `ui` key | `data-slot`                | Description                  |
+| -------- | -------------------------- | ---------------------------- |
+| `base`   | `dashboard-sidebar-toggle` | The button. Hidden from `md` |
 
 ## API
 

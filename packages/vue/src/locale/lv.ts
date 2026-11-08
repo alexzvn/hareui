@@ -58,6 +58,9 @@ export const lv = defineLocale({
     dropZone: {
       removeFile: 'Noņemt {filename}',
     },
+    editorMenu: {
+      noResults: 'Nav rezultātu',
+    },
     error: {
       clear: 'Atpakaļ uz sākumlapu',
     },
@@ -86,6 +89,9 @@ export const lv = defineLocale({
       nextLabel: 'Nākamais',
       prev: 'Iepriekšējā lapa',
       prevLabel: 'Iepriekšējais',
+    },
+    promptInput: {
+      retry: 'Mēģināt vēlreiz',
     },
     richTable: {
       noData: 'Nav datu',

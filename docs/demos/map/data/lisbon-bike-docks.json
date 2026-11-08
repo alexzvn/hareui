@@ -1,0 +1,133 @@
+{
+  "attribution": "© OpenStreetMap contributors (ODbL)",
+  "docks": [
+    {
+      "id": "node/5654293730",
+      "name": "Praça Dom Luís I",
+      "long": -9.146593,
+      "lat": 38.706628,
+      "capacity": 21,
+      "bikes": 10
+    },
+    {
+      "id": "node/5654293732",
+      "name": "Avenida 24 de Julho",
+      "long": -9.144692,
+      "lat": 38.706116,
+      "capacity": 22,
+      "bikes": 4
+    },
+    {
+      "id": "node/5691090498",
+      "name": "Avenida da Liberdade",
+      "long": -9.148397,
+      "lat": 38.722778,
+      "capacity": 16,
+      "bikes": 0
+    },
+    {
+      "id": "node/6355624433",
+      "name": "Avenida Infante Dom Henrique",
+      "long": -9.127609,
+      "lat": 38.710346,
+      "capacity": 20,
+      "bikes": 12
+    },
+    {
+      "id": "node/6355638572",
+      "name": "Praça Martim Moniz 224",
+      "long": -9.136505,
+      "lat": 38.715122,
+      "capacity": 22,
+      "bikes": 20
+    },
+    {
+      "id": "node/6355678060",
+      "name": "Avenida da Liberdade 305",
+      "long": -9.146967,
+      "lat": 38.722412,
+      "capacity": 16,
+      "bikes": 16
+    },
+    {
+      "id": "node/6355733251",
+      "name": "Praça Marquês de Pombal",
+      "long": -9.149762,
+      "lat": 38.724583,
+      "capacity": 11,
+      "bikes": 0
+    },
+    {
+      "id": "node/6355739125",
+      "name": "Rua da Palma",
+      "long": -9.135742,
+      "lat": 38.719075,
+      "capacity": 10,
+      "bikes": 1
+    },
+    {
+      "id": "node/6813434122",
+      "name": "Praça da Figueira",
+      "long": -9.138308,
+      "lat": 38.713802,
+      "capacity": 30,
+      "bikes": 26
+    },
+    {
+      "id": "node/9044598261",
+      "name": "Avenida Almirante Reis",
+      "long": -9.135301,
+      "lat": 38.721697,
+      "capacity": 11,
+      "bikes": 8
+    },
+    {
+      "id": "node/9455836137",
+      "name": "Rua Frei Francisco Foreiro",
+      "long": -9.135994,
+      "lat": 38.728047,
+      "capacity": 14,
+      "bikes": 1
+    },
+    {
+      "id": "node/9455942499",
+      "name": "Rua Marques da Silva",
+      "long": -9.135679,
+      "lat": 38.729636,
+      "capacity": 12,
+      "bikes": 5
+    },
+    {
+      "id": "node/9491022540",
+      "name": "Largo do Intendente Pina Manique",
+      "long": -9.134794,
+      "lat": 38.720833,
+      "capacity": 17,
+      "bikes": 1
+    },
+    {
+      "id": "node/9491134776",
+      "name": "Avenida da Ribeira das Naus",
+      "long": -9.141399,
+      "lat": 38.7059,
+      "capacity": 27,
+      "bikes": 16
+    },
+    {
+      "id": "node/9491202455",
+      "name": "Avenida Engenheiro Duarte Pacheco",
+      "long": -9.159465,
+      "lat": 38.72438,
+      "capacity": 31,
+      "bikes": 13
+    },
+    {
+      "id": "node/9577788668",
+      "name": "Rua Castilho",
+      "long": -9.157433,
+      "lat": 38.729677,
+      "capacity": 30,
+      "bikes": 1
+    }
+  ]
+}

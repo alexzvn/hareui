@@ -58,6 +58,9 @@ export const ka = defineLocale({
     dropZone: {
       removeFile: 'მოაშორე {filename}',
     },
+    editorMenu: {
+      noResults: 'შედეგები არ არის',
+    },
     error: {
       clear: 'მთავარზე დაბრუნება',
     },
@@ -86,6 +89,9 @@ export const ka = defineLocale({
       nextLabel: 'შემდეგი',
       prev: 'წინა გვერდი',
       prevLabel: 'წინა',
+    },
+    promptInput: {
+      retry: 'ხელახლა ცდა',
     },
     richTable: {
       noData: 'მონაცემები არ არის',

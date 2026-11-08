@@ -18,10 +18,9 @@ import { Tooltip } from '@hareui/vue'
 
 ## Anatomy
 
-Each `Tooltip` instance owns its own tooltip provider, so no app-level provider is
-needed. The first child is the trigger (`as-child`, merged directly onto its own root
-element — no extra wrapper is rendered); `text` or the `#content` slot supplies the
-floating content.
+Each `Tooltip` brings its own provider, so no app-level provider is needed.
+The first child is the trigger. The tooltip attaches to that element directly, with no extra wrapper.
+Set `text` or use the `#content` slot for the floating content.
 
 ```vue
 <Tooltip text="Helpful information about this element">
@@ -35,8 +34,6 @@ floating content.
 </Tooltip>
 ```
 
-`ui` keys: `base`, `arrow`.
-
 ## Examples
 
 ### Placement
@@ -49,22 +46,26 @@ floating content.
 
 ### Custom Triggers
 
-The default slot's root element becomes the trigger. To use non-focusable content (an `Avatar`,
-a `Chip`, an icon), wrap it in an `inline-block` element with `role="button"` and `tabindex="0"` so the tooltip stays reachable from the keyboard.
+The default slot's root element becomes the trigger. Some content can't take focus, such as an `Avatar`, a `Chip` or an icon.
+Wrap it in an `inline-block` element with `role="button"` and `tabindex="0"`, so the tooltip stays reachable from the keyboard.
 
 <ComponentPreview name="tooltip/custom-trigger" />
 
 ### Keyboard Shortcuts
 
 `kbds` shows a keyboard shortcut after the text, one key per entry. A string that names a known key renders its
-symbol (`'command'` shows ⌘); any other string renders as written. Pass `Kbd` props for full control. The shortcut is hidden on screens narrower than the `lg` breakpoint, and
-when you use the `content` slot.
+symbol, so `'command'` shows ⌘. Any other string renders as written. Pass `Kbd` props for full control.
+The shortcut is hidden on screens narrower than the `lg` breakpoint, and when you use the `content` slot.
 
 <ComponentPreview name="tooltip/kbds" />
 
 ### Delays and Focus-Only Trigger
 
-`delay` (default `1500`) and `close-delay` (default `500`) are the defaults. The close delay applies only when the pointer leaves the trigger or tooltip; moving back in cancels it. Blur, press, Escape and another tooltip opening close it immediately. `trigger="focus"` opens the tooltip only when the trigger gets focus, and hovering neither opens nor closes it.
+The tooltip opens after `delay`, which defaults to 1500 ms. It closes after `close-delay`, which defaults to 500 ms.
+The close delay applies only when the pointer leaves the trigger or tooltip. Moving back in cancels it.
+Blur, press, Escape and another tooltip opening close it immediately.
+
+`trigger="focus"` opens the tooltip only when the trigger gets focus. Hovering neither opens nor closes it.
 
 ```vue
 <Tooltip :delay="0" :close-delay="1000" text="Stays open for a second">

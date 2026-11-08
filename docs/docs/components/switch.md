@@ -88,7 +88,7 @@ Group multiple switches with [SwitchGroup](#switchgroup), a layout-only wrapper 
 
 ### Label Position
 
-HareUI has no dedicated `label-position` prop; reverse the order with a `content` class override:
+HareUI has no dedicated `label-position` prop. Reverse the order with a `content` class override:
 
 <ComponentPreview name="switch/label-position" />
 
@@ -106,7 +106,7 @@ HareUI has no dedicated `label-position` prop; reverse the order with a `content
 
 ### Render Props
 
-The `#label`, `#description` and `#icon` slots receive `{ checked }`:
+The label, description and icon slots receive the `checked` state:
 
 <ComponentPreview name="switch/render-props" />
 
@@ -132,7 +132,7 @@ app.use(
 
 ### Slots
 
-- `base` → `[data-slot="switch"]` – root container, carries `data-selected` / `data-disabled` / `data-invalid` / `data-readonly` / `data-required`
+- `base` → `[data-slot="switch"]` – root container. It carries the state attributes listed below.
 - `content` → `[data-slot="switch-content"]` – the interactive `SwitchRoot` element
 - `control` → `[data-slot="switch-control"]` – the track
 - `thumb` → `[data-slot="switch-thumb"]` – the moving thumb
@@ -165,9 +165,8 @@ app.use(
 
 ## SwitchGroup
 
-`SwitchGroup` is a layout-only wrapper: it renders no state of its own and shares no context with its
-`Switch` children — each switch keeps its own `name`/`value`/`v-model`. Use it purely to apply the grouped
-spacing/orientation styling for stacks of switches.
+`SwitchGroup` is a layout-only wrapper. It has no state of its own and shares nothing with its `Switch` children.
+Each switch keeps its own `name`, `value` and `v-model`. Use the group only for the spacing and orientation of a stack of switches.
 
 ### Props
 

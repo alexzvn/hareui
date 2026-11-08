@@ -143,4 +143,14 @@ See [Colors](/docs/getting-started/colors) for the full token reference.
 
 ### 10. Open and Extensible
 
-Override any slot, any variant, at any scope — per instance with `:ui`, or app-wide with `createHareUI`. Precedence (lowest to highest): theme file → `createHareUI({ ui })` → variant props → `:ui` → `class` (root only). See [Theming](/docs/getting-started/theming) for the full precedence rules.
+Override any slot or variant, at any scope. Use `:ui` for one instance, or `createHareUI` for the whole app.
+
+Precedence, lowest to highest:
+
+1. the theme file
+2. `createHareUI({ ui })`
+3. variant props
+4. `:ui`
+5. `class` (root slot only)
+
+See [Theming](/docs/getting-started/theming) for the full precedence rules.

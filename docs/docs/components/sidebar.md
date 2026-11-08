@@ -8,7 +8,7 @@ links:
 
 ## Usage
 
-Place the Sidebar next to your page content inside a flex container. Use the `header`, `default` and `footer` slots to fill it. `v-model:open` follows the viewport: on desktop it expands and collapses the sidebar, and below the `md` breakpoint it opens and closes the same content as a menu.
+Place the Sidebar next to your page content inside a flex container. Use the `header`, `default` and `footer` slots to fill it. `v-model:open` follows the viewport. On desktop it expands and collapses the sidebar. Below the `md` breakpoint it opens and closes the same content as a menu.
 
 ```ts
 import { Sidebar } from '@hareui/vue'
@@ -73,13 +73,13 @@ Use the `side` prop to set the edge the sidebar collapses towards and the side i
 
 ### Title and description
 
-Use the `title` and `description` props to fill the header. The `title` also names the mobile menu for screen readers. Use the `actions` slot to add buttons at the end of the header, and the `close` prop to add a button that collapses the sidebar. Pass an object to customize the [Button](./button) and its `icon`.
+Use the `title` and `description` props to fill the header. The `title` also names the mobile menu for screen readers. Use the `actions` slot to add buttons at the end of the header. Set the `close` prop to add a button that collapses the sidebar. Pass `close` an object to customize the [Button](./button) and its `icon`.
 
 <ComponentPreview name="sidebar/header" contain="32rem" />
 
 ### Mode
 
-Use the `mode` prop to choose how the sidebar opens below the breakpoint: `slideover` (default), `drawer` or `modal`. Use the `menu` prop to pass props to the underlying [Drawer](./drawer) or [Modal](./modal), and the `breakpoint` prop to change the width below which the menu replaces the sidebar (`md` by default).
+Use the `mode` prop to choose how the sidebar opens below the breakpoint: `slideover` (default), `drawer` or `modal`. Use the `menu` prop to pass props to the underlying [Drawer](./drawer) or [Modal](./modal). The `breakpoint` prop sets the width below which the menu replaces the sidebar, `md` by default.
 
 <ComponentPreview name="sidebar/mode" contain="32rem" device="mobile" />
 

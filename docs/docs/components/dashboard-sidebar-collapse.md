@@ -8,7 +8,7 @@ links:
 
 ## Usage
 
-The `DashboardSidebarCollapse` component is a [`Button`](/docs/components/button) that collapses and expands a `collapsible` [`DashboardSidebar`](/docs/components/dashboard-sidebar) inside a [`DashboardGroup`](/docs/components/dashboard-group). It is hidden below the `md` breakpoint, where the sidebar opens as a sheet instead.
+The `DashboardSidebarCollapse` component is a [`Button`](/docs/components/button) that collapses and expands a [`DashboardSidebar`](/docs/components/dashboard-sidebar). The sidebar must be `collapsible` and sit inside a [DashboardGroup](/docs/components/dashboard-group). It is hidden below the `md` breakpoint, where the sidebar opens as a sheet instead.
 
 ```ts
 import { DashboardSidebarCollapse } from '@hareui/vue'
@@ -24,7 +24,7 @@ Put it in the `#header` slot of the sidebar and hide the brand while `collapsed`
 </DashboardSidebarCollapse>
 ```
 
-`ui` keys: `base`. Native button attributes (`aria-label`, `@click`, ...) fall through to the button.
+Native button attributes (`aria-label`, `@click`, ...) fall through to the button.
 
 ## Examples
 
@@ -64,6 +64,14 @@ app.use(
   }),
 )
 ```
+
+## Styling Reference
+
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
+
+| `ui` key | `data-slot`                  | Description                   |
+| -------- | ---------------------------- | ----------------------------- |
+| `base`   | `dashboard-sidebar-collapse` | The button. Hidden below `md` |
 
 ## API
 

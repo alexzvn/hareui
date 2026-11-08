@@ -20,7 +20,14 @@ import { ColorField, parseColor } from '@hareui/vue'
 
 ## Anatomy
 
-ColorField renders a [Label](/docs/components/label), a group holding an optional prefix (e.g. a [ColorSwatch](/docs/components/color-swatch)), the input and an optional suffix, then a [Description](/docs/components/description) and a [FieldError](/docs/components/field-error). The text parts come from props; each can be replaced with a slot.
+ColorField renders these parts in order:
+
+- a [Label](/docs/components/label)
+- a group holding an optional prefix, such as a [ColorSwatch](/docs/components/color-swatch), the input, and an optional suffix
+- a [Description](/docs/components/description)
+- a [FieldError](/docs/components/field-error)
+
+The text parts come from props. Each can be replaced with a slot.
 
 ```vue
 <template>
@@ -78,7 +85,9 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 <ComponentPreview name="color-field/required" />
 
 ::: warning Empty value and forms
-Without `v-model`/`default-value`, or with a `null` model, the input is empty and shows its `placeholder`. The field always holds a colour internally, so an empty field still **submits `#000000`** as its form value, and `required` can't block submitting an empty field. Validate with `validate` or check for a `null` model if you need to tell them apart.
+Without `v-model` or `default-value`, or with a `null` model, the input is empty and shows its `placeholder`.
+
+The field always holds a colour internally. So an empty field still **submits `#000000`** as its form value, and `required` can't block submitting it. To tell the two apart, validate with `validate` or check for a `null` model.
 :::
 
 ### Disabled State
@@ -91,7 +100,7 @@ Without `v-model`/`default-value`, or with a `null` model, the input is empty an
 
 ### Validation
 
-Set `invalid` with `error-message` to control the state yourself, or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form).
+Set `invalid` with `error-message` to control the state yourself. Or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form).
 
 <ComponentPreview name="color-field/invalid" />
 
@@ -103,7 +112,7 @@ ColorField supports editing individual color channels (hue, saturation, lightnes
 
 ### Controlled
 
-Bind the value with `v-model` to synchronize with other components or state management. The committed value is a `Color` object, or `null` when the input is cleared (set the model to `null` to clear it). Use `colorToString(color, 'hex')` to read it as a string.
+Bind the value with `v-model` to synchronize with other components or state management. The committed value is a `Color` object, or `null` when the input is cleared. Set the model to `null` to clear it. Use `colorToString(color, 'hex')` to read it as a string.
 
 <ComponentPreview name="color-field/controlled" />
 
@@ -115,7 +124,7 @@ Complete form example with validation and submission handling.
 
 ### Render Function
 
-Attributes you pass to `ColorField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`.
+Attributes you pass to `ColorField` fall through to the root `div`. The exceptions are `aria-label` and `aria-labelledby`, which go to the input.
 
 <ComponentPreview name="color-field/render-function" />
 
@@ -180,8 +189,12 @@ ColorField sets these data attributes:
 
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)
 - The input's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
-- Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> (and <kbd>PageUp</kbd>/<kbd>PageDown</kbd>) step the hex value or the active channel by one step, <kbd>Home</kbd>/<kbd>End</kbd> jump a channel to its minimum/maximum, <kbd>Enter</kbd> commits typed text and then submits an enclosing form, mouse wheel steps the value unless `disableWheelChange` is set
+- `invalid` sets `aria-invalid="true"` on the input. The error is announced via `role="alert"`
+- Keyboard:
+  - <kbd>↑</kbd>/<kbd>↓</kbd> and <kbd>PageUp</kbd>/<kbd>PageDown</kbd> step the hex value or the active channel by one step
+  - <kbd>Home</kbd>/<kbd>End</kbd> jump a channel to its minimum or maximum
+  - <kbd>Enter</kbd> commits typed text, then submits an enclosing form
+  - The mouse wheel steps the value, unless `disableWheelChange` is set
 - Channel values show their unit (`213°`, `50%`) and are clamped to the channel range on commit
 - `name` submits the lowercase hex (`#0485f7`), or the channel value in channel mode (alpha on a 0–1 scale)
 

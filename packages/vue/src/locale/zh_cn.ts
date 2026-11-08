@@ -58,6 +58,9 @@ export const zh_cn = defineLocale({
     dropZone: {
       removeFile: '删除 {filename}',
     },
+    editorMenu: {
+      noResults: '无结果',
+    },
     error: {
       clear: '返回首页',
     },
@@ -86,6 +89,9 @@ export const zh_cn = defineLocale({
       nextLabel: '下一页',
       prev: '上一页',
       prevLabel: '上一页',
+    },
+    promptInput: {
+      retry: '重试',
     },
     richTable: {
       noData: '没有数据',

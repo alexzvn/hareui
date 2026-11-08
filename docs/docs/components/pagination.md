@@ -35,10 +35,10 @@ Pagination renders its summary, page items, previous/next buttons and ellipses f
 </template>
 ```
 
-- `ellipsis` collapses distant pages (first, last, current ± 1);
-  `pages` takes any exact list of numbers and `'ellipsis'` entries.
-- `prev` / `next` configure the buttons: `label` sets the text (empty = icon only) and `disabled`
-  overrides the first/last-page default.
+- `ellipsis` collapses distant pages. It keeps the first, the last and the current ± 1.
+- `pages` takes any exact list of numbers and `'ellipsis'` entries.
+- `prev` and `next` configure the buttons. `label` sets the text. Leave it empty for an icon-only button.
+- `disabled` on `prev` or `next` overrides the first/last-page default.
 
 | `ui` key   | `data-slot`                                                 | Element                          |
 | ---------- | ----------------------------------------------------------- | -------------------------------- |

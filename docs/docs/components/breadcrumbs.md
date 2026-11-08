@@ -166,7 +166,7 @@ The component supports both CSS pseudo-classes and data attributes for flexibili
 
 ## Accessibility
 
-- The root is an `<ol>` labelled "Breadcrumbs"; every item is an `<li>`.
+- The root is an `<ol>` labelled "Breadcrumbs". Every item is an `<li>`.
 - The current page (the last item) is a non-interactive `role="link"` element with `aria-current="page"`.
 - Disabled links render without `href` and with `aria-disabled="true"`.
 

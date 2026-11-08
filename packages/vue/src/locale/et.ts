@@ -58,6 +58,9 @@ export const et = defineLocale({
     dropZone: {
       removeFile: 'Eemalda {filename}',
     },
+    editorMenu: {
+      noResults: 'Tulemusi pole',
+    },
     error: {
       clear: 'Tagasi avalehele',
     },
@@ -86,6 +89,9 @@ export const et = defineLocale({
       nextLabel: 'Järg',
       prev: 'Eelmine lehekülg',
       prevLabel: 'Eel',
+    },
+    promptInput: {
+      retry: 'Proovi uuesti',
     },
     richTable: {
       noData: 'Pole andmeid',

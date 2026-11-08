@@ -3,53 +3,61 @@ title: All Components (Vue)
 description: Explore the full list of components available in the library. More are on the way.
 ---
 
+## App Shell
+
+<ComponentsCategory category="App Shell" />
+
 ## Buttons
 
 <ComponentsCategory category="Buttons" />
-
-## Charts
-
-<ComponentsCategory category="Charts" />
-
-## Collections
-
-<ComponentsCategory category="Collections" />
-
-## Colors
-
-<ComponentsCategory category="Colors" />
-
-## Controls
-
-<ComponentsCategory category="Controls" />
-
-## Dashboard
-
-<ComponentsCategory category="Dashboard" />
-
-## Data Display
-
-<ComponentsCategory category="Data Display" />
-
-## Date and Time
-
-<ComponentsCategory category="Date and Time" />
-
-## Feedback
-
-<ComponentsCategory category="Feedback" />
-
-## Forms
-
-<ComponentsCategory category="Forms" />
 
 ## Layout
 
 <ComponentsCategory category="Layout" />
 
+## Feedback
+
+<ComponentsCategory category="Feedback" />
+
 ## Media
 
 <ComponentsCategory category="Media" />
+
+## Typography
+
+<ComponentsCategory category="Typography" />
+
+## Forms
+
+<ComponentsCategory category="Forms" />
+
+## Pickers
+
+<ComponentsCategory category="Pickers" />
+
+## Controls
+
+<ComponentsCategory category="Controls" />
+
+## Date and Time
+
+<ComponentsCategory category="Date and Time" />
+
+## Colors
+
+<ComponentsCategory category="Colors" />
+
+## Data Display
+
+<ComponentsCategory category="Data Display" />
+
+## Collections
+
+<ComponentsCategory category="Collections" />
+
+## Charts
+
+<ComponentsCategory category="Charts" />
 
 ## Navigation
 
@@ -59,13 +67,17 @@ description: Explore the full list of components available in the library. More 
 
 <ComponentsCategory category="Overlays" />
 
-## Pickers
+## Dashboard
 
-<ComponentsCategory category="Pickers" />
+<ComponentsCategory category="Dashboard" />
 
-## Typography
+## AI
 
-<ComponentsCategory category="Typography" />
+<ComponentsCategory category="AI" />
+
+## Editor
+
+<ComponentsCategory category="Editor" />
 
 ## Utilities
 

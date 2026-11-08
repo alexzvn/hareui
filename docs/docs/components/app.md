@@ -7,7 +7,12 @@ links:
 
 ## Usage
 
-Wrap your whole application with the `App` component. It sets the reading direction, locale and default [portal](#portal) for every component inside it, renders a [`ToastProvider`](/docs/components/toast) so `toast()` works anywhere, and renders the overlays opened with [`useOverlay()`](/docs/getting-started/overlays).
+Wrap your whole application with the `App` component. It gives every component inside it:
+
+- the reading direction and locale
+- a default [portal](#portal) for overlays
+- a [`ToastProvider`](/docs/components/toast), so `toast()` works anywhere
+- a place to render the overlays opened with [`useOverlay()`](/docs/getting-started/overlays)
 
 ```ts
 import { App } from '@hareui/vue'
@@ -105,8 +110,8 @@ const myFr = defineLocale({ ...fr, messages: { ...fr.messages, toc: { title: 'So
 
 #### Document Language
 
-`App` can't set attributes on `<html>`. Set `lang` there yourself (screen readers pick their voice from it), and `dir`
-as well:
+`App` can't set attributes on `<html>`. Set `lang` there yourself, since screen readers pick their
+voice from it. Set `dir` there as well:
 
 ```ts
 document.documentElement.lang = locale.code
@@ -115,7 +120,7 @@ document.documentElement.dir = locale.dir
 
 ### Portal
 
-Use the `portal` prop to choose where overlays such as `Modal`, `Drawer`, `Popover` and `Tooltip` are rendered. It defaults to `true` (`document.body`); pass a selector or an element to render them there, or `false` to render them in place. An overlay's own `portal` prop takes precedence.
+Use the `portal` prop to choose where overlays such as `Modal` and `Popover` are rendered. It defaults to `true`, which renders them in `document.body`. Pass a selector or an element to render them there, or `false` to render them in place. An overlay's own `portal` prop takes precedence.
 
 When the target is a container rather than the page, give it `position: relative` and size the overlay to it, e.g. `:ui="{ backdrop: 'absolute h-full', container: 'h-full' }"` on a `Modal`, which fills the viewport by default.
 

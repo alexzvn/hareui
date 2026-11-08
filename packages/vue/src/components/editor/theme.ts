@@ -3,8 +3,11 @@
 // the scrolling document and the footer slot. The document is `px-4 py-3` with a 180px minimum height,
 // 14px/24px text and 12px between blocks; headings are semibold (24/32, 20/28, 18/28px for levels 1-3).
 // Inline code is monospace at 0.9em with 2px/3px padding; code blocks sit on the default hover fill (12px radius, 14px),
-// quotes have a 2px start border in muted text, links are underlined 2px below the text.
-// The footer is a 40px `px-3 py-2` row in 12px muted text. Disabled dims the whole field to 60%.
+// quotes have a 2px start border in muted text, links are underlined 2px below the text, mentions are soft accent
+// chips (0.75 radius, 4px inline padding), as in PromptInput.
+// The footer is a 40px `px-3 py-2` row in 12px muted text. Disabled dims the whole field to 60%. From `sm` up, an
+// `EditorDragHandle` inside the editor widens the document's start padding to 48px to make room for its grip, and
+// the drop cursor hides while its dragged block already shows where it lands.
 export default {
   slots: {
     root: [
@@ -13,6 +16,8 @@ export default {
       '[transition:background-color_150ms_var(--ease-smooth),border-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
       'cursor-text hover:border-field-border-hover',
       'has-[.ProseMirror:focus]:border-field-border-focus has-[.ProseMirror:focus]:bg-field-focus',
+      // The drop cursor sits in this positioned root; `data-reordering` is an `EditorDragHandle` drag preview
+      '[&:has([data-reordering])_.prosemirror-dropcursor-block]:hidden',
     ],
     content: 'min-h-0 flex-1 cursor-text overflow-y-auto',
     base: [
@@ -35,12 +40,16 @@ export default {
       '[&_pre_code]:p-0 [&_pre_code]:text-inherit',
       // Links
       '[&_a]:text-link [&_a]:underline [&_a]:underline-offset-2',
+      // Mentions render as `<span class="mention" data-type="mention">`
+      '[&_.mention]:rounded-[calc(var(--radius)*0.75)] [&_.mention]:bg-accent-soft [&_.mention]:px-1 [&_.mention]:text-accent',
       // Horizontal rules render as `<div data-type="horizontalRule"><hr></div>`
       '[&_[data-type=horizontalRule]]:py-2 [&_hr]:border-t [&_hr]:border-separator',
       // Images
       '[&_img]:block [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-xl',
       // Selected nodes (images, rules)
       '[&_.ProseMirror-selectednode]:rounded-sm [&_.ProseMirror-selectednode]:outline-2 [&_.ProseMirror-selectednode]:outline-offset-2 [&_.ProseMirror-selectednode]:outline-accent',
+      // Room for an `EditorDragHandle` grip, which is hidden below `sm`
+      'sm:[[data-slot=editor]:has([data-slot=editor-drag-handle])_&]:ps-12',
     ],
     footer:
       'flex min-h-10 cursor-default items-center justify-between gap-3 px-3 py-2 text-xs text-muted',

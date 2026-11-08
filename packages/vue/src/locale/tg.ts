@@ -58,6 +58,9 @@ export const tg = defineLocale({
     dropZone: {
       removeFile: '{filename}-ро хориҷ кунед',
     },
+    editorMenu: {
+      noResults: 'Натиҷа нест',
+    },
     error: {
       clear: 'Тоза кардан',
     },
@@ -86,6 +89,9 @@ export const tg = defineLocale({
       nextLabel: 'Баъдӣ',
       prev: 'Саҳифаи қаблӣ',
       prevLabel: 'Қаблӣ',
+    },
+    promptInput: {
+      retry: 'Аз нав кӯшиш кардан',
     },
     richTable: {
       noData: 'Маълумот нест',

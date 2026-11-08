@@ -80,7 +80,7 @@ app.use(
 
 ## Styling Reference
 
-Kbd renders no `data-slot` attributes; style it through `class`, `ui` or `createHareUI`.
+Kbd renders no `data-slot` attributes. Style it with `class`, the `ui` prop or the global theme.
 
 - `base` – keyboard key styles with background and spacing (`variant="light"` makes the background transparent)
 - `abbr` – abbreviation element for modifier keys
@@ -98,7 +98,7 @@ Kbd renders no `data-slot` attributes; style it through `class`, `ui` or `create
 
 ### KbdKey
 
-Available values for `keys`, with the symbol and `title` each renders. `kbdKeysMap` and `kbdKeysLabelMap` are exported.
+Available values for `keys`, with the symbol and `title` each renders. The maps behind them are exported as `kbdKeysMap` and `kbdKeysLabelMap`.
 
 | Key        | Symbol | Title     |
 | ---------- | ------ | --------- |

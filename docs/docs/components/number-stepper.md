@@ -108,13 +108,13 @@ The `#value` slot receives `value` and `formattedValue`. Use it to render the nu
 
 ### With Custom Buttons
 
-Pass [Button](/docs/components/button) props to `increment` and `decrement` to render Buttons in place of the built-in ones. Space them with `ui.group`, and add `bg-transparent` to drop the pill background, as in the last two rows.
+Pass [Button](/docs/components/button) props to `increment` and `decrement` to render Buttons in place of the built-in ones. Space them with `ui.group`. Add `bg-transparent` to drop the pill background, as in the last two rows.
 
 <ComponentPreview name="number-stepper/with-custom-buttons" />
 
 ### With Format Options
 
-`format-options` takes `Intl.NumberFormat` options for currencies, units and percentages. Percent values are fractions, so `0.2` shows as 20%. Pass `locale` to override the `ConfigProvider` locale, as the euro tip does with `de-DE`.
+`format-options` takes `Intl.NumberFormat` options for currencies, units and percentages. Percent values are fractions, so `0.2` shows as 20%. Pass `locale` to override the `ConfigProvider` locale. The euro tip does this with `de-DE`.
 
 <ComponentPreview name="number-stepper/with-format-options" />
 
@@ -179,7 +179,7 @@ app.use(
 ### Interactive States
 
 - **Hover**: the button icon turns from `text-muted` to `text-foreground`
-- **Pressed**: `[data-pressed="true"]` on a button while it's held; the button scales down
+- **Pressed**: `[data-pressed="true"]` on a button while it's held. The button scales down
 - **Focus visible**: the group shows a focus ring while the hidden spin button has keyboard focus
 - **Disabled**: `[data-disabled="true"]` on the root and the group, `disabled` on the buttons and the input
 - **Invalid**: `[data-invalid="true"]` on the root and the group
@@ -206,11 +206,11 @@ app.use(
 
 ## Accessibility
 
-- The hidden input has `role="spinbutton"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`, and is in the tab order
+- The hidden input has `role="spinbutton"` and is in the tab order. It sets `aria-valuenow`, `aria-valuemin` and `aria-valuemax`
 - Name it with `label`, or with `aria-label` when there is no visible label
 - The buttons are named after the field ("Increase Checked bags", "Decrease Checked bags"), aren't in the tab order, and repeat while held
-- Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> and <kbd>PageUp</kbd>/<kbd>PageDown</kbd> step by `step`, <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`
-- The visible value is `aria-hidden`; screen readers read the spin button instead
+- Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> and <kbd>PageUp</kbd>/<kbd>PageDown</kbd> step by `step`. <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`
+- The visible value is `aria-hidden`. Screen readers read the spin button instead
 - The input's `aria-describedby` lists the rendered description and error
 
 ## Related Components

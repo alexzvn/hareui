@@ -118,7 +118,7 @@ app.use(
 
 ### Slots
 
-- `base` → `[data-slot="checkbox-group"]` — `flex flex-col`; each item after the first gets `mt-4`
+- `base` → `[data-slot="checkbox-group"]` — `flex flex-col`. Each item after the first gets `mt-4`
 - Items use the [Checkbox](/docs/components/checkbox) theme (`content`, `control`, `indicator`)
 
 ## API Reference

@@ -27,6 +27,8 @@
 import Code from '@tiptap/extension-code'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import Image from '@tiptap/extension-image'
+import Mention from '@tiptap/extension-mention'
+import type { MentionNodeAttrs, MentionOptions } from '@tiptap/extension-mention'
 import Placeholder from '@tiptap/extension-placeholder'
 import type { PlaceholderOptions } from '@tiptap/extension-placeholder'
 import { Markdown } from '@tiptap/markdown'
@@ -50,7 +52,7 @@ import type {
   EditorProps,
   EditorSlots,
 } from './Editor.types'
-import { createEditorHandlers } from './handlers'
+import { BlockKeymap, createEditorHandlers } from './handlers'
 import theme from './theme'
 
 defineOptions({ inheritAttrs: false })
@@ -60,6 +62,7 @@ const props = withDefaults(defineProps<EditorProps<H>>(), {
   modelValue: undefined,
   starterKit: true,
   image: true,
+  mention: true,
   editable: true,
   autofocus: false,
 })
@@ -165,6 +168,23 @@ const starterKitOptions = computed(() => {
 
 const imageOptions = computed(() => (typeof props.image === 'object' ? props.image : {}))
 
+// A mention shows the trigger it was typed with (`@`, `#`), not the extension's first configured one.
+const mentionText = (attrs: MentionNodeAttrs) =>
+  `${attrs.mentionSuggestionChar ?? '@'}${attrs.label ?? attrs.id ?? ''}`
+
+const MENTION_OPTIONS: Partial<MentionOptions> = {
+  HTMLAttributes: { class: 'mention' },
+  renderText: ({ node }) => mentionText(node.attrs as MentionNodeAttrs),
+  renderHTML: ({ options, node }) => [
+    'span',
+    options.HTMLAttributes,
+    mentionText(node.attrs as MentionNodeAttrs),
+  ],
+}
+
+// The node only: each `EditorMentionMenu` brings the suggestion plugin for its own trigger character.
+const MentionNode = Mention.extend({ addProseMirrorPlugins: () => [] })
+
 // Inline code accepts other marks (bold code, linked code) instead of excluding them all.
 const InlineCode = Code.extend({ excludes: 'code' })
 
@@ -184,7 +204,9 @@ const createExtensions = () => {
     StarterKit.configure(starterKitOptions.value),
     isRichText && InlineCode,
     isRichText && WrappedHorizontalRule,
+    BlockKeymap,
     props.image !== false && Image.configure(imageOptions.value),
+    props.mention && MentionNode.configure(MENTION_OPTIONS),
     placeholder &&
       Placeholder.configure(
         defu({ placeholder: resolvePlaceholderText }, placeholder, PLACEHOLDER_DEFAULTS),

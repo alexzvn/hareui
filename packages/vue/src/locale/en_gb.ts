@@ -49,6 +49,9 @@ export const en_gb = defineLocale({
     dropZone: {
       removeFile: 'Remove {filename}',
     },
+    editorMenu: {
+      noResults: 'No results',
+    },
     error: {
       clear: 'Back to home',
     },
@@ -65,6 +68,9 @@ export const en_gb = defineLocale({
     pagination: {
       next: 'Next page',
       prev: 'Previous page',
+    },
+    promptInput: {
+      retry: 'Try again',
     },
     richTable: {
       noData: 'No data',

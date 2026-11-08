@@ -8,7 +8,7 @@ links:
 
 ## Usage
 
-Pass the rows in the `items` prop. Each item needs a `value` and a `label`, and can have a `description` and an `icon`.
+Pass the rows in the `items` prop. Each item needs a `value` and a `label`. It can also have a `description` and an `icon`.
 Set `selectable` to put a checkbox in each row, and bind the selection with `v-model`.
 
 ```ts
@@ -38,8 +38,8 @@ The list renders one row per item: an optional checkbox, the icon, the label and
 ### Selection
 
 - By default rows have no checkbox and no selected state. They can still be pressed.
-- `selectable`: one row at a time; `v-model` holds a value or `null`.
-- `selectable` with `multiple`: any number of rows; `v-model` holds an array.
+- `selectable`: one row at a time. `v-model` holds a value or `null`.
+- `selectable` with `multiple`: any number of rows. `v-model` holds an array.
 
 <ComponentPreview name="list-view/selection" />
 
@@ -83,7 +83,7 @@ normal link. The row itself stays a grid row, not an `<a>`.
 By default a press adds or removes the row (`selection-behavior="toggle"`), which suits touch screens. With
 `selection-behavior="replace"` the list works like a file manager:
 
-- A press selects the row alone. Ctrl/Cmd+press adds or removes it; Shift+press selects a range.
+- A press selects the row alone. Ctrl/Cmd+press adds or removes it. Shift+press selects a range.
 - The selection follows the arrow keys. Hold Ctrl/Cmd to move without selecting.
 - A double click or Enter runs the action.
 - On a touch screen a tap runs the action (or toggles the row when nothing listens to `action`), and the checkboxes
@@ -115,13 +115,13 @@ Show bulk actions while rows are selected: bind the [ActionBar](./action-bar)'s 
 ### Virtualize
 
 Set `virtualize` to render only the rows in view, for lists with thousands of rows. Give the list a fixed height (here
-`h-96`); it then scrolls itself. To tune it, pass `{ estimateSize, overscan }` (48 px and 5 rows by default).
+`h-96`), and it scrolls itself. To tune it, pass `{ estimateSize, overscan }`. The defaults are 48 px and 5 rows.
 
 <ComponentPreview name="list-view/virtualize" />
 
 ## Accessibility
 
-The list renders `role="grid"`, each row a `row` with one `gridcell`, named by its `label`. Give the list a name with
+The list renders `role="grid"`. Each row is a `row` with one `gridcell`, named by its `label`. Give the list a name with
 `aria-label` or `aria-labelledby`.
 
 The list is a single tab stop. Tab focuses the row focused last, else the first selected row, else the first row. Tab

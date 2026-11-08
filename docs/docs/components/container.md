@@ -16,7 +16,12 @@ import { Container } from '@hareui/vue'
 
 <ComponentPreview name="container/basic" />
 
-Set the `--container-max-width` (default `64rem`) and `--container-padding` (default `1.5rem`) CSS variables on `:root` to change the width of `Container`, `Header` and `Footer` together. To widen a single container, use the `class` prop, e.g. `class="max-w-7xl"`.
+Set these CSS variables on `:root` to change the width of Container, Header and Footer together:
+
+- `--container-max-width`: defaults to `64rem`
+- `--container-padding`: defaults to `1.5rem`
+
+To widen a single container, use the `class` prop, e.g. `class="max-w-7xl"`.
 
 ## Customization
 

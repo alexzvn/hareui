@@ -8,7 +8,11 @@ links:
 
 ## Usage
 
-Pass the steps in the `items` prop. Each item can have a `title`, a `description`, an `icon` (an icon class or a component) and `content` shown while the step is active.
+Pass the steps in the `items` prop. Each item can have:
+
+- `title` and `description`: the step's text.
+- `icon`: an icon class or a component, shown in the circle.
+- `content`: shown while the step is active.
 
 ```ts
 import { Stepper } from '@hareui/vue'
@@ -28,7 +32,10 @@ import { Stepper } from '@hareui/vue'
 </Stepper>
 ```
 
-The steps render as an `ol` with one `li` per step. Each step is a button named by its title and described by its description; the arrow keys move focus between steps, and Enter or Space selects the focused one. `state` is `completed` for the steps before the active one, `active` for the active one and `inactive` for the ones after it.
+The steps render as an `ol` with one `li` per step. Each step is a button named by its title and described by its description.
+
+- The arrow keys move focus between steps. Enter or Space selects the focused one.
+- The `state` slot prop tells where a step stands: completed before the active step, active on it and inactive after it.
 
 ### Description
 
@@ -83,11 +90,11 @@ The colors and sizes are CSS variables on the root, so one class restyles every 
 
 ### Active Step
 
-Use `v-model` to control the active step. The value is matched against each item's `value` (or the key set with `value-key`); a number that no item has is a step index. A value past the last step marks every step completed. Use `default-value` when you don't need to control it.
+Use `v-model` to control the active step. The value is matched against each item's `value`, or the key set with `value-key`. A number that no item has is a step index. A value past the last step marks every step completed. Use `default-value` when you don't need to control it.
 
 The component exposes these through a template ref:
 
-- `next()` and `prev()` move one step and emit `next` / `prev` with the new step.
+- `next()` and `prev()` move one step. They emit `next` or `prev` with the new step.
 - `hasNext` and `hasPrev` tell you when to disable your buttons at either end.
 
 Here Finish sets the value past the last step, which completes them all.
@@ -108,7 +115,7 @@ By default, only the completed steps, the active one and the one right after it 
 
 ### Disabled
 
-Use the `disabled` prop to show progress without letting the user change steps. Set `disabled` on an item to disable only that step. Disabled steps keep their look; they just can't be selected.
+Use the `disabled` prop to show progress without letting the user change steps. Set `disabled` on an item to disable only that step. Disabled steps keep their look, but they can't be selected.
 
 <ComponentPreview name="stepper/disabled" />
 

@@ -6,6 +6,7 @@ import type {
   ColumnFiltersOptions,
   ColumnPinningOptions,
   ColumnSizingOptions,
+  ColumnSizingState,
   CoreOptions,
   ExpandedOptions,
   FacetedOptions,
@@ -253,6 +254,20 @@ export type RichTableProps<T extends RichTableData = RichTableData> = {
   /** Color and animation of the loading bar. */
   loadingBar?: RichTableLoadingBar
   /**
+   * Adds a drag handle before each top-level row: drag it, or focus it and press Enter or Space, to move the row.
+   * Moving a selected row moves every selected row. A drop updates `v-model:data` and emits `reorder`.
+   * Handles are disabled while the rows are sorted or grouped, since the order on screen isn't the order of `data` then.
+   * @defaultValue false
+   */
+  reorderable?: boolean
+  /**
+   * Lets the column headers be dragged, or focused and picked up with Enter or Space, to move columns within their
+   * pinned side and header group. A drop updates the column order (`v-model:column-order`) and, for pinned columns,
+   * the pinning order (`v-model:column-pinning`).
+   * @defaultValue false
+   */
+  reorderableColumns?: boolean
+  /**
    * Customize how `data` changes are watched (for ex: disable deep watching or limit the traversal depth). Improves performance with large datasets, at the cost of missing in-place row mutations.
    * @see https://vuejs.org/api/options-state.html#watch
    * @defaultValue { deep: true }
@@ -288,6 +303,34 @@ export type RichTableProps<T extends RichTableData = RichTableData> = {
   class?: ClassValue
   /** Per-slot class overrides. */
   ui?: ComponentSlots<RichTableTheme>
+}
+
+/** Where dragged rows land: before or after a row. */
+export type RichTableReorderTarget = {
+  /** The id of the row the drop lands next to. */
+  key: string
+  /** Whether the moved rows go before or after that row. */
+  position: 'before' | 'after'
+}
+
+/** A drop of dragged rows: the rows moved, where they land, and the reordered data. */
+export type RichTableReorderEvent<T extends RichTableData = RichTableData> = {
+  /** The ids of the moved rows, in display order. */
+  keys: string[]
+  /** Where the moved rows land. */
+  target: RichTableReorderTarget
+  /** A new array with the rows of `data` in their new order, also emitted as `update:data`. */
+  data: T[]
+}
+
+/** Events emitted by `RichTable`. */
+export type RichTableEmits<T extends RichTableData = RichTableData> = {
+  /** Emitted when dragged rows are dropped, with `data` in its new order. Use `v-model:data` to apply it. */
+  'update:data': [data: T[]]
+  /** Emitted when dragged rows are dropped, with the moved rows, where they land and the reordered data. */
+  reorder: [event: RichTableReorderEvent<T>]
+  /** Emitted when a column resize ends, with the width of every sized column by column id. */
+  columnResizeEnd: [sizing: ColumnSizingState]
 }
 
 /** Slots of `RichTable`. Per-column slots are named after the column id. */

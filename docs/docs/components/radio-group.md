@@ -123,7 +123,7 @@ Mark the group `required` inside a [Form](/docs/components/form): submitting wit
 
 ### Tailwind CSS
 
-Use the `#item-label` slot and `:ui` overrides to restyle each row. Use the `hover:` / `active:` / `focus-visible:` variants for interaction states.
+Use the `#item-label` slot and `:ui` overrides to restyle each row. Use Tailwind's `hover:`, `active:` and `focus-visible:` variants for interaction states.
 
 <ComponentPreview name="radio-group/custom-styles" />
 
@@ -145,7 +145,7 @@ app.use(
 - `item` → `[data-slot="radio"]` – one row per item (`flex flex-col items-start gap-1`)
 - `content` → `[data-slot="radio-content"]` – the clickable button wrapping control + label
 - `control` → `[data-slot="radio-control"]` – circular control
-- `indicator` → `[data-slot="radio-indicator"]` – inner dot, empty by default; fill with `#indicator` for custom content
+- `indicator` → `[data-slot="radio-indicator"]` – inner dot, empty by default. Fill it with `#indicator` for custom content
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
@@ -154,7 +154,7 @@ app.use(
 RadioGroup sets these data attributes:
 
 - **Selected** (per item): `[data-selected="true"]` on `[data-slot="radio"]` and on its `[data-slot="radio-content"]`
-- **Disabled**: `[data-disabled="true"]` on `[data-slot="radio"]` (group `disabled` or `item.disabled`)
+- **Disabled**: `[data-disabled="true"]` on `[data-slot="radio"]`, set by the group's `disabled` or the item's `disabled`
 - **Invalid**: `[data-invalid="true"]` on `[data-slot="radio"]` when the group `invalid` is true
 - **Read only**: `[data-readonly="true"]` and `aria-readonly="true"` on the root
 - **Required**: `[data-required="true"]` on the root
@@ -179,10 +179,11 @@ RadioGroup sets these data attributes:
 
 ## Accessibility
 
-- The group label is associated via `aria-labelledby`; each item's clickable button has `aria-describedby` listing its own description and the group's description/error ids
-- `invalid` sets `aria-invalid="true"` and `data-invalid="true"` on the root; the error is rendered via [FieldError](/docs/components/field-error) (`role="alert"`)
+- The group label is associated via `aria-labelledby`
+- Each item's clickable button has `aria-describedby` listing its own description and the group's description and error ids
+- `invalid` sets `aria-invalid="true"` and `data-invalid="true"` on the root. The error is rendered by [FieldError](/docs/components/field-error) with `role="alert"`
 - `required` sets `data-required="true"` on the root
-- Keyboard: arrow keys move selection between items, following `orientation`; <kbd>Tab</kbd> moves focus into and out of the group as a single stop
+- Keyboard: arrow keys move selection between items, following `orientation`. <kbd>Tab</kbd> moves focus into and out of the group as a single stop
 - Pressing a disabled radio moves focus to the group container. The next <kbd>Tab</kbd> then starts from the group
 
 ## Related Components

@@ -19,7 +19,14 @@ The default slot is the area that opens the menu. Right-click it, or press and h
 
 ## Anatomy
 
-A single `ContextMenu` component owns the whole structure. The menu is built from the `items` array with the same entries as [Dropdown](./dropdown): items, `{ type: 'section' }` groups with a header, `{ type: 'separator' }` dividers and submenus (an item with nested `items`). Named slots customize the parts of each item.
+A single `ContextMenu` component owns the whole structure. The menu is built from the `items` array, with the same entries as [Dropdown](./dropdown):
+
+- plain items
+- `{ type: 'section' }` groups with a header
+- `{ type: 'separator' }` dividers
+- submenus: an item with nested `items`
+
+Named slots customize the parts of each item.
 
 ```vue
 <template>
@@ -87,7 +94,7 @@ Pass an array of arrays to `items` to split the menu into groups, with a separat
 
 ### Checked Items
 
-Set `selection-mode` to `single` or `multiple` and bind the selected values with `v-model` (always an array).
+Set `selection-mode` to `single` or `multiple`. Bind the selected values with `v-model`, which is always an array.
 
 <ComponentPreview name="context-menu/with-selection" />
 
@@ -99,7 +106,7 @@ Items of a `multiple` menu toggle and keep the menu open, so several can be chec
 
 ### Nested Menus
 
-An item with nested `items` opens a submenu. Sections can carry their own `selectionMode` and `indicator`, selecting independently of the rest of the menu into the same `v-model` array.
+An item with nested `items` opens a submenu. Sections can carry their own `selectionMode` and `indicator`. They select independently of the rest of the menu, into the same `v-model` array.
 
 <ComponentPreview name="context-menu/with-submenus" />
 
@@ -171,7 +178,7 @@ app.use(
 | `header`           | `header`               | Section header, labels the group                                                        |
 | `separator`        | `separator`            | Divider between entries                                                                 |
 
-Submenu popovers use the `popover` and `menu` classes too, with `data-slot="dropdown-popover"` and `data-slot="dropdown-menu"`. Item labels and descriptions render with the [Label](/docs/components/label) and [Description](/docs/components/description) components, and shortcuts with [Kbd](/docs/components/kbd) (`variant="light"`).
+Submenu popovers use the `popover` and `menu` classes too. Their `data-slot` values are `dropdown-popover` and `dropdown-menu`. Item labels and descriptions render with the [Label](/docs/components/label) and [Description](/docs/components/description) components, and shortcuts with [Kbd](/docs/components/kbd) (`variant="light"`).
 
 #### Variants
 
@@ -187,7 +194,7 @@ Submenu popovers use the `popover` and `menu` classes too, with `data-slot="drop
 - **Pressed**: `:active` or `[data-pressed="true"]` on items
 - **Selected**: `[data-selected="true"]` or `[aria-checked="true"]` on items
 - **Has submenu**: `[data-has-submenu="true"]` on submenu triggers
-- **Placement**: `[data-side]` on the popover; the enter animation slides in from that side
+- **Placement**: `[data-side]` on the popover. The enter animation slides in from that side
 
 ## API Reference
 

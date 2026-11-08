@@ -19,7 +19,7 @@ import { Slider } from '@hareui/vue'
 
 ## Anatomy
 
-Slider renders a [Label](/docs/components/label), an output showing the formatted value, and a track holding the fill and one thumb per value. A number value renders one thumb; an array renders one thumb per entry (a two-element array is a range slider).
+Slider renders a [Label](/docs/components/label), an output showing the formatted value, and a track holding the fill and one thumb per value. A number value renders one thumb. An array renders one thumb per entry, so a two-element array makes a range slider.
 
 ```vue
 <template>
@@ -101,7 +101,7 @@ app.use(
 
 - `base` → `[data-slot="slider"]` – grid with the label and output on the first row and the track below (vertical: output, track, label stacked)
 - `output` → `[data-slot="slider-output"]` – formatted value(s)
-- `track` → `[data-slot="slider-track"]` – track; transparent borders leave room for the thumb at the edges
+- `track` → `[data-slot="slider-track"]` – track. Transparent borders leave room for the thumb at the edges
 - `fill` → `[data-slot="slider-fill"]` – selected part of the track
 - `thumb` → `[data-slot="slider-thumb"]` – draggable thumb
 
@@ -133,10 +133,14 @@ app.use(
 
 ## Accessibility
 
-- Implements the ARIA slider pattern: each thumb is a `role="slider"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, the formatted value as `aria-valuetext`, and `aria-disabled="true"` while disabled; the root is a `role="group"`
-- Keyboard: Arrow keys step by `step`; Page Up / Page Down and Shift + Arrow step by a tenth of the range (at least one `step`); Home / End jump to `min` / `max`
-- Range thumbs can't cross: a thumb stops at its neighbour's value, and Home / End move the focused thumb to the edge of its own range
-- `label` names the slider and every thumb through `aria-labelledby`; without one, pass `aria-label`
+- Implements the ARIA slider pattern. The root is a `role="group"`, and each thumb is a `role="slider"`
+- Each thumb reports its value with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`
+- `aria-valuetext` carries the formatted value, and `aria-disabled="true"` is set while disabled
+- Arrow keys step by `step`
+- Page Up, Page Down and Shift + Arrow step by a tenth of the range, and at least one `step`
+- Home and End jump to `min` and `max`
+- Range thumbs can't cross. A thumb stops at its neighbour's value, and Home / End move the focused thumb to the edge of its own range
+- `label` names the slider and every thumb through `aria-labelledby`. Without one, pass `aria-label`
 - With `name`, a hidden input submits the value with a form
 - Right-to-left layouts are supported
 

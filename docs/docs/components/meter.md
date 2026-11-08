@@ -27,10 +27,8 @@ The label, output, track and fill parts are rendered by the component. The root 
 </Meter>
 ```
 
-- The label renders when the `label` prop or `#label` slot is provided, and labels the meter via `aria-labelledby`.
-- The output renders next to a label; set `show-output` to force it on or off.
-
-`ui` keys: `base`, `label`, `output`, `track`, `fill`.
+- Set `label` or fill the `#label` slot to show a label. It also names the meter for screen readers.
+- The value shows next to the label. Set `show-output` to force it on or off.
 
 ## Examples
 

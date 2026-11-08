@@ -58,6 +58,9 @@ export const vi = defineLocale({
     dropZone: {
       removeFile: 'Xóa {filename}',
     },
+    editorMenu: {
+      noResults: 'Không có kết quả',
+    },
     error: {
       clear: 'Quay lại trang chủ',
     },
@@ -86,6 +89,9 @@ export const vi = defineLocale({
       nextLabel: 'Sau',
       prev: 'Trang trước',
       prevLabel: 'Trước',
+    },
+    promptInput: {
+      retry: 'Thử lại',
     },
     richTable: {
       noData: 'Không có dữ liệu',

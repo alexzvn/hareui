@@ -58,6 +58,9 @@ export const uk = defineLocale({
     dropZone: {
       removeFile: 'Видалити {filename}',
     },
+    editorMenu: {
+      noResults: 'Немає результатів',
+    },
     error: {
       clear: 'Повернутися на головну',
     },
@@ -86,6 +89,9 @@ export const uk = defineLocale({
       nextLabel: 'Далі',
       prev: 'Попередня сторінка',
       prevLabel: 'Назад',
+    },
+    promptInput: {
+      retry: 'Спробувати ще раз',
     },
     richTable: {
       noData: 'Немає даних',

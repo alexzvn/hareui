@@ -59,6 +59,9 @@ export const ur = defineLocale({
     dropZone: {
       removeFile: '{filename} ہٹائیں',
     },
+    editorMenu: {
+      noResults: 'کوئی نتیجہ نہیں',
+    },
     error: {
       clear: 'ہوم پیج پر واپس جائیں',
     },
@@ -87,6 +90,9 @@ export const ur = defineLocale({
       nextLabel: 'اگلا',
       prev: 'پچھلا صفحہ',
       prevLabel: 'پچھلا',
+    },
+    promptInput: {
+      retry: 'دوبارہ کوشش کریں',
     },
     richTable: {
       noData: 'کوئی ڈیٹا نہیں',

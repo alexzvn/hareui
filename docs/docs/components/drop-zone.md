@@ -31,13 +31,15 @@ const files = ref<File[]>([])
 </script>
 ```
 
-To show upload progress, listen to `@add` and render your own list in the `#files` slot with `DropZoneFileList` and `DropZoneFileItem`. With `multiple`, DropZone still keeps every added file in its selection: call the slot's `removeFile` when you remove one from your list (or use `v-model`), so removed files aren't submitted with the form.
+To show upload progress, listen to `@add` and render your own list in the `#files` slot. Build it with `DropZoneFileList` and `DropZoneFileItem`.
 
-Set `name` to submit the files with a form; `required` and `validate` join form validation.
+With `multiple`, DropZone keeps every added file in its selection. When you remove a file from your list, call the slot's `removeFile` or update `v-model`. Otherwise the removed file is still submitted with the form.
+
+Set `name` to submit the files with a form. `required` and `validate` take part in form validation.
 
 ## Anatomy
 
-DropZone renders the drop area (icon, label, description and a button that opens the file picker), a hidden file input, and the file list. The area text comes from props; each part can be replaced with a slot.
+DropZone renders three parts: the drop area, a hidden file input and the file list. The area shows an icon, a label, a description and a button that opens the file picker. Its text comes from props, and each part can be replaced with a slot.
 
 ```vue
 <template>
@@ -99,7 +101,7 @@ DropZone renders the drop area (icon, label, description and a button that opens
 
 ### With File List
 
-Keep your own list of uploads and render it in the `#files` slot. Pass `status` and `progress` to each item; a failed item gets a red border. With `retryable`, a failed item shows a retry button that emits `@retry`.
+Keep your own list of uploads and render it in the `#files` slot. Pass `status` and `progress` to each item. A failed item gets a red border. With `retryable`, it also shows a retry button that emits `@retry`.
 
 <ComponentPreview name="drop-zone/with-file-list" />
 
@@ -123,7 +125,7 @@ Keep your own list of uploads and render it in the `#files` slot. Pass `status` 
 
 ### Max Size Limit
 
-`max-size` sets the largest file size in bytes. `@reject` receives the files that don't fit, each with a `reason`: `type` or `size`.
+`max-size` sets the largest file size in bytes. `@reject` receives the files that don't fit. Each one has a `reason` of `type` or `size`.
 
 <ComponentPreview name="drop-zone/max-size-limit" />
 
@@ -141,7 +143,7 @@ Replace the upload icon with the `#icon` slot.
 
 ### Custom Triggers
 
-The `#trigger` slot replaces the picker button. Call `open` from any button or link; `disabled` tells you when the zone is disabled.
+The `#trigger` slot replaces the picker button. Call its `open` function from any button or link. Its `disabled` value tells you when the zone is disabled.
 
 <ComponentPreview name="drop-zone/custom-triggers" />
 
@@ -176,8 +178,9 @@ app.use(
 
 - `base` → `[data-slot="drop-zone"]` – root column (`flex flex-col gap-3`)
 - `area` → `[data-slot="drop-zone-area"]` – dashed drop target
-- `icon` → `[data-slot="drop-zone-icon"]` – icon wrapper; its default icon size is `size-8`, and a size class on your own icon wins
-- `label` / `description` → `[data-slot="drop-zone-label"]` / `[data-slot="drop-zone-description"]`
+- `icon` → `[data-slot="drop-zone-icon"]` – icon wrapper. The default icon is `size-8`. A size class on your own icon wins
+- `label` → `[data-slot="drop-zone-label"]`
+- `description` → `[data-slot="drop-zone-description"]`
 - `trigger` → `[data-slot="drop-zone-trigger"]` – the outline button
 - `fileList` → `[data-slot="drop-zone-file-list"]` – hidden when empty
 - `fileItem` → `[data-slot="drop-zone-file-item"]` – bordered row
@@ -194,7 +197,7 @@ The badge color comes from the file extension: PDF is red, images and spreadshee
 - **Invalid**: `[data-invalid="true"]` on the root
 - **File status**: `[data-status="uploading|complete|failed"]` on each file item
 
-Items fade in when added and fade out when removed; the other items slide into place. Both animations are skipped when the user prefers reduced motion.
+Items fade in when added and fade out when removed. The other items slide into place. Both animations are skipped when the user prefers reduced motion.
 
 ## API Reference
 
@@ -232,10 +235,11 @@ Items fade in when added and fade out when removed; the other items slide into p
 
 ## Accessibility
 
-- The area holds a visually hidden button labelled by the label and described by the description. <kbd>Tab</kbd> focuses it and rings the area; <kbd>Enter</kbd> or <kbd>Space</kbd> opens the file picker.
+- The area holds a visually hidden button, labelled by the label and described by the description.
+- <kbd>Tab</kbd> focuses that button and rings the area. <kbd>Enter</kbd> or <kbd>Space</kbd> opens the file picker.
 - Pasting files while the area is focused adds them, like a drop.
 - The picker button is a regular button, and the file input stays out of the tab order.
-- `invalid` sets `aria-invalid="true"` on the area button and the input; the error is announced via `role="alert"`.
+- `invalid` sets `aria-invalid="true"` on the area button and the input. The error is announced through `role="alert"`.
 - Each remove button is labelled "Remove" plus the file name, and each progress bar "Upload progress for" plus the file name.
 
 ## Related Components

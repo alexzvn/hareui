@@ -1,12 +1,13 @@
 <template>
   <TreeRoot
+    ref="root"
     v-slot="{ flattenItems }"
     data-slot="tree"
     :as="as.root"
     :items="items"
     :model-value="selection"
     :multiple="multiple"
-    :expanded="expanded"
+    :expanded="expanded ?? expandedKeys"
     :default-expanded="resolvedDefaultExpanded"
     :selection-behavior="selectionBehavior"
     :propagate-select="propagateSelect"
@@ -68,7 +69,8 @@
 
 <script setup lang="ts" generic="T extends TreeItem = TreeItem, M extends boolean = false">
 import { TreeRoot, TreeVirtualizer } from 'reka-ui'
-import { computed, provide, shallowRef, useSlots } from 'vue'
+import { computed, provide, shallowRef, useSlots, useTemplateRef } from 'vue'
+import type { ComponentPublicInstance } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { get } from '@/utils/get'
@@ -80,12 +82,14 @@ import theme from './theme'
 import type {
   TreeEmits,
   TreeItem,
+  TreeMoveEvent,
   TreeProps,
   TreeSelectEvent,
   TreeSlots,
   TreeToggleEvent,
 } from './Tree.types'
 import TreeNode from './TreeNode.vue'
+import { useTreeDrag } from './useTreeDrag'
 
 const props = withDefaults(defineProps<TreeProps<T, M>>(), {
   labelKey: 'label',
@@ -93,6 +97,7 @@ const props = withDefaults(defineProps<TreeProps<T, M>>(), {
   nested: true,
   virtualize: false,
   checkbox: false,
+  draggable: false,
   items: () => [],
 })
 
@@ -157,6 +162,30 @@ const onExpandedUpdate = (keys: string[]) => {
   emit('update:expanded', keys)
 }
 
+// Opens a folder through the same `toggle` the chevron fires, so `preventDefault()` keeps it closed
+const expand = (key: string) => {
+  const item = collectVisible(props.items).find((row) => getItemKey(row) === key)
+  if (!item) return false
+
+  const event = new CustomEvent('treeItem.toggle', {
+    cancelable: true,
+    detail: { originalEvent: new Event('drag'), value: item },
+  }) as TreeToggleEvent
+
+  onToggle(event, item)
+  if (event.defaultPrevented) return false
+
+  onExpandedUpdate([...(props.expanded ?? expandedKeys.value), key])
+
+  return true
+}
+
+const onToggle = (event: TreeToggleEvent, item: TreeItem) => {
+  if (item.onToggle) return item.onToggle(event)
+
+  emit('toggle', event as TreeToggleEvent<T>, item as T)
+}
+
 // The rows in view order: every item whose ancestors are all expanded
 const collectVisible = (items: TreeItem[]): TreeItem[] => {
   const expanded = props.expanded ?? expandedKeys.value
@@ -168,6 +197,27 @@ const collectVisible = (items: TreeItem[]): TreeItem[] => {
     return [item, ...(isOpen ? collectVisible(children) : [])]
   })
 }
+
+const root = useTemplateRef<ComponentPublicInstance>('root')
+
+const drag = useTreeDrag({
+  root: () => root.value?.$el as HTMLElement | undefined,
+  items: () => props.items,
+  isEnabled: () => props.draggable && !props.disabled,
+  selection: () => (props.multiple ? ((selection.value as TreeItem[] | undefined) ?? []) : []),
+  isExpanded: (key) => (props.expanded ?? expandedKeys.value).includes(key),
+  expand,
+  getVisibleItems: () => collectVisible(props.items),
+  getKey: getItemKey,
+  getLabel: getItemLabel,
+  canDrop: () => props.canDrop as ((move: TreeMoveEvent) => boolean) | undefined,
+  rowHeight: () => {
+    const size = virtualizeOptions.value?.estimateSize
+
+    return typeof size === 'function' ? size(0) : size
+  },
+  onMove: (move) => emit('move', move as TreeMoveEvent<T>),
+})
 
 // The row a Shift-click range starts from
 const anchorKey = shallowRef<string>()
@@ -249,6 +299,9 @@ provide(treeContextKey, {
   isNested: () => props.nested && !props.virtualize,
   isDisabled: () => props.disabled,
   hasCheckbox: () => props.checkbox,
+  isDraggable: () => props.draggable,
+  getDragAttrs: drag.getRowAttrs,
+  getDropIndicator: drag.getIndicator,
   icons: () => ({
     indicator: props.indicatorIcon ?? ChevronRightIcon,
     expanded: props.expandedIcon ?? FolderOpenIcon,
@@ -261,10 +314,6 @@ provide(treeContextKey, {
     if (!item.onSelect) emit('select', event as TreeSelectEvent<T>, item as T)
     if (!event.defaultPrevented) selectWithModifiers(event, item)
   },
-  onToggle: (event, item) => {
-    if (item.onToggle) return item.onToggle(event)
-
-    emit('toggle', event as TreeToggleEvent<T>, item as T)
-  },
+  onToggle,
 })
 </script>

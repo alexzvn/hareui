@@ -31,7 +31,7 @@ Because HareUI uses tailwind-merge, `bg-purple-500` replaces the theme's `bg-(--
 
 ## Scrollbars
 
-HareUI's scroll slots (e.g. `Modal`'s body) apply the `scrollbar` utility, which reads the theme's `--scrollbar-*` variables. Use the same utilities from `@hareui/vue` on your own overflow containers:
+Component scroll areas, such as a modal's body, use the `scrollbar` utility. It reads the theme's `--scrollbar-*` variables. Use the same utilities from `@hareui/vue` on your own overflow containers:
 
 ```vue
 <template>
@@ -111,7 +111,13 @@ HareUI components are plain DOM elements, so native pseudo-classes work directly
 
 ## Extending Component Themes
 
-Every component's theme config is exported from `@hareui/vue`'s `themes` namespace (`themes.button`, `themes.card`, …) in the same shape `tv()` expects. Extend one to add a variant that doesn't exist in the original component, resolve it with `tv()`, and apply the resolved class through the `class` prop:
+Every component's theme config is exported from the `themes` namespace of `@hareui/vue`, for example `themes.button`. Each one has the shape `tv()` expects.
+
+To add a variant the component doesn't have:
+
+1. Extend its theme with the new variant.
+2. Resolve it with `tv()`.
+3. Apply the resolved class through the `class` prop.
 
 <ComponentPreview name="button/custom-variants" />
 

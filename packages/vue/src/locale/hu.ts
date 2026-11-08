@@ -58,6 +58,9 @@ export const hu = defineLocale({
     dropZone: {
       removeFile: '{filename} eltávolítása',
     },
+    editorMenu: {
+      noResults: 'Nincs találat',
+    },
     error: {
       clear: 'Vissza a főoldalra',
     },
@@ -86,6 +89,9 @@ export const hu = defineLocale({
       nextLabel: 'Következő',
       prev: 'Előző oldal',
       prevLabel: 'Előző',
+    },
+    promptInput: {
+      retry: 'Próbálja újra',
     },
     richTable: {
       noData: 'Nincs adat',

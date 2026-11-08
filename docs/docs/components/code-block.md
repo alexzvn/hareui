@@ -34,7 +34,9 @@ bun add shiki
 
 :::
 
-Pass the source as `code` and its shiki language id as `lang`. The code renders as plain, escaped text first, on the server too. After mount, CodeBlock loads `shiki` on demand and swaps in the highlighted tokens. Without `shiki`, or for a language it doesn't know, the code stays plain. The colors follow light and dark mode on their own.
+Pass the source as `code` and its shiki language id as `lang`.
+
+The code first renders as plain, escaped text, on the server too. After mount, CodeBlock loads `shiki` on demand and swaps in the highlighted tokens. Without `shiki`, or for a language it doesn't know, the code stays plain. The colors follow light and dark mode on their own.
 
 <ComponentPreview name="code-block/basic" />
 
@@ -97,13 +99,17 @@ Long lines don't wrap. The code scrolls sideways, its edges fade while more code
 
 ### Custom header
 
-Use the `header` slot to replace the header label. It receives `lang` and `filename`, plus the `copied` state and the `copy` function.
+Use the `header` slot to replace the header label. It receives:
+
+- `lang` and `filename`
+- `copied`: whether the code was just copied
+- `copy`: a function that copies the code
 
 <ComponentPreview name="code-block/header-slot" />
 
 ### Custom copy button
 
-Use the `copy` slot to render your own copy button. Call `copy` to write the code to the clipboard; `copied` stays `true` while the copied state shows.
+Use the `copy` slot to render your own copy button. Call `copy` to write the code to the clipboard. `copied` stays `true` while the copied state shows.
 
 <ComponentPreview name="code-block/copy-slot" />
 

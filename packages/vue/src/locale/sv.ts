@@ -58,6 +58,9 @@ export const sv = defineLocale({
     dropZone: {
       removeFile: 'Ta bort {filename}',
     },
+    editorMenu: {
+      noResults: 'Inga resultat',
+    },
     error: {
       clear: 'Tillbaka till startsidan',
     },
@@ -86,6 +89,9 @@ export const sv = defineLocale({
       nextLabel: 'Nästa',
       prev: 'Föregående sida',
       prevLabel: 'Föregående',
+    },
+    promptInput: {
+      retry: 'Försök igen',
     },
     richTable: {
       noData: 'Inga data',

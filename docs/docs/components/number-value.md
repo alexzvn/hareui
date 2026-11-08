@@ -26,7 +26,7 @@ import { NumberValue } from '@hareui/vue'
 </NumberValue>
 ```
 
-The root is a `span` with a `value` part between optional `prefix` and `suffix` parts, so it sits inline in running text.
+The root is a `span`, so it sits inline in running text. It holds a `value` part between optional `prefix` and `suffix` parts.
 
 ## Examples
 
@@ -50,7 +50,7 @@ Set `notation` to `compact` to shorten large numbers (5.3K, 2.5M). `scientific` 
 
 ### Unit
 
-Set `format` to `unit` and pass a unit identifier such as `kilometer`, `celsius` or `megabyte` in `unit`.
+Set `format` to `unit`, and pass a unit identifier in `unit`. Examples are `kilometer`, `celsius` and `megabyte`.
 
 <ComponentPreview name="number-value/unit" />
 

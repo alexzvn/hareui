@@ -88,7 +88,7 @@ app.use(
 ### Slots
 
 - `anchor` → `[data-slot="badge-anchor"]` – Positioning wrapper (`relative inline-flex`)
-- `base` → `[data-slot="badge"]` – Badge styles; colors come from `--badge-bg`, `--badge-fg` and `--badge-border`
+- `base` → `[data-slot="badge"]` – Badge styles. Colors come from `--badge-bg`, `--badge-fg` and `--badge-border`
 - `label` → `[data-slot="badge-label"]` – Text content padding
 
 ### Variants

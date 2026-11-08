@@ -17,7 +17,10 @@ import { FieldError } from '@hareui/vue'
 
 <ComponentPreview name="field-error/basic" />
 
-The FieldError component displays validation error messages for form fields. Fields render it automatically while they are invalid: from the `error-message` prop or `#error` slot, or else from their validation errors (native constraints, `validate`, or a [Form](/docs/components/form)'s `validation.errors`).
+The FieldError component displays validation error messages for form fields. Fields render it automatically while they are invalid. The message comes from the first of these that is set:
+
+- the field's `error-message` prop or `#error` slot
+- its validation errors: native constraints, `validate`, or a [Form](/docs/components/form)'s `validation.errors`
 
 ## Anatomy
 
@@ -114,9 +117,9 @@ app.use(
 
 ### Slots
 
-- `base` → `[data-slot="field-error"]` — danger color, collapsed (`h-0 opacity-0`) unless `[data-visible]` is present (always set by HareUI)
+- `base` → `[data-slot="field-error"]` — danger color. It stays collapsed (`h-0 opacity-0`) unless `[data-visible]` is present, which HareUI always sets
 
-Inside toggle fields (`[data-slot="checkbox"]`, `[data-slot="switch"]`, `[data-slot="radio"]`) the error is stacked like a description without the collapse transition.
+Inside a checkbox, switch or radio, the error is stacked like a description, without the collapse transition.
 
 ## API Reference
 
