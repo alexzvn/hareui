@@ -58,6 +58,9 @@ export const hy = defineLocale({
     dropZone: {
       removeFile: 'Ջնջել {filename}',
     },
+    editorMenu: {
+      noResults: 'Արդյունքներ չկան',
+    },
     error: {
       clear: 'Վերադառնալ գլխավոր էջ',
     },
@@ -86,6 +89,9 @@ export const hy = defineLocale({
       nextLabel: 'Առաջ',
       prev: 'Նախորդ էջ',
       prevLabel: 'Հետ',
+    },
+    promptInput: {
+      retry: 'Կրկին փորձել',
     },
     richTable: {
       noData: 'Տվյալներ չկան',

@@ -58,6 +58,9 @@ export const ca = defineLocale({
     dropZone: {
       removeFile: 'Eliminar {filename}',
     },
+    editorMenu: {
+      noResults: 'Cap resultat',
+    },
     error: {
       clear: "Tornar a l'inici",
     },
@@ -86,6 +89,9 @@ export const ca = defineLocale({
       nextLabel: 'Següent',
       prev: 'Pàgina anterior',
       prevLabel: 'Anterior',
+    },
+    promptInput: {
+      retry: 'Torna-ho a provar',
     },
     richTable: {
       noData: 'Sense dades',

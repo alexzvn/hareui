@@ -58,6 +58,9 @@ export const tr = defineLocale({
     dropZone: {
       removeFile: '{filename} kaldır',
     },
+    editorMenu: {
+      noResults: 'Sonuç yok',
+    },
     error: {
       clear: 'Ana sayfaya dön',
     },
@@ -86,6 +89,9 @@ export const tr = defineLocale({
       nextLabel: 'Sonraki',
       prev: 'Önceki sayfa',
       prevLabel: 'Önceki',
+    },
+    promptInput: {
+      retry: 'Tekrar dene',
     },
     richTable: {
       noData: 'Veri yok',

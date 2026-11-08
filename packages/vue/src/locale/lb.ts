@@ -58,6 +58,9 @@ export const lb = defineLocale({
     dropZone: {
       removeFile: '{filename} ewechhuelen',
     },
+    editorMenu: {
+      noResults: 'Keng Resultater',
+    },
     error: {
       clear: "Zréck op d'Startsäit",
     },
@@ -86,6 +89,9 @@ export const lb = defineLocale({
       nextLabel: 'Näch.',
       prev: 'Vireg Säit',
       prevLabel: 'Präz.',
+    },
+    promptInput: {
+      retry: 'Nach eng Kéier probéieren',
     },
     richTable: {
       noData: 'Keng Donnéeën',

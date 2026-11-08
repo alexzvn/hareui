@@ -58,6 +58,9 @@ export const uz = defineLocale({
     dropZone: {
       removeFile: '{filename}ni oʻchirish',
     },
+    editorMenu: {
+      noResults: 'Natija yoʻq',
+    },
     error: {
       clear: 'Bosh sahifaga qaytish',
     },
@@ -86,6 +89,9 @@ export const uz = defineLocale({
       nextLabel: 'Oldinga',
       prev: 'Oldingi sahifa',
       prevLabel: 'Ortga',
+    },
+    promptInput: {
+      retry: 'Qayta urinish',
     },
     richTable: {
       noData: 'Maʼlumot yoʻq',

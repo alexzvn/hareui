@@ -58,6 +58,9 @@ export const ko = defineLocale({
     dropZone: {
       removeFile: '{filename} 제거',
     },
+    editorMenu: {
+      noResults: '결과 없음',
+    },
     error: {
       clear: '홈으로 돌아가기',
     },
@@ -86,6 +89,9 @@ export const ko = defineLocale({
       nextLabel: '다음',
       prev: '이전 페이지',
       prevLabel: '이전',
+    },
+    promptInput: {
+      retry: '다시 시도',
     },
     richTable: {
       noData: '데이터가 없습니다.',

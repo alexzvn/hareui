@@ -58,6 +58,9 @@ export const km = defineLocale({
     dropZone: {
       removeFile: 'លុប {filename}',
     },
+    editorMenu: {
+      noResults: 'គ្មានលទ្ធផល',
+    },
     error: {
       clear: 'ត្រឡប់ទៅទំព័រដើម',
     },
@@ -86,6 +89,9 @@ export const km = defineLocale({
       nextLabel: 'បន្ទាប់',
       prev: 'ទំព័រមុន',
       prevLabel: 'មុន',
+    },
+    promptInput: {
+      retry: 'ព្យាយាមម្ដងទៀត',
     },
     richTable: {
       noData: 'មិនមានទិន្នន័យ',

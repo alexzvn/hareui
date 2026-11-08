@@ -59,6 +59,9 @@ export const fa_ir = defineLocale({
     dropZone: {
       removeFile: 'حذف {filename}',
     },
+    editorMenu: {
+      noResults: 'نتیجه‌ای یافت نشد',
+    },
     error: {
       clear: 'بازگشت به صفحه اصلی',
     },
@@ -87,6 +90,9 @@ export const fa_ir = defineLocale({
       nextLabel: 'بعدی',
       prev: 'صفحه‌ی قبلی',
       prevLabel: 'قبلی',
+    },
+    promptInput: {
+      retry: 'تلاش دوباره',
     },
     richTable: {
       noData: 'داده‌ای موجود نیست',

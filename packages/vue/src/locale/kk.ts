@@ -58,6 +58,9 @@ export const kk = defineLocale({
     dropZone: {
       removeFile: '{filename} жою',
     },
+    editorMenu: {
+      noResults: 'Нәтиже жоқ',
+    },
     error: {
       clear: 'Тазалау',
     },
@@ -86,6 +89,9 @@ export const kk = defineLocale({
       nextLabel: 'Келесі',
       prev: 'Алдыңғы бет',
       prevLabel: 'Алдыңғы',
+    },
+    promptInput: {
+      retry: 'Қайталап көру',
     },
     richTable: {
       noData: 'Деректер жоқ',

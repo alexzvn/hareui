@@ -58,6 +58,9 @@ export const ro = defineLocale({
     dropZone: {
       removeFile: 'Elimină {filename}',
     },
+    editorMenu: {
+      noResults: 'Niciun rezultat',
+    },
     error: {
       clear: 'Înapoi la pagina principală',
     },
@@ -86,6 +89,9 @@ export const ro = defineLocale({
       nextLabel: 'Următor',
       prev: 'Pagina anterioară',
       prevLabel: 'Anterior',
+    },
+    promptInput: {
+      retry: 'Încearcă din nou',
     },
     richTable: {
       noData: 'Nu există date',

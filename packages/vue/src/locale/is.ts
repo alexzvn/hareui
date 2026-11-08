@@ -58,6 +58,9 @@ export const is = defineLocale({
     dropZone: {
       removeFile: 'Fjarlægja {filename}',
     },
+    editorMenu: {
+      noResults: 'Engar niðurstöður',
+    },
     error: {
       clear: 'Til baka heim',
     },
@@ -86,6 +89,9 @@ export const is = defineLocale({
       nextLabel: 'Næsta',
       prev: 'Fyrri síða',
       prevLabel: 'Fyrri',
+    },
+    promptInput: {
+      retry: 'Reyna aftur',
     },
     richTable: {
       noData: 'Engin gögn',

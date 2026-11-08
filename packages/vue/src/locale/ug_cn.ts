@@ -59,6 +59,9 @@ export const ug_cn = defineLocale({
     dropZone: {
       removeFile: '{filename} ئۆچۈرۈش',
     },
+    editorMenu: {
+      noResults: 'نەتىجە يوق',
+    },
     error: {
       clear: 'تازىلاش',
     },
@@ -87,6 +90,9 @@ export const ug_cn = defineLocale({
       nextLabel: 'كېيىنكى بەت',
       prev: 'ئالدىنقى بەت',
       prevLabel: 'ئالدىنقى بەت',
+    },
+    promptInput: {
+      retry: 'قايتا سىناڭ',
     },
     richTable: {
       noData: 'سانلىق مەلۇمات يوق',

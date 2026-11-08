@@ -58,6 +58,9 @@ export const cs = defineLocale({
     dropZone: {
       removeFile: 'Odebrat {filename}',
     },
+    editorMenu: {
+      noResults: 'Žádné výsledky',
+    },
     error: {
       clear: 'Zpět na úvod',
     },
@@ -86,6 +89,9 @@ export const cs = defineLocale({
       nextLabel: 'Další',
       prev: 'Předchozí stránka',
       prevLabel: 'Předchozí',
+    },
+    promptInput: {
+      retry: 'Zkusit znovu',
     },
     richTable: {
       noData: 'Žádná data',

@@ -58,6 +58,9 @@ export const eu = defineLocale({
     dropZone: {
       removeFile: 'Ezabatu {filename}',
     },
+    editorMenu: {
+      noResults: 'Ez dago emaitzarik',
+    },
     error: {
       clear: 'Hasierara itzuli',
     },
@@ -86,6 +89,9 @@ export const eu = defineLocale({
       nextLabel: 'Hurrengoa',
       prev: 'Aurreko orria',
       prevLabel: 'Aurretikoa',
+    },
+    promptInput: {
+      retry: 'Saiatu berriro',
     },
     richTable: {
       noData: 'Daturik gabe',

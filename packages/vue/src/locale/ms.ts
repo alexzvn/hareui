@@ -58,6 +58,9 @@ export const ms = defineLocale({
     dropZone: {
       removeFile: 'Buang {filename}',
     },
+    editorMenu: {
+      noResults: 'Tiada hasil',
+    },
     error: {
       clear: 'Kembali ke laman utama',
     },
@@ -86,6 +89,9 @@ export const ms = defineLocale({
       nextLabel: 'Seterusnya',
       prev: 'Halaman sebelumnya',
       prevLabel: 'Sebelum',
+    },
+    promptInput: {
+      retry: 'Cuba lagi',
     },
     richTable: {
       noData: 'Tiada data',

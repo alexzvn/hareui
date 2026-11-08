@@ -58,6 +58,9 @@ export const az = defineLocale({
     dropZone: {
       removeFile: '{filename} sil',
     },
+    editorMenu: {
+      noResults: 'Nəticə yoxdur',
+    },
     error: {
       clear: 'Ana səhifəyə qayıt',
     },
@@ -86,6 +89,9 @@ export const az = defineLocale({
       nextLabel: 'Növbəti',
       prev: 'Əvvəlki səhifə',
       prevLabel: 'Əvvəlki',
+    },
+    promptInput: {
+      retry: 'Yenidən cəhd edin',
     },
     richTable: {
       noData: 'Məlumat yoxdur',

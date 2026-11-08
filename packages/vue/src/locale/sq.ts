@@ -58,6 +58,9 @@ export const sq = defineLocale({
     dropZone: {
       removeFile: 'Hiq {filename}',
     },
+    editorMenu: {
+      noResults: 'Asnjë rezultat',
+    },
     error: {
       clear: 'Kthehu në kryefaqe',
     },
@@ -86,6 +89,9 @@ export const sq = defineLocale({
       nextLabel: 'Tjetri',
       prev: 'Faqja e mëparshme',
       prevLabel: 'Para',
+    },
+    promptInput: {
+      retry: 'Provo përsëri',
     },
     richTable: {
       noData: 'Nuk ka të dhëna',

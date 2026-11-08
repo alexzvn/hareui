@@ -58,6 +58,9 @@ export const el = defineLocale({
     dropZone: {
       removeFile: 'Αφαίρεση {filename}',
     },
+    editorMenu: {
+      noResults: 'Κανένα αποτέλεσμα',
+    },
     error: {
       clear: 'Επιστροφή στην αρχική',
     },
@@ -86,6 +89,9 @@ export const el = defineLocale({
       nextLabel: 'Επόμενο',
       prev: 'Προηγούμενη σελίδα',
       prevLabel: 'Προηγούμενο',
+    },
+    promptInput: {
+      retry: 'Δοκιμάστε ξανά',
     },
     richTable: {
       noData: 'Δεν υπάρχουν δεδομένα',

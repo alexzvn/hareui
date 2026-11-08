@@ -58,6 +58,9 @@ export const bn = defineLocale({
     dropZone: {
       removeFile: '{filename} সরান',
     },
+    editorMenu: {
+      noResults: 'কোনো ফলাফল নেই',
+    },
     error: {
       clear: 'হোম পেজে ফিরে যান',
     },
@@ -86,6 +89,9 @@ export const bn = defineLocale({
       nextLabel: 'পরবর্তী',
       prev: 'পূর্ববর্তী পৃষ্ঠা',
       prevLabel: 'পূর্ববর্তী',
+    },
+    promptInput: {
+      retry: 'আবার চেষ্টা করুন',
     },
     richTable: {
       noData: 'কোন তথ্য নেই',

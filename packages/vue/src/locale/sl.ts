@@ -58,6 +58,9 @@ export const sl = defineLocale({
     dropZone: {
       removeFile: 'Odstrani {filename}',
     },
+    editorMenu: {
+      noResults: 'Ni rezultatov',
+    },
     error: {
       clear: 'Nazaj na domačo stran',
     },
@@ -86,6 +89,9 @@ export const sl = defineLocale({
       nextLabel: 'Naprej',
       prev: 'Prejšnja stran',
       prevLabel: 'Nazaj',
+    },
+    promptInput: {
+      retry: 'Poskusi znova',
     },
     richTable: {
       noData: 'Ni podatkov',

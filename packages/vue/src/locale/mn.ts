@@ -58,6 +58,9 @@ export const mn = defineLocale({
     dropZone: {
       removeFile: '{filename} устгах',
     },
+    editorMenu: {
+      noResults: 'Үр дүн алга',
+    },
     error: {
       clear: 'Нүүр хуудас руу буцах',
     },
@@ -86,6 +89,9 @@ export const mn = defineLocale({
       nextLabel: 'Дараах',
       prev: 'Өмнөх хуудас',
       prevLabel: 'Өмнөх',
+    },
+    promptInput: {
+      retry: 'Дахин оролдох',
     },
     richTable: {
       noData: 'Мэдээлэл байхгүй',

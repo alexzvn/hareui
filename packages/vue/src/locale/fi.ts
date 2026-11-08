@@ -58,6 +58,9 @@ export const fi = defineLocale({
     dropZone: {
       removeFile: 'Poista {filename}',
     },
+    editorMenu: {
+      noResults: 'Ei tuloksia',
+    },
     error: {
       clear: 'Takaisin etusivulle',
     },
@@ -86,6 +89,9 @@ export const fi = defineLocale({
       nextLabel: 'Seuraava',
       prev: 'Edellinen sivu',
       prevLabel: 'Edellinen',
+    },
+    promptInput: {
+      retry: 'Yritä uudelleen',
     },
     richTable: {
       noData: 'Ei tietoja',

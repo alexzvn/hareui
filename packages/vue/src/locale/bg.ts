@@ -58,6 +58,9 @@ export const bg = defineLocale({
     dropZone: {
       removeFile: 'Премахни {filename}',
     },
+    editorMenu: {
+      noResults: 'Няма резултати',
+    },
     error: {
       clear: 'Изчисти',
     },
@@ -86,6 +89,9 @@ export const bg = defineLocale({
       nextLabel: 'Напред',
       prev: 'Предишна страница',
       prevLabel: 'Назад',
+    },
+    promptInput: {
+      retry: 'Опитайте отново',
     },
     richTable: {
       noData: 'Няма данни',

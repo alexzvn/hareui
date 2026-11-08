@@ -35,6 +35,48 @@ export const enMessages = {
     hue: 'Hue',
     presets: 'Color presets',
   },
+  chainOfThought: {
+    thinking: 'Thinking…',
+    thought: 'Thought',
+    thoughtFor: 'Thought for {duration}',
+  },
+  chatAttachment: {
+    error: 'Upload failed',
+    remove: 'Remove {filename}',
+    uploading: 'Uploading',
+  },
+  chatConversation: {
+    scrollToBottom: 'Scroll to bottom',
+  },
+  chatLoader: {
+    label: 'Loading response',
+  },
+  chatMessageActions: {
+    label: 'Message actions',
+    copy: 'Copy',
+    copied: 'Copied',
+    like: 'Good response',
+    dislike: 'Bad response',
+    regenerate: 'Regenerate',
+    more: 'More actions',
+    edit: 'Edit',
+    share: 'Share',
+  },
+  chatSource: {
+    source: '{count} source',
+    sources: '{count} sources',
+  },
+  chatTool: {
+    approval: 'Approval needed:',
+    approve: 'Approve',
+    call: '{count} tool call',
+    calls: '{count} tool calls',
+    denied: 'Denied:',
+    deny: 'Deny',
+    failed: 'Failed:',
+    running: 'Running tool:',
+    used: 'Used tool:',
+  },
   closeButton: {
     close: 'Close',
   },
@@ -76,6 +118,22 @@ export const enMessages = {
   dateRangePicker: {
     calendar: 'Calendar',
   },
+  dragAndDrop: {
+    after: 'Drop after {item}',
+    before: 'Drop before {item}',
+    cancelled: 'Drop cancelled.',
+    handle: 'Drag {item}',
+    inside: 'Drop inside {item}',
+    instructions: 'Press Enter to start dragging.',
+    items: '{count} items',
+    movedAfter: 'Moved {item} after {target}.',
+    movedBefore: 'Moved {item} before {target}.',
+    movedInside: 'Moved {item} into {target}.',
+    started:
+      'Picked up {item}. Press the arrow keys to choose where it goes, Enter to drop it, Escape to cancel.',
+    startedMany:
+      'Picked up {count} items. Press the arrow keys to choose where they go, Enter to drop them, Escape to cancel.',
+  },
   drawer: {
     close: 'Close',
   },
@@ -88,6 +146,12 @@ export const enMessages = {
     removeFile: 'Remove {filename}',
     retry: 'Retry',
     trigger: 'Select files',
+  },
+  editorDragHandle: {
+    label: 'Drag to move, click to select',
+  },
+  editorMenu: {
+    noResults: 'No results',
   },
   editorToolbar: {
     alignCenter: 'Align center',
@@ -161,6 +225,16 @@ export const enMessages = {
   listView: {
     select: 'Select {label}',
   },
+  map: {
+    closePopup: 'Close popup',
+    exitFullscreen: 'Exit fullscreen',
+    fullscreen: 'Enter fullscreen',
+    locate: 'Find my location',
+    marker: 'Map marker',
+    resetBearing: 'Reset bearing to north',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+  },
   modal: {
     close: 'Close',
   },
@@ -192,11 +266,25 @@ export const enMessages = {
     prev: 'Previous page',
     prevLabel: 'Previous',
   },
+  promptInput: {
+    attach: 'Attach file',
+    edit: 'Edit',
+    label: 'Message input',
+    placeholder: 'What do you want to know?',
+    queue: 'Queued messages',
+    remove: 'Remove from queue',
+    retry: 'Try again',
+    send: 'Send message',
+    sendNow: 'Send now',
+    stop: 'Stop generating',
+  },
   rating: {
     item: '{value} out of {length}',
   },
   richTable: {
+    dragColumn: 'Reorder',
     noData: 'No data',
+    row: 'Row {index}',
   },
   searchField: {
     clear: 'Clear search',

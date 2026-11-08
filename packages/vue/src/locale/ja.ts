@@ -58,6 +58,9 @@ export const ja = defineLocale({
     dropZone: {
       removeFile: '{filename}を削除',
     },
+    editorMenu: {
+      noResults: '結果がありません',
+    },
     error: {
       clear: 'ホームに戻る',
     },
@@ -86,6 +89,9 @@ export const ja = defineLocale({
       nextLabel: '次へ',
       prev: '前のページ',
       prevLabel: '前へ',
+    },
+    promptInput: {
+      retry: '再試行',
     },
     richTable: {
       noData: 'データがありません',
