@@ -1,5 +1,9 @@
 // RichTable slots, styled as a data grid (built on the HeroUI Table: see components/table/theme.ts).
 // Body-row styles live on `tbody` and target `[data-slot=rich-table-row]`, so header, footer and expanded rows (which share the `tr` slot) stay plain.
+// Reordering: rows drag by a 32px handle column holding a 16px `text-muted` grip (`text-foreground` on hover), headers
+// drag themselves. A dragged row or header fades to 50%; the drop target draws a 2px `accent` line on the edge the
+// drop lands on: a row's top or bottom, a header's start or end.
+
 export default {
   slots: {
     root: 'relative scrollbar overflow-auto outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus',
@@ -21,6 +25,10 @@ export default {
       '[&>[data-slot=rich-table-row]]:focus-visible:*:last:rounded-e-lg [&>[data-slot=rich-table-row]]:focus-visible:*:last:shadow-[inset_-2px_0_0_0_var(--focus),inset_0_2px_0_0_var(--focus),inset_0_-2px_0_0_var(--focus)]',
       '[&>[data-slot=rich-table-row]]:focus-visible:*:only:rounded-lg [&>[data-slot=rich-table-row]]:focus-visible:*:only:shadow-[inset_0_0_0_2px_var(--focus)]',
       '[&>[data-slot=rich-table-row]]:aria-disabled:status-disabled',
+      '[&>[data-slot=rich-table-row]]:data-dragging:opacity-50',
+      // The drop line is one straight bar across the row, above the pinned cells, whatever the cells' corners and edges
+      "[&>[data-slot=rich-table-row]]:data-drop-target:after:pointer-events-none [&>[data-slot=rich-table-row]]:data-drop-target:after:absolute [&>[data-slot=rich-table-row]]:data-drop-target:after:inset-x-0 [&>[data-slot=rich-table-row]]:data-drop-target:after:z-3 [&>[data-slot=rich-table-row]]:data-drop-target:after:h-0.5 [&>[data-slot=rich-table-row]]:data-drop-target:after:bg-accent [&>[data-slot=rich-table-row]]:data-drop-target:after:content-['']",
+      '[&>[data-slot=rich-table-row]]:data-[drop-target=before]:after:top-0 [&>[data-slot=rich-table-row]]:data-[drop-target=after]:after:bottom-0',
       // The body card ends with its last row, so it carries no separator
       '[&>tr:last-child>td]:border-b-0',
     ],
@@ -35,12 +43,31 @@ export default {
       // Pinned columns: `data-pinned` is `left` | `right` (TanStack pins to physical sides), `data-edge` marks the edge facing the scrolling columns while content is scrolled under it.
       'data-pinned:sticky data-pinned:z-2 data-[pinned=left]:left-(--rich-table-pin) data-[pinned=right]:right-(--rich-table-pin)',
       'data-[edge=left]:shadow-[inset_-1px_0_0_0_var(--separator)] data-[edge=right]:shadow-[inset_1px_0_0_0_var(--separator)]',
+      // Draggable headers (`reorderableColumns`) are focusable: the drop line is a `before` element, as `after` draws the separator
+      'data-[reorder-column]:cursor-grab data-[reorder-column]:active:cursor-grabbing data-dragging:opacity-50',
+      'focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_2px_var(--focus)]',
+      "data-drop-target:before:pointer-events-none data-drop-target:before:absolute data-drop-target:before:inset-y-0 data-drop-target:before:z-1 data-drop-target:before:w-0.5 data-drop-target:before:bg-accent data-drop-target:before:content-['']",
+      'data-[drop-target=before]:before:start-0 data-[drop-target=after]:before:end-0',
     ],
     td: [
       'border-b border-separator-tertiary/50 bg-surface px-4 py-3 align-middle text-sm whitespace-nowrap text-foreground',
       '[&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pe-0',
       'data-pinned:sticky data-pinned:z-2 data-[pinned=left]:left-(--rich-table-pin) data-[pinned=right]:right-(--rich-table-pin)',
       'data-[edge=left]:shadow-[inset_-1px_0_0_0_var(--separator)] data-[edge=right]:shadow-[inset_1px_0_0_0_var(--separator)]',
+    ],
+    // Drag handle column (`reorderable`), outside TanStack's columns: with left-pinned columns it sticks to the left edge
+    // too, and they stick after it.
+    dragColumn:
+      'w-8 min-w-8 bg-surface-secondary p-0 data-pinned:sticky data-pinned:left-0 data-pinned:z-2',
+    dragColumnLabel: 'sr-only',
+    dragCell: [
+      'w-8 min-w-8 border-b border-separator-tertiary/50 bg-surface p-0 text-center align-middle',
+      'data-pinned:sticky data-pinned:left-0 data-pinned:z-2',
+    ],
+    dragHandle: [
+      'inline-flex size-6 cursor-grab touch-none items-center justify-center rounded-md text-muted outline-none select-none',
+      'transition-colors motion-reduce:transition-none hover:text-foreground active:cursor-grabbing [&_svg]:size-4',
+      'focus-visible:status-focused disabled:status-disabled',
     ],
     empty: 'py-12 text-center text-sm text-muted',
     loading: 'py-12 text-center',
@@ -63,6 +90,8 @@ export default {
       secondary: {
         th: 'bg-surface-secondary first:rounded-s-[min(32px,var(--radius-2xl))] last:rounded-e-[min(32px,var(--radius-2xl))]',
         td: 'bg-transparent data-pinned:bg-background',
+        dragColumn: 'rounded-s-[min(32px,var(--radius-2xl))]',
+        dragCell: 'bg-transparent data-pinned:bg-background',
         tbody: '[&>[data-slot=rich-table-row]]:hover:*:bg-default/50',
       },
     },

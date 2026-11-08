@@ -16,10 +16,8 @@ type UseRichTableColumnLayoutOptions<T extends RichTableData> = {
   /** Whether content is scrolled under the columns pinned to each side. */
   detached: Readonly<Record<PinnedSide, boolean>>
   isResizingEnabled: () => boolean
-}
-
-const getPinOffset = <T extends RichTableData>(column: Column<T, unknown>, side: PinnedSide) => {
-  return side === 'left' ? column.getStart('left') : column.getAfter('right')
+  /** The width of the cells before the first column (the drag handle column), which left-pinned columns stick after. */
+  getLeadingWidth: () => number
 }
 
 /** Widths, pinning offsets and outlined edges of the columns. */
@@ -58,7 +56,12 @@ export const useRichTableColumnLayout = <T extends RichTableData>(
     const pinned = column.getIsPinned()
     if (!pinned) return styles
 
-    styles['--rich-table-pin'] = `${getPinOffset(column, pinned)}px`
+    const offset =
+      pinned === 'left'
+        ? column.getStart('left') + options.getLeadingWidth()
+        : column.getAfter('right')
+
+    styles['--rich-table-pin'] = `${offset}px`
 
     return styles
   }

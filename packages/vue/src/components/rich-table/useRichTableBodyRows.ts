@@ -238,8 +238,21 @@ export const useRichTableBodyRows = <T extends RichTableData>(
     ]
   })
 
+  // Every body row in display order, rendered or not.
+  const displayRows = computed(() => [...topRows.value, ...centerRows.value, ...bottomRows.value])
+
+  // Unrendered rows have no element to scroll to: the virtualizer brings them into view by index.
+  const scrollToRow = virtualizerInstance
+    ? (rowId: string) => {
+        const index = centerRows.value.findIndex((row) => row.id === rowId)
+        if (index !== -1) virtualizerInstance.scrollToIndex(index)
+      }
+    : undefined
+
   return {
     bodyEntries,
+    displayRows,
+    scrollToRow,
     indexAttribute,
     measureRowRef,
     onExpandedRowMounted,
