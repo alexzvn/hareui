@@ -273,3 +273,23 @@
     }
   }
 }
+
+/*
+ * Sheet (from @heroui/styles 3.2.7 sheet.css). Scroll-driven: inline styles bind them to a sheet's view timeline
+ * (components/sheet/sheetGeometry.ts), so they live outside `@theme`, which only emits keyframes its utilities use.
+ */
+@keyframes heroui-sheet-backdrop {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes heroui-sheet-scale-back {
+  to {
+    transform: translateZ(-120px);
+  }
+}
