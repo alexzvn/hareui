@@ -1,0 +1,8 @@
+import { createSvgIcon } from '@/utils/icon'
+
+// gravity-ui icons (MIT): `grip`.
+const GRIP =
+  'M7 3a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M5.5 9.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m5 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m0-5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3M7 13a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m3.5 1.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3'
+
+/** The six-dot grip a drag handle shows. */
+export const GripIcon = createSvgIcon({ d: GRIP, size: 16 })
