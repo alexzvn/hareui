@@ -61,6 +61,18 @@
       "types": "./dist/editor.d.ts",
       "import": "./dist/editor.js"
     },
+    "./editor-drag-handle": {
+      "types": "./dist/editor-drag-handle.d.ts",
+      "import": "./dist/editor-drag-handle.js"
+    },
+    "./map": {
+      "types": "./dist/map.d.ts",
+      "import": "./dist/map.js"
+    },
+    "./markdown": {
+      "types": "./dist/markdown.d.ts",
+      "import": "./dist/markdown.js"
+    },
     "./locale": {
       "types": "./dist/locale/index.d.ts",
       "import": "./dist/locale/index.js"
@@ -88,18 +100,26 @@
     "unplugin-vue-components": "^32.1.0"
   },
   "peerDependencies": {
+    "@floating-ui/dom": "^1.8.0",
     "@internationalized/date": "^3.12.4",
     "@tiptap/core": "^3.32.0",
     "@tiptap/extension-bubble-menu": "^3.32.0",
     "@tiptap/extension-code": "^3.32.0",
+    "@tiptap/extension-collaboration": "^3.32.0",
+    "@tiptap/extension-drag-handle": "^3.32.0",
+    "@tiptap/extension-drag-handle-vue-3": "^3.32.0",
     "@tiptap/extension-floating-menu": "^3.32.0",
     "@tiptap/extension-horizontal-rule": "^3.32.0",
     "@tiptap/extension-image": "^3.32.0",
+    "@tiptap/extension-mention": "^3.32.0",
+    "@tiptap/extension-node-range": "^3.32.0",
     "@tiptap/extension-placeholder": "^3.32.0",
     "@tiptap/markdown": "^3.32.0",
     "@tiptap/pm": "^3.32.0",
     "@tiptap/starter-kit": "^3.32.0",
+    "@tiptap/suggestion": "^3.32.0",
     "@tiptap/vue-3": "^3.32.0",
+    "@tiptap/y-tiptap": "^3.0.7",
     "d3-scale": "^4.0.0",
     "d3-shape": "^3.0.0",
     "embla-carousel": "^8.6.0",
@@ -111,12 +131,19 @@
     "embla-carousel-vue": "^8.6.0",
     "embla-carousel-wheel-gestures": "^8.1.0",
     "fuse.js": "^7.5.0",
+    "maplibre-gl": "^6.16.0",
+    "marked": "^18.1.3",
     "shiki": "^4.5.0",
     "tailwindcss": "^4.3.0",
     "vite": ">=6.0.0",
-    "vue": "^3.5.0"
+    "vue": "^3.5.0",
+    "y-protocols": "^1.0.1",
+    "yjs": "^13.6.13"
   },
   "peerDependenciesMeta": {
+    "@floating-ui/dom": {
+      "optional": true
+    },
     "@tiptap/core": {
       "optional": true
     },
@@ -126,6 +153,15 @@
     "@tiptap/extension-code": {
       "optional": true
     },
+    "@tiptap/extension-collaboration": {
+      "optional": true
+    },
+    "@tiptap/extension-drag-handle": {
+      "optional": true
+    },
+    "@tiptap/extension-drag-handle-vue-3": {
+      "optional": true
+    },
     "@tiptap/extension-floating-menu": {
       "optional": true
     },
@@ -133,6 +169,12 @@
       "optional": true
     },
     "@tiptap/extension-image": {
+      "optional": true
+    },
+    "@tiptap/extension-mention": {
+      "optional": true
+    },
+    "@tiptap/extension-node-range": {
       "optional": true
     },
     "@tiptap/extension-placeholder": {
@@ -147,7 +189,13 @@
     "@tiptap/starter-kit": {
       "optional": true
     },
+    "@tiptap/suggestion": {
+      "optional": true
+    },
     "@tiptap/vue-3": {
+      "optional": true
+    },
+    "@tiptap/y-tiptap": {
       "optional": true
     },
     "d3-scale": {
@@ -183,28 +231,48 @@
     "fuse.js": {
       "optional": true
     },
+    "maplibre-gl": {
+      "optional": true
+    },
+    "marked": {
+      "optional": true
+    },
     "shiki": {
       "optional": true
     },
     "vite": {
       "optional": true
+    },
+    "y-protocols": {
+      "optional": true
+    },
+    "yjs": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@floating-ui/dom": "^1.8.0",
     "@internationalized/date": "^3.12.4",
     "@sinclair/typebox": "^0.34",
     "@sinclair/typemap": "^0.10.1",
     "@tiptap/core": "^3.32.0",
     "@tiptap/extension-bubble-menu": "^3.32.0",
     "@tiptap/extension-code": "^3.32.0",
+    "@tiptap/extension-collaboration": "^3.32.0",
+    "@tiptap/extension-drag-handle": "^3.32.0",
+    "@tiptap/extension-drag-handle-vue-3": "^3.32.0",
     "@tiptap/extension-floating-menu": "^3.32.0",
     "@tiptap/extension-horizontal-rule": "^3.32.0",
     "@tiptap/extension-image": "^3.32.0",
+    "@tiptap/extension-mention": "^3.32.0",
+    "@tiptap/extension-node-range": "^3.32.0",
     "@tiptap/extension-placeholder": "^3.32.0",
     "@tiptap/markdown": "^3.32.0",
     "@tiptap/pm": "^3.32.0",
     "@tiptap/starter-kit": "^3.32.0",
+    "@tiptap/suggestion": "^3.32.0",
     "@tiptap/vue-3": "^3.32.0",
+    "@tiptap/y-tiptap": "^3.0.7",
     "@types/d3-scale": "^4.0.9",
     "@types/d3-shape": "^3.2.0",
     "@vitejs/plugin-vue": "^6.0.9",
@@ -222,6 +290,8 @@
     "embla-carousel-wheel-gestures": "^8.1.0",
     "fuse.js": "^7.5.0",
     "happy-dom": "^20.14.5",
+    "maplibre-gl": "^6.16.0",
+    "marked": "^18.1.3",
     "shiki": "^4.5.0",
     "tailwindcss": "^4.3.3",
     "tsc-alias": "^1.9.9",
@@ -231,6 +301,8 @@
     "vitest": "^5.0.3",
     "vue": "^3.5.43",
     "vue-tsc": "^3.3.11",
+    "y-protocols": "^1.0.1",
+    "yjs": "^13.6.13",
     "zod": "^4.6.5"
   }
 }
