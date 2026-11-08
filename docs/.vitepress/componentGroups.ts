@@ -158,7 +158,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
   Utilities: ['scroll-area', 'scroll-shadow'],
 }
 
-// Pages that get a "New" badge in the sidebar: components added since the last release (`releases/unreleased.md`).
+// Pages that get a "New" badge in the sidebar: components added in the latest release, or since it (`releases/unreleased.md`).
 export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
   'chain-of-thought',
   'chat-attachment',
