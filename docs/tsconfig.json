@@ -12,6 +12,7 @@
       "@hareui/vue/editor": ["../packages/vue/src/editor.ts"],
       "@hareui/vue/editor-drag-handle": ["../packages/vue/src/editor-drag-handle.ts"],
       "@hareui/vue/locale": ["../packages/vue/src/locale/index.ts"],
+      "@hareui/vue/markdown": ["../packages/vue/src/markdown.ts"],
       "@/*": ["../packages/vue/src/*"]
     },
     "noUnusedLocals": true,

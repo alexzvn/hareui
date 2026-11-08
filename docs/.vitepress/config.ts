@@ -65,7 +65,7 @@ export default defineConfigWithTheme<ThemeConfig>({
       // `@/` is the library's internal alias for packages/vue/src, needed because the docs compile the library from source.
       alias: [
         {
-          find: /^@hareui\/vue\/(charts|carousel|code-block|command-palette|editor)$/,
+          find: /^@hareui\/vue\/(charts|carousel|code-block|command-palette|editor|editor-drag-handle|map|markdown)$/,
           replacement: fileURLToPath(new URL('../../packages/vue/src/$1.ts', import.meta.url)),
         },
         {

@@ -18,6 +18,7 @@ export default defineConfig({
         'src/command-palette.ts',
         'src/editor.ts',
         'src/editor-drag-handle.ts',
+        'src/markdown.ts',
         'src/locale/index.ts',
         'src/vite.ts',
       ],
@@ -27,7 +28,7 @@ export default defineConfig({
     cssCodeSplit: false,
     rolldownOptions: {
       external:
-        /^(vue|reka-ui|tailwind-variants|tailwind-merge|unplugin-vue-components|defu|@tanstack\/vue-table|@tanstack\/vue-virtual|@internationalized\/date|@number-flow\/vue|d3-[\w-]+|embla-carousel[\w-]*|@tiptap\/[\w-]+|fuse\.js|shiki)(\/|$)/,
+        /^(node:\w+|vue|reka-ui|tailwind-variants|tailwind-merge|unplugin-vue-components|defu|@tanstack\/vue-table|@tanstack\/vue-virtual|@internationalized\/date|@number-flow\/vue|d3-[\w-]+|embla-carousel[\w-]*|@tiptap\/[\w-]+|@floating-ui\/dom|fuse\.js|shiki|maplibre-gl|marked)(\/|$)/,
       output: { preserveModules: true, preserveModulesRoot: 'src', entryFileNames: '[name].js' },
     },
   },
