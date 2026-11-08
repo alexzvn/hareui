@@ -54,7 +54,7 @@ bun add fuse.js
 
 ## Groups
 
-Pass `groups`, each with a unique `id`, an optional `label` and its `items`. An item shows its `label` and can add:
+Pass `groups` as an array. Each group has a unique `id`, its `items` and an optional `label`. An item shows its `label` and can add:
 
 - `prefix` and `suffix` text around the label, and a `description` below it
 - a leading `icon`, `avatar` or `chip` (a status dot)
@@ -66,19 +66,27 @@ Icons are components or icon classes.
 
 ## Widths
 
-`size` caps the width at 384px (`sm`), 512px (`md`, default) or 576px (`lg`). The input and the rows look the same at every size.
+`size` caps the width:
+
+- `sm`: 384px
+- `md`: 512px, the default
+- `lg`: 576px
+
+The input and the rows look the same at every size.
 
 <ComponentPreview name="command-palette/widths" />
 
 ## In a Modal
 
-Put the palette in a Modal's `#content` slot and close the Modal on `update:model-value`. Give the dialog the same max width as the palette's `size` (`max-w-xl` for `lg` here), so the palette fills it edge to edge. The `#header`, `#close` and `#footer` slots add breadcrumbs, an `Esc` hint or keyboard hints. Set `:icon="false"` to hide the search icon.
+Put the palette in a Modal's `#content` slot and close the Modal on `update:model-value`. Give the dialog the same max width as the palette's `size`, so the palette fills it edge to edge. Here that is `max-w-xl` for `lg`. Use the `#header`, `#close` and `#footer` slots for breadcrumbs, an Esc hint or keyboard hints. Set `:icon="false"` to hide the search icon.
 
 <ComponentPreview name="command-palette/in-modal" />
 
 ## Status rows and shortcuts
 
-`chip` adds a leading status dot, `description` a second line, and `kbds` a shortcut on the right. Modifier names such as `command`, `shift` or `enter` render as their symbols.
+- `chip`: a leading status dot.
+- `description`: a second line.
+- `kbds`: a shortcut on the right. Modifier names such as `command`, `shift` or `enter` render as their symbols.
 
 <ComponentPreview name="command-palette/status" />
 
@@ -108,7 +116,7 @@ Content in `#header` sits above the input. A group with a `slot` gets its own `#
 
 ## Backdrops
 
-The Modal's `variant` sets the backdrop: `opaque`, `blur` or `transparent`.
+The Modal's `variant` sets the backdrop. Pick `opaque`, `blur` or `transparent`.
 
 <ComponentPreview name="command-palette/backdrops" />
 
@@ -146,7 +154,8 @@ Set `fuse.fuseOptions.includeMatches` to mark the matched characters in labels a
 
 Set `slot` on an item or group to give it its own slots:
 
-- `#<slot>-leading`, `#<slot>-label`, `#<slot>-description` and `#<slot>-trailing` for the parts of an item
+- `#<slot>-leading` and `#<slot>-trailing` for either end of an item
+- `#<slot>-label` and `#<slot>-description` for its text
 - `#<slot>` for the whole item
 - `#<slot>-group-label` for a group's heading
 

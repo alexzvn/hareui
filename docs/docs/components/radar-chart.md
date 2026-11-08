@@ -40,7 +40,8 @@ Each row of `data` is one spoke. `index` names the field that labels the spokes,
 
 ## Series
 
-Pass `series` to choose the fields, their names and their order. Use a map of key to config, or an array of keys and `{ key, ...config }` objects. Colors follow the chart palette by position (`--chart-3`, `--chart-1`, `--chart-4`, `--chart-2`, `--chart-5`); set `colors` for a different palette, or `color` on one series.
+Pass `series` to choose the fields, their names and their order. Use a map of key to config, or an array of keys and `{ key, ...config }` objects. Colors follow the chart palette by position, starting at `--chart-3` and then using chart colors 1, 4, 2 and 5.
+Set `colors` for a different palette, or `color` on one series.
 
 ```vue
 <RadarChart
@@ -50,11 +51,22 @@ Pass `series` to choose the fields, their names and their order. Use a map of ke
 />
 ```
 
-Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `fillOpacity`, `strokeWidth`, `strokeDasharray`, `dot` and `activeDot`. `fill-opacity` (0.15), `stroke-width` (2) and `dot` on the root apply to every radar, and a series' own value wins.
+Each series accepts these options:
+
+- `name`, `color` and `hide`
+- `tooltip` and `valueFormatter`
+- `fillOpacity`, `strokeWidth` and `strokeDasharray`
+- `dot` and `activeDot`
+
+The root props `fill-opacity` (0.15), `stroke-width` (2) and `dot` apply to every radar. A series' own value wins.
 
 ## Grid and Axes
 
-`grid`, `angle-axis` and `radius-axis` take `false` to hide the part, or an object of `ChartPolarGrid`, `ChartPolarAngleAxis` and `ChartPolarRadiusAxis` props. The grid and the spoke labels show by default; the radius axis is off until you set it.
+Each part takes `false` to hide it, or an object of props for the matching component:
+
+- `grid`: `ChartPolarGrid` props. Shown by default.
+- `angle-axis`: `ChartPolarAngleAxis` props. The spoke labels show by default.
+- `radius-axis`: `ChartPolarRadiusAxis` props. Off until you set it.
 
 ```vue
 <RadarChart
@@ -69,11 +81,13 @@ The `#angle-tick` slot redraws each spoke label. It receives the label position 
 
 ## Tooltip
 
-Hovering the chart shows every radar at the nearest spoke, under the spoke label. The tooltip stays up while the pointer moves between spokes. `tooltip` takes `false`, or `ChartTooltip` props such as `indicator`. `value-formatter` formats the values, and `index-formatter` the header. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
+Hovering the chart shows every radar at the nearest spoke, under the spoke label. The tooltip stays up while the pointer moves between spokes. Set `tooltip` to `false` to turn it off, or pass `ChartTooltip` props such as `indicator`. `value-formatter` formats the values, and `index-formatter` formats the header. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
 
 ## Legend
 
-Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `indicator` and `orientation`, plus a `position`. Clicking an item hides or shows its radar; bind `v-model:hidden` to read or set the hidden keys. Use `#legend-item` to redraw each row, or `#legend` to replace the list. To place the legend elsewhere, such as a card header, render `<ChartLegend :series="series" />` with the same `series` and `colors`.
+Set `legend` to draw a [ChartLegend](./chart-legend) beside the chart. `true` puts it at the bottom. A side name puts it there: `'top'`, `'left'` or `'right'`.
+An object sets `ChartLegend` props, such as `indicator` and `orientation`, plus a `position`.
+Clicking an item hides or shows its radar. Bind `v-model:hidden` to read or set the hidden keys. Use `#legend-item` to redraw each row, or `#legend` to replace the list. To place the legend elsewhere, such as a card header, render `<ChartLegend :series="series" />` with the same `series` and `colors`.
 
 ## Examples
 
@@ -105,7 +119,7 @@ Three radars with their own `color` and a lower `fill-opacity`. Without `dot`, o
 
 ### Tailwind CSS
 
-Use `class` for the container and `ui` for the drawn parts. Radar colors come from `colors` or each series' `color`, which accept any CSS color or the `--chart-1` to `--chart-5` tokens.
+Use `class` for the container and `ui` for the drawn parts. Radar colors come from `colors` or each series' `color`. Both accept any CSS color or the `--chart-1` to `--chart-5` tokens.
 
 ```vue
 <RadarChart
@@ -153,7 +167,7 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 <ComponentPreview name="radar-chart/composition" />
 
-`ChartPolarAngleAxis` labels the spokes with its `data-key`, and each `ChartRadar` draws one field as a closed shape. Put a `ChartLabel` inside a `ChartRadar` to label each point; it sits past the point, away from the center. Parts always draw in the same order (grid, series, axes), so template order doesn't matter. With `index` or `series` set, parts in the default slot draw next to the generated ones: turn a generated part off (for example `:grid="false"`) before adding your own.
+`ChartPolarAngleAxis` labels the spokes with its `data-key`, and each `ChartRadar` draws one field as a closed shape. Put a `ChartLabel` inside a `ChartRadar` to label each point. The label sits past the point, away from the center. Parts always draw in the same order (grid, series, axes), so template order doesn't matter. With `index` or `series` set, parts in the default slot draw next to the generated ones. Turn a generated part off, for example with `:grid="false"`, before adding your own.
 
 | `ui` key         | `data-slot`                                         | Element    | Description                                                           |
 | ---------------- | --------------------------------------------------- | ---------- | --------------------------------------------------------------------- |
@@ -180,7 +194,7 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 ### Slots
 
-- `base` → `[data-slot="radar-chart"]` – block container; the chart fills its width unless you set `width`
+- `base` → `[data-slot="radar-chart"]` – block container. The chart fills its width unless you set `width`
 - `surface` → `[data-slot="chart-surface"]` – the `<svg>`, with a focus ring when focused from the keyboard
 - `overlay` → `[data-slot="chart-overlay"]` – layer over the svg that positions the tooltip
 - `polarGrid` → `[data-slot="chart-polar-grid"]` – rings and spokes, muted stroke at 20% opacity
@@ -196,7 +210,7 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 - `activeDot` → `[data-slot="chart-active-dot"]` – marker at the hovered spoke, outlined in the surface color
 - `label` → `[data-slot="chart-label"]` – `ChartLabel` text, 10px muted. Inside a `ChartRadar`, each label sits past its point along the spoke, anchored away from the center
 - `tooltip` → `[data-slot="chart-tooltip-wrapper"]` – floating wrapper around the tooltip panel
-- `legend` → `[data-slot="chart-legend"]` – legend drawn from the `legend` prop; with it, `base` becomes a flex row or column
+- `legend` → `[data-slot="chart-legend"]` – legend drawn from the `legend` prop. With it, `base` becomes a flex row or column
 
 ## API Reference
 

@@ -35,7 +35,7 @@ import { Link } from '@hareui/vue'
 The usual link attributes work, plus a few extras:
 
 - `to` and `href` set the destination. With vue-router installed, an internal `to` navigates client-side.
-- `target` and `rel` work as on `<a>`. `target="_blank"` adds `rel="noopener noreferrer"`.
+- `target` and `rel` work as on `<a>`. With `target="_blank"`, the link adds `rel="noopener noreferrer"` for you.
 - `download` downloads the file instead of opening it.
 - `disabled` removes the `href`, so the link can't be followed or focused.
 
@@ -152,7 +152,7 @@ a plain `<a>`.
 </template>
 ```
 
-For another router (or a framework link component), pass it to `as`; it receives `to` and `href`:
+For another router or a framework link component, pass it to `as`. It receives `to` and `href`:
 
 ```vue
 <template>

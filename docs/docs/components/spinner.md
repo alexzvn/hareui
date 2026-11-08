@@ -19,8 +19,6 @@ import { Spinner } from '@hareui/vue'
 
 Spinner is a single component with one slot.
 
-`ui` keys: `base`.
-
 ## Examples
 
 ### Colors

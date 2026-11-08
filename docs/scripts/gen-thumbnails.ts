@@ -12,7 +12,7 @@ import { PNG } from 'pngjs'
  * Usage: bun scripts/gen-thumbnails.ts [--base http://localhost:5183] [slug ...]
  * (start the docs server first: `bun run dev -- --port 5183`)
  */
-import type { Page } from 'puppeteer'
+import type { KeyInput, Page } from 'puppeteer'
 import puppeteer from 'puppeteer'
 
 const WIDTH = 874
@@ -38,6 +38,10 @@ const CROP_RADIUS = 12
 // Full-page (`contain`) demos render in an iframe, so `page` shoots the demo alone from its /preview/<demo> route
 // at that viewport instead, keeping either the `select` matches or the `crop` (in CSS px), and `pointer` hovers a
 // point of it first. Crops are picked to show the component itself at 1x or more, not the whole page shrunk.
+// `style` adds CSS to the shot (e.g. hiding part of a long demo, or holding an animation at a readable frame), `motion`
+// plays animations instead of emulating reduced motion, and `settle` waits that many ms after the zoom changes, for demos
+// that redraw at the new pixel ratio over a few frames (a map's canvas). `keys` are pressed after the `open` click, for
+// overlays a keystroke opens (an editor's `/` or `@` menu).
 type Pick = {
   demo?: string
   select?: string
@@ -49,6 +53,10 @@ type Pick = {
   page?: { width: number; height: number }
   crop?: Box
   pointer?: { x: number; y: number }
+  style?: string
+  motion?: boolean
+  settle?: number
+  keys?: KeyInput[]
 }
 
 const PICKS: Record<string, Pick> = {
@@ -126,6 +134,22 @@ const PICKS: Record<string, Pick> = {
   main: { width: 360 },
   'rich-table': { width: 600 },
   editor: { width: 440 },
+  // The menus open on a keystroke at the end of the text, shown with the editor they float over. The click lands on the
+  // content wrapper, since ProseMirror re-renders its own nodes and drops the attribute that marks the click target.
+  'editor-suggestion-menu': {
+    width: 440,
+    open: '[data-slot="editor-content"]',
+    keys: ['ArrowDown', 'ArrowDown', 'ArrowDown', 'ArrowDown', 'ArrowDown', 'End', ' ', '/'],
+    overlay: '.preview [data-slot="editor"], [data-slot="editor-suggestion-menu"]',
+  },
+  'editor-mention-menu': {
+    width: 440,
+    open: '[data-slot="editor-content"]',
+    keys: ['ArrowDown', 'ArrowDown', 'ArrowDown', 'ArrowDown', 'ArrowDown', 'End', ' ', '@'],
+    overlay: '.preview [data-slot="editor"], [data-slot="editor-mention-menu"]',
+    // At 900px tall the mention menu flips above the caret, over the text.
+    viewport: { width: 1440, height: 1400 },
+  },
   'list-view': { select: '[data-slot="list-view"]', width: 320 },
   // The first copy's leading logos, held still and without the edge fade, which paints the page background.
   marquee: {
@@ -165,6 +189,59 @@ const PICKS: Record<string, Pick> = {
     overlay: '[data-reka-popper-content-wrapper]',
   },
   typography: { select: ':scope > :nth-child(-n+3)' },
+  // The thread fitted to its messages, without the scroll button the short log never needs.
+  'chat-conversation': {
+    demo: 'chat-conversation/roles',
+    width: 440,
+    style: `
+      [data-thumbnail] > div { height: auto !important; }
+      [data-slot="chat-conversation-scroll-button-container"] { display: none !important; }
+    `,
+  },
+  'chat-list-view': { select: '[data-slot="chat-list-view"]' },
+  // Three dots alone say little; in an assistant message under a question they read as a pending reply.
+  'chat-loader': { demo: 'chat-loader/message' },
+  // Expanded, so the call's output shows, not only its header.
+  'chat-tool': { demo: 'chat-tool/output-slot' },
+  // The map redraws its canvas at the thumbnail's zoom over a few frames.
+  map: { demo: 'map/markers', settle: 3000 },
+  // A heading, paragraph, list and code block; the checklist, table and quote make it too tall to read.
+  markdown: {
+    width: 640,
+    style:
+      '[data-slot="markdown"] > :is(ul, table, blockquote, p:nth-of-type(2)) { display: none !important; }',
+  },
+  // A press shows its effect: the first button's progress sweep held near its end, its edge in the padding past the
+  // label so neither label is cut (reduced motion would fade the overlay in whole).
+  'pressable-feedback': {
+    demo: 'pressable-feedback/progress',
+    open: 'button',
+    overlay: '.preview[data-name="pressable-feedback-progress"] > div > div > div:first-child',
+    style: `[data-slot="pressable-feedback-progress"][data-state="progressing"] {
+      clip-path: inset(0 9% 0 0) !important;
+      opacity: 1 !important;
+    }`,
+  },
+  // The primary field is the page colour; the secondary one on a surface shows its shape.
+  'prompt-input': { demo: 'prompt-input/variants', select: ':scope > :last-child' },
+  // Without the demo's "Last prompt" readout.
+  'prompt-suggestion': { select: '[data-slot="prompt-suggestion"]' },
+  // The edge fade shows at the bottom of the scrolled list.
+  'scroll-area': { demo: 'scroll-area/shadow' },
+  sheet: {
+    open: 'button',
+    overlay: '[data-slot="sheet-dialog"]',
+    viewport: { width: 560, height: 900 },
+  },
+  // The sweep held part-way across the text (reduced motion hides it). Headless Chrome drops the masked band while its
+  // animation runs, even paused, so the frame is set as a static transform.
+  'text-shimmer': {
+    motion: true,
+    style: `[data-slot="text-shimmer-highlight"]::after {
+      animation: none !important;
+      transform: translate3d(20%, 0, 0);
+    }`,
+  },
 }
 
 const PAGES = fileURLToPath(new URL('../docs/components/', import.meta.url))
@@ -262,6 +339,11 @@ const thumbnail = async (page: Page, { slug, theme }: ThumbnailTarget): Promise<
   const viewport = pick.page ?? pick.viewport ?? { width: 1440, height: 900 }
   await page.setViewport({ ...viewport, deviceScaleFactor: 1 })
 
+  // Charts draw in over ~1s; reduced motion renders their final geometry at once.
+  await page.emulateMediaFeatures([
+    { name: 'prefers-reduced-motion', value: pick.motion ? 'no-preference' : 'reduce' },
+  ])
+
   if (pick.page && (!pick.demo || !pick.select === !pick.crop))
     throw new Error('`page` needs a `demo` to load from /preview, and either `select` or `crop`')
 
@@ -326,6 +408,12 @@ const thumbnail = async (page: Page, { slug, theme }: ThumbnailTarget): Promise<
     await trigger.scrollIntoView()
     await (pick.hover ? trigger.hover() : trigger.click())
 
+    if (pick.keys) {
+      // The editor takes the caret a moment after the click; keys pressed sooner land at the start of the text.
+      await sleep(300)
+      for (const key of pick.keys) await page.keyboard.press(key)
+    }
+
     // Let the overlay's enter animation finish before the transitions are switched off.
     await sleep(800)
 
@@ -340,7 +428,7 @@ const thumbnail = async (page: Page, { slug, theme }: ThumbnailTarget): Promise<
       `no demo on the page${pick.demo || pick.select ? ` for ${JSON.stringify(pick)}` : ''}`,
     )
 
-  await page.addStyleTag({ content: ISOLATE })
+  await page.addStyleTag({ content: ISOLATE + (pick.style ?? '') })
   await page.evaluate(() => document.fonts.ready)
   await sleep(300)
 
@@ -363,6 +451,8 @@ const thumbnail = async (page: Page, { slug, theme }: ThumbnailTarget): Promise<
   const max = pick.crop ? CROP_CONTENT : MAX_CONTENT
   const scale = Math.min(MAX_SCALE, max.width / box.width, max.height / box.height)
   await page.setViewport({ ...viewport, deviceScaleFactor: scale })
+
+  if (pick.settle) await sleep(pick.settle)
 
   if (pick.pointer) {
     await page.mouse.move(pick.pointer.x, pick.pointer.y)
@@ -416,9 +506,6 @@ const writeThumbnails = async (page: Page, slug: string) => {
 
 try {
   const page = await browser.newPage()
-
-  // Charts draw in over ~1s; reduced motion renders their final geometry at once.
-  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
 
   for (const slug of slugs) {
     await writeThumbnails(page, slug)

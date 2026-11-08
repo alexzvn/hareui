@@ -7,7 +7,7 @@ HareUI uses CSS variables for color/spacing tokens and [tailwind-variants](https
 
 ## How It Works
 
-HareUI's theming system is built on [Tailwind CSS v4](https://tailwindcss.com/docs/theme). The `@hareui/vue` stylesheet declares semantic CSS variables (`--accent`, `--surface`, `--radius`, …) for light and dark themes, maps them to Tailwind's `@theme inline` tokens, and each component's `.vue` file consumes them through a tailwind-variants slot object.
+HareUI's theming system is built on [Tailwind CSS v4](https://tailwindcss.com/docs/theme). The `@hareui/vue` stylesheet declares semantic CSS variables, such as `--accent`, `--surface` and `--radius`, for the light and dark themes. It maps them to Tailwind tokens with `@theme inline`. Every component styles itself with those tokens, so changing a variable restyles every component that uses it.
 
 **Naming pattern:**
 
@@ -47,7 +47,10 @@ See [Colors](/docs/getting-started/colors) for the complete token reference and 
 
 ## Overriding Components with `createHareUI`
 
-Pass a `ui` config to `createHareUI()` to override a component's slot classes, variant classes, or default variants app-wide. Keys match the component's theme name (`button`, `card`, `checkbox`, …); values follow the same `slots` / `variants` / `defaultVariants` shape as the component's internal theme file.
+Pass a `ui` config to `createHareUI()` to override a component's slot classes, variant classes or default variants app-wide.
+
+- Keys are the component's theme name: `button`, `card`, `checkbox`, and so on.
+- Values take the same `slots` / `variants` / `defaultVariants` shape as the component's theme file.
 
 ```ts
 import { createHareUI } from '@hareui/vue'
@@ -157,7 +160,7 @@ For a complete reference, see [Colors](/docs/getting-started/colors) and `packag
 
 **Tailwind theme bridge (`@theme inline`):**
 
-`packages/vue/src/styles/theme.css` maps semantic variables to Tailwind tokens (`--color-*`, `--radius-*`, `--ease-*`). Calculated colors reference underlying vars (e.g. `--surface-hover`, `--accent-soft`) from `variables.css` — they are not inlined with `color-mix()` in this file:
+`packages/vue/src/styles/theme.css` maps semantic variables to Tailwind tokens: `--color-*`, `--radius-*` and `--ease-*`. Calculated colors such as `--surface-hover` and `--accent-soft` point to their variables in `variables.css`. This file does not repeat their `color-mix()` formulas:
 
 <CollapsibleCode lang="css" title="theme.css" :code="`@theme inline {
   --color-background: var(--background);
@@ -290,7 +293,7 @@ Form controls rely on `--field-*` theme variables. Hover, focus, and border vari
 
 ## Scrollbars
 
-HareUI applies a shared scrollbar style to component scroll areas (currently `Modal`'s body). Scrollbars use standard CSS properties (`scrollbar-width`, `scrollbar-color`, `scrollbar-gutter`) — no `::-webkit-scrollbar` overrides.
+HareUI applies a shared scrollbar style to component scroll areas (modal bodies, popovers, list boxes, and similar). Scrollbars use standard CSS properties (`scrollbar-width`, `scrollbar-color`, `scrollbar-gutter`) — no `::-webkit-scrollbar` overrides.
 
 **Modes** — set `data-scrollbar` on `<html>`, a component root, or a scroll slot:
 

@@ -21,9 +21,7 @@ Table renders the rows you give it. To sort, filter, group, paginate or virtuali
 
 ## Anatomy
 
-Table renders its `<table>` structure from two arrays: `columns`
-(one entry per header) and `rows` (one object per row, looked up as `row[column.key]`). Per-column slots
-replace the default header or cell content.
+Table renders its `<table>` from two arrays. `columns` has one entry per header. `rows` has one object per row, and each cell reads `row[column.key]`. Per-column slots replace the default header or cell content.
 
 ```vue
 <Table aria-label="Team members" :columns="columns" :rows="rows">
@@ -34,10 +32,6 @@ replace the default header or cell content.
   <template #footer /> <!-- optional: below the table, e.g. pagination -->
 </Table>
 ```
-
-`ui` keys: `base`, `scrollContainer`, `resizableContainer`, `content`, `header`, `column`,
-`sortableColumnHeader`, `sortableColumnIndicator`, `body`, `row`, `cell`, `footer`, `columnResizer`,
-`loadMore`, `loadMoreContent`.
 
 ## Examples
 
@@ -62,11 +56,15 @@ sort the data.
 
 ### Selection
 
-Enable row selection with `selection-mode`. The table adds a checkbox column with a select-all checkbox
-in the header; bind `v-model:selected-keys` to read or control the selection (`'all'` or a `Set` of row ids).
-The table is a single tab stop: Arrow Up/Down, Home and End move between rows (Arrow Up from the first row enters
-the header row), Space or Enter toggles the focused row, Shift+Arrow and Shift+click select a range, Meta/Ctrl+A
-selects every row and Escape clears the selection.
+Enable row selection with `selection-mode`. The table adds a checkbox column with a select-all checkbox in the header.
+Bind `v-model:selected-keys` to read or control the selection. Its value is `'all'` or a `Set` of row ids.
+
+The table is a single tab stop. On the keyboard:
+
+- Arrow Up/Down, Home and End move between rows. Arrow Up from the first row enters the header row.
+- Space or Enter toggles the focused row.
+- Shift+Arrow and Shift+click select a range.
+- Meta/Ctrl+A selects every row, and Escape clears the selection.
 
 <ComponentPreview name="table/selection" minHeight="380px" />
 
@@ -80,7 +78,10 @@ Use `v-model:expanded-keys` to control which rows are expanded.
 
 ### Column Resizing
 
-Set `resizable` on a column to add a column resizer to its header. The columns of a resizable table share the container's width: `width` sets each column's initial size (pixels, `'25%'` or `'2fr'`, default `'1fr'`), clamped by `minWidth` (default 75) and `maxWidth`. Resizing a column fixes the columns to its left at their current width.
+Set `resizable` on a column to add a column resizer to its header. The columns of a resizable table share the container's width. Resizing a column fixes the columns to its left at their current width. Each column takes:
+
+- `width`: its initial size, in pixels, `'25%'` or `'2fr'`. Defaults to `'1fr'`.
+- `minWidth` and `maxWidth`: limits in pixels. `minWidth` defaults to 75.
 
 <ComponentPreview name="table/column-resizing" minHeight="420px" />
 
@@ -145,9 +146,7 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | `loadMoreContent`         | `table-load-more-content`         | Content wrapper of the load-more row             |
 | `footer`                  | `table-footer`                    | Footer below the table                           |
 
-These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
-
-- `variant`: `primary` (default, rows on a secondary surface), `secondary`
+Use the `variant` prop to change the look: `primary` (the default, rows on a secondary surface) or `secondary`. To restyle further, use `class`, `ui` or `createHareUI`.
 
 ### Interactive States
 

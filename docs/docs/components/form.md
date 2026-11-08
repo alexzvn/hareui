@@ -38,13 +38,17 @@ import { Button, Form } from '@hareui/vue'
 
 <ComponentPreview name="form/render-function" />
 
-Attributes and listeners such as `action`, `method`, `@reset` and `data-*` fall through to the native `<form>` element. Without `state`, `schema` or `validate`, `@submit` receives the native submit event (see [Form Submission](#form-submission)).
+Attributes and listeners such as `action`, `method` and `@reset` fall through to the native form element. So do `data-*` attributes.
+
+Without `state`, `schema` or `validate`, the submit listener receives the native submit event. See [Form Submission](#form-submission).
 
 ### Schema Validation
 
 <ComponentPreview name="form/schema" />
 
-Bind each field to a reactive `state` object with `v-model` and give it the matching `name`. Pass the object to `state` and a schema to `schema`. The form accepts any [Standard Schema](https://standardschema.dev) (Zod, Valibot, ArkType, Yup, Effect Schema, …) or a Superstruct struct, with no adapter:
+Bind each field to a reactive `state` object with `v-model` and give it the matching `name`. Pass the object to `state` and a schema to `schema`.
+
+The form accepts any [Standard Schema](https://standardschema.dev) or a Superstruct struct, with no adapter:
 
 | Library        | Usage                             |
 | -------------- | --------------------------------- |
@@ -55,17 +59,21 @@ Bind each field to a reactive `state` object with `v-model` and give it the matc
 | Effect Schema  | `Schema.standardSchemaV1(schema)` |
 | Superstruct    | `object({ … })`                   |
 
-Each issue is shown by the field whose `name` matches the issue's path (dotted for nested values, e.g. `address.city`) through its built-in [FieldError](/docs/components/field-error). Issues without a matching field are listed in the default slot's `errors`.
+Each issue is shown by the field whose `name` matches the issue's path, through the field's built-in [FieldError](/docs/components/field-error). Nested paths are dotted, such as `address.city`. Issues without a matching field are listed in the default slot's `errors`.
 
-A field the user hasn't filled in holds `undefined` in the state, and a text field typed in and then cleared holds `''`. Give both cases a message, such as `z.string('Name is required').min(1, 'Name is required')` in Zod; otherwise the library's defaults (`Invalid input: expected string, received undefined`) are shown.
+A field the user hasn't filled in holds `undefined` in the state. A text field typed in and then cleared holds `''`.
 
-`@submit` fires only once validation passes. `event.data` holds the schema's output, with its transformations and defaults; set `:transform="false"` to receive the state as is.
+Give both cases a message, such as `z.string('Name is required').min(1, 'Name is required')` in Zod. Otherwise the library's default message is shown, such as `Invalid input: expected string, received undefined`.
+
+`@submit` fires only once validation passes. `event.data` holds the schema's output, with its transformations and defaults. Set `:transform="false"` to receive the state as is.
 
 ### Custom Validation
 
 <ComponentPreview name="form/custom-validate" />
 
-Use `validate` for rules a schema can't express, or instead of one. It receives the state and returns a list of `FormError` (`{ name, message }`), synchronously or as a promise. With both `schema` and `validate`, the errors of both are shown.
+Use `validate` for rules a schema can't express, or instead of one. It receives the state and returns a list of `FormError`, each `{ name, message }`. It can return synchronously or a promise.
+
+With both `schema` and `validate`, the errors of both are shown.
 
 ### Error Reporting
 
@@ -90,7 +98,7 @@ Errors no field claims stay available through the default slot and the exposed `
 
 ### Input Events
 
-A field is validated when the user interacts with it, on the events listed in `validate-on` (default `['input', 'blur', 'change']`; `focus` is also available). The whole form is always validated on submit.
+A field is validated when the user interacts with it, on the events listed in `validate-on`. The default is `['input', 'blur', 'change']`, and `focus` is also available. The whole form is always validated on submit.
 
 - Input validation starts only after the field is first left, so errors don't show while the user is still typing for the first time. Set `eager-validation` on a field to validate it on input right away.
 - Input validation is debounced by `validate-on-input-delay` (300 ms). Override it per field with the field's `validate-on-input-delay`.
@@ -105,7 +113,7 @@ A field is validated when the user interacts with it, on the events listed in `v
 
 <ComponentPreview name="form/error-event" />
 
-`@error` fires when submission is blocked by `schema` or `validate` errors. `event.errors` lists them with the `id` of each field's control, so the handler can focus or scroll to the first one.
+`@error` fires when `schema` or `validate` errors block submission. `event.errors` lists them, each with the `id` of its field's control. Use it to focus or scroll to the first one.
 
 ### Submitting Programmatically
 
@@ -131,11 +139,15 @@ const form = useTemplateRef<FormInstance<typeof schema>>('form')
 
 <ComponentPreview name="form/nested" />
 
-A `Form` with `nested` attaches to its parent form and renders a `<div>`. It reads its parent's `state` (or the part of it at its `name` path), and its `schema` / `validate` run along with the parent's, so its fields block the parent's submission. Render it conditionally to validate a section only when it applies.
+A `Form` with `nested` attaches to its parent form and renders a `<div>`. It reads its parent's `state`, or the part of it at its `name` path.
+
+Its `schema` and `validate` run along with the parent's, so its fields block the parent's submission. Render it conditionally to validate a section only when it applies.
 
 ### Disabled and Loading
 
-`disabled` disables every field inside. While an async `@submit` handler runs, the fields are disabled too and the default slot's `loading` is `true`; set `:loading-auto="false"` to keep them enabled.
+`disabled` disables every field inside.
+
+While an async `@submit` handler runs, the fields are disabled too and the default slot's `loading` is `true`. Set `:loading-auto="false"` to keep them enabled.
 
 ## Customization
 
@@ -165,7 +177,13 @@ For individual controls, see **Customization** on [TextField](/docs/components/t
 
 ## Styling Reference
 
-`Form` has no `ui` keys and no `data-slot`. Field appearance and validation states come from child components such as `TextField`, `Input`, `Label`, `Description` and `FieldError`.
+`Form` has no `ui` keys and no `data-slot`. Field appearance and validation states come from the child components:
+
+- [TextField](/docs/components/text-field)
+- [Input](/docs/components/input)
+- [Label](/docs/components/label)
+- [Description](/docs/components/description)
+- [FieldError](/docs/components/field-error)
 
 ## API Reference
 
@@ -221,8 +239,8 @@ Every field that takes a `name` (TextField, Input, NumberField, Checkbox, Select
 
 Fields inside a `Form` support:
 
-- Built-in HTML validation attributes (`required`, `minlength`, `pattern`, `min`, `max`, …)
-- A custom `validate` function on [TextField](/docs/components/text-field), [Input](/docs/components/input), [NumberField](/docs/components/number-field), [Checkbox](/docs/components/checkbox), [Switch](/docs/components/switch) and [RadioGroup](/docs/components/radio-group). It returns an error message (or an array of them) when the value is invalid, and `true`, `null` or `undefined` when it is valid.
+- Built-in HTML validation attributes, such as `required`, `minlength` and `pattern`
+- A custom `validate` function on [TextField](/docs/components/text-field), [Input](/docs/components/input), [NumberField](/docs/components/number-field), [Checkbox](/docs/components/checkbox), [Switch](/docs/components/switch) and [RadioGroup](/docs/components/radio-group). It returns an error message, or an array of them, when the value is invalid. It returns `true`, `null` or `undefined` when the value is valid.
 - Server-side errors through the `validation.errors` prop, keyed by field `name`. They show immediately and clear once the user changes that field.
 - The form's `schema` and `validate` (see [Schema Validation](#schema-validation) and [Custom Validation](#custom-validation)).
 - Error display through each field's built-in [FieldError](/docs/components/field-error). The `#error` slot receives `{ isInvalid, validationErrors, validationDetails }`.
@@ -234,9 +252,11 @@ A field's `invalid` prop, when set, overrides all of the above.
 The `validation.behavior` prop controls how native constraints, a field's `validate` and `validation.errors` are displayed:
 
 - **`native`** (default): native constraint validation. Submission is blocked while a field is invalid, and errors show once the user commits a value (on `change`, on blur, or on submit). The first invalid field is focused.
-- **`aria`**: errors show in realtime as the user types, are exposed through `aria-invalid`, and never block submission. The `<form>` gets `novalidate`.
+- **`aria`**: errors show in realtime as the user types and are exposed through `aria-invalid`. They never block submission. The `<form>` gets `novalidate`.
 
-Set it on the form, or override it with a field's own `validation-behavior` prop. `schema` and `validate` errors don't depend on it: they show on the `validate-on` events and on submit, and block `@submit` without blocking native constraint validation.
+Set it on the form, or override it with a field's own `validation-behavior` prop.
+
+`schema` and `validate` errors don't depend on it. They show on the `validate-on` events and on submit. They block `@submit`, but not native constraint validation.
 
 ### Form Submission
 
@@ -244,7 +264,7 @@ Forms can be submitted in several ways:
 
 - **Traditional submission**: set the `action` attribute to submit to a URL
 - **JavaScript handling**: listen to `@submit` and process the data. Without `state`, `schema` or `validate`, it receives the native submit event.
-- **With `state` / `schema` / `validate`**: native submission is always prevented. `@submit` fires once validation passes, with the validated state as `event.data`; `@error` fires with `event.errors` when it fails.
+- **With `state`, `schema` or `validate`**: native submission is always prevented. `@submit` fires once validation passes, with the validated state as `event.data`. `@error` fires with `event.errors` when it fails.
 - **FormData API**: read the values with `FormData` in the submit handler
 
 ```ts
@@ -260,14 +280,14 @@ A `reset` button (or `form.reset()`) restores every field's `defaultValue` and c
 
 ## Theme
 
-`Form` renders a plain `<form>` (a `<div>` when nested) with no theme classes; style it with `class`.
+`Form` renders a plain `<form>`, or a `<div>` when nested. It has no theme classes, so style it with `class`.
 
 ## Accessibility
 
 - Native `<form>` element semantics
 - Form landmark with `aria-label` or `aria-labelledby`
 - Focus moves to the first invalid field when native validation blocks submission
-- `schema` / `validate` errors don't move focus; handle `@error` and focus `event.errors[0].id` (see [Error Event](#error-event))
+- `schema` and `validate` errors don't move focus. Handle `@error` and focus `event.errors[0].id`, as in [Error Event](#error-event)
 - `aria-invalid` and `aria-describedby` (pointing to the error) on each invalid control
 
 ## Related Components

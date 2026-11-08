@@ -59,7 +59,7 @@ Use the `title` prop to change the heading of the list. Defaults to `On this pag
 
 ### Color
 
-Use the `color` prop to change the color of the active links: `default`, `accent` (default), `success`, `warning` or `danger`.
+Use the `color` prop to change the color of the active links. It defaults to `accent`. The other colors are default, success, warning and danger.
 
 <ComponentPreview name="toc/color" />
 
@@ -69,19 +69,26 @@ Use the `highlight` prop to draw a line along the links, with the active ones hi
 
 <ComponentPreview name="toc/highlight" />
 
-Pass an object to change the highlight: `variant: 'circuit'` traces the line along the nesting of the links, and `color` sets the color of the active segment (it follows `color` by default).
+Pass an object to change the highlight. `variant: 'circuit'` traces the line along the nesting of the links. `color` sets the color of the active segment, and follows the `color` prop by default.
 
 <ComponentPreview name="toc/highlight-variant" />
 
 ### Mobile
 
-Below the `lg` breakpoint, the list collapses behind its title. The title becomes a button that opens and closes it; bind `v-model:open` to control it, or set `default-open`. The list is sticky in its scroll container in both layouts, below a `--header-height` you can set on a parent.
+Below the `lg` breakpoint, the list collapses behind its title. The title becomes a button that opens and closes it. Bind `v-model:open` to control it, or set `default-open`.
+
+In both layouts the list is sticky in its scroll container. It sits below a `--header-height` you can set on a parent.
 
 <ComponentPreview name="toc/collapsible" device="mobile" />
 
 ### Floating
 
-Use `variant="floating"` for a compact table of contents: one short mark per link, with the active one longer and colored. Resting the pointer on the marks opens a panel with the links; leaving both closes it. A click pins the panel open, and the keyboard opens it with `Enter` or `Space`, focusing the active link. `Escape` or a press outside closes it.
+Use `variant="floating"` for a compact table of contents. It shows one short mark per link, with the active one longer and colored.
+
+- Resting the pointer on the marks opens a panel with the links. Leaving both closes it.
+- A click pins the panel open.
+- `Enter` or `Space` opens it from the keyboard and focuses the active link.
+- `Escape` or a press outside closes it.
 
 <ComponentPreview name="toc/floating" />
 
@@ -103,7 +110,7 @@ Use `trigger="press"` to open the panel on click only, ignoring hover. Touch inp
 
 ### Delays
 
-Use the `delay` and `close-delay` props to change how long, in milliseconds, the pointer must rest on the marks before the panel opens (`200` by default) and how long it stays open after the pointer leaves (`300` by default).
+Use the `delay` prop to set how long, in milliseconds, the pointer must rest on the marks before the panel opens. It defaults to `200`. Use `close-delay` to set how long the panel stays open after the pointer leaves. It defaults to `300`.
 
 <ComponentPreview name="toc/floating-delays" />
 

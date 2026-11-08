@@ -31,11 +31,9 @@ content (default slot), then `#footer`.
 </Card>
 ```
 
-- The header renders only when the `title`/`description` props or the `#header`/`#title`/`#description` slots are provided.
-- The content wrapper renders only when the default slot is used; the footer only when `#footer` is used.
+- The header renders only when you set `title` or `description`, or fill a header slot.
+- The content wrapper renders only when the default slot is used. The footer renders only when `#footer` is used.
 - `#leading` renders its children directly inside the root, without a wrapper, so they become flex items of the card.
-
-`ui` keys: `base`, `header`, `title`, `description`, `content`, `footer`.
 
 ## Examples
 
@@ -52,7 +50,7 @@ Cards come in semantic variants that describe their prominence level rather than
 
 ### Horizontal Layout
 
-Put the media in `#leading` and the rest in the default slot: the root gets two flex items, so
+Put the media in `#leading` and the rest in the default slot. The root then has two flex items, so
 `md:flex-row` lays them out side by side. `:ui="{ content: 'gap-3' }"` turns the content wrapper
 into the right-hand column.
 
@@ -122,8 +120,8 @@ const card = tv(themes.card)()
 </script>
 ```
 
-`tv(themes.card)` uses the default theme; app-wide `createHareUI({ ui: { card } })` overrides
-don't apply to these classes.
+`tv(themes.card)` uses the default theme. App-wide `createHareUI` overrides don't apply to these
+classes.
 
 ## Styling Reference
 
@@ -138,8 +136,8 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `content`     | `card-content`     | Flexible content container (default slot)              |
 | `footer`      | `card-footer`      | Footer with row layout                                 |
 
-The `variant` prop (`transparent`, `default`, `secondary`, `tertiary`) sets the surface. HareUI
-renders utility classes, so style through `class`, `ui` or `createHareUI`.
+The `variant` prop sets the surface. HareUI renders utility classes, so style through `class`, `ui`
+or `createHareUI`.
 
 ## API Reference
 

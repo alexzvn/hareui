@@ -30,13 +30,17 @@ DashboardGroup is `fixed inset-0` and fills the viewport. Render it once at the 
 </DashboardGroup>
 ```
 
-The group provides the context returned by [`useDashboard()`](#usedashboard): the `storage`, `storage-key` and `persistent` settings, the `unit` used for every size, and the open and collapsed state of the left and right sidebars.
+The group provides the context returned by [`useDashboard()`](#usedashboard). It holds:
+
+- the `storage`, `storage-key` and `persistent` settings
+- the `unit` used for every size
+- the open and collapsed state of the left and right sidebars
 
 ## Examples
 
 ### Unit
 
-Use the `unit` prop to set the unit of the `min-size`, `max-size`, `default-size` and `collapsed-size` props of every sidebar and panel in the group: `%` (default), `rem` or `px`.
+Use the `unit` prop to set the unit for every sidebar and panel size in the group. It takes `%` (the default), `rem` or `px`. It applies to their min, max, default and collapsed size props.
 
 ```vue
 <DashboardGroup unit="rem">

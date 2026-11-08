@@ -33,7 +33,12 @@ The sidebar provides the layout only. Build the navigation with any component, s
 
 ### Resizable
 
-Use the `resizable` prop to make the sidebar resizable by dragging its inner edge. When the handle has focus, the arrow keys resize it (hold `Shift` for larger steps), `Home` and `End` jump to `minSize` and `maxSize`, and a double-click restores `defaultSize`.
+Use the `resizable` prop to make the sidebar resizable by dragging its inner edge. Keyboard users can resize it from the focused handle:
+
+- The arrow keys resize it. Hold `Shift` for larger steps.
+- `Home` jumps to `minSize`. `End` jumps to `maxSize`.
+
+A double-click on the handle restores `defaultSize`.
 
 <ComponentPreview name="dashboard-sidebar/resizable" contain />
 
@@ -45,7 +50,13 @@ Use the `collapsible` prop to let the sidebar collapse to `collapsedSize` when i
 
 ### Size
 
-Use the `min-size`, `max-size`, `default-size` and `collapsed-size` props to set the width of the sidebar. Values use the `unit` of the parent [DashboardGroup](./dashboard-group#unit).
+Set the width of the sidebar with these props:
+
+- `min-size` and `max-size`: the resize limits
+- `default-size`: the starting width
+- `collapsed-size`: the width when collapsed
+
+Values use the `unit` of the parent [DashboardGroup](./dashboard-group#unit).
 
 <ComponentPreview name="dashboard-sidebar/size" contain />
 
@@ -57,7 +68,7 @@ Use the `side` prop to place the sidebar on the `left` or `right` of the group. 
 
 ### Mode
 
-Use the `mode` prop to choose how the sidebar opens on mobile: `slideover` (default), `drawer` or `modal`. Use the `menu` prop to pass props to the underlying [Drawer](./drawer) or [Modal](./modal).
+Use the `mode` prop to choose how the sidebar opens on mobile. It takes `slideover` (the default), `drawer` or `modal`. Use the `menu` prop to pass props to the underlying [Drawer](./drawer) or [Modal](./modal).
 
 <ComponentPreview name="dashboard-sidebar/mode" contain device="mobile" />
 
@@ -101,7 +112,7 @@ Add a margin, rounded corners and `shadow-surface` to `ui.root` to detach the si
 
 ### Aside
 
-Add a second sidebar with `side="right"` to show details next to the main content. Below `md` it becomes a sheet; open it with `<DashboardSidebarToggle side="right">`.
+Add a second sidebar with `side="right"` to show details next to the main content. Below `md` it becomes a sheet. Open it with `<DashboardSidebarToggle side="right">`.
 
 <ComponentPreview name="dashboard-sidebar/aside" contain />
 

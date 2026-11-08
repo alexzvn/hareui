@@ -19,7 +19,14 @@ import { SearchField } from '@hareui/vue'
 
 ## Anatomy
 
-SearchField renders a [Label](/docs/components/label), a group holding a search icon, a native `type="search"` input and a clear button, then a [Description](/docs/components/description) and a [FieldError](/docs/components/field-error). The text parts come from props; each can be replaced with a slot, and the icons can be replaced too.
+SearchField renders these parts, in order:
+
+- a [Label](/docs/components/label)
+- a group holding a search icon, a native `type="search"` input and a clear button
+- a [Description](/docs/components/description)
+- a [FieldError](/docs/components/field-error)
+
+The text parts come from props, and each can be replaced with a slot. The icons can be replaced too.
 
 ```vue
 <template>
@@ -75,13 +82,13 @@ When used inside a surface ([Surface](/docs/components/surface) or another `bg-s
 
 ### Validation
 
-Use `invalid` together with `error-message` to control the state yourself, or let the field validate: native attributes (`required`, …) and a `validate` function, inside a [Form](/docs/components/form) or on their own. Without `error-message`, the field shows the validation errors.
+Use `invalid` together with `error-message` to control the state yourself. Or let the field validate with native attributes such as `required` and a `validate` function. This works inside a [Form](/docs/components/form) or on its own. Without `error-message`, the field shows the validation errors.
 
 <ComponentPreview name="search-field/validation" />
 
 ### Controlled
 
-Bind the value with `v-model` to synchronize counters, previews, or formatting. The clear button and <kbd>Escape</kbd> both empty it; pressing <kbd>Enter</kbd> emits `submit` with the current value.
+Bind the value with `v-model` to synchronize counters, previews, or formatting. The clear button and <kbd>Escape</kbd> both empty it. Pressing <kbd>Enter</kbd> emits `submit` with the current value.
 
 <ComponentPreview name="search-field/controlled" />
 
@@ -105,7 +112,7 @@ Add keyboard shortcuts to quickly focus the search field.
 
 ### Render Function
 
-Input attributes you pass to `SearchField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`.
+Input attributes you pass to `SearchField` go to the input. That includes labels such as `aria-label` and `aria-labelledby`, and attributes such as `autocomplete` and `maxlength`. A passed `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`.
 
 <ComponentPreview name="search-field/render-function" />
 
@@ -113,7 +120,7 @@ Input attributes you pass to `SearchField` (`aria-label`, `aria-labelledby`, `au
 
 ### Tailwind CSS
 
-Use the `icon` and `clearIcon` slots to render custom icons, and `:ui` or `class` for styling.
+Use the `icon` and `clearIcon` slots to render custom icons. Use `:ui` or `class` for styling.
 
 <ComponentPreview name="search-field/custom-icons" />
 <ComponentPreview name="search-field/custom-styles" />
@@ -172,12 +179,13 @@ SearchField sets these data attributes:
 
 ## Accessibility
 
-- The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)
-- The input's `aria-describedby` lists any ids you pass, then the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
+- The label's `for` points to the input id. The id comes from `useId()` unless you set `id`
+- The input's `aria-describedby` lists any ids you pass, then the rendered description and error ids
+- `invalid` sets `aria-invalid="true"` on the input. The error is announced via `role="alert"`
 - `required` and `disabled` set the native attributes on the input
-- The clear button is excluded from the tab order (`tabindex="-1"`) and labeled `"Clear search"`; clicking it refocuses the input instead of moving focus away
-- <kbd>Escape</kbd> clears the field (and does nothing when it's already empty); <kbd>Enter</kbd> emits `submit` with the current value. Both are ignored while the field is `disabled` or `readonly`
+- The clear button is out of the tab order (`tabindex="-1"`) and labeled "Clear search". Clicking it refocuses the input
+- <kbd>Escape</kbd> clears the field. It does nothing when the field is already empty
+- <kbd>Enter</kbd> emits `submit` with the current value. Both are ignored while the field is `disabled` or `readonly`
 
 ## Related Components
 

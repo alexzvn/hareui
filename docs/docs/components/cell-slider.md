@@ -55,7 +55,7 @@ Bind the value with `v-model`. The text below the row is computed from the curre
 
 ### Integer Step
 
-`step` defaults to `1`, so the value moves in whole numbers. Set `min` and `max` to fit the range, here a font size from 10 to 24.
+`step` defaults to `1`, so the value moves in whole numbers. Set `min` and `max` to fit the range. Here it is a font size from 10 to 24.
 
 <ComponentPreview name="cell-slider/integer-step" />
 
@@ -110,10 +110,10 @@ The slots are merged over the [Slider](/docs/components/slider) theme, so `ui.sl
 ### Slots
 
 - `base` → `[data-slot="cell-slider"]`: root, a one-row grid with the label and value columns over the track
-- `track` → `[data-slot="slider-track"]`: the row (`h-9`, `rounded-field`); it clips the fill and the bar
+- `track` → `[data-slot="slider-track"]`: the row, `h-9` tall with `rounded-field` corners. It clips the fill and the bar
 - `fill` → `[data-slot="slider-fill"]`: value tint, full row height
-- `thumb` → `[data-slot="slider-thumb"]`: transparent hit area, `1.25rem` wide; its `::after` is the `2px × 16px` bar
-- `label` → `[data-slot="label"]`: label text; it truncates with an ellipsis when the value needs the room
+- `thumb` → `[data-slot="slider-thumb"]`: transparent hit area, `1.25rem` wide. Its `::after` is the `2px × 16px` bar
+- `label` → `[data-slot="label"]`: label text. It truncates with an ellipsis when the value needs the room
 - `output` → `[data-slot="slider-output"]`: formatted value, tabular figures
 
 The row background reads `--cell-bg-current`, so a plain `bg-*` class in `ui.track` wins on hover too. The variants set `--cell-bg` and `--cell-bg-hover`.
@@ -122,8 +122,8 @@ The row background reads `--cell-bg-current`, so a plain `bg-*` class in `ui.tra
 
 - **Disabled**: `[data-disabled]` on the root, the track and the thumb
 - **Hover**: the row tints and the bar fades in to 40%
-- **Dragging**: `[data-dragging="true"]` on the thumb; the bar shows at 70% and stretches
-- **Focus Visible**: `[data-focus-visible="true"]` on the thumb; the bar shows at 70% with the focus ring
+- **Dragging**: `[data-dragging="true"]` on the thumb. The bar shows at 70% and stretches
+- **Focus Visible**: `[data-focus-visible="true"]` on the thumb. The bar shows at 70% with the focus ring
 
 ## API Reference
 
@@ -145,9 +145,12 @@ The row background reads `--cell-bg-current`, so a plain `bg-*` class in `ui.tra
 
 ## Accessibility
 
-- The thumb has `role="slider"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, `aria-valuetext` set to the formatted value, and `aria-disabled="true"` while disabled
-- The label names the root group and the thumb through `aria-labelledby`; without a label, pass `aria-label`
-- Keyboard: <kbd>←</kbd>/<kbd>→</kbd> step by `step`, <kbd>PageUp</kbd>/<kbd>PageDown</kbd> and <kbd>Shift</kbd> + arrows move a tenth of the range, <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`
+- The thumb has `role="slider"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`
+- The thumb's `aria-valuetext` is the formatted value. It gets `aria-disabled="true"` while disabled
+- The label names the root group and the thumb through `aria-labelledby`. Without a label, pass `aria-label`
+- <kbd>←</kbd>/<kbd>→</kbd> step by `step`
+- <kbd>PageUp</kbd>/<kbd>PageDown</kbd> and <kbd>Shift</kbd> + arrows move a tenth of the range
+- <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`
 - The label and value ignore the pointer, so a press anywhere on the row moves the value
 
 ## Related Components

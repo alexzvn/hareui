@@ -35,9 +35,6 @@ through named slots.
 </Modal>
 ```
 
-`ui` keys: `backdrop`, `container`, `dialog`, `header`, `icon`, `heading`, `body`,
-`footer`, `closeTrigger`.
-
 ## Examples
 
 ### Sizes
@@ -78,7 +75,7 @@ through named slots.
 
 ### Close Methods
 
-The `#footer`, `#body` and `#content` slots receive a `close` function. `#content` replaces the whole dialog, so set `title` too: it stays as the dialog's accessible name, visually hidden.
+The `#footer`, `#body` and `#content` slots receive a `close` function. `#content` replaces the whole dialog, so set `title` too. The title stays as the dialog's accessible name, visually hidden.
 
 <ComponentPreview name="modal/close-methods" />
 
@@ -92,7 +89,7 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 
 ### Custom Close Button
 
-`closeButton` takes `false` to hide the close button, or an object with an `icon` and a `label` (its accessible name) to customise it.
+Set `closeButton` to `false` to hide the close button. To customise it, pass an object with an `icon` and a `label`, which is its accessible name.
 
 <ComponentPreview name="modal/custom-close-button" />
 
@@ -177,9 +174,9 @@ with these behaviours:
 
 - **Focus trap**: focus is locked within the dialog while open and restored to the
   trigger on close
-- **Keyboard**: `Escape` closes the dialog (unless `dismissible` is `false`), `Tab`
-  cycles through focusable elements inside it. A scrollable body is not a tab stop of its own;
-  give it `tabindex="0"` if you want it to be one
+- **Keyboard**: `Escape` closes the dialog unless `dismissible` is `false`. `Tab`
+  cycles through focusable elements inside it. A scrollable body is not a tab stop of its own.
+  Give it `tabindex="0"` if you want it to be one
 - **Screen readers**: the dialog always has an accessible name — either the rendered
   title or a visually hidden one
 - **Scroll lock**: body scroll is disabled while the modal is open

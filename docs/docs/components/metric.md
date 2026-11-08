@@ -28,7 +28,7 @@ import { Metric } from '@hareui/vue'
 </Metric>
 ```
 
-`Metric` is a `Card`: it takes `as` and `variant`. The title renders as a `dt` and the value as a `dd` inside a `dl`.
+`Metric` is a `Card`, so it takes `as` and `variant`. Inside a `dl`, the title renders as a `dt` and the value as a `dd`.
 
 ## Examples
 
@@ -50,14 +50,14 @@ import { Metric } from '@hareui/vue'
 
 ### Progress
 
-`progress` adds a thin bar under the value. It is green by default; set `progress.status` to change the colour.
+`progress` adds a thin bar under the value. It is green by default. Set `progress.status` to change the colour.
 
 <ComponentPreview name="metric/progress" />
 
 ### Sparkline
 
 Put an `AreaChart` from `@hareui/vue/charts` in the `chart` slot. The chart area is 80 px high and runs to the card
-edges. Its left and right ends fade out; set `--metric-chart-fade` on the card to change the fade width (10% by
+edges. Its left and right ends fade out. Set `--metric-chart-fade` on the card to change the fade width (10% by
 default).
 
 <ComponentPreview name="metric/sparkline" />
@@ -84,7 +84,7 @@ The `footer` slot renders under a full-width separator.
 
 ### Slots
 
-`value` receives `{ formatted, value }`; `title` and `trend` replace their defaults.
+The `value` slot receives `{ formatted, value }`. The `title` and `trend` slots replace their defaults.
 
 <ComponentPreview name="metric/slots" />
 

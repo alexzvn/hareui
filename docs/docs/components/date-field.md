@@ -20,7 +20,14 @@ import { DateField } from '@hareui/vue'
 
 ## Anatomy
 
-DateField renders a [Label](/docs/components/label), a group holding an optional prefix, the segmented date input and an optional suffix, then a [Description](/docs/components/description) and a [FieldError](/docs/components/field-error). The text parts come from props; each can be replaced with a slot.
+DateField renders, in order:
+
+- a [Label](/docs/components/label)
+- a group with an optional prefix, the segmented date input and an optional suffix
+- a [Description](/docs/components/description)
+- a [FieldError](/docs/components/field-error)
+
+The text parts come from props. Each can be replaced with a slot.
 
 ```vue
 <template>
@@ -51,7 +58,7 @@ DateField renders a [Label](/docs/components/label), a group holding an optional
 | —         | `description`              | [Description](/docs/components/description) (iff `description` / `#description`)                               |
 | —         | `field-error`              | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 
-> **DateField** combines a label, segmented date input, description, and error into a single accessible component. Values are [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) objects (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`).
+> **DateField** combines a label, segmented date input, description, and error into a single accessible component. Values are [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) objects. Use `CalendarDate`, `CalendarDateTime` or `ZonedDateTime`.
 
 ## Examples
 
@@ -96,13 +103,13 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 
 ### Validation
 
-Set `invalid` with `error-message` to control the state yourself, or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form).
+Set `invalid` with `error-message` to control the state yourself. Or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form).
 
 <ComponentPreview name="date-field/invalid" />
 
 ### Granularity
 
-`granularity` controls which segments are rendered, up to and including the given unit. A plain `CalendarDate` only supports `"day"`; use a `CalendarDateTime` or `ZonedDateTime` value for `"hour"`, `"minute"` or `"second"`.
+`granularity` controls which segments are rendered, up to and including the given unit. A plain `CalendarDate` only supports `"day"`. Time granularities (hour, minute, second) need a `CalendarDateTime` or `ZonedDateTime` value.
 
 <ComponentPreview name="date-field/granularity" />
 
@@ -126,7 +133,7 @@ DateField supports validation with `min-value`, `max-value`, `is-date-unavailabl
 
 ### Render Function
 
-DateField has no `render` prop; attributes you pass to `DateField` fall through to the root element instead.
+DateField has no `render` prop. Attributes you pass to `DateField` fall through to the root element instead.
 
 <ComponentPreview name="date-field/render-function" />
 
@@ -157,7 +164,7 @@ app.use(
 - `segment` → `[data-slot="date-input-group-segment"]` – each individual date part
 - `suffix` → `[data-slot="date-input-group-suffix"]` – content after the segments
 
-> **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options. `group`, `input`, `segment`, `prefix` and `suffix` all belong to the internal `date-input-group` part shared with [TimeField](/docs/components/time-field).
+> **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options. The group, input, segment, prefix and suffix keys belong to the internal `date-input-group` part, shared with [TimeField](/docs/components/time-field).
 
 ### Interactive States
 
@@ -193,9 +200,10 @@ DateField sets these data attributes:
 
 - The label's `for` points to the field's id (auto-generated with `useId()` unless `id` is set)
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the field and every segment; the error is announced via `role="alert"`
+- `invalid` sets `aria-invalid="true"` on the field and every segment
+- The error is announced via `role="alert"`
 - Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments, <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
-- `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own — no need to compute `invalid` yourself just for native-range feedback
+- `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own. You don't need to set `invalid` for range feedback
 
 ## Related Components
 

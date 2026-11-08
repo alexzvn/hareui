@@ -29,10 +29,7 @@ Fieldset is composed through props and named slots, rendered in a fixed order: l
 ```
 
 - Each part renders only when its prop or slot is provided.
-- `disabled` sets the native `disabled` attribute and `data-disabled="true"`, and disables HareUI
-  controls inside (such as `Button` and `Link`).
-
-`ui` keys: `base`, `legend`, `description`, `fieldGroup`, `actions`.
+- `disabled` disables the fieldset natively and sets `data-disabled="true"`. HareUI controls inside, such as `Button` and `Link`, are disabled too.
 
 ## Examples
 

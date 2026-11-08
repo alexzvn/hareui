@@ -18,9 +18,9 @@ import { ToastProvider, toast } from '@hareui/vue'
 
 ## Anatomy
 
-A single `ToastProvider` renders the whole stack; each toast's layout (indicator, title,
-description, action, close button) is built in, or fully replaced through the `#toast`
-slot (see [Custom Toast Rendering](#custom-toast-rendering)).
+A single `ToastProvider` renders the whole stack. Each toast's layout is built in: indicator, title,
+description, action and close button. To replace it entirely, use the `#toast` slot
+(see [Custom Toast Rendering](#custom-toast-rendering)).
 
 ```vue
 <ToastProvider />
@@ -29,8 +29,6 @@ slot (see [Custom Toast Rendering](#custom-toast-rendering)).
 ```ts
 toast('Event created')
 ```
-
-`ui` keys: `region`, `toast`, `content`, `indicator`, `title`, `description`, `close`, `action`.
 
 ## Examples
 
@@ -146,10 +144,9 @@ app.use(
 
 ### ToastQueue
 
-Manages toast state outside any component, so toasts can be triggered from anywhere —
-including outside a component instance. Pass a custom instance to `ToastProvider`'s
-`queue` prop to run an independent stack; otherwise every `ToastProvider` shares the
-module-level default queue used by `toast()`.
+Manages toast state outside any component, so toasts can be triggered from anywhere.
+By default, every `ToastProvider` shares the module-level queue used by `toast()`.
+To run an independent stack, pass your own instance to the provider's `queue` prop.
 
 #### Constructor Options
 
@@ -172,9 +169,8 @@ module-level default queue used by `toast()`.
 
 ### toast / useToast()
 
-`toast` and `useToast()` are equivalent — `useToast()` just returns the `toast`
-singleton, provided for symmetry with other composables; toast state lives outside
-any component instance, so `toast` works from anywhere, including outside `<script setup>`.
+`toast` and `useToast()` are equivalent. `useToast()` returns the `toast` singleton, for symmetry with other composables.
+Toast state lives outside any component instance, so `toast` works from anywhere, including outside `<script setup>`.
 
 ```ts
 import { toast } from '@hareui/vue'
@@ -256,10 +252,7 @@ toast.resumeAll()
 Each toast implements the [WAI-ARIA alertdialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/),
 grouped inside a labeled landmark region:
 
-- **Landmark region**: toasts render in a labeled landmark reachable with `F6`;
-  `Alt` + `T` moves focus straight to it. The hotkey is configurable via the `hotkey`
-  prop and can be disabled by passing an empty array; the region is labeled with the
-  toast count (e.g. "2 notifications.") and the label can be overridden with `ariaLabel`
+- **Landmark region**: Toasts render in a labeled landmark reachable with `F6`; `Alt` + `T` moves focus straight to it. The hotkey is configurable via the `hotkey` prop and can be disabled by passing an empty array, and the region label can be overridden with `ariaLabel`. By default the label states the toast count, such as "2 notifications."
 - **Keyboard**: `Tab` reaches the controls of visible toasts, `Escape` collapses the
   expanded stack, and dismissing a focused toast moves focus to the nearest remaining
   toast (or back to where focus was before entering the region when none remains)

@@ -225,20 +225,20 @@ RangeCalendar sets these data attributes on `[data-slot="range-calendar-cell"]`:
 ### Limitations
 
 - Week and day views (`visible-duration`) use their own grid rather than the month grid. They have
-  their own alignment, paging, `page-behavior` and keyboard navigation; the year picker,
-  `number-of-months` and `fixed-weeks` only apply to the month view.
+  their own alignment, paging, `page-behavior` and keyboard navigation.
+- The year picker, `number-of-months` and `fixed-weeks` only apply to the month view.
 - Anchor-aware `is-date-unavailable`: the callback receives the in-progress anchor as its second
-  argument (the picked start while `end` is unset, `null` once the range is complete). While a
-  range is anchored, `min-value`/`max-value` narrow to the run of available days around the anchor,
-  so paging past it is disabled. The lone anchor cell is both selection start and end.
+  argument. That is the picked start while `end` is unset, and `null` once the range is complete.
+- While a range is anchored, `min-value` and `max-value` narrow to the run of available days around
+  the anchor, so paging past it is disabled. The lone anchor cell is both selection start and end.
 - `fixed-weeks` is boolean only: it always shows 6 weeks, with no other week count.
 - `invalid` sets `aria-invalid`/`data-invalid` directly, so any consumer validation (e.g. "stay too
   long") can mark the calendar invalid, not only unavailable or out-of-range dates.
-- Range selection: a mouse press anchors the range (drag and release to commit, or click a second
-  day), pressing an end of the selected range and dragging adjusts that end, the preview follows
-  the hovered or focused day, Enter/Space anchors and moves focus one day ahead, Escape cancels,
-  and outside-month days are inert. Picking the first day still emits a half-open range
-  (`end: undefined`).
+- Range selection with the mouse: a press anchors the range. Drag and release to commit, or click a
+  second day. Pressing an end of the selected range and dragging adjusts that end.
+- The preview follows the hovered or focused day. Enter or Space anchors and moves focus one day
+  ahead, and Escape cancels. Outside-month days are inert.
+- Picking the first day still emits a half-open range, with `end: undefined`.
 
 ## API Reference
 

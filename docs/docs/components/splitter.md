@@ -16,7 +16,7 @@ import { Splitter } from '@hareui/vue'
 
 <ComponentPreview name="splitter/basic" />
 
-A splitter takes the full size of its parent; the parent needs a set height for the panels to show.
+A splitter takes the full size of its parent. The parent needs a set height for the panels to show.
 
 ## Anatomy
 
@@ -35,11 +35,11 @@ Each item describes one panel:
 - `id?: string`: a stable panel id.
 - `defaultSize?: number`: the size until the user resizes it. Panels without one share the space left.
 - `minSize?: number` and `maxSize?: number`: the size range a drag can reach.
-- `collapsible?: boolean` and `collapsedSize?: number`: lets the panel collapse to `collapsedSize` (default `0`) when dragged below `minSize`.
-- `sizeUnit?: '%' | 'px'`: sizes are percentages of the splitter by default; use `'px'` for fixed pixel sizes.
+- `collapsible?: boolean` and `collapsedSize?: number`: lets the panel collapse when dragged below `minSize`. It folds to `collapsedSize`, `0` by default.
+- `sizeUnit?: '%' | 'px'`: sizes are percentages of the splitter by default. Use `'px'` for fixed pixel sizes.
 - `order?: number`: the panel's position, needed when panels are rendered conditionally.
 - `slot?: string`: the name of the slot that fills the panel.
-- `class?: ClassValue` and `ui?: { panel?: ClassValue }`: classes for the panel. Put padding on an element inside the panel, not on the panel itself: the panel's padding adds to its size, so it no longer matches its sizes and can't collapse below the padding. The panel clips content that doesn't fit.
+- `class?: ClassValue` and `ui?: { panel?: ClassValue }`: classes for the panel. Put padding on an element inside the panel, not on the panel itself. Padding on the panel adds to its size, so the panel no longer matches its sizes and can't collapse below the padding. The panel clips content that doesn't fit.
 
 When an item has no `slot`, fill its panel with `#panel-0`, `#panel-1` and so on, by position. Any other fields on the item reach the slot through `item`.
 
@@ -62,7 +62,11 @@ Use the `type` prop to choose the handle's affordance:
 
 ### Variant
 
-Use the `variant` prop to match the line to the surface the splitter sits on: `primary` (default) for the page background, `secondary` for a surface, `tertiary` for a secondary surface.
+Use the `variant` prop to match the line to the surface the splitter sits on:
+
+- `primary` (default): the page background
+- `secondary`: a surface
+- `tertiary`: a secondary surface
 
 <ComponentPreview name="splitter/variants" />
 
@@ -80,7 +84,7 @@ Use the `disabled` prop to lock the current layout. The handles fade and ignore 
 
 ## Keyboard
 
-Handles are focusable `separator`s. Their `aria-valuenow`, `aria-valuemin` and `aria-valuemax` report the size of the panel before them.
+Handles are focusable `separator`s. Their `aria-value*` attributes report the size of the panel before them.
 
 | Key                        | Action                                                                                                   |
 | -------------------------- | -------------------------------------------------------------------------------------------------------- |
@@ -100,7 +104,7 @@ A collapsible item folds to `collapsedSize` once a drag pushes it past its `minS
 
 ### Collapsed size
 
-A `collapsedSize` above zero leaves a strip of the folded panel on screen, enough for an icon rail. The panel slot receives `collapsed`, `collapse()` and `expand()`. This example sizes the panel in pixels with `sizeUnit: 'px'`.
+A `collapsedSize` above zero leaves a strip of the folded panel on screen, enough for an icon rail. The panel slot receives the `collapsed` state and `collapse()` and `expand()` functions. This example sizes the panel in pixels with `sizeUnit: 'px'`.
 
 <ComponentPreview name="splitter/collapsed-size" />
 
@@ -112,7 +116,7 @@ Put a `Splitter` inside a panel to build two-dimensional layouts. Give each spli
 
 ### Custom handle
 
-Restyle the handle with `ui.handle` and replace its grip with the `resize-handle` slot. The handle carries `data-state="hover"` while a pointer is within reach and `data-state="drag"` while it is dragged.
+Restyle the handle with `ui.handle` and replace its grip with the `resize-handle` slot. The handle carries `data-state="hover"` while a pointer is within reach. It carries `data-state="drag"` while it is dragged.
 
 <ComponentPreview name="splitter/custom-handle" />
 
@@ -122,7 +126,7 @@ Set `auto-save-id` to save the layout to `localStorage` and restore it on the ne
 
 <ComponentPreview name="splitter/persistence" />
 
-Pass a `storage` object with `getItem(name)` and `setItem(name, value)` to save somewhere else, such as a cookie the server can read. With server rendering, give the splitter an `id` too, so the server and the browser agree on the panel ids.
+To save somewhere else, pass a `storage` object with `getItem(name)` and `setItem(name, value)`. For example, use a cookie the server can read. With server rendering, give the splitter an `id` too, so the server and the browser agree on the panel ids.
 
 ## Customization
 

@@ -141,7 +141,7 @@ In multiple mode the trigger lists the selected labels as text by default. For r
 
 ### Asynchronous Filtering
 
-Bind `v-model:input-value` to fetch on every search and set `:filter="false"` so the fetched `items` are shown as they are. The `#search-trailing` slot holds the spinner.
+Bind `v-model:input-value` to fetch on every search. Set `:filter="false"` so the fetched `items` are shown as they are. The `#search-trailing` slot holds the spinner.
 
 <ComponentPreview name="autocomplete/asynchronous-filtering" />
 
@@ -163,7 +163,7 @@ When used inside a [Surface](/docs/components/surface) component, use `variant="
 
 ### Virtualization
 
-Set `virtualize` to render only the rows in view, for efficient rendering of large datasets. Pass `{ estimateSize }` with the row height in pixels (default 50); sections and separators aren't rendered in this mode. Here the 1,000 users are filtered on name or email with `:filter="false"` and `v-model:input-value`.
+Set `virtualize` to render only the rows in view, for efficient rendering of large datasets. Pass `{ estimateSize }` with the row height in pixels, 50 by default. Sections and separators aren't rendered in this mode. Here the 1,000 users are filtered on name or email with `:filter="false"` and `v-model:input-value`.
 
 <ComponentPreview name="autocomplete/virtualization" />
 
@@ -183,7 +183,7 @@ Set `virtualize` to render only the rows in view, for efficient rendering of lar
 
 ### Tag Group Selection
 
-Set `:search="false"` to drop the search field; the list then takes focus as in [Select](/docs/components/select).
+Set `:search="false"` to drop the search field. The list then takes focus, as in [Select](/docs/components/select).
 
 <ComponentPreview name="autocomplete/tag-group-selection" />
 
@@ -251,10 +251,12 @@ app.use(
 
 Autocomplete follows the ARIA select-only pattern with a filter field:
 
-- The trigger button opens the popover with click, Enter, Space or the arrow keys; a mouse press opens on press start, so you can drag onto an option and release to select it. Typing on the closed trigger selects the next matching option
-- Focus moves into the search field; the arrow keys, Home / End and Page Up / Page Down move a virtual focus through the options (`aria-activedescendant`), Enter selects
+- The trigger button opens the popover with click, Enter, Space or the arrow keys
+- A mouse press opens it on press start, so you can drag onto an option and release to select it
+- Typing on the closed trigger selects the next matching option
+- Focus moves into the search field. The arrow keys, Home / End and Page Up / Page Down move a virtual focus through the options (`aria-activedescendant`). Enter selects
 - Escape clears the search text first, then closes the popover and returns focus to the trigger
-- The clear button is excluded from the tab order; with `clearable`, Backspace / Delete on the trigger also clears
+- The clear button is excluded from the tab order. With `clearable`, Backspace / Delete on the trigger also clears
 - A hidden native `<select>` carries `name`, form data and native `required` validation
 
 ## Related Components

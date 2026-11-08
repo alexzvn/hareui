@@ -17,7 +17,9 @@ import { Popover } from '@hareui/vue'
 
 ## Anatomy
 
-The default slot's first child is the trigger (receives the current `open` state). The `title` slot (or `title` prop) renders an optional heading, and the `content` slot (receives a `close` callback) renders the body.
+- The default slot's first child is the trigger. The slot receives the current `open` state.
+- Set the `title` prop or fill the `#title` slot to add a heading.
+- The `#content` slot renders the body. It receives a `close` function.
 
 ```vue
 <Popover title="Title" arrow>
@@ -27,8 +29,6 @@ The default slot's first child is the trigger (receives the current `open` state
   </template>
 </Popover>
 ```
-
-`ui` keys: `base`, `dialog`, `heading`, `arrow`.
 
 ## Examples
 

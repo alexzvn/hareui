@@ -46,7 +46,7 @@ and the cards inside take it as their default.
 ### Grid
 
 `layout="grid"` puts the cards in columns, each on its own raised surface. The group itself has no surface in this
-layout. This example drops to one column on phones; see [Columns](#columns).
+layout. This example drops to one column on phones, as described in [Columns](#columns).
 
 <ComponentPreview name="item-card-group/grid" />
 

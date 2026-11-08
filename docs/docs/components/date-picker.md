@@ -20,7 +20,14 @@ import { DatePicker } from '@hareui/vue'
 
 ## Anatomy
 
-DatePicker renders a [Label](/docs/components/label), a segmented [date-input-group](/docs/components/date-field) holding the field segments and a calendar trigger button, a [Description](/docs/components/description)/[FieldError](/docs/components/field-error), and a popover with an embedded [Calendar](/docs/components/calendar). The text parts come from props; each can be replaced with a slot.
+DatePicker renders, in order:
+
+- a [Label](/docs/components/label)
+- a segmented [date-input-group](/docs/components/date-field) with the field segments and a calendar trigger button
+- a [Description](/docs/components/description) or [FieldError](/docs/components/field-error)
+- a popover with an embedded [Calendar](/docs/components/calendar)
+
+The text parts come from props. Each can be replaced with a slot.
 
 ```vue
 <template>
@@ -52,7 +59,7 @@ DatePicker renders a [Label](/docs/components/label), a segmented [date-input-gr
 | —                  | `field-error`                   | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 | `popover`          | `date-picker-popover`           | the popover content wrapping the [Calendar](/docs/components/calendar)                                         |
 
-> **DatePicker** combines a segmented date field and a calendar popover into a single accessible component. Values are [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) objects (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`).
+> **DatePicker** combines a segmented date field and a calendar popover into a single accessible component. Values are [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) objects. Use `CalendarDate`, `CalendarDateTime` or `ZonedDateTime`.
 
 ## Examples
 
@@ -68,13 +75,18 @@ Bind the value with `v-model` to synchronize with other components or state mana
 
 ### Validation
 
-Set `invalid` with `error-message` to control the state yourself, or validate with `required`, `min-value`/`max-value`/`is-date-unavailable`, a `validate` function, or a surrounding [Form](/docs/components/form).
+Set `invalid` with `error-message` to control the state yourself. Or validate with any of these:
+
+- `required`
+- `min-value`, `max-value` or `is-date-unavailable`
+- a `validate` function
+- a surrounding [Form](/docs/components/form)
 
 <ComponentPreview name="date-picker/with-validation" />
 
 ### Format Options
 
-Control how values are displayed with `granularity`, `hour-cycle` and `hide-time-zone`. For granularities beyond `"day"`, the `#calendar` slot composes a [TimeField](/docs/components/time-field) alongside the Calendar to edit the time portion.
+Control how DatePicker values are displayed with props such as `granularity`, `hour-cycle` and `hide-time-zone`. For granularities beyond `"day"`, the `#calendar` slot composes a [TimeField](/docs/components/time-field) alongside the Calendar to edit the time portion.
 
 <ComponentPreview name="date-picker/format-options" />
 
@@ -92,7 +104,7 @@ The `#indicator` slot replaces the default calendar icon rendered inside the tri
 
 ### Render Function
 
-DatePicker has no `render` prop; attributes you pass to `DatePicker` fall through to the root element instead.
+DatePicker has no `render` prop. Attributes you pass to `DatePicker` fall through to the root element instead.
 
 <ComponentPreview name="date-picker/render-function" />
 
@@ -108,7 +120,7 @@ By default, DatePicker displays dates using the calendar system for the given `l
 
 ### Tailwind CSS
 
-The `#calendar` slot lets you fully restyle (or replace) the embedded Calendar; bind its `value`/`onSelect` to keep it wired to the picker.
+The `#calendar` slot lets you fully restyle or replace the embedded Calendar. Bind its `value` and `onSelect` to keep it wired to the picker.
 
 <ComponentPreview name="date-picker/custom-styles" />
 
@@ -127,7 +139,7 @@ app.use(
 ### Slots
 
 - `base` → `[data-slot="date-picker"]` – root field container (`inline-flex flex-col gap-1`)
-- `group`, `input`, `segment` → the internal `date-input-group`'s slots, shared with [DateField](/docs/components/date-field)/[TimeField](/docs/components/time-field)
+- `group`, `input`, `segment` → slots of the internal date input group, shared with [DateField](/docs/components/date-field) and [TimeField](/docs/components/time-field)
 - `trigger` → `[data-slot="date-picker-trigger"]` – button that opens the popover
 - `triggerIndicator` → `[data-slot="date-picker-trigger-indicator"]` – default/custom calendar icon
 - `popover` → `[data-slot="date-picker-popover"]` – popover content wrapping the Calendar
@@ -148,7 +160,7 @@ DatePicker sets these data attributes:
 
 - There is no option to force leading zeros on numeric segments, so the `format-options` demo
   drops that control.
-- Selecting a calendar day always closes the popover; this is not configurable. It is also why
+- Selecting a calendar day always closes the popover. This is not configurable. It is also why
   the `format-options` demo's inline time field only stays reachable before a date is picked.
 
 ## API Reference
@@ -173,10 +185,14 @@ DatePicker sets these data attributes:
 
 - The label's `for` points to the field's id (auto-generated with `useId()` unless `id` is set)
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the field and every segment; the error is announced via `role="alert"`
+- `invalid` sets `aria-invalid="true"` on the field and every segment
+- The error is announced via `role="alert"`
 - Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments, <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
-- `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own — no need to compute `invalid` yourself just for native-range feedback
-- The popover's calendar is reachable via the trigger button (named "Calendar") or <kbd>Alt</kbd>+<kbd>↓</kbd> on a segment, and focuses the selected date on open; it closes on <kbd>Esc</kbd> (even with the year picker open), an outside click or picking a date, and focus returns to the trigger
+- `min-value`, `max-value` and `is-date-unavailable` mark the field invalid on their own. You don't need to set `invalid` for range feedback
+- The trigger button is named "Calendar". It opens the popover, as does <kbd>Alt</kbd>+<kbd>↓</kbd> on a segment
+- On open, the calendar focuses the selected date
+- <kbd>Esc</kbd> closes the popover, even with the year picker open. An outside click or picking a date also closes it
+- On close, focus returns to the trigger
 
 ## Related Components
 

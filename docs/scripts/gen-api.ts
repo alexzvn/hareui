@@ -279,6 +279,9 @@ const entry = (
       'code-block.ts',
       'command-palette.ts',
       'editor.ts',
+      'editor-drag-handle.ts',
+      'map.ts',
+      'markdown.ts',
     ].map((file) => Bun.file(join(componentsDir, '..', file)).text()),
   )
 ).join('\n')

@@ -114,7 +114,7 @@ Set `:indicator="false"` when the selection ring is enough.
 
 ### Selection State in Content
 
-Every item slot (`default`, `label`, `description`, `icon`, `indicator`) receives `selected` and `disabled`. Here the daily minutes switch to the accent color on the selected card.
+Every item slot receives `selected` and `disabled`. That covers the default, label, description, icon and indicator slots. Here the daily minutes switch to the accent color on the selected card.
 
 <ComponentPreview name="radio-button-group/selection-state-in-content" />
 
@@ -163,8 +163,8 @@ The default indicator is the radio dot from [RadioGroup](/docs/components/radio-
 - `base` → `[data-slot="radio-button-group"]` – root (`flex flex-col gap-3`, or `grid` with `layout="grid"`)
 - `item` → `[data-slot="radio-button-group-item"]` – the card
 - `indicator` → `[data-slot="radio-button-group-indicator"]` – indicator in the top-end corner
-- `control` → `[data-slot="radio-control"]` – default radio circle; extends the [RadioGroup](/docs/components/radio-group) `control` classes with the card's hover, press and focus states
-- `controlIndicator` → `[data-slot="radio-indicator"]` – dot in the radio circle; extends the RadioGroup `indicator` classes
+- `control` → `[data-slot="radio-control"]` – default radio circle. It extends the [RadioGroup](/docs/components/radio-group) `control` classes with the card's hover, press and focus states
+- `controlIndicator` → `[data-slot="radio-indicator"]` – dot in the radio circle. It extends the RadioGroup `indicator` classes
 - `content` → `[data-slot="radio-button-group-item-content"]` – icon and text area
 - `icon` → `[data-slot="radio-button-group-item-icon"]` – leading icon (SVGs are sized to `size-6`)
 - `itemText` → `[data-slot="radio-button-group-item-text"]` – title, description and default slot
@@ -212,13 +212,14 @@ The card radius comes from `--radio-button-group-item-radius` (default `var(--ra
 ## Accessibility
 
 - The root has `role="radiogroup"`, named by the group label through `aria-labelledby`
-- Each card is a `role="radio"` button with `aria-checked`. It is named by its title through `aria-labelledby`, and its `aria-describedby` lists the card description, the default slot content and the group description and error
+- Each card is a `role="radio"` button with `aria-checked`. It is named by its title through `aria-labelledby`
+- Each card's `aria-describedby` lists the card description, the default slot content, and the group description and error
 - Without a visible group label, pass `aria-label` or `aria-labelledby` to `RadioButtonGroup`
 - Only the selected card (or the first enabled one) is in the tab order
-- Keyboard: arrow keys move focus to the next or previous enabled card and select it; <kbd>Space</kbd> selects the focused card; <kbd>Enter</kbd> submits the surrounding form
+- Keyboard: arrow keys move focus to the next or previous enabled card and select it. <kbd>Space</kbd> selects the focused card. <kbd>Enter</kbd> submits the surrounding form
 - `orientation` limits the arrow keys to one axis: <kbd>↑</kbd> / <kbd>↓</kbd> for `vertical`, <kbd>←</kbd> / <kbd>→</kbd> for `horizontal`. Both axes work when it is omitted
-- `readonly` sets `aria-readonly="true"` on the root; the cards stay focusable and announced, but the selection can't change
-- `invalid` sets `aria-invalid="true"` on the root; the error is announced via `role="alert"`
+- `readonly` sets `aria-readonly="true"` on the root. The cards stay focusable and announced, but the selection can't change
+- `invalid` sets `aria-invalid="true"` on the root. The error is announced via `role="alert"`
 
 ## Related Components
 

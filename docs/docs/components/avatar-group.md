@@ -27,8 +27,6 @@ count with the `#count` slot.
 </AvatarGroup>
 ```
 
-`ui` keys: `base`, `count`.
-
 ## Examples
 
 ### Max
@@ -86,9 +84,10 @@ app.use(
 Layout is controlled by the `grid` and `overlap` props. HareUI renders utility classes, so style
 through `class`, `ui` or `createHareUI`.
 
-Stacked layout uses negative margin between siblings (`--avatar-group-overlap`, default `0.5rem`).
-Clip mode masks overlapped avatars (not the last child / count) and optically nudges fallback
-glyphs; ring mode uses a thin box-shadow outline via `--background`.
+The stacked layout overlaps siblings with a negative margin. Set it with `--avatar-group-overlap`,
+`0.5rem` by default. Clip mode masks each overlapped avatar, except the last child and the count.
+It also nudges fallback glyphs so they look centered. Ring mode draws a thin outline in the
+`--background` color instead.
 
 ## API Reference
 
@@ -107,10 +106,10 @@ glyphs; ring mode uses a thin box-shadow outline via `--background`.
 ## Note
 
 - `size`, `color` and `variant` are passed to **direct `Avatar` children only**, and only where the Avatar doesn't set them
-- `max` truncates visible avatars when set and auto-counts the remaining ones; omit to show all
+- `max` limits the visible avatars and counts the rest automatically. Omit it to show all
 - For a known total (e.g. from the server), use the `#count` slot. It is not truncated by `max` and replaces the automatic count
 - `grid` disables overlap and uses a wrapping grid layout instead
-- `overlap` defaults to `"clip"` (crescent seam); use `"ring"` for the solid outline; no effect with `grid`
+- `overlap` defaults to `"clip"`, a crescent seam. Use `"ring"` for a solid outline. It has no effect with `grid`
 - No default `role="group"`. When the stack is meaningful (assignees, viewers), pass `role="group"` with `aria-label` or `aria-labelledby`
 
 ## Related Components

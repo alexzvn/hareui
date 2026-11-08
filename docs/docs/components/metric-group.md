@@ -42,8 +42,8 @@ The default. Metrics share the width equally in one row. Thin dividers sit betwe
 
 ### Stacked below a breakpoint
 
-Pass a breakpoint (`sm`, `md`, `lg` or `xl`) to stack only below it, so long values don't get cut off on phones. This
-group is a column under 768px; resize the preview to see it switch.
+Pass a breakpoint to stack only below it, so long values don't get cut off on phones. It takes `sm`, `md`, `lg` or `xl`.
+This group is a column under 768px. Resize the preview to see it switch.
 
 <ComponentPreview name="metric-group/stacked-below-md" />
 
@@ -55,7 +55,7 @@ Inside a `Widget`, pass `class="bg-transparent shadow-none"` so the metrics sit 
 
 ## Accessibility
 
-The group is a plain container; each `Metric` keeps its own `dl` semantics. `stacked` is exposed as `data-stacked`.
+The group is a plain container. Each `Metric` keeps its own `dl` semantics. `stacked` is exposed as `data-stacked`.
 
 ## Styling Reference
 

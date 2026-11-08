@@ -40,7 +40,9 @@ bun add d3-scale d3-shape
 
 ## Series
 
-Pass `series` to choose the fields, their names and their order. Use a map of key to config, or an array of keys and `{ key, ...config }` objects. Colors follow the chart palette by position (`--chart-3`, `--chart-1`, `--chart-4`, `--chart-2`, `--chart-5`); set `colors` for a different palette, or `color` on one series.
+Pass `series` to choose the fields, their names and their order. Use a map of key to config, or an array of keys and `{ key, ...config }` objects.
+
+Colors follow the chart palette by position: `--chart-3`, then `--chart-1`, `--chart-4`, `--chart-2` and `--chart-5`. Set `colors` for a different palette, or `color` on one series.
 
 ```vue
 <AreaChart
@@ -50,11 +52,24 @@ Pass `series` to choose the fields, their names and their order. Use a map of ke
 />
 ```
 
-Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`, `curve`, `strokeWidth`, `strokeDasharray`, `dot`, `activeDot`, `connectNulls`, `fill`, `fillOpacity` and `stack`. `curve`, `stroke-width`, `fill`, `fill-opacity`, `dot` and `connect-nulls` on the root apply to every series, and a series' own value wins. Areas fade from the series color by default (`fill="gradient"` with `fill-opacity` `[0.2, 0.02]`); use `'solid'`, `'none'` or a `url(#id)` of your own.
+Each series takes these keys:
+
+- `name`, `color` and `hide`
+- `tooltip`, `valueFormatter` and `yAxis`
+- `curve`, `strokeWidth`, `strokeDasharray` and `connectNulls`
+- `dot` and `activeDot`
+- `fill`, `fillOpacity` and `stack`
+
+These root props apply to every series, and a series' own value wins:
+
+- `curve`, `stroke-width` and `connect-nulls`
+- `fill`, `fill-opacity` and `dot`
+
+Areas fade from the series color by default. That is `fill="gradient"` with a `fill-opacity` of `[0.2, 0.02]`. Use `'solid'`, `'none'` or a `url(#id)` of your own instead.
 
 ## Axes and Formatting
 
-`x-axis` and `grid` take `false` to hide the part, or an object of `ChartXAxis` and `ChartGrid` props. `y-axis` takes `{ left, right }`, each `false` or an object of `ChartYAxis` props. The y axis fits its widest label.
+`x-axis` and `grid` take `false` to hide the part. They also take an object of `ChartXAxis` or `ChartGrid` props. `y-axis` takes `{ left, right }`. Each side is `false` or an object of `ChartYAxis` props. The y axis fits its widest label.
 
 - `value-formatter` formats values in the tooltip and on the y axis. It receives the series key (`''` on the axis).
 - `index-formatter` formats the categories on the x axis and in the tooltip header.
@@ -75,11 +90,15 @@ Each series takes `name`, `color`, `hide`, `tooltip`, `valueFormatter`, `yAxis`,
 
 ## Tooltip
 
-`tooltip` takes `false`, or `ChartTooltip` props such as `indicator`, `cursor`, `labelFormatter` and `valueFormatter`. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
+Set `tooltip` to `false` to hide it. Or pass `ChartTooltip` props, such as `indicator`, `cursor` or `valueFormatter`. Use the `#tooltip-footer` slot to add rows under the default ones, or `#tooltip` to replace the panel.
 
 ## Legend
 
-Set `legend` to draw a [ChartLegend](./chart-legend) beside the plot: `true` puts it at the bottom, or pass `'top'`, `'left'` or `'right'`. An object sets `ChartLegend` props, such as `indicator`, plus a `position`. Use `#legend-item` to redraw each row, or `#legend` to replace the list. Clicking an item hides or shows its series; bind `v-model:hidden` to read or set the hidden keys. To place the legend elsewhere, such as a card header, render `<ChartLegend :series="series" />` with the same `series` and `colors`.
+Set `legend` to draw a [ChartLegend](./chart-legend) beside the plot. `true` puts it at the bottom. Pass `'top'`, `'left'` or `'right'` for another side. An object sets `ChartLegend` props, such as `indicator`, plus a `position`.
+
+Use `#legend-item` to redraw each row, or `#legend` to replace the list. Clicking an item hides or shows its series. Bind `v-model:hidden` to read or set the hidden keys.
+
+To place the legend elsewhere, such as a card header, render `<ChartLegend :series="series" />`. Give it the same `series` and `colors` as the chart.
 
 ## Examples
 
@@ -91,7 +110,7 @@ Set `legend` to draw a [ChartLegend](./chart-legend) beside the plot: `true` put
 
 ### Metric With Trend
 
-`sparkline` drops the grid, axes and tooltip and thins the stroke, for a small trend next to a metric. `:tooltip="{ cursor: false, panel: false }"` keeps the hover dot and announces the hovered value to screen readers without drawing a panel. `index` gives each announcement its week, and `value-formatter` its unit.
+`sparkline` drops the grid, axes and tooltip and thins the stroke. Use it for a small trend next to a metric. `:tooltip="{ cursor: false, panel: false }"` keeps the hover dot without drawing a panel. Screen readers still hear the hovered value. `index` gives each announcement its week, and `value-formatter` its unit.
 
 <ComponentPreview name="area-chart/metric-with-trend" />
 
@@ -117,7 +136,7 @@ Without axes, the chart fills its container. Give the container a width and set 
 
 ### Tailwind CSS
 
-Use `class` for the container and `ui` for the drawn parts. Series colors come from `colors` or each series' `color`, which accept any CSS color or the `--chart-1` to `--chart-5` tokens.
+Use `class` for the container and `ui` for the drawn parts. Series colors come from `colors` or each series' `color`. Both accept any CSS color or the `--chart-1` to `--chart-5` tokens.
 
 ```vue
 <AreaChart :data="data" :ui="{ tick: 'fill-foreground', grid: 'stroke-accent/20' }">
@@ -127,7 +146,7 @@ Use `class` for the container and `ui` for the drawn parts. Series colors come f
 
 ### Gradient fills
 
-The default `'gradient'` fill fades the series color from `fillOpacity[0]` at the top to `fillOpacity[1]` at the bottom. For any other gradient, define a `<linearGradient>` in the default slot and pass its `url(#id)` as `fill`. It draws at full opacity, since the gradient sets its own, unless `fillOpacity` is a number:
+The default `'gradient'` fill fades the series color from `fillOpacity[0]` at the top to `fillOpacity[1]` at the bottom. For any other gradient, define a `<linearGradient>` in the default slot. Pass its `url(#id)` as `fill`. It draws at full opacity, since the gradient sets its own. Set `fillOpacity` to a number to change that:
 
 ```vue
 <AreaChart :data="data" index="month" :series="{ output: { fill: 'url(#output-fill)' } }">
@@ -178,7 +197,11 @@ Without `index` or `series`, the chart draws only the parts you put in its defau
 
 <ComponentPreview name="area-chart/composition" />
 
-Parts always draw in the same order (grid, series, axes, cursor), so template order doesn't matter. With `index` or `series` set, parts in the default slot draw next to the generated ones: turn a generated part off (for example `:x-axis="false"`) before adding your own. Hand-placed parts still read the root's `index` and `series`, so `<ChartXAxis />` picks up the categories and `<ChartArea data-key="paid" />` its name and color.
+Parts always draw in the same order: grid, series, axes, then cursor. Template order doesn't matter.
+
+With `index` or `series` set, parts in the default slot draw next to the generated ones. Turn a generated part off before adding your own, for example with `:x-axis="false"`.
+
+Hand-placed parts still read the root's `index` and `series`. So `<ChartXAxis />` picks up the categories, and `<ChartArea data-key="paid" />` picks up its name and color.
 
 | `ui` key    | `data-slot`                    | Element    | Description                                            |
 | ----------- | ------------------------------ | ---------- | ------------------------------------------------------ |
@@ -205,21 +228,21 @@ Parts always draw in the same order (grid, series, axes, cursor), so template or
 
 ### Slots
 
-- `base` → `[data-slot="area-chart"]` – block container; the chart fills its width unless you set `width`
+- `base` → `[data-slot="area-chart"]` – block container. The chart fills its width unless you set `width`
 - `surface` → `[data-slot="chart-surface"]` – the `<svg>`, with a focus ring when focused from the keyboard
 - `overlay` → `[data-slot="chart-overlay"]` – layer over the svg that positions the tooltip
-- `grid` → `[data-slot="chart-grid"]` – lines behind the plot; `stroke-muted` at 0.15 stroke opacity
+- `grid` → `[data-slot="chart-grid"]` – lines behind the plot, `stroke-muted` at 0.15 stroke opacity
 - `axis` → `[data-slot="chart-x-axis"]` – one group per axis (`chart-y-axis` for y)
 - `axisLine` → `[data-slot="chart-axis-line"]` – axis line, hidden
 - `tickLine` → `[data-slot="chart-tick-line"]` – tick marks, hidden
-- `tick` → `[data-slot="chart-tick"]` – axis label text; `fill-muted text-[10px]`
+- `tick` → `[data-slot="chart-tick"]` – axis label text, `fill-muted text-[10px]`
 - `series` → `[data-slot="chart-area"]` – group around each area, empty by default
 - `dot` → `[data-slot="chart-dot"]` – point markers, off by default. Set `dot` to show them
 - `activeDot` → `[data-slot="chart-active-dot"]` – circle at the hovered point, with a 2px `stroke-surface` ring
 - `cursor` → `[data-slot="chart-cursor"]` – hover guide: a 1px `stroke-muted` line, dashed 4/4
-- `label` → `[data-slot="chart-label"]` – `ChartLabel` text; `fill-muted text-[10px]`
+- `label` → `[data-slot="chart-label"]` – `ChartLabel` text, `fill-muted text-[10px]`
 - `tooltip` → `[data-slot="chart-tooltip-wrapper"]` – floating wrapper around the tooltip panel
-- `legend` → `[data-slot="chart-legend"]` – legend drawn from the `legend` prop; with it, `base` becomes a flex row or column
+- `legend` → `[data-slot="chart-legend"]` – legend drawn from the `legend` prop. With it, `base` becomes a flex row or column
 
 ## API Reference
 

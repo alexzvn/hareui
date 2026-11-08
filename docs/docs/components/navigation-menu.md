@@ -16,7 +16,7 @@ import { NavigationMenu } from '@hareui/vue'
 
 Use the NavigationMenu component to build a header navigation with dropdown content or a sidebar menu with collapsible sections.
 
-A horizontal menu doesn't wrap, so its labels truncate when it runs out of room. The horizontal examples on this page pass `:ui="{ linkLabel: 'max-sm:sr-only' }"` to show only the icons on small screens; the labels stay available to screen readers.
+A horizontal menu doesn't wrap, so its labels truncate when it runs out of room. The horizontal examples on this page pass `:ui="{ linkLabel: 'max-sm:sr-only' }"` to show only the icons on small screens. The labels stay available to screen readers.
 
 ### Items
 
@@ -45,13 +45,20 @@ Use the `items` prop as an array of objects with the following properties. Pass 
 | `href`, `to`, `as`, `target`, `rel`, `download`, `external`, `exact`, `replace` |                                         | Link props, see [Links](#links)                                                                          |
 | `class`, `ui`                                                                   |                                         | Classes for the item's link, per-slot classes                                                            |
 
-Child items accept `label`, `icon`, `onSelect`, `class` and the link properties. A `description` is shown in the horizontal dropdown content.
+Child items accept these properties:
+
+- `label` and `icon`
+- `onSelect` and `class`
+- the link properties
+- `description`, shown in the horizontal dropdown content
 
 Use `type: 'label'` to render an item as a group heading. Set `type: 'trigger'` on an item with both `href` and `children` to make it toggle its children instead of navigating.
 
 #### Links
 
-An item with `href` renders an `<a>`, an item without one renders a `<button>`. When `vue-router` is installed, `to` renders a `RouterLink` and the item becomes active when its route matches; add `exact` to match only the exact route. Setting `active` on an item overrides the router.
+An item with `href` renders an `<a>`. An item without one renders a `<button>`.
+
+When `vue-router` is installed, `to` renders a `RouterLink`, and the item becomes active when its route matches. Add `exact` to match only the exact route. Setting `active` on an item overrides the router.
 
 Use `as` to render the link as another component. `target: '_blank'` adds an external icon and `rel="noopener noreferrer"`.
 
@@ -103,7 +110,7 @@ Use the `color` prop to change the color of the active item.
 
 ### Variant
 
-Use the `variant` prop to change the style of the items. `pill` fills the background of hovered, open and active items; `link` only changes their text color.
+Use the `variant` prop to change the style of the items. `pill` fills the background of hovered, open and active items. `link` only changes their text color.
 
 <ComponentPreview name="navigation-menu/variant" minHeight="420px" />
 
@@ -143,9 +150,13 @@ Use the `unmount-on-hide` prop to keep the content in the DOM when it closes, fo
 
 Use `v-model` to control which item is open, matching the item's `value`. Use `default-value` to set the initial item without binding it. Change the field used for matching with the `value-key` prop.
 
-In a horizontal menu, or with `type="single"`, the model is a `string`. A vertical menu defaults to `type="multiple"` and its model is a `string[]`.
+In a horizontal menu, or with `type="single"`, the model is a `string`. A vertical menu defaults to `type="multiple"`, and its model is a `string[]`.
 
-Items without a `value` get one from their position: `item-0`, `item-1` for top-level items and `item-1-0` for nested ones, prefixed with `group-0-` when `items` has several groups.
+Items without a `value` get one from their position:
+
+- top-level items: `item-0`, `item-1`, …
+- nested items: `item-1-0`, …
+- with several groups in `items`, each value gets a `group-0-` prefix
 
 <ComponentPreview name="navigation-menu/control-active-item" align="start" minHeight="420px" />
 
@@ -157,7 +168,7 @@ Use the `tooltip` prop in a collapsed vertical menu to show each item's label in
 
 ### With popover in items
 
-Use the `popover` prop in a collapsed vertical menu to show an item's children in a popover. It opens on hover by default; set `mode: 'click'` to open it on click. Customize its content with the `#item-content` slot.
+Use the `popover` prop in a collapsed vertical menu to show an item's children in a popover. It opens on hover by default. Set `mode: 'click'` to open it on click. Customize its content with the `#item-content` slot.
 
 <ComponentPreview name="navigation-menu/with-popover" minHeight="360px" />
 
@@ -192,7 +203,13 @@ Set `slot` on an item to give it its own slots, used instead of the generic `#it
 
 ### With item actions
 
-Use the `actions` property in a vertical menu to add a ⋮ button at the end of the row that opens a [Dropdown](/docs/components/dropdown) with these items. Entries take an `icon`, `variant: 'danger'` for destructive ones, and an `onSelect` called when they're picked. Add more buttons before it with the `#item-actions` slot, or `#<slot>-actions` for a single item, and style them with the slot's `ui.linkAction()`.
+Use the `actions` property in a vertical menu to add a ⋮ button at the end of the row. It opens a [Dropdown](/docs/components/dropdown) with these entries. Each entry takes:
+
+- `icon`
+- `variant: 'danger'` for destructive actions
+- `onSelect`, called when the entry is picked
+
+Add more buttons before it with the `#item-actions` slot, or `#<slot>-actions` for a single item. Style them with the slot's `ui.linkAction()`.
 
 The buttons sit next to the link, not inside it, so they're separate tab stops with their own `aria-label` ("More actions for Reports"). They show on hover, keyboard focus and on the active row, always on touch screens and in the mobile sheet. The row stays highlighted while its menu is open, and the actions are hidden when the menu is `collapsed`.
 
@@ -238,7 +255,7 @@ A vertical menu in an app sidebar, with groups, a collapsible section, a badge, 
 
 ### Interactive States
 
-Hovered items get a `bg-default` background with the `pill` variant and `text-foreground` with the `link` variant, on devices that support hover. Other states:
+On devices that support hover, hovered items get a `bg-default` background with the `pill` variant. With the `link` variant they get `text-foreground`. Other states:
 
 - **Open**: `data-state="open"` on the trigger
 - **Active**: `aria-current="page"` when the router matches the item

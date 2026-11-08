@@ -18,9 +18,8 @@ import { AlertDialog } from '@hareui/vue'
 
 ## Anatomy
 
-A single `AlertDialog` component owns the whole structure. The first child is the trigger
-(`as-child`, merged directly onto its own root element); everything else is supplied
-through props and named slots.
+A single `AlertDialog` component owns the whole structure. The first child is the trigger. It is
+merged onto its own root element, like `as-child`. Everything else comes from props and named slots.
 
 ```vue
 <AlertDialog status="danger" title="Heading">
@@ -33,9 +32,6 @@ through props and named slots.
   </template>
 </AlertDialog>
 ```
-
-`ui` keys: `backdrop`, `container`, `dialog`, `header`, `icon`, `heading`, `body`,
-`footer`, `closeTrigger`.
 
 ## Examples
 
@@ -82,7 +78,7 @@ An alert dialog waits for an answer: by default, Escape and clicks on the backdr
 
 ### Close Methods
 
-The `#footer`, `#body` and `#content` slots receive a `close` function. `#content` replaces the whole dialog, so set `title` too: it stays as the dialog's accessible name, visually hidden.
+The `#footer`, `#body` and `#content` slots receive a `close` function. `#content` replaces the whole dialog. Set `title` too, so screen readers still get a name for the dialog.
 
 <ComponentPreview name="alert-dialog/close-methods" />
 
@@ -96,7 +92,7 @@ The `#footer`, `#body` and `#content` slots receive a `close` function. `#conten
 
 ### Custom Close Button
 
-`closeButton` takes `false` to hide the close button, or an object with an `icon` and a `label` (its accessible name) to customise it.
+Set `closeButton` to `false` to hide the close button. Pass an object with an `icon` and a `label` to customise it. The `label` is the button's accessible name.
 
 <ComponentPreview name="alert-dialog/custom-close-button" />
 
@@ -207,7 +203,7 @@ Implements the [WAI-ARIA AlertDialog pattern](https://www.w3.org/WAI/ARIA/apg/pa
 with focus management, keyboard handling and scroll lock:
 
 - **Focus trap**: focus is locked within the alert dialog
-- **Keyboard**: `Escape` closes it only when `keyboardDismissible` is `true`, `Tab` cycles elements.
+- **Keyboard**: `Escape` closes it only when `keyboardDismissible` is `true`. `Tab` cycles elements.
   A scrollable body is not a tab stop of its own
 - **Screen readers**: the dialog has `role="alertdialog"` and always has an accessible name,
   either the rendered title or a visually hidden one

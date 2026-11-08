@@ -112,13 +112,15 @@ app.use(
 ### Slots
 
 - `base` → `[data-slot="cell-select"]`: root container
-- `trigger` → `[data-slot="select-trigger"]`: the row (`h-9`, `rounded-field`, `px-3`, `gap-3`)
+- `trigger` → `[data-slot="select-trigger"]`: the row, `h-9` tall with `rounded-field` corners and `px-3` padding
 - `label` → `[data-slot="cell-select-label"]`: leading text, truncated when long
-- `value` → `[data-slot="select-value"]`: selected value in `text-muted`; shares the row width with the label and truncates
-- `indicator` → `[data-slot="select-indicator"]`: 12px chevrons icon; it doesn't rotate when open
+- `value` → `[data-slot="select-value"]`: selected value in `text-muted`. It shares the row width with the label and truncates
+- `indicator` → `[data-slot="select-indicator"]`: 12px chevrons icon. It doesn't rotate when open
 - `popover` → `[data-slot="select-popover"]`: at least as wide as the row
 
-The root is named `cell-select`; the other parts keep the [Select](/docs/components/select) names, and their classes are merged over the Select theme. The row background follows `--cell-bg-current`, so a plain `bg-*` class in `ui.trigger` wins in every state. The `secondary` variant sets `--cell-bg` and `--cell-bg-focus`.
+The root is named `cell-select`. The other parts keep the [Select](/docs/components/select) names, and their classes are merged over the Select theme.
+
+The row background follows `--cell-bg-current`, so a plain `bg-*` class in `ui.trigger` wins in every state. The `secondary` variant sets `--cell-bg` and `--cell-bg-focus`.
 
 ### Interactive States
 
@@ -148,9 +150,11 @@ The root is named `cell-select`; the other parts keep the [Select](/docs/compone
 
 ## Accessibility
 
-- The row is a `<button>` with `aria-haspopup="listbox"`; its name is the row label followed by the value
+- The row is a `<button>` with `aria-haspopup="listbox"`. Its name is the row label followed by the value
 - The listbox is labelled by the row label
-- Keyboard: <kbd>Enter</kbd>, <kbd>Space</kbd>, <kbd>↓</kbd> and <kbd>↑</kbd> open the popover, typing on the closed row selects the matching option, <kbd>Escape</kbd> closes and returns focus to the row
+- <kbd>Enter</kbd>, <kbd>Space</kbd>, <kbd>↓</kbd> and <kbd>↑</kbd> open the popover
+- Typing on the closed row selects the matching option
+- <kbd>Escape</kbd> closes the popover and returns focus to the row
 - A hidden native `<select>` carries `name` and `required` for forms
 
 ## Related Components

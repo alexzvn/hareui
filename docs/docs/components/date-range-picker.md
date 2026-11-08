@@ -20,7 +20,14 @@ import { DateRangePicker } from '@hareui/vue'
 
 ## Anatomy
 
-DateRangePicker renders a [Label](/docs/components/label), a segmented [date-input-group](/docs/components/date-field) holding the start and end segments, a range separator and a calendar trigger button, a [Description](/docs/components/description)/[FieldError](/docs/components/field-error), and a popover with an embedded [RangeCalendar](/docs/components/range-calendar). The text parts come from props; each can be replaced with a slot.
+DateRangePicker renders, in order:
+
+- a [Label](/docs/components/label)
+- a segmented [date-input-group](/docs/components/date-field) with the start and end segments, a range separator and a calendar trigger button
+- a [Description](/docs/components/description) or [FieldError](/docs/components/field-error)
+- a popover with an embedded [RangeCalendar](/docs/components/range-calendar)
+
+The text parts come from props. Each can be replaced with a slot.
 
 ```vue
 <template>
@@ -63,7 +70,7 @@ DateRangePicker renders a [Label](/docs/components/label), a segmented [date-inp
 | —                  | `field-error`                         | [FieldError](/docs/components/field-error) (while invalid, iff `error-message` / `#error` / validation errors) |
 | `popover`          | `date-range-picker-popover`           | the popover content wrapping the [RangeCalendar](/docs/components/range-calendar)                              |
 
-> **DateRangePicker** values are `{ start, end }` objects of [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) values (`CalendarDate`, `CalendarDateTime` or `ZonedDateTime`). `v-model` only emits complete ranges (or `null` once both ends are cleared).
+> **DateRangePicker** values are `{ start, end }` objects of [`@internationalized/date`](https://www.npmjs.com/package/@internationalized/date) values. Use `CalendarDate`, `CalendarDateTime` or `ZonedDateTime`. `v-model` only emits complete ranges (or `null` once both ends are cleared).
 
 ## Examples
 
@@ -81,7 +88,7 @@ DateRangePicker renders a [Label](/docs/components/label), a segmented [date-inp
 
 ### Format Options
 
-Control how DateRangePicker values are displayed with props such as `granularity`, `hour-cycle` and `hide-time-zone`. For granularities beyond `"day"`, the `#calendar` slot composes two [TimeField](/docs/components/time-field)s alongside the RangeCalendar; `onChange` commits a time edit without closing the popover.
+Control how DateRangePicker values are displayed with props such as `granularity`, `hour-cycle` and `hide-time-zone`. For granularities beyond `"day"`, the `#calendar` slot composes two [TimeField](/docs/components/time-field)s alongside the RangeCalendar. `onChange` commits a time edit without closing the popover.
 
 <ComponentPreview name="date-range-picker/format-options" />
 
@@ -103,7 +110,7 @@ The `#indicator` slot replaces the default calendar icon rendered inside the tri
 
 ### Render Function
 
-DateRangePicker has no `render` prop; attributes you pass to `DateRangePicker` fall through to the root element instead.
+DateRangePicker has no `render` prop. Attributes you pass to `DateRangePicker` fall through to the root element instead.
 
 <ComponentPreview name="date-range-picker/render-function" />
 
@@ -119,7 +126,7 @@ By default, DateRangePicker displays dates using the calendar system for the giv
 
 ### Tailwind CSS
 
-Style the field parts through `:ui`; the `#calendar` slot lets you fully restyle (or replace) the embedded RangeCalendar — bind its `value` and call `onSelect` to keep it wired to the picker.
+Style the field parts through `:ui`. The `#calendar` slot lets you fully restyle or replace the embedded RangeCalendar. Bind its `value` and call `onSelect` to keep it wired to the picker.
 
 <ComponentPreview name="date-range-picker/custom-styles" />
 
@@ -146,7 +153,7 @@ app.use(
 ### Slots
 
 - `base` → `[data-slot="date-range-picker"]` – root field container (`inline-flex flex-col gap-1`)
-- `group`, `inputContainer`, `input`, `segment` → the internal `date-input-group`'s slots, shared with [DateField](/docs/components/date-field)
+- `group`, `inputContainer`, `input`, `segment` → slots of the internal date input group, shared with [DateField](/docs/components/date-field)
 - `trigger` → `[data-slot="date-range-picker-trigger"]` – button that opens the popover
 - `triggerIndicator` → `[data-slot="date-range-picker-trigger-indicator"]` – default/custom calendar icon
 - `rangeSeparator` → `[data-slot="date-range-picker-range-separator"]` – separator between the start and end inputs
@@ -169,7 +176,7 @@ app.use(
   drops the "Force leading zeros" switch.
 - `v-model` only receives complete ranges (or `null`). While a range is being typed, the partial
   edit (`{ start, end: undefined }`) is held as a local draft and not emitted.
-- The field calls `is-date-unavailable` once per date with a `null` anchor; the anchor-aware form
+- The field calls `is-date-unavailable` once per date with a `null` anchor. The anchor-aware form
   only applies inside the embedded [RangeCalendar](/docs/components/range-calendar).
 - `min-value`/`max-value` validate the field but don't disable days in the popover's calendar, so
   out-of-range days are not greyed out there.
@@ -194,12 +201,14 @@ app.use(
 
 ## Accessibility
 
-- The label names the input group (`aria-labelledby`); each end is its own segmented spinbutton group
+- The label names the input group (`aria-labelledby`). Each end is its own segmented spinbutton group
 - The field's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
 - `start-name`/`end-name` submit each end through its own hidden input, which also carries native `required`
 - Keyboard: <kbd>←</kbd>/<kbd>→</kbd> move between segments (across the separator), <kbd>↑</kbd>/<kbd>↓</kbd> increment/decrement the focused segment (a 12-hour hour stays within its AM/PM period), <kbd>PgUp</kbd>/<kbd>PgDn</kbd> step it by a larger amount, <kbd>Home</kbd>/<kbd>End</kbd> set it to its minimum/maximum, digits type directly into the focused segment and auto-advance
-- The trigger button is named "Calendar"; <kbd>Alt</kbd>+<kbd>↓</kbd> on a segment also opens the popover
-- Opening the popover moves focus into the calendar (the range end, else today); <kbd>Esc</kbd> (even with the year picker open), an outside click or completing a range closes it and returns focus to the trigger
+- The trigger button is named "Calendar". <kbd>Alt</kbd>+<kbd>↓</kbd> on a segment also opens the popover
+- Opening the popover moves focus into the calendar: to the range end, else today
+- <kbd>Esc</kbd> closes it, even with the year picker open. An outside click or completing a range also closes it
+- On close, focus returns to the trigger
 - A range edited through the segments is validated when focus leaves the field, so a range that is briefly reversed mid-edit isn't flagged
 
 ## Related Components

@@ -28,8 +28,6 @@ Use the default slot to fill the toolbar. When its content overflows, the toolba
 </DashboardToolbar>
 ```
 
-`ui` keys: `root`, `left`, `right`.
-
 ## Examples
 
 ### Left and right
@@ -55,6 +53,16 @@ app.use(
   }),
 )
 ```
+
+## Styling Reference
+
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
+
+| `ui` key | `data-slot`               | Description          |
+| -------- | ------------------------- | -------------------- |
+| `root`   | `dashboard-toolbar`       | The toolbar row      |
+| `left`   | `dashboard-toolbar-left`  | Content at the start |
+| `right`  | `dashboard-toolbar-right` | Content at the end   |
 
 ## API
 

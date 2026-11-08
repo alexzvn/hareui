@@ -17,8 +17,8 @@ import { Button } from '@hareui/vue'
 
 ## Anatomy
 
-Button is a single component — no compound parts. Content is composed through named
-slots, or through the `label`, `leadingIcon`, `trailingIcon` and `avatar` props (a slot wins over its prop).
+Button is a single component, with no compound parts. Compose its content with named slots, or with
+props. A slot wins over its prop.
 
 ```vue
 <Button>
@@ -27,8 +27,6 @@ slots, or through the `label`, `leadingIcon`, `trailingIcon` and `avatar` props 
   <template #trailing />
 </Button>
 ```
-
-`ui` keys: `base`, `spinner`, `label`, `leadingIcon`, `trailingIcon`, `avatar`.
 
 ## Examples
 
@@ -50,12 +48,16 @@ slots, or through the `label`, `leadingIcon`, `trailingIcon` and `avatar` props 
 
 ### Label and Icon Props
 
-Pass `label` for the text, and `leadingIcon`, `trailingIcon` or `avatar` for what sits around it. A slot wins over its
-prop. A button with an icon or avatar but no label is square, like `iconOnly`; give it an `aria-label`.
+Pass `label` for the text. Pass `leadingIcon`, `trailingIcon` or `avatar` for what sits around it. A slot wins over its
+prop. A button with an icon or avatar but no label is square, like `iconOnly`. Give it an `aria-label`.
 
 An icon can be a component or a CSS class string. A class string only shows an icon when your app has a CSS icon
-plugin, such as `@iconify/tailwind4` (`icon-[lucide--x]`) or UnoCSS `presetIcons` (`i-lucide-x`). Iconify names such
-as `lucide:x` don't work as strings; pass an `Icon` component for those.
+plugin:
+
+- `@iconify/tailwind4`, with classes like `icon-[lucide--x]`
+- UnoCSS `presetIcons`, with classes like `i-lucide-x`
+
+Iconify names such as `lucide:x` don't work as strings. Pass an `Icon` component for those.
 
 <ComponentPreview name="button/label-and-icons" />
 
@@ -77,7 +79,7 @@ runs. A `type="submit"` button inside a `Form` also waits for the form's `@submi
 ### As a Link
 
 Give the button `to` or `href` and it renders a link. With vue-router installed, an internal `to` goes through
-`RouterLink`; anything else renders a plain `<a>`. A disabled link has no `href` and can't be focused.
+`RouterLink`. Anything else renders a plain `<a>`. A disabled link has no `href` and can't be focused.
 
 The button takes the same link props as [`Link`](./link#link-props):
 

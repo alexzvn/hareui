@@ -52,4 +52,4 @@ Each page in `llms-full.txt` is wrapped with a header in a consistent format bef
 > <Page description>
 ```
 
-`<ComponentPreview>` demo references are replaced with the actual Vue single-file component source in a fenced code block, and `<ApiTable>` references are replaced with a Markdown table of props, slots, or emits — so an AI assistant reading `llms-full.txt` sees real, copy-pasteable component code rather than a placeholder.
+Each demo is replaced with its Vue single-file component source in a fenced code block. Each API table is replaced with a Markdown table of props, slots or emits. An AI assistant reading `llms-full.txt` sees real, copy-pasteable component code, not a placeholder.

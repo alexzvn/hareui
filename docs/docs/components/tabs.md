@@ -154,17 +154,16 @@ app.use(
 
 - `base` → `[data-slot="tabs"]` – root container (`flex`, column in horizontal orientation)
 - `tabListContainer` → `[data-slot="tabs-list-container"]` – rounded background behind the list
-- `scroller` → `[data-slot="scroll-shadow"]` – scroll area around the list (scrollbar hidden); fades
-  overflowing edges and sets `data-left-scroll` / `data-right-scroll` (`data-top-scroll` /
-  `data-bottom-scroll` when vertical, `data-left-right-scroll` / `data-top-bottom-scroll` when both)
+- `scroller` → `[data-slot="scroll-shadow"]` – scroll area around the list, with the scrollbar hidden. It fades the overflowing edges and marks them with attributes:
+  - `data-left-scroll` / `data-right-scroll` when horizontal
+  - `data-top-scroll` / `data-bottom-scroll` when vertical
+  - `data-left-right-scroll` / `data-top-bottom-scroll` when both edges overflow
 - `scrollPrev` / `scrollNext` – chevron buttons, shown only while there's hidden content on that side
 - `tabList` → `[data-slot="tabs-list"]` – the row/column of triggers
 - `tab` → `[data-slot="tabs-tab"]` – one trigger per item
-- `separator` → `[data-slot="tabs-separator"]` – divider rendered in every tab when `separator` is
-  set; hidden (`opacity-0`) on the selected tab and the one following it
+- `separator` → `[data-slot="tabs-separator"]` – divider rendered in every tab when `separator` is set. It is hidden on the selected tab and the one after it.
 - `tabPanel` → `[data-slot="tabs-panel"]` – only the selected item's panel is mounted
-- `tabIndicator` → `[data-slot="tabs-indicator"]` – sliding selection indicator; its box comes from the
-  selected tab's `getBoundingClientRect()` via `--tabs-indicator-x/-y/-width/-height`
+- `tabIndicator` → `[data-slot="tabs-indicator"]` – sliding selection indicator. It follows the selected tab's box through the `--tabs-indicator-x/-y/-width/-height` variables.
 
 #### Orientation Attributes
 

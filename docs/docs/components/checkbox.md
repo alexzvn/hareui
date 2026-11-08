@@ -94,7 +94,7 @@ The Checkbox component supports two visual variants:
 
 ### Render Props
 
-The `#label`, `#description` and `#indicator` slots receive `{ state }` (`'checked' | 'unchecked' | 'indeterminate'`):
+The `#label`, `#description` and `#indicator` slots receive `{ state }`. It is `'checked'`, `'unchecked'` or `'indeterminate'`:
 
 <ComponentPreview name="checkbox/render-props" />
 
@@ -162,7 +162,8 @@ Checkbox sets these data attributes on its root:
 ## Accessibility
 
 - The clickable label (`[data-slot="checkbox-content"]`) is a native `<button role="checkbox">`, keyboard-operable with <kbd>Space</kbd>
-- `invalid` sets `aria-invalid="true"`; `aria-describedby` lists the description (`<id>-description`) and error (`<id>-error`) ids
+- `invalid` sets `aria-invalid="true"`
+- `aria-describedby` lists the description (`<id>-description`) and error (`<id>-error`) ids
 - `required` and `disabled` set the matching native/ARIA attributes
 - For a checkbox without a visible label, pass an `aria-label` via `$attrs`
 

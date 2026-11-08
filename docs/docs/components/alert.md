@@ -30,16 +30,14 @@ Alert is composed through props and named slots, rendered in a fixed order: `#le
 </Alert>
 ```
 
-- The indicator renders by default with the status icon; set `:indicator="false"` to omit it.
+- The indicator shows the status icon by default. Set `:indicator="false"` to hide it.
 - The title and description render only when their prop or slot is provided.
-
-`ui` keys: `base`, `indicator`, `content`, `title`, `description`, `close`.
 
 ## Examples
 
 ### Dismissible
 
-`closeButton` adds a close button (an object sets its `icon` and `label`). Clicking it hides the alert and sets `v-model:open` to `false`.
+`closeButton` adds a close button. Pass an object to set its `icon` and `label`. Clicking it hides the alert and sets `v-model:open` to `false`.
 
 <ComponentPreview name="alert/dismissible" />
 
@@ -81,8 +79,8 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `description` | `alert-description` | Alert description text (renders as `span`) |
 | `close`       | `alert-close`       | Close button, rendered with `closeButton`  |
 
-The `status` prop (`default`, `accent`, `success`, `warning`, `danger`) sets the colors. HareUI
-renders utility classes, so style through `class`, `ui` or `createHareUI`.
+The `status` prop sets the colors. HareUI renders utility classes, so style through `class`, `ui`
+or `createHareUI`.
 
 ### Interactive States
 

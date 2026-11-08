@@ -160,15 +160,16 @@ app.use(
 
 ### Slots
 
-- `base` → `[data-slot="checkbox-button-group"]`: root (`flex flex-col gap-3`, `grid` with `layout="grid"`)
+- `base` → `[data-slot="checkbox-button-group"]`: root. A `flex flex-col gap-3` column, or a `grid` with `layout="grid"`
 - `item` → `[data-slot="checkbox-button-group-item"]`: the card, with border, surface background and selection ring
-- `indicator` → `[data-slot="checkbox-button-group-indicator"]`: top-end indicator; `[data-custom="true"]` when it holds a custom icon
+- `indicator` → `[data-slot="checkbox-button-group-indicator"]`: top-end indicator. It gets `[data-custom="true"]` when it holds a custom icon
 - `content` → `[data-slot="checkbox-button-group-item-content"]`: content column, a row when an icon is present
 - `icon` → `[data-slot="checkbox-button-group-item-icon"]`: leading icon, `svg` sized to 24px
 - `itemText` → `[data-slot="checkbox-button-group-item-text"]`: title, description and default-slot content
-- `itemLabel` → `[data-slot="checkbox-button-group-item-label"]`, `itemDescription` → `[data-slot="checkbox-button-group-item-description"]`
+- `itemLabel` → `[data-slot="checkbox-button-group-item-label"]`: the title
+- `itemDescription` → `[data-slot="checkbox-button-group-item-description"]`: the description
 
-The default indicator uses the [Checkbox](/docs/components/checkbox) theme's `control` and `indicator` classes, so `variant` and global `checkbox` overrides apply to it.
+The default indicator uses the `control` and `indicator` classes of the [Checkbox](/docs/components/checkbox) theme. Its `variant` and global `checkbox` overrides apply to it too.
 
 ### Interactive States
 
@@ -208,10 +209,13 @@ The default indicator uses the [Checkbox](/docs/components/checkbox) theme's `co
 ## Accessibility
 
 - The root has `role="group"`, named by the label through `aria-labelledby` and described by the description and error through `aria-describedby`
-- Each card is a `<button role="checkbox">` with `aria-checked`. It is named by its title (`label` / `#label`) and described by its description, its default slot content and the group's description and error. Without a title, the card's text content names it
-- Every enabled card is its own tab stop; disabled cards are skipped
-- Keyboard: <kbd>Space</kbd> toggles the focused card; <kbd>Enter</kbd> submits the enclosing form
-- `invalid` sets `aria-invalid="true"` on every card; `readonly` sets `aria-readonly="true"` and keeps the selection
+- Each card is a `<button role="checkbox">` with `aria-checked`
+- A card is named by its title (`label` or `#label`). Without a title, the card's text content names it
+- A card is described by its description, its default slot content, and the group's description and error
+- Every enabled card is its own tab stop. Disabled cards are skipped
+- Keyboard: <kbd>Space</kbd> toggles the focused card. <kbd>Enter</kbd> submits the enclosing form
+- `invalid` sets `aria-invalid="true"` on every card
+- `readonly` sets `aria-readonly="true"` and keeps the selection
 - With `name`, the selected values are submitted as `name[0]`, `name[1]`, … like [CheckboxGroup](/docs/components/checkbox-group)
 
 ## Related Components

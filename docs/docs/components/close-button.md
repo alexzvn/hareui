@@ -25,8 +25,6 @@ A single `<button>` with a default close icon that the default slot can replace.
 </CloseButton>
 ```
 
-`ui` keys: `base`, `icon`.
-
 ## Examples
 
 ### Interactive

@@ -27,7 +27,7 @@ import { DashboardPanel } from '@hareui/vue'
 </DashboardPanel>
 ```
 
-Use the `default` slot instead of `header`, `body` and `footer` when you need full control over the content. It has no padding and no scroll container.
+When you need full control over the content, use the `default` slot instead of the three section slots. It has no padding and no scroll container.
 
 ## Examples
 

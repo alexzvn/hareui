@@ -13,7 +13,7 @@ import { ActionBar } from '@hareui/vue'
 ```
 
 The action bar is a pill-shaped [Toolbar](./toolbar) fixed to the bottom centre of the screen. It slides in when `open`
-turns `true` and out when it turns `false`. Bind it with `v-model:open`, or use `default-open` when you don't need to
+turns `true`, and out when it turns `false`. Bind it with `v-model:open`. Use `default-open` when you don't need to
 control it.
 
 The bar floats over the page, 24 px above the bottom edge (plus the safe area on phones). Leave about 6rem of padding
@@ -56,7 +56,7 @@ the button shrinks to its icon, and screen readers still read the label. Switch 
 
 ### Attached
 
-The bar has a surface background by default. Set `:attached="false"` to remove it; the rounding and the shadow stay.
+The bar has a surface background by default. Set `:attached="false"` to remove it. The rounding and the shadow stay.
 
 <ComponentPreview name="action-bar/detached" contain />
 
@@ -82,7 +82,7 @@ The same pattern with a selectable [ListView](./list-view).
 
 ### Custom Styles
 
-Use the `ui` prop to move the bar or restyle the pill; `class` applies to the pill.
+Use the `ui` prop to move the bar or restyle the pill. `class` applies to the pill.
 
 <ComponentPreview name="action-bar/custom-styles" contain />
 

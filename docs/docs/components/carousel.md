@@ -18,7 +18,7 @@ import { Carousel } from '@hareui/vue/carousel'
 
 ### Installation
 
-Import the carousel from `@hareui/vue/carousel`. Its embla packages are only needed when you import this entry; install the peer dependency:
+Import the carousel from `@hareui/vue/carousel`. Its embla packages are only needed when you import this entry. Install the peer dependency:
 
 ::: code-group
 
@@ -62,7 +62,7 @@ Each [plugin](#plugins) is a separate package, imported only when its prop is se
 </Carousel>
 ```
 
-The carousel is a `region` with an `aria-roledescription` of "carousel", and each slide is a `group` described as a "slide". Give the carousel a name with `aria-label`. When it has focus, the arrow keys of its orientation move between slides. Inside a slide, a text field keeps its arrow keys, as does any control that handles them itself (calls `preventDefault()`).
+Give the carousel a name with `aria-label`. See [Accessibility](#accessibility) for keyboard support.
 
 ## Type
 
@@ -82,7 +82,9 @@ Use the `type` prop to choose where the arrows sit. `in-place` (default) keeps t
 
 ## Items
 
-Each slide fills the viewport. To show several at once, set a `basis-*` class on the `item` slot with the `ui` prop. Slides have no gap by default; pad the slide content, or add `ps-*` to `item` and a matching negative `-ms-*` to `container`.
+Each slide fills the viewport. To show several at once, set a `basis-*` class on the `item` slot with the `ui` prop.
+
+Slides have no gap by default. Pad the slide content, or add `ps-*` to `item` and a matching negative `-ms-*` to `container`.
 
 <ComponentPreview name="carousel/several-per-view" />
 
@@ -112,7 +114,7 @@ Use the `dots` prop to show one dot per scroll position. With `slidesToScroll` i
 
 ## Thumbnails
 
-Use the `thumbnails` prop to show a row of thumbnail buttons below the slides, one per slide. A string item is used as the image; an object item uses its `thumbnail` and `alt` keys. The row scrolls to keep the selected thumbnail in view, and its edges fade while more thumbnails are hidden past them.
+Use the `thumbnails` prop to show a row of thumbnail buttons below the slides, one per slide. A string item is used as the image. An object item uses its `thumbnail` and `alt` keys. The row scrolls to keep the selected thumbnail in view. Its edges fade while more thumbnails are hidden past them.
 
 Use the `thumbnail` slot for any other content. It receives the `item`, its `index` and whether it is `selected`.
 
@@ -120,7 +122,7 @@ Use the `thumbnail` slot for any other content. It receives the `item`, its `ind
 
 ## Options
 
-Use the `options` prop to pass [Embla options](https://www.embla-carousel.com/api/options/) such as `align`, `slidesToScroll`, `dragFree`, `startIndex` or `breakpoints`. The scroll axis and direction follow the `orientation` and `dir` props.
+Use the `options` prop to pass [Embla options](https://www.embla-carousel.com/api/options/), such as `align`, `dragFree` or `breakpoints`. The scroll axis and direction follow the `orientation` and `dir` props.
 
 ### Wrapping around
 
@@ -238,6 +240,14 @@ app.use(
 ## Theme
 
 <ApiTheme component="Carousel" />
+
+## Accessibility
+
+- The carousel is a `region` with an `aria-roledescription` of "carousel"
+- Each slide is a `group` described as a "slide"
+- Give the carousel a name with `aria-label`
+- When the carousel has focus, the arrow keys of its orientation move between slides
+- Inside a slide, a text field keeps its arrow keys. So does any control that handles them itself by calling `preventDefault()`
 
 ## Related Components
 

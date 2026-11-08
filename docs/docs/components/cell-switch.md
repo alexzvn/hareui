@@ -109,7 +109,7 @@ The switch control keeps the [Switch](/docs/components/switch) theme, so `ui.swi
 ### Slots
 
 - `base` → `[data-slot="cell-switch"]`: root
-- `trigger` → `[data-slot="switch-content"]`: the row (`h-9`, `px-3`, `gap-3`, `rounded-field`)
+- `trigger` → `[data-slot="switch-content"]`: the row, `h-9` tall with `rounded-field` corners and `px-3` padding
 - `label` → `[data-slot="cell-switch-label"]`: label text, truncated with an ellipsis
 - `control` → `[data-slot="switch-control"]`: switch track
 - `thumb` → `[data-slot="switch-thumb"]`: switch thumb
@@ -146,9 +146,10 @@ The row background reads `--cell-bg-current`, so a plain `bg-*` class in `ui.tri
 ## Accessibility
 
 - The row is a `<button role="switch">` with `aria-checked`, so it is one tab stop
-- The row's text names the switch; set `aria-label` when the `#label` slot holds more than a short title
+- The row's text names the switch. Set `aria-label` when the `#label` slot holds more than a short title
 - Keyboard: <kbd>Space</kbd> toggles. <kbd>Enter</kbd> submits the surrounding form, as with a native checkbox
-- `readonly` sets `aria-readonly="true"`; `invalid` sets `aria-invalid="true"` and links the error with `aria-describedby`
+- `readonly` sets `aria-readonly="true"`
+- `invalid` sets `aria-invalid="true"` and links the error with `aria-describedby`
 
 ## Related Components
 

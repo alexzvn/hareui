@@ -23,13 +23,13 @@ import { Typography } from '@hareui/vue'
 <Typography type="h1">Heading</Typography>
 ```
 
-- `type` picks both the visual style and, unless `as` is set, the rendered element: `h1`–`h6` →
-  `<h1>`–`<h6>`, `body`/`body-sm`/`body-xs` → `<p>`, `code` → `<code>`.
-- `prose` switches to a rich-content container (`<div data-slot="prose">`): children are plain
-  HTML and receive a default typography rhythm instead of the `type` styles. `type`,
-  `align`, `color`, `weight` and `truncate` are ignored in this mode.
-
-`ui` keys: `base`, `prose`.
+- `type` picks the visual style. Unless `as` is set, it also picks the rendered element:
+  - `h1`–`h6` render `<h1>`–`<h6>`.
+  - `body`, `body-sm` and `body-xs` render `<p>`.
+  - `code` renders `<code>`.
+- `prose` turns the component into a rich-content container, `<div data-slot="prose">`. Its children are plain
+  HTML and get a default typography rhythm instead of the `type` styles.
+  In this mode, `type`, `align` and `color` are ignored. So are `weight` and `truncate`.
 
 ## Examples
 
@@ -41,8 +41,9 @@ import { Typography } from '@hareui/vue'
 
 <ComponentPreview name="typography/primitives" />
 
-- `Typography.Heading level={1..6}` maps to `type="h1"` through `type="h6"`.
-- `Typography.Paragraph size="base" | "sm" | "xs"` maps to `type="body"`, `"body-sm"` and `"body-xs"`.
+- `Typography.Heading` maps `level={1..6}` to `type="h1"` through `type="h6"`.
+- `Typography.Paragraph` maps `size="base" | "sm" | "xs"` to body text styles.
+  These are `type="body"`, `"body-sm"` and `"body-xs"`.
 - `Typography.Code` maps to `type="code"`.
 - `Typography.Prose` maps to the `prose` prop, which styles rich content passed as regular HTML children.
 

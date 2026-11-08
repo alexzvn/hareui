@@ -49,7 +49,7 @@ CellColorPicker is a [ColorPicker](/docs/components/color-picker) whose trigger 
 
 ### Controlled
 
-Bind the color with `v-model`. The emitted value is a `Color`; format it with `colorToString`. Here the terminal cursor below follows the row.
+Bind the color with `v-model`. The emitted value is a `Color`. Format it with `colorToString`. Here the terminal cursor below follows the row.
 
 <ComponentPreview name="cell-color-picker/controlled" />
 
@@ -112,14 +112,16 @@ app.use(
 ### Slots
 
 - `base` → `[data-slot="cell-color-picker"]`: root container (`flex`)
-- `trigger` → `[data-slot="color-picker-trigger"]`: the row (`h-9`, `rounded-field`, `px-3`, `gap-3`)
+- `trigger` → `[data-slot="color-picker-trigger"]`: the row, `h-9` tall with `rounded-field` corners and `px-3` padding
 - `label` → `[data-slot="cell-color-picker-label"]`: leading text, truncated when long
 - `valueDisplay` → `[data-slot="cell-color-picker-value-display"]`: hex value in `text-muted`
 - `swatch` → `[data-slot="color-swatch"]`: 20px round swatch
 - `popover` → `[data-slot="color-picker-popover"]`: popover panel
 - `presets` → `[data-slot="color-swatch-picker"]`: preset palette
 
-The root is named `cell-color-picker`; the other parts keep the [ColorPicker](/docs/components/color-picker) names. `trigger` and `popover` classes are merged over the ColorPicker theme. The row background follows `--cell-bg-current`, so a plain `bg-*` class in `ui.trigger` wins in every state. The `secondary` variant sets `--cell-bg`, `--cell-bg-hover` and `--cell-bg-focus`.
+The root is named `cell-color-picker`. The other parts keep the [ColorPicker](/docs/components/color-picker) names. `trigger` and `popover` classes are merged over the ColorPicker theme.
+
+The row background follows `--cell-bg-current`, so a plain `bg-*` class in `ui.trigger` wins in every state. The `secondary` variant sets `--cell-bg`, `--cell-bg-hover` and `--cell-bg-focus`.
 
 ### Interactive States
 
@@ -148,8 +150,10 @@ The root is named `cell-color-picker`; the other parts keep the [ColorPicker](/d
 
 ## Accessibility
 
-- The row is a `<button>` with `aria-haspopup="dialog"` and `aria-expanded`; its name is the label, the hex value and the swatch's color name
-- <kbd>Enter</kbd> or <kbd>Space</kbd> opens the popover and moves focus into it; <kbd>Escape</kbd> closes it and returns focus to the row
+- The row is a `<button>` with `aria-haspopup="dialog"` and `aria-expanded`
+- The row's name is the label, the hex value and the swatch's color name
+- <kbd>Enter</kbd> or <kbd>Space</kbd> opens the popover and moves focus into it
+- <kbd>Escape</kbd> closes the popover and returns focus to the row
 - The color area, hue slider and presets keep their own keyboard support
 
 ## Related Components

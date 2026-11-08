@@ -3,7 +3,11 @@ title: Overlays
 description: Open modals, drawers and alert dialogs from code with useOverlay, and await the value they close with.
 ---
 
-`useOverlay()` opens a `Modal`, `Drawer` or `AlertDialog` from code instead of from a trigger in your template. You register a component once with `create()`, then open it from any event handler, pass it props, update them while it is open, and `await` the value it closes with.
+`useOverlay()` opens a `Modal`, `Drawer` or `AlertDialog` from code, without a trigger in your template. Register a component once with `create()`. Then, from any event handler, you can:
+
+- open it and pass it props
+- update its props while it is open
+- `await` the value it closes with
 
 ## Setup
 
@@ -36,7 +40,7 @@ import { OverlayProvider } from '@hareui/vue'
 
 ## Usage
 
-Put the overlay in a component of its own, with a `Modal`, `Drawer` or `AlertDialog` as its root element. The provider binds `open` and listens for `update:open`, which pass through to that root, so the component doesn't declare them.
+Put the overlay in a component of its own, with a `Modal`, `Drawer` or `AlertDialog` as its root element. The component doesn't need to declare `open` or `update:open`. The provider binds them, and they pass through to that root.
 
 <<< @/demos/use-overlay/components/ReleaseNotesModal.vue
 
@@ -58,19 +62,27 @@ releaseNotes.open()
 
 ## Drawer
 
-Props passed to `open()` are merged over the ones given to `create()`, so one overlay can show different content each time. Every `open()` starts again from the `create()` props.
+Props passed to `open()` are merged over the ones given to `create()`, so one overlay can show different content each time. Each call starts again from the `create()` props.
 
 <ComponentPreview name="use-overlay/drawer" />
 
 ## Returning a Value
 
-`open()` returns a promise. It resolves with the payload of the component's `close` event, which also closes the overlay. When the overlay closes another way, such as through its close button, Escape or a press outside where the component allows them, or `closeAll()`, the promise resolves with `undefined`. The alert dialog below can only be dismissed with its close button.
+`open()` returns a promise. Emit `close` with a value to close the overlay and resolve the promise with that value.
+
+The promise resolves with `undefined` when the overlay closes any other way:
+
+- its close button
+- Escape or a press outside, where the component allows them
+- `closeAll()`
+
+The alert dialog below can only be dismissed with its close button.
 
 <<< @/demos/use-overlay/components/ConfirmRemoveDialog.vue
 
 <ComponentPreview name="use-overlay/return-value" />
 
-If you'd rather destructure, read the promise from the `result` field of what `open()` returns. With TypeScript, its type comes from the component's `close` event: `Promise<boolean | undefined>` here.
+If you'd rather destructure, read the promise from the `result` field of what `open()` returns. With TypeScript, the result type comes from the component's `close` event. Here it is `Promise<boolean | undefined>`.
 
 ## Updating Props
 
@@ -99,7 +111,7 @@ const confirm = (member: string): Promise<boolean | undefined> => {
 
 ## Provide and Inject
 
-Overlays render inside `App`, not where `open()` is called, so they can only `inject()` values provided above `App` (by app plugins or the root component). Pass anything else as props:
+Overlays render inside `App`, not where `open()` is called. So `inject()` only sees values provided above `App`, by app plugins or the root component. Pass anything else as props:
 
 ```ts
 const workspace = inject(workspaceKey)

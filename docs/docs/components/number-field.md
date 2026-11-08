@@ -20,7 +20,14 @@ import { NumberField } from '@hareui/vue'
 
 ## Anatomy
 
-NumberField renders a [Label](/docs/components/label), a group holding the decrement button, the input and the increment button, then a [Description](/docs/components/description) and a [FieldError](/docs/components/field-error). The text parts come from props; each can be replaced with a slot.
+NumberField renders, in order:
+
+- a [Label](/docs/components/label)
+- a group with the decrement button, the input and the increment button
+- a [Description](/docs/components/description)
+- a [FieldError](/docs/components/field-error)
+
+The text parts come from props. Each can be replaced with a slot.
 
 ```vue
 <template>
@@ -87,13 +94,13 @@ When used inside a surface ([Surface](/docs/components/surface) or another `bg-s
 
 ### Validation
 
-Set `invalid` with `error-message` to control the state yourself, or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form). `validate` receives the committed number (`NaN` while empty). `min` / `max` clamp the value rather than reporting an error.
+Set `invalid` with `error-message` to control the state yourself. Or validate with `required`, a `validate` function, or a surrounding [Form](/docs/components/form). `validate` receives the committed number, which is `NaN` while empty. `min` and `max` clamp the value rather than reporting an error.
 
 <ComponentPreview name="number-field/validation" />
 
 ### Controlled
 
-Bind the value with `v-model` to synchronize with other components or perform custom formatting. The value is `undefined` while the input is empty: clearing the input and blurring or pressing <kbd>Enter</kbd> commits `undefined` and an empty form value.
+Bind the value with `v-model` to synchronize with other components or perform custom formatting. The value is `undefined` while the input is empty. Clearing the input, then blurring or pressing <kbd>Enter</kbd>, commits `undefined` and an empty form value.
 
 <ComponentPreview name="number-field/controlled" />
 
@@ -101,7 +108,7 @@ Bind the value with `v-model` to synchronize with other components or perform cu
 
 An emptied field commits `undefined`. Use `v-model.nullable` to commit `null` instead, for example when an API expects an explicit empty value. `v-model.optional` keeps `undefined`. `0` is always a value.
 
-`NumberField` supports only the `nullable` and `optional` modifiers. `trim`, `number` and `lazy` don't apply: the value is already a number, parsed and committed by the field.
+`NumberField` supports only the `nullable` and `optional` modifiers. `trim`, `number` and `lazy` don't apply, because the field already parses and commits a number.
 
 <ComponentPreview name="number-field/model-modifiers" />
 
@@ -143,7 +150,7 @@ Use chevron icons in a vertical layout for a different visual style. The `ui` cl
 
 ### Render Function
 
-Attributes you pass to `NumberField` (other than `aria-label` / `aria-labelledby`, which go to the input) fall through to the root `div`.
+Attributes you pass to `NumberField` fall through to the root `div`. The exceptions are `aria-label` and `aria-labelledby`, which go to the input.
 
 <ComponentPreview name="number-field/render-function" />
 
@@ -173,7 +180,11 @@ app.use(
 - `incrementButton` → `[data-slot="number-field-increment-button"]` – button that increments the value
 - `decrementButton` → `[data-slot="number-field-decrement-button"]` – button that decrements the value
 
-The group's background follows `--number-field-group-bg-current`, so a plain `bg-*` class in `ui.group` wins in every state. The `secondary` variant reads `--number-field-group-bg`, `--number-field-group-bg-hover` and `--number-field-group-bg-focus`.
+The group's background follows `--number-field-group-bg-current`, so a plain `bg-*` class in `ui.group` wins in every state. The `secondary` variant reads these variables:
+
+- `--number-field-group-bg`
+- `--number-field-group-bg-hover`
+- `--number-field-group-bg-focus`
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
@@ -211,11 +222,14 @@ NumberField sets these data attributes:
 
 ## Accessibility
 
-- The input has `role="spinbutton"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax`
+- The input has `role="spinbutton"`. It sets `aria-valuenow`, `aria-valuemin` and `aria-valuemax`
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)
 - The input's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
-- Keyboard: <kbd>↑</kbd>/<kbd>↓</kbd> step by `step`, <kbd>PageUp</kbd>/<kbd>PageDown</kbd> also by one `step`, <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`, <kbd>Enter</kbd> commits typed text
+- `invalid` sets `aria-invalid="true"` on the input. The error is announced via `role="alert"`
+- Keyboard:
+  - <kbd>↑</kbd>/<kbd>↓</kbd> and <kbd>PageUp</kbd>/<kbd>PageDown</kbd> step by one `step`
+  - <kbd>Home</kbd>/<kbd>End</kbd> jump to `min`/`max`
+  - <kbd>Enter</kbd> commits typed text
 - The buttons are labelled "Increase"/"Decrease", aren't in the tab order, and repeat while held
 
 ## Related Components

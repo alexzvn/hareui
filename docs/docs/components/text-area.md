@@ -98,7 +98,7 @@ app.use(
 
 ## API Reference
 
-TextArea accepts all standard HTML `<textarea>` attributes (`rows`, `cols`, `maxlength`, `minlength`, `wrap`, `autocomplete`, …) plus the following:
+TextArea accepts all standard HTML `<textarea>` attributes plus the following:
 
 ### Props
 

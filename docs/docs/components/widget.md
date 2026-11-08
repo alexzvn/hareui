@@ -35,7 +35,7 @@ The widget is a `surface-secondary` shell around an elevated `surface` content a
 
 ### Legend
 
-Use the `legend` prop to show a coloured dot and a label per series at the end of the header. `color` takes any CSS colour, such as `var(--chart-3)`; match it to the chart's series colours.
+Use the `legend` prop to show a coloured dot and a label per series at the end of the header. Each entry's `color` takes any CSS colour, such as `var(--chart-3)`. Match it to the chart's series colours.
 
 <ComponentPreview name="widget/legend" />
 
@@ -66,10 +66,10 @@ Use the `title`, `description` and `legend` slots to put your own content in the
 
 ## Accessibility
 
-- The widget is a plain container; render it `as="section"` and give it an `aria-label` (or `aria-labelledby`
-  pointing at your own heading in the `title` slot) when it should be a landmark.
+- The widget is a plain container. To make it a landmark, render it `as="section"` and give it an `aria-label`.
+  You can use `aria-labelledby` instead, pointing at your own heading in the `title` slot.
 - The title is a `span`, not a heading. Put a heading element in the `title` slot if the page outline needs one.
-- The legend is a list (`ul` / `li`); the coloured dots are `aria-hidden`, so each entry is read by its label.
+- The legend is a list (`ul` / `li`). The coloured dots are `aria-hidden`, so each entry is read by its label.
 - Label the content yourself, for example a chart's `aria-label` or a table's `aria-label`.
 
 ## Styling Reference

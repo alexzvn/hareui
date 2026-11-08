@@ -14,7 +14,7 @@ The `DashboardNavbar` component shows a title and actions at the top of a [`Dash
 import { DashboardNavbar } from '@hareui/vue'
 ```
 
-Place it in the `#header` slot of a `DashboardPanel`. Use the `left` and `right` slots for content at either end of the bar, and the default slot for content in the center, which is shown from the `lg` breakpoint.
+Place it in the `#header` slot of a `DashboardPanel`. Use the `left` and `right` slots for content at either end of the bar. The default slot holds centered content, shown from the `lg` breakpoint.
 
 <ComponentPreview name="dashboard-navbar/basic" contain="24rem" />
 
@@ -32,7 +32,13 @@ Place it in the `#header` slot of a `DashboardPanel`. Use the `left` and `right`
 </DashboardNavbar>
 ```
 
-`ui` keys: `root`, `left`, `title`, `center`, `right`, `toggle`. Every slot receives the dashboard state (`sidebarOpen`, `toggleSidebar`, `sidebarCollapsed`, `collapseSidebar`, `sidebars`). The `leading`, `trailing` and `toggle` slots also receive the `ui` classes.
+Every slot receives the dashboard state:
+
+- `sidebarOpen` and `toggleSidebar()` for the mobile menu
+- `sidebarCollapsed` and `collapseSidebar()` for the docked sidebar
+- `sidebars`, the state of each side
+
+The `leading`, `trailing` and `toggle` slots also receive the resolved theme classes.
 
 ## Examples
 
@@ -50,7 +56,9 @@ Use the `#title` slot to display an icon next to the title text. Keep `#leading`
 
 ### Toggle
 
-Use the `toggle` prop to customize the [`DashboardSidebarToggle`](/docs/components/dashboard-sidebar-toggle) shown on mobile. It accepts any of its props, such as `variant`, `size` or `class`. Set it to `false` to hide the toggle. The ghost toggle is pulled into the padding (`-ms-2.5 md:-ms-2`, matching its 36px and 32px sizes) so its icon lines up with the content; a filled variant can drop that offset with `class: 'ms-0 md:ms-0'`.
+Use the `toggle` prop to customize the [`DashboardSidebarToggle`](/docs/components/dashboard-sidebar-toggle) shown on mobile. It accepts any of its props, such as `variant` or `size`. Set it to `false` to hide the toggle.
+
+The ghost toggle is pulled into the padding so its icon lines up with the content. The offset is `-ms-2.5 md:-ms-2`, matching its 36px and 32px sizes. A filled variant can drop it with `class: 'ms-0 md:ms-0'`.
 
 <ComponentPreview name="dashboard-navbar/toggle" contain="20rem" device="mobile" />
 
@@ -95,6 +103,19 @@ app.use(
   }),
 )
 ```
+
+## Styling Reference
+
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
+
+| `ui` key | `data-slot`               | Description                                      |
+| -------- | ------------------------- | ------------------------------------------------ |
+| `root`   | `dashboard-navbar`        | The bar                                          |
+| `left`   | `dashboard-navbar-left`   | Start of the bar: toggle, leading slot and title |
+| `title`  | `dashboard-navbar-title`  | The title, an `h1` by default                    |
+| `center` | `dashboard-navbar-center` | Centered default slot content, shown from `lg`   |
+| `right`  | `dashboard-navbar-right`  | End of the bar                                   |
+| `toggle` | `dashboard-navbar-toggle` | The mobile sidebar toggle                        |
 
 ## API
 

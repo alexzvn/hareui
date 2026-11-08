@@ -20,7 +20,13 @@ import { ListBox } from '@hareui/vue'
 
 ## Anatomy
 
-ListBox takes an `items` array. Each entry is an item (`{ value, label, description, disabled, variant, textValue, class }`), a section (`{ type: 'section', label, items }`) or a separator (`{ type: 'separator' }`). Each item renders a [Label](/docs/components/label), a [Description](/docs/components/description) and a checkmark indicator; slots replace any part.
+ListBox takes an `items` array. Each entry is one of:
+
+- an item: `{ value, label, description, disabled, variant, textValue, class }`
+- a section: `{ type: 'section', label, items }`
+- a separator: `{ type: 'separator' }`
+
+Each item renders a [Label](/docs/components/label), a [Description](/docs/components/description) and a checkmark indicator. Slots replace any part.
 
 ```vue
 <template>
@@ -96,7 +102,7 @@ Set `icon` on an item to show an icon before its label. The `#item-leading` slot
 
 ### Virtualization
 
-`virtualize` renders only the visible rows. The root must scroll (give it a height and `overflow-y-auto`), and `items` must be flat. Pass `{ estimateSize, overscan }` to tune the row height estimate.
+`virtualize` renders only the visible rows. The root must scroll, so give it a height and `overflow-y-auto`. `items` must be flat. Pass `{ estimateSize, overscan }` to tune the row height estimate.
 
 <ComponentPreview name="list-box/virtualization" />
 
@@ -106,7 +112,7 @@ Set `icon` on an item to show an icon before its label. The `#item-leading` slot
 
 ### Render Function
 
-ListBox has no `render` prop; attributes such as `data-custom` fall through to the root.
+ListBox has no `render` prop. Attributes such as `data-custom` fall through to the root.
 
 <ComponentPreview name="list-box/render-function" />
 
@@ -168,7 +174,7 @@ Implements the ARIA listbox pattern:
 
 - Arrow keys, Home/End, PageUp/PageDown and typeahead navigation (Space continues a typeahead search)
 - In `multiple` mode, Shift+Arrow/Home/End/Space and Shift+click select a range from the last selected item, and Meta/Ctrl+A selects every enabled item
-- Escape clears the selection; set `escape-key-behavior="none"` to leave Escape to a surrounding popover
+- Escape clears the selection. Set `escape-key-behavior="none"` to leave Escape to a surrounding popover
 - `highlight-on-hover` makes the hovered option the focused one, as in Select's popover
 - `aria-selected` on selectable options, `aria-multiselectable` in multiple mode
 - Disabled items are skipped by keyboard navigation

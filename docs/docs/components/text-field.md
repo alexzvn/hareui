@@ -19,7 +19,7 @@ import { TextField } from '@hareui/vue'
 
 ## Anatomy
 
-TextField renders a [Label](/docs/components/label), an [Input](/docs/components/input), a [Description](/docs/components/description) and a [FieldError](/docs/components/field-error) from props; each part can be replaced with a slot.
+TextField renders a [Label](/docs/components/label), an [Input](/docs/components/input), a [Description](/docs/components/description) and a [FieldError](/docs/components/field-error) from props. Each part can be replaced with a slot.
 
 ```vue
 <template>
@@ -84,7 +84,12 @@ When used inside a surface ([Surface](/docs/components/surface) or another `bg-s
 
 ### Validation
 
-Use `invalid` together with `error-message` to control the state yourself, or let the field validate: native attributes (`required`, `minlength`, `pattern`, …) and a `validate` function, inside a [Form](/docs/components/form) or on their own. Without `error-message`, the field shows the validation errors.
+Use `invalid` together with `error-message` to control the state yourself. Or let the field validate, inside a [Form](/docs/components/form) or on its own:
+
+- native attributes such as `required`, `minlength` and `pattern`
+- a `validate` function
+
+Without `error-message`, the field shows the validation errors.
 
 <ComponentPreview name="textfield/validation" />
 
@@ -116,7 +121,13 @@ Use [TextArea](/docs/components/text-area) instead of [Input](/docs/components/i
 
 ### Render Function
 
-Input attributes you pass to `TextField` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the input's description and error ids. Everything else falls through to the root `div`; render your own markup through the default slot.
+Input attributes you pass to `TextField` go to the input, for example:
+
+- `aria-label` and `aria-labelledby`
+- `autocomplete`, `maxlength` and `inputmode`
+
+The field adds its description and error ids to the input's `aria-describedby`.
+Everything else falls through to the root `div`. Render your own markup through the default slot.
 
 <ComponentPreview name="textfield/render-function" />
 
@@ -124,7 +135,7 @@ Input attributes you pass to `TextField` (`aria-label`, `aria-labelledby`, `auto
 
 ### Tailwind CSS
 
-Use the default slot to render your own `Label` and `Input` with custom classes; `Input`s inside the slot still read the field's id and state.
+Use the default slot to render your own `Label` and `Input` with custom classes. An `Input` inside the slot still reads the field's id and state.
 
 <ComponentPreview name="textfield/custom-styles" />
 
@@ -194,7 +205,7 @@ The default slot receives the field state:
 
 - The label's `for` points to the input id (auto-generated with `useId()` unless `id` is set)
 - The input's `aria-describedby` lists the ids of the rendered description (`<id>-description`) and error (`<id>-error`)
-- `invalid` sets `aria-invalid="true"` on the input; the error is announced via `role="alert"`
+- `invalid` sets `aria-invalid="true"` on the input. The error is announced via `role="alert"`.
 - `required` and `disabled` set the native attributes on the input
 
 ## Related Components

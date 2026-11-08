@@ -42,9 +42,17 @@ InputGroup wraps an input with optional prefix and suffix elements in one visual
 | `input`  | `input-group-textarea` | `<textarea>` (instead of the input, iff `textarea`) |
 | `suffix` | `input-group-suffix`   | `<div>` (iff `suffix` / `#suffix`)                  |
 
-Inside a TextField, the group takes the field's id, name, type, value, `variant`, `fullWidth` and its disabled, invalid, required and read-only states. Its own props win when set. Clicking anywhere in the group outside the input focuses the input, except on interactive content such as a suffix button, which keeps focus.
+Inside a TextField, the group takes from the field:
 
-Input attributes you pass to `InputGroup` (`aria-label`, `aria-labelledby`, `autocomplete`, `maxlength`, `inputmode`, …) go to the input, and `aria-describedby` is added to the field's description and error ids. Everything else stays on the group `div`.
+- the id, name, type and value
+- `variant` and `fullWidth`
+- the disabled, invalid, required and read-only states
+
+Its own props win when set. Clicking anywhere in the group outside the input focuses the input. Interactive content, such as a suffix button, keeps focus instead.
+
+Input attributes you pass to `InputGroup` go to the input. Examples are `aria-label`, `autocomplete` and `maxlength`. Everything else stays on the group `div`.
+
+Your `aria-describedby` is added to the field's description and error ids.
 
 ## Examples
 
@@ -224,7 +232,7 @@ app.use(
 
 ### Slots
 
-- `base` → `[data-slot="input-group"]` – root container with border, background and flex layout. Uses `min-h-9` and `items-center`, switching to `items-start` with auto height when a textarea is present.
+- `base` → `[data-slot="input-group"]` – root container with border, background and flex layout. It uses `min-h-9` and `items-center`. With a textarea it switches to `items-start` and auto height.
 - `input` → `[data-slot="input-group-input"]` / `[data-slot="input-group-textarea"]` – the input (or textarea) with a transparent background and no border. The textarea adds a minimum height and vertical resize.
 - `prefix` → `[data-slot="input-group-prefix"]` – prefix container with the start-side radius. Aligns to the top with a textarea.
 - `suffix` → `[data-slot="input-group-suffix"]` – suffix container with the end-side radius. Aligns to the top with a textarea.

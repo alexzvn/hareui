@@ -27,8 +27,6 @@ import { Chip } from '@hareui/vue'
 </Chip>
 ```
 
-`ui` keys: `base`, `label`.
-
 ## Examples
 
 ### Variants

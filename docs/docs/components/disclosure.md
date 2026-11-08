@@ -30,9 +30,7 @@ Disclosure is composed through props and named slots:
 ```
 
 - Without `#trigger`, a `<button data-slot="disclosure-trigger">` renders `title` followed by the indicator.
-- With `#trigger`, the slotted element (e.g. `Button`) receives `aria-expanded`, `aria-controls` and the toggle handler.
-
-`ui` keys: `base`, `heading`, `trigger`, `indicator`, `content`, `body`, `bodyInner`.
+- With `#trigger`, your element (for example a Button) gets the toggle handler. It also receives `aria-expanded` and `aria-controls`.
 
 ## Examples
 
@@ -78,6 +76,8 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `trigger`   | `disclosure-trigger`   | Trigger button styles             |
 | `indicator` | `disclosure-indicator` | Chevron indicator styles          |
 | `content`   | `disclosure-content`   | Content container with animations |
+| `body`      | `disclosure-body`      | Body wrapper inside the content   |
+| `bodyInner` | -                      | Inner wrapper around the body     |
 
 ### Interactive States
 

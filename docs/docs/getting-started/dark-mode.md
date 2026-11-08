@@ -77,7 +77,7 @@ const { theme, setTheme } = useDark()
 ```
 
 ::: tip
-If your app already uses [VueUse](https://vueuse.org/), its [`useDark`](https://vueuse.org/core/useDark/) composable covers the same `prefers-color-scheme` detection, `localStorage` persistence, and class toggling — pass `{ selector: 'html', valueDark: 'dark' }` and skip writing your own.
+If your app already uses [VueUse](https://vueuse.org/), you can skip writing your own composable. Its [`useDark`](https://vueuse.org/core/useDark/) composable covers the same system preference detection, `localStorage` persistence and class toggling. Pass it `{ selector: 'html', valueDark: 'dark' }`.
 :::
 
 ## Styling for Both Themes

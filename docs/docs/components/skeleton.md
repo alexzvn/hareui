@@ -17,9 +17,7 @@ import { Skeleton } from '@hareui/vue'
 
 ## Anatomy
 
-Skeleton is a single element. Size and shape come from `class`; the default slot is optional.
-
-`ui` keys: `base`.
+Skeleton is a single element. Set its size and shape with `class`. The default slot is optional.
 
 ## Examples
 
@@ -121,7 +119,7 @@ The Skeleton root has no `data-slot`.
 | -------- | -------------------------------------------------------- |
 | `base`   | Base skeleton styles with background and rounded corners |
 
-The `animationType` prop selects the animation (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
+The `animationType` prop selects the animation. Style it through `class`, `ui` or `createHareUI`:
 
 - `shimmer` (default): shimmer animation with a gradient
 - `pulse`: Tailwind's `animate-pulse`
