@@ -1,6 +1,10 @@
-import type { ChainedCommands, Editor } from '@tiptap/vue-3'
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model'
+import { NodeSelection, TextSelection } from '@tiptap/pm/state'
+import type { Selection } from '@tiptap/pm/state'
+import { Extension } from '@tiptap/vue-3'
+import type { ChainedCommands, CommandProps, Editor } from '@tiptap/vue-3'
 
-import type { EditorHandler, EditorHandlers } from './Editor.types'
+import type { EditorCommand, EditorHandler, EditorHandlers } from './Editor.types'
 
 type Command = (...args: unknown[]) => unknown
 
@@ -191,6 +195,165 @@ const clearFormattingHandler: EditorHandler = {
   isActive: () => false,
 }
 
+type BlockState = {
+  doc: ProseMirrorNode
+  selection: Selection
+}
+
+type Block = {
+  node: ProseMirrorNode
+  pos: number
+}
+
+type MoveDirection = 'up' | 'down'
+
+// Without a `pos`, the block is the selected node or the top-level block holding the cursor.
+const resolveBlockPos = ({ selection }: BlockState, pos?: number) => {
+  if (pos !== undefined) return pos
+  if (selection instanceof NodeSelection) return selection.from
+
+  return selection.$from.depth > 0 ? selection.$from.before(1) : undefined
+}
+
+const resolveBlock = (state: BlockState, pos?: number): Block | undefined => {
+  const blockPos = resolveBlockPos(state, pos)
+  const node = blockPos === undefined ? null : state.doc.nodeAt(blockPos)
+
+  return node && blockPos !== undefined ? { node, pos: blockPos } : undefined
+}
+
+// The sibling the block swaps places with; none at the edge of its parent.
+const getSibling = (
+  doc: ProseMirrorNode,
+  { block, direction }: { block: Block; direction: MoveDirection },
+) => {
+  const $pos = doc.resolve(block.pos)
+  const index = $pos.index() + (direction === 'up' ? -1 : 1)
+
+  return index >= 0 && index < $pos.parent.childCount ? $pos.parent.child(index) : undefined
+}
+
+// Keeps a selection that sat on or inside the block with it at its new position.
+const followBlock = ({
+  tr,
+  block,
+  target,
+}: {
+  tr: CommandProps['tr']
+  block: Block
+  target: number
+}) => {
+  const { selection } = tr
+  const end = block.pos + block.node.nodeSize
+  const isNodeSelected = selection instanceof NodeSelection && selection.from === block.pos
+  const isInside = selection.from >= block.pos && selection.to <= end
+
+  tr.delete(block.pos, end).insert(target, block.node)
+
+  if (isNodeSelected) {
+    tr.setSelection(NodeSelection.create(tr.doc, target))
+    return
+  }
+
+  if (!isInside) return
+
+  const shift = target - block.pos
+  tr.setSelection(TextSelection.create(tr.doc, selection.from + shift, selection.to + shift))
+}
+
+const createMoveCommand =
+  ({ direction, pos }: { direction: MoveDirection; pos?: number }) =>
+  ({ tr, dispatch }: CommandProps) => {
+    const block = resolveBlock(tr, pos)
+    const sibling = block && getSibling(tr.doc, { block, direction })
+    if (!block || !sibling) return false
+    if (!dispatch) return true
+
+    const target = direction === 'up' ? block.pos - sibling.nodeSize : block.pos + sibling.nodeSize
+    followBlock({ tr, block, target })
+
+    return true
+  }
+
+const createMoveHandler = (direction: MoveDirection): EditorHandler => ({
+  canExecute: (editor, command) => {
+    const block = resolveBlock(editor.state, command?.pos)
+
+    return !!block && !!getSibling(editor.state.doc, { block, direction })
+  },
+  execute: (editor, command) =>
+    editor
+      .chain()
+      .focus()
+      .command(createMoveCommand({ direction, pos: command?.pos })),
+  isActive: () => false,
+})
+
+const duplicateHandler: EditorHandler = {
+  canExecute: (editor, command) => !!resolveBlock(editor.state, command?.pos),
+  execute: (editor, command) =>
+    editor
+      .chain()
+      .focus()
+      .command(({ tr, dispatch }) => {
+        const block = resolveBlock(tr, command?.pos)
+        if (!block) return false
+
+        dispatch?.(tr.insert(block.pos + block.node.nodeSize, block.node))
+
+        return true
+      }),
+  isActive: () => false,
+}
+
+const deleteHandler: EditorHandler = {
+  canExecute: (editor, command) => !!resolveBlock(editor.state, command?.pos),
+  execute: (editor, command) =>
+    editor
+      .chain()
+      .focus()
+      .command(({ tr, dispatch }) => {
+        const block = resolveBlock(tr, command?.pos)
+        if (!block) return false
+
+        dispatch?.(tr.delete(block.pos, block.pos + block.node.nodeSize))
+
+        return true
+      }),
+  isActive: () => false,
+}
+
+// Types the trigger character of a suggestion or mention menu, after a space when it would touch other text.
+const createTriggerHandler = (defaultChar: string): EditorHandler => {
+  const resolveText = (editor: Editor, command?: EditorCommand) => {
+    const char = command?.char ?? defaultChar
+    const { from } = editor.state.selection
+    const before = editor.state.doc.textBetween(Math.max(0, from - 1), from)
+
+    return before === '' || /\s/.test(before) ? char : ` ${char}`
+  }
+
+  return {
+    canExecute: (editor, command) =>
+      canRun(editor, { name: 'insertContent', args: [resolveText(editor, command)] }),
+    execute: (editor, command) =>
+      editor.chain().focus().insertContent(resolveText(editor, command)),
+    isActive: () => false,
+    isDisabled: (editor) => editor.isActive('codeBlock'),
+  }
+}
+
+/** Alt+Shift+Up and Alt+Shift+Down move the block at the cursor, like dragging it with an `EditorDragHandle`. */
+export const BlockKeymap = Extension.create({
+  name: 'blockKeymap',
+  addKeyboardShortcuts: () => ({
+    'Alt-Shift-ArrowUp': ({ editor }) =>
+      editor.commands.command(createMoveCommand({ direction: 'up' })),
+    'Alt-Shift-ArrowDown': ({ editor }) =>
+      editor.commands.command(createMoveCommand({ direction: 'down' })),
+  }),
+})
+
 /** Creates the built-in handlers, keyed by command kind. */
 export const createEditorHandlers = (): EditorHandlers => ({
   mark: markHandler,
@@ -208,4 +371,10 @@ export const createEditorHandlers = (): EditorHandlers => ({
   undo: createHistoryHandler('undo'),
   redo: createHistoryHandler('redo'),
   clearFormatting: clearFormattingHandler,
+  duplicate: duplicateHandler,
+  delete: deleteHandler,
+  moveUp: createMoveHandler('up'),
+  moveDown: createMoveHandler('down'),
+  suggestion: createTriggerHandler('/'),
+  mention: createTriggerHandler('@'),
 })

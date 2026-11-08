@@ -10,6 +10,7 @@ import type {
 import EditorToolbar from '@/components/editor-toolbar/EditorToolbar.vue'
 import type { EditorHandler, EditorProps } from '@/components/editor/Editor.types'
 import Editor from '@/components/editor/Editor.vue'
+import { createEditorHandlers } from '@/components/editor/handlers'
 
 const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
 
@@ -232,6 +233,97 @@ describe('Editor', () => {
     await mountEditor({ props: { modelValue: '<p>abc</p>' }, footer: true })
 
     expect(document.querySelector('[data-slot=editor-footer]')?.textContent).toBe('3 chars')
+  })
+})
+
+describe('Editor block and trigger handlers', () => {
+  const handlers = createEditorHandlers()
+  const PARAGRAPHS = '<p>One</p><p>Two</p><p>Three</p>'
+
+  // Position just before the paragraph "Two".
+  const TWO = 5
+
+  it('duplicates the block at `pos`', async () => {
+    const { editor, model } = await mountEditor({ props: { modelValue: PARAGRAPHS } })
+
+    handlers.duplicate.execute(editor(), { kind: 'duplicate', pos: TWO }).run()
+
+    expect(model.value).toBe('<p>One</p><p>Two</p><p>Two</p><p>Three</p>')
+  })
+
+  it('deletes the block at the cursor without `pos`', async () => {
+    const { editor, model } = await mountEditor({ props: { modelValue: PARAGRAPHS } })
+
+    editor().commands.setTextSelection(TWO + 2)
+    handlers.delete.execute(editor(), { kind: 'delete' }).run()
+
+    expect(model.value).toBe('<p>One</p><p>Three</p>')
+  })
+
+  it('moves the block at `pos` up and down', async () => {
+    const { editor, model } = await mountEditor({ props: { modelValue: PARAGRAPHS } })
+
+    handlers.moveUp.execute(editor(), { kind: 'moveUp', pos: TWO }).run()
+
+    expect(model.value).toBe('<p>Two</p><p>One</p><p>Three</p>')
+
+    handlers.moveDown.execute(editor(), { kind: 'moveDown', pos: 0 }).run()
+
+    expect(model.value).toBe('<p>One</p><p>Two</p><p>Three</p>')
+  })
+
+  it('cannot move the first block up or the last block down', async () => {
+    const { editor } = await mountEditor({ props: { modelValue: PARAGRAPHS } })
+
+    expect(handlers.moveUp.canExecute(editor(), { kind: 'moveUp', pos: 0 })).toBe(false)
+    expect(handlers.moveDown.canExecute(editor(), { kind: 'moveDown', pos: 10 })).toBe(false)
+    expect(handlers.moveDown.canExecute(editor(), { kind: 'moveDown', pos: TWO })).toBe(true)
+  })
+
+  it('moves the block at the cursor with Alt+Shift+Arrow keys and keeps the cursor in it', async () => {
+    const { editor, model } = await mountEditor({ props: { modelValue: PARAGRAPHS } })
+
+    editor().commands.setTextSelection(TWO + 2)
+
+    prose().dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'ArrowDown',
+        altKey: true,
+        shiftKey: true,
+        bubbles: true,
+      }),
+    )
+
+    expect(model.value).toBe('<p>One</p><p>Three</p><p>Two</p>')
+    expect(editor().state.selection.$from.parent.textContent).toBe('Two')
+  })
+
+  it('types the suggestion trigger after a space when it follows text', async () => {
+    const { editor, model } = await mountEditor({ props: { modelValue: '<p>Hi</p>' } })
+
+    editor().commands.setTextSelection(3)
+    handlers.suggestion.execute(editor(), { kind: 'suggestion' }).run()
+
+    expect(model.value).toBe('<p>Hi /</p>')
+  })
+
+  it('types the mention trigger, or `char`, without a space at the start of a line', async () => {
+    const { editor, model } = await mountEditor({ props: { modelValue: '<p></p>' } })
+
+    editor().commands.setTextSelection(1)
+    handlers.mention.execute(editor(), { kind: 'mention' }).run()
+
+    expect(model.value).toBe('<p>@</p>')
+
+    handlers.mention.execute(editor(), { kind: 'mention', char: '#' }).run()
+
+    expect(model.value).toBe('<p>@ #</p>')
+  })
+
+  it('leaves the mention node out when mention is false', async () => {
+    const { editor } = await mountEditor({ props: { modelValue: '<p>Hi</p>', mention: false } })
+
+    expect(editor().schema.nodes.mention).toBeUndefined()
   })
 })
 
