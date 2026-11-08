@@ -18,6 +18,7 @@ export default defineConfig({
         'src/command-palette.ts',
         'src/editor.ts',
         'src/editor-drag-handle.ts',
+        'src/map.ts',
         'src/markdown.ts',
         'src/locale/index.ts',
         'src/vite.ts',

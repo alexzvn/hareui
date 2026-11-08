@@ -1,0 +1,90 @@
+{
+  "attribution": "City coordinates: OpenStreetMap contributors (ODbL)",
+  "people": [
+    {
+      "id": "p1",
+      "name": "Marina Okafor-Silva",
+      "role": "Product designer",
+      "city": "São Paulo",
+      "long": -46.633309,
+      "lat": -23.55052,
+      "timeZone": "America/Sao_Paulo",
+      "color": "accent"
+    },
+    {
+      "id": "p2",
+      "name": "Elias Brandt",
+      "role": "Frontend engineer",
+      "city": "Berlin",
+      "long": 13.404954,
+      "lat": 52.520008,
+      "timeZone": "Europe/Berlin",
+      "color": "success"
+    },
+    {
+      "id": "p3",
+      "name": "Wanjiru Kamau",
+      "role": "Engineering manager",
+      "city": "Nairobi",
+      "long": 36.821946,
+      "lat": -1.292066,
+      "timeZone": "Africa/Nairobi",
+      "color": "warning"
+    },
+    {
+      "id": "p4",
+      "name": "Priya Raghunathan",
+      "role": "Backend engineer",
+      "city": "Bengaluru",
+      "long": 77.594566,
+      "lat": 12.971599,
+      "timeZone": "Asia/Kolkata",
+      "color": "danger"
+    },
+    {
+      "id": "p5",
+      "name": "Daniel Tan Wei Ming",
+      "role": "Data analyst",
+      "city": "Singapore",
+      "long": 103.819836,
+      "lat": 1.352083,
+      "timeZone": "Asia/Singapore",
+      "color": "var(--chart-3)"
+    },
+    {
+      "id": "p6",
+      "name": "Haruka Ishii",
+      "role": "QA engineer",
+      "city": "Tokyo",
+      "long": 139.691706,
+      "lat": 35.689487,
+      "timeZone": "Asia/Tokyo",
+      "color": "default"
+    },
+    {
+      "id": "p7",
+      "name": "Liam Fairweather",
+      "role": "Developer advocate",
+      "city": "Sydney",
+      "long": 151.209296,
+      "lat": -33.86882,
+      "timeZone": "Australia/Sydney",
+      "color": "var(--chart-4)"
+    },
+    {
+      "id": "p8",
+      "name": "Chloé Gagnon",
+      "role": "Support lead",
+      "city": "Toronto",
+      "long": -79.383184,
+      "lat": 43.653226,
+      "timeZone": "America/Toronto",
+      "color": "var(--chart-5)"
+    }
+  ],
+  "hq": {
+    "city": "Lisbon",
+    "long": -9.139337,
+    "lat": 38.722252
+  }
+}

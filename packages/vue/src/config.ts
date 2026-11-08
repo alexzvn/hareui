@@ -17,6 +17,14 @@ export type HareUIConfig = {
    * @defaultValue true
    */
   portal?: PortalTarget
+  /** Options of `Map` from `@hareui/vue/map`. */
+  map?: {
+    /**
+     * URL of maplibre-gl's worker (`maplibre-gl/dist/maplibre-gl-worker.mjs`), for bundlers other than Vite. The
+     * `hareui()` Vite plugin sets it already.
+     */
+    workerUrl?: string
+  }
 }
 
 /** Injection key of the app-level `HareUIConfig` provided by `createHareUI()`. */

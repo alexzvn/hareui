@@ -1,0 +1,46 @@
+{
+  "attribution": "© OpenStreetMap contributors (ODbL)",
+  "viewpoints": [
+    {
+      "id": "node/11576971746",
+      "name": "Miradouro Sophia de Mello Breyner Andresen",
+      "neighbourhood": "Graça",
+      "long": -9.131543,
+      "lat": 38.716523,
+      "elevation": 86,
+      "label": "Graça"
+    },
+    {
+      "id": "node/5446794770",
+      "name": "Miradouro de Santa Luzia",
+      "neighbourhood": "Alfama",
+      "long": -9.130216,
+      "lat": 38.711741,
+      "label": "Santa Luzia"
+    },
+    {
+      "id": "node/419313189",
+      "name": "Miradouro de São Pedro de Alcântara",
+      "neighbourhood": "Bairro Alto",
+      "long": -9.144048,
+      "lat": 38.715437,
+      "label": "São Pedro de Alcântara"
+    },
+    {
+      "id": "node/5446794765",
+      "name": "Miradouro das Portas do Sol",
+      "neighbourhood": "Alfama",
+      "long": -9.130366,
+      "lat": 38.712346,
+      "label": "Portas do Sol"
+    },
+    {
+      "id": "node/11265825736",
+      "name": "Miradouro de Santa Catarina",
+      "neighbourhood": "Santa Catarina",
+      "long": -9.147724,
+      "lat": 38.70945,
+      "label": "Santa Catarina"
+    }
+  ]
+}

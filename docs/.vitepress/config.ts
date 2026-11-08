@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfigWithTheme } from 'vitepress'
 
+import { hareuiMapWorker } from '../../packages/vue/src/viteMapWorker'
 import { headingPermalink, markdownConfig, searchRender } from './markdown'
 import { sectionLinks, sidebar, type ThemeConfig } from './sidebar'
 import { DESIGN_THEME_IDS } from './theme/design-theme'
@@ -49,6 +50,8 @@ export default defineConfigWithTheme<ThemeConfig>({
   vite: {
     plugins: [
       tailwindcss(),
+      // The part of the `hareui()` plugin the docs need: it serves maplibre-gl's worker to `Map`.
+      hareuiMapWorker(),
       // The dev server's page shell has no `head` entries until the app mounts, so the browser would request
       // /favicon.ico first; built pages carry the icon link already.
       {

@@ -1,0 +1,137 @@
+{
+  "attribution": "© OpenStreetMap contributors (ODbL)",
+  "cafes": [
+    {
+      "id": "node/301267561",
+      "name": "Leitaria Académica",
+      "street": "Largo do Carmo",
+      "long": -9.140579,
+      "lat": 38.711676,
+      "rating": 4.1,
+      "tags": ["terrace"],
+      "opens": "08:30",
+      "closes": "19:00"
+    },
+    {
+      "id": "node/4569935690",
+      "name": "Hello, Kristof",
+      "street": "Rua do Poço dos Negros",
+      "long": -9.151317,
+      "lat": 38.709911,
+      "rating": 4.5,
+      "tags": ["wifi"],
+      "opens": "07:30",
+      "closes": "00:00"
+    },
+    {
+      "id": "node/4696453439",
+      "name": "The Midnight Espresso",
+      "street": "Rua Cecílio de Sousa",
+      "long": -9.150051,
+      "lat": 38.714853,
+      "rating": 4.6,
+      "tags": ["terrace"],
+      "opens": "08:00",
+      "closes": "22:00"
+    },
+    {
+      "id": "node/4692271791",
+      "name": "Rhodo Bagels",
+      "street": "Rua do Norte",
+      "long": -9.15049,
+      "lat": 38.709037,
+      "rating": 4.2,
+      "tags": ["wifi", "terrace"],
+      "opens": "07:30",
+      "closes": "19:00"
+    },
+    {
+      "id": "node/1916919644",
+      "name": "Alva",
+      "street": "Rua dos Poiais de São Bento",
+      "long": -9.151335,
+      "lat": 38.710814,
+      "rating": 4.2,
+      "tags": ["terrace"],
+      "opens": "07:30",
+      "closes": "19:00"
+    },
+    {
+      "id": "node/12258412928",
+      "name": "Breakfast Lovers",
+      "street": "Rua da Rosa",
+      "long": -9.146965,
+      "lat": 38.710906,
+      "rating": 4.8,
+      "tags": ["wifi"],
+      "opens": "09:00",
+      "closes": "19:00"
+    },
+    {
+      "id": "node/7001783185",
+      "name": "Break",
+      "street": "Rua do Poço dos Negros",
+      "long": -9.15071,
+      "lat": 38.710237,
+      "rating": 4.6,
+      "tags": ["wifi", "terrace"],
+      "opens": "10:00",
+      "closes": "20:00"
+    },
+    {
+      "id": "node/13075758501",
+      "name": "Dramático",
+      "street": "Rua da Alegria",
+      "long": -9.14751,
+      "lat": 38.717581,
+      "rating": 4.2,
+      "tags": ["wifi"],
+      "opens": "08:00",
+      "closes": "00:00"
+    },
+    {
+      "id": "node/4383338489",
+      "name": "Fabrica Coffee Roasters",
+      "street": "Rua da Misericórdia",
+      "long": -9.141601,
+      "lat": 38.717569,
+      "rating": 3.9,
+      "tags": ["wifi", "roastery"],
+      "opens": "08:00",
+      "closes": "22:00"
+    },
+    {
+      "id": "node/11872136312",
+      "name": "SO Coffee Roasters",
+      "street": "Calçada do Sacramento",
+      "long": -9.14021,
+      "lat": 38.711341,
+      "rating": 4.5,
+      "tags": ["wifi", "roastery"],
+      "opens": "09:00",
+      "closes": "00:00"
+    },
+    {
+      "id": "node/2620372118",
+      "name": "Café Gelo",
+      "street": "Praça Dom Pedro IV",
+      "long": -9.140179,
+      "lat": 38.71433,
+      "rating": 4.5,
+      "tags": ["wifi"],
+      "opens": "07:30",
+      "closes": "00:00"
+    },
+    {
+      "id": "node/4803931021",
+      "name": "Ginginha do Carmo",
+      "street": "Calçada do Carmo",
+      "long": -9.140662,
+      "lat": 38.713397,
+      "rating": 3.9,
+      "tags": ["terrace"],
+      "opens": "09:00",
+      "closes": "19:00"
+    }
+  ]
+}

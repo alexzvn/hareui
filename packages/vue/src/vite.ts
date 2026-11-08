@@ -4,6 +4,9 @@ import componentNames from 'virtual:hareui-component-names'
 import type { Plugin } from 'vite'
 
 import type { HareUIConfig } from './config'
+import { hareuiMapWorker } from './viteMapWorker'
+
+export { hareuiMapWorker }
 
 /** Options for `HareUIResolver`, the unplugin-vue-components resolver for HareUI components. */
 export type HareUIResolverOptions = {
@@ -55,9 +58,12 @@ export const HareUIResolver = (options: HareUIResolverOptions = {}): ComponentRe
   }
 }
 
-/** Vite plugin: auto-imports HareUI components (optionally prefixed) and applies app-wide theme overrides. */
+/**
+ * Vite plugin: auto-imports HareUI components (optionally prefixed), applies app-wide theme overrides and serves the
+ * maplibre-gl worker to `Map` when `maplibre-gl` is installed.
+ */
 export const hareui = (options: HareUIPluginOptions = {}): Plugin[] => {
-  const plugins: Plugin[] = []
+  const plugins: Plugin[] = [hareuiMapWorker()]
   const { ui } = options
   if (ui) {
     // `useComponentUI` reads this global; Vite's `define` also reaches the pre-bundled `@hareui/vue`.
