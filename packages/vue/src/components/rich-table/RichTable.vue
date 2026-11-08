@@ -223,6 +223,8 @@
         </tr>
       </tfoot>
     </table>
+
+    <div aria-hidden="true" data-slot="rich-table-corners" :class="ui.corners()" />
   </Primitive>
 </template>
 

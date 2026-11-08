@@ -4,6 +4,21 @@
 // drag themselves. A dragged row or header fades to 50%; the drop target draws a 2px `accent` line on the edge the
 // drop lands on: a row's top or bottom, a header's start or end.
 
+// Primary body card corners while rows scroll: the visible window of rows keeps the card's rounded corners, but only the
+// first and last rows are rounded. Each mask paints the gutter colour outside a quarter circle, so a row cut by the
+// sticky header, the sticky footer or the bottom of the scrollport still shows a rounded corner. Kept as literal
+// strings so Tailwind finds them.
+const cornerMaskBox =
+  "before:pointer-events-none before:absolute before:inset-x-0 before:h-(--rich-table-corner) before:content-['']"
+
+// Corners cut out at the box's top edge, for a box hanging under the sticky header
+const cornerMaskBelow =
+  'before:[background:radial-gradient(circle_at_100%_100%,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_left_top/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat,radial-gradient(circle_at_0_100%,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_right_top/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat]'
+
+// Corners cut out at the box's bottom edge, for a box resting on the sticky footer or the scrollport bottom
+const cornerMaskAbove =
+  'before:[background:radial-gradient(circle_at_100%_0,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_left_bottom/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat,radial-gradient(circle_at_0_0,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_right_bottom/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat]'
+
 export default {
   slots: {
     root: 'relative scrollbar overflow-auto outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus',
@@ -71,20 +86,28 @@ export default {
     ],
     empty: 'py-12 text-center text-sm text-muted',
     loading: 'py-12 text-center',
+    // Sticky, zero-height box after the table that carries the bottom corner masks (primary only)
+    corners: 'hidden',
   },
   variants: {
     variant: {
       primary: {
         // The gutter around the body card is a transparent border rather than padding: it sits outside the scrollport, so
         // rows scrolling under the sticky footer or the pinned columns never show through it, and sticky cells rest on its inner edge.
-        root: 'rounded-[min(32px,calc(var(--radius)*2.5))] border-x-4 border-t-0 border-b-4 border-transparent bg-surface-secondary',
+        root: 'rounded-[min(32px,calc(var(--radius)*2.5))] border-x-4 border-t-0 border-b-4 border-transparent bg-surface-secondary [--rich-table-corner:min(32px,var(--radius-2xl))]',
         // '.table__body tr:first-child td:first-child' etc.
         tbody: [
-          '[&_tr:first-child_td:first-child]:rounded-ss-[min(32px,var(--radius-2xl))] [&_tr:first-child_td:last-child]:rounded-se-[min(32px,var(--radius-2xl))]',
-          '[&_tr:last-child_td:first-child]:rounded-es-[min(32px,var(--radius-2xl))] [&_tr:last-child_td:last-child]:rounded-ee-[min(32px,var(--radius-2xl))]',
+          '[&_tr:first-child_td:first-child]:rounded-ss-(--rich-table-corner) [&_tr:first-child_td:last-child]:rounded-se-(--rich-table-corner)',
+          '[&_tr:last-child_td:first-child]:rounded-es-(--rich-table-corner) [&_tr:last-child_td:last-child]:rounded-ee-(--rich-table-corner)',
           // A corner cell that is also the pinned edge goes square while content scrolls under it, so nothing shows through its rounded corner
           '[&_tr:first-child_td:first-child[data-edge=left]]:rounded-none [&_tr:last-child_td:first-child[data-edge=left]]:rounded-none',
           '[&_tr:first-child_td:last-child[data-edge=right]]:rounded-none [&_tr:last-child_td:last-child[data-edge=right]]:rounded-none',
+        ],
+        corners: [
+          'pointer-events-none sticky bottom-0 left-0 z-3 block h-0',
+          cornerMaskBox,
+          'before:bottom-0',
+          cornerMaskAbove,
         ],
       },
       secondary: {
@@ -133,6 +156,28 @@ export default {
     },
   },
   compoundVariants: [
+    {
+      variant: 'primary',
+      sticky: true,
+      class: { thead: [cornerMaskBox, 'before:top-full', cornerMaskBelow] },
+    },
+    {
+      variant: 'primary',
+      sticky: 'header',
+      class: { thead: [cornerMaskBox, 'before:top-full', cornerMaskBelow] },
+    },
+    {
+      variant: 'primary',
+      sticky: true,
+      class: { tfoot: [cornerMaskBox, 'before:bottom-full', cornerMaskAbove] },
+    },
+    {
+      variant: 'primary',
+      sticky: 'footer',
+      class: { tfoot: [cornerMaskBox, 'before:bottom-full', cornerMaskAbove] },
+    },
+    // Rows scroll with the page, so there's no scrollport bottom to mask
+    { externalScroll: true, class: { corners: 'hidden' } },
     { loading: true, loadingColor: 'accent', class: { thead: 'after:bg-accent' } },
     { loading: true, loadingColor: 'success', class: { thead: 'after:bg-success' } },
     { loading: true, loadingColor: 'warning', class: { thead: 'after:bg-warning' } },
