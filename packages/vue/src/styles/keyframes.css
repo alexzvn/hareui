@@ -229,3 +229,47 @@
     }
   }
 }
+
+/*
+ * ChatLoader's typing dots and pulse, and TextShimmer's sweep. `inline` so the sweep duration resolves on the element
+ * (`--text-shimmer-duration`, set by TextShimmer's root), not on :root.
+ */
+@theme inline {
+  --animate-chat-loader-bounce: chat-loader-bounce 1.2s ease-in-out infinite both;
+  --animate-chat-loader-pulse: chat-loader-pulse 1.4s ease-in-out infinite;
+  --animate-text-shimmer: text-shimmer var(--text-shimmer-duration) ease infinite;
+
+  @keyframes chat-loader-bounce {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.85);
+    }
+    40% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes chat-loader-pulse {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(0.92);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes text-shimmer {
+    from {
+      transform: translate3d(-100%, 0, 0);
+    }
+    to {
+      transform: translate3d(100%, 0, 0);
+    }
+  }
+}
