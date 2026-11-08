@@ -216,6 +216,16 @@ async function capture(page: Page, base: string, c: Case, state: State, theme: T
   debug(c.id, state, theme, base)
   await load(page, base, c, theme)
   await act(page, c, state)
+  // Sheets enter by smooth scrolling, and their backdrop follows the scroll: wait until every sheet scroller rests.
+  await page.waitForFunction(() => {
+    const w = window as unknown as { __sheetScroll?: string, __sheetStable?: number }
+    const now = [...document.querySelectorAll('[data-sheet-scroll]')].map(e => `${e.scrollLeft},${e.scrollTop}`).join(';')
+    w.__sheetStable = now === w.__sheetScroll ? (w.__sheetStable ?? 0) + 1 : 0
+    w.__sheetScroll = now
+    if (!now)
+      return true
+    return w.__sheetStable >= 10 && !document.querySelector('[data-entering]')
+  }, { polling: 'raf', timeout: 5000 }).catch(() => {})
   // Infinite animations (spinners) are pinned to t=0; finite ones (enter transitions) are finished.
   // Scroll/view-timeline animations (e.g. HeroUI ScrollShadow fades) reflect real scroll state: leave them alone.
   await page.evaluate(() => {
