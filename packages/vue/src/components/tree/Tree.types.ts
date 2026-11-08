@@ -24,6 +24,16 @@ export type TreeSelectEvent<T extends TreeItem = TreeItem> = TreeItemSelectEvent
  */
 export type TreeToggleEvent<T extends TreeItem = TreeItem> = TreeItemToggleEvent<T>
 
+/** A drop of dragged rows: the items moved and where they land. */
+export type TreeMoveEvent<T extends TreeItem = TreeItem> = {
+  /** The moved items, in tree order. A moved folder takes its descendants along; they aren't listed. */
+  items: T[]
+  /** The item the drop lands next to, or inside. */
+  target: T
+  /** Before or after `target` among its siblings, or `inside` it: into the folder. */
+  position: 'before' | 'after' | 'inside'
+}
+
 /** One row of a `Tree`: a file, or a folder when it has `children`. */
 export type TreeItem = {
   /** The row text, read with the tree's `labelKey`. It is also the item's key unless `getKey` is set. */
@@ -140,6 +150,20 @@ export type TreeProps<T extends TreeItem = TreeItem, M extends boolean = false> 
    */
   checkbox?: boolean
   /**
+   * Whether rows can be dragged to move them. This isn't native HTML drag and drop: nothing drops in from outside the
+   * tree. A pointer drags a row (a touch after a long press), and a copy of the row follows it. Resting on a collapsed
+   * folder opens it. On the keyboard, Enter picks up the focused row, the arrow keys choose the spot (Right opens a
+   * collapsed folder), Enter drops and Escape cancels. Dragging a selected row moves every selected row. The tree
+   * doesn't change `items`: apply the `move` event to them with `moveTreeItems`.
+   * @defaultValue false
+   */
+  draggable?: boolean
+  /**
+   * Whether the dragged items may drop at a spot. Spots that aren't allowed show no drop indicator and are skipped by
+   * the keyboard. A folder never drops into itself or its descendants.
+   */
+  canDrop?: (move: TreeMoveEvent<T>) => boolean
+  /**
    * Whether the whole tree is disabled.
    * @defaultValue false
    */
@@ -179,6 +203,8 @@ export type TreeEmits<T extends TreeItem = TreeItem, M extends boolean = false> 
   select: [event: TreeSelectEvent<T>, item: T]
   /** Emitted before an item is expanded or collapsed. `event.preventDefault()` keeps its state. Not emitted for items with their own `onToggle`. */
   toggle: [event: TreeToggleEvent<T>, item: T]
+  /** Emitted when dragged rows are dropped, with the items and where they go. `moveTreeItems(items, event)` applies it. */
+  move: [event: TreeMoveEvent<T>]
 }
 
 /** Props passed to every item slot. */

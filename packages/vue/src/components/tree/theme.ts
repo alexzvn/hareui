@@ -5,6 +5,8 @@
 // block. Nesting indents by `--tree-indent` per level and draws a 1px guide line (`currentColor` at 10%) 10px from the
 // start of every ancestor level: through its chevron, or through its checkbox when rows have one. Nested lists animate
 // their height and opacity over 200ms `ease-out`.
+// A dragged row fades to 40%. A drop inside a folder tints it `bg-accent-soft` with a 2px inner `accent` outline; a
+// drop before or after a row draws a 2px `accent` line on that edge, from the row's indent to its end.
 // Sizes (row padding / font / icon / indent): sm 6×2px, 12px, 14px, 10px · md 8×4px, 14px, 16px, 12px ·
 // lg 10×6px, 16px, 20px, 24px; rows are 20, 28 and 36px tall.
 export default {
@@ -26,6 +28,8 @@ export default {
       'cursor-(--cursor-interactive) outline-none no-highlight',
       'hover:bg-default active:bg-default data-selected:bg-default',
       'focus-visible:status-focused data-disabled:status-disabled',
+      'data-dragging:opacity-40',
+      'data-[drop-target=inside]:bg-accent-soft data-[drop-target=inside]:outline-2 data-[drop-target=inside]:-outline-offset-2 data-[drop-target=inside]:outline-accent data-[drop-target=inside]:outline-solid',
     ],
     guideLine:
       'pointer-events-none absolute inset-y-0 start-[calc(var(--tree-px)+10px+var(--tree-guide)*var(--tree-indent))] w-px bg-current/10 select-none',
@@ -40,6 +44,10 @@ export default {
     linkLabel: 'min-w-0 flex-1 truncate px-0.5',
     linkTrailing: 'inline-flex shrink-0 items-center gap-1.5 text-muted',
     linkTrailingIcon: 'shrink-0',
+    dropIndicator: [
+      'pointer-events-none absolute end-0 start-[calc(var(--tree-px)+(var(--tree-level)-1)*var(--tree-indent))] h-0.5 rounded-full bg-accent',
+      'data-[position=after]:-bottom-px data-[position=before]:-top-px',
+    ],
     empty: 'px-(--tree-px) text-muted',
   },
   variants: {

@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import type { TreeItem } from '@/components/tree/Tree.types'
+import { moveTreeItems } from '@/components/tree/moveTreeItems'
+import type { TreeItem, TreeMoveEvent } from '@/components/tree/Tree.types'
 import Tree from '@/components/tree/Tree.vue'
 
 import { expectAccessible } from './a11y'
@@ -29,6 +30,28 @@ const rowByLabel = (wrapper: ReturnType<typeof mount>, label: string) => {
   if (!row) throw new Error(`No row labelled ${label}`)
 
   return row
+}
+
+const announcement = () => document.querySelector('[data-slot=live-announcer]')?.textContent
+
+const pointer = (type: string, { x = 10, y }: { x?: number; y: number }) =>
+  new PointerEvent(type, {
+    button: 0,
+    pointerId: 1,
+    pointerType: 'mouse',
+    clientX: x,
+    clientY: y,
+    bubbles: true,
+    cancelable: true,
+  })
+
+const dragPreview = () => document.querySelector<HTMLElement>('[data-slot=drag-preview]')
+
+const nextFrame = () => {
+  const { promise, resolve } = Promise.withResolvers<void>()
+  requestAnimationFrame(() => resolve())
+
+  return promise
 }
 
 describe('tree', () => {
@@ -402,5 +425,470 @@ describe('tree', () => {
 
     sizes.forEach((size) => size.mockRestore())
     wrapper.unmount()
+  })
+
+  it('draggable: rows say how to start a keyboard drag, disabled rows do not', async () => {
+    const items = createItems()
+    items[1]!.disabled = true
+    const wrapper = mount(Tree, { props: { items, draggable: true }, attachTo: document.body })
+
+    expect(rowByLabel(wrapper, 'LICENSE').attributes('aria-description')).toBe(
+      'Press Enter to start dragging.',
+    )
+
+    expect(rowByLabel(wrapper, 'notes').attributes('aria-description')).toBeUndefined()
+
+    await expectAccessible(wrapper)
+    wrapper.unmount()
+  })
+
+  it('draggable: Enter picks up a row, the arrow keys choose the spot and Enter drops it', async () => {
+    const items = createItems()
+    const wrapper = mount(Tree, { props: { items, draggable: true }, attachTo: document.body })
+    const license = rowByLabel(wrapper, 'LICENSE')
+
+    await license.trigger('keydown', { key: 'Enter' })
+    expect(license.attributes('data-dragging')).toBe('')
+
+    expect(announcement()).toBe(
+      'Picked up LICENSE. Press the arrow keys to choose where it goes, Enter to drop it, Escape to cancel.',
+    )
+
+    await license.trigger('keydown', { key: 'ArrowUp' })
+    expect(rowByLabel(wrapper, 'notes').attributes('data-drop-target')).toBe('inside')
+    expect(announcement()).toBe('Drop inside notes')
+
+    // After the open docs folder: the line runs below its last row, at the folder's level
+    await license.trigger('keydown', { key: 'ArrowUp' })
+    expect(rowByLabel(wrapper, 'docs').attributes('data-drop-target')).toBe('after')
+    expect(announcement()).toBe('Drop after docs')
+
+    const line = rowByLabel(wrapper, 'guides').find('[data-slot=tree-drop-indicator]')
+    expect(line.attributes('data-position')).toBe('after')
+
+    await license.trigger('keydown', { key: 'Enter' })
+
+    expect(wrapper.emitted('move')).toEqual([
+      [{ items: [items[2]], target: items[0], position: 'after' }],
+    ])
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(announcement()).toBe('Moved LICENSE after docs.')
+    expect(wrapper.find('[data-dragging]').exists()).toBe(false)
+    expect(wrapper.find('[data-drop-target]').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('draggable: the first arrow key moves the row one spot, Home and End jump to the ends', async () => {
+    const items = createItems()
+    const wrapper = mount(Tree, { props: { items, draggable: true }, attachTo: document.body })
+    const notes = rowByLabel(wrapper, 'notes')
+
+    await notes.trigger('keydown', { key: 'Enter' })
+    await notes.trigger('keydown', { key: 'ArrowDown' })
+    expect(announcement()).toBe('Drop after LICENSE')
+
+    await notes.trigger('keydown', { key: 'Home' })
+    expect(announcement()).toBe('Drop before docs')
+
+    await notes.trigger('keydown', { key: 'End' })
+    await notes.trigger('keydown', { key: ' ' })
+
+    expect(wrapper.emitted('move')).toEqual([
+      [{ items: [items[1]], target: items[2], position: 'after' }],
+    ])
+
+    wrapper.unmount()
+  })
+
+  it('draggable: Escape cancels a keyboard drag', async () => {
+    const wrapper = mount(Tree, {
+      props: { items: createItems(), draggable: true },
+      attachTo: document.body,
+    })
+
+    const license = rowByLabel(wrapper, 'LICENSE')
+
+    await license.trigger('keydown', { key: 'Enter' })
+    await license.trigger('keydown', { key: 'ArrowUp' })
+    await license.trigger('keydown', { key: 'Escape' })
+
+    expect(wrapper.emitted('move')).toBeUndefined()
+    expect(announcement()).toBe('Drop cancelled.')
+    expect(wrapper.find('[data-dragging]').exists()).toBe(false)
+    expect(wrapper.find('[data-drop-target]').exists()).toBe(false)
+
+    // The drag is over: the arrow keys no longer choose drop spots
+    await license.trigger('keydown', { key: 'ArrowUp' })
+    expect(announcement()).toBe('Drop cancelled.')
+    wrapper.unmount()
+  })
+
+  it('draggable: dragging a selected row moves every selected row, in tree order', async () => {
+    const items = createItems()
+    const intro = items[0]!.children![0]!
+    const wrapper = mount(Tree, {
+      props: { items, draggable: true, multiple: true, modelValue: [items[2]!, intro] },
+      attachTo: document.body,
+    })
+
+    const license = rowByLabel(wrapper, 'LICENSE')
+
+    await license.trigger('keydown', { key: 'Enter' })
+
+    expect(announcement()).toBe(
+      'Picked up 2 items. Press the arrow keys to choose where they go, Enter to drop them, Escape to cancel.',
+    )
+
+    const dragged = rows(wrapper).filter((row) => row.attributes('data-dragging') === '')
+    expect(dragged.map((row) => row.text())).toEqual(['intro.md', 'LICENSE'])
+
+    await license.trigger('keydown', { key: 'Home' })
+    await license.trigger('keydown', { key: 'Enter' })
+
+    expect(wrapper.emitted('move')).toEqual([
+      [{ items: [intro, items[2]], target: items[0], position: 'before' }],
+    ])
+
+    wrapper.unmount()
+  })
+
+  it('draggable: an unselected row drags alone, and a folder never drops into itself', async () => {
+    const items = createItems()
+    const wrapper = mount(Tree, {
+      props: { items, draggable: true, multiple: true, modelValue: [items[2]!] },
+      attachTo: document.body,
+    })
+
+    const docs = rowByLabel(wrapper, 'docs')
+
+    await docs.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.findAll('[data-dragging]')).toHaveLength(1)
+
+    // docs is open, yet the arrow keys skip its own rows
+    await docs.trigger('keydown', { key: 'ArrowDown' })
+    expect(announcement()).toBe('Drop inside notes')
+
+    await docs.trigger('keydown', { key: 'Enter' })
+
+    expect(wrapper.emitted('move')).toEqual([
+      [{ items: [items[0]], target: items[1], position: 'inside' }],
+    ])
+
+    wrapper.unmount()
+  })
+
+  it('draggable: canDrop refuses spots, and the arrow keys skip them', async () => {
+    const items = createItems()
+    const canDrop = vi.fn<(move: TreeMoveEvent) => boolean>(({ position }) => position !== 'inside')
+    const wrapper = mount(Tree, {
+      props: { items, draggable: true, canDrop },
+      attachTo: document.body,
+    })
+
+    const license = rowByLabel(wrapper, 'LICENSE')
+
+    await license.trigger('keydown', { key: 'Enter' })
+    await license.trigger('keydown', { key: 'ArrowUp' })
+    expect(announcement()).toBe('Drop after docs')
+
+    expect(canDrop).toHaveBeenCalledWith({
+      items: [items[2]],
+      target: items[1],
+      position: 'inside',
+    })
+
+    wrapper.unmount()
+  })
+
+  it('draggable: a disabled row or tree does not start a drag', async () => {
+    const items = createItems()
+    items[2]!.disabled = true
+    const wrapper = mount(Tree, { props: { items, draggable: true }, attachTo: document.body })
+
+    await rowByLabel(wrapper, 'LICENSE').trigger('keydown', { key: 'Enter' })
+    expect(wrapper.find('[data-dragging]').exists()).toBe(false)
+
+    await wrapper.setProps({ disabled: true })
+    await rowByLabel(wrapper, 'notes').trigger('keydown', { key: 'Enter' })
+    expect(wrapper.find('[data-dragging]').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('draggable: a pointer drag drops a row inside a folder', async () => {
+    const items = createItems()
+    const wrapper = mount(Tree, { props: { items, draggable: true }, attachTo: document.body })
+    const license = rowByLabel(wrapper, 'LICENSE')
+    const notes = rowByLabel(wrapper, 'notes')
+
+    // happy-dom has no layout: put the pointer over the middle of the notes row
+    const spies = [
+      vi
+        .spyOn(document, 'elementFromPoint')
+        .mockReturnValue(notes.find('[data-slot=tree-label]').element),
+      vi
+        .spyOn(notes.element, 'getBoundingClientRect')
+        .mockReturnValue(DOMRect.fromRect({ x: 0, y: 190, width: 280, height: 20 })),
+    ]
+
+    license.element.dispatchEvent(pointer('pointerdown', { y: 300 }))
+    window.dispatchEvent(pointer('pointermove', { y: 200 }))
+    await nextTick()
+    expect(license.attributes('data-dragging')).toBe('')
+    expect(notes.attributes('data-drop-target')).toBe('inside')
+
+    window.dispatchEvent(pointer('pointerup', { y: 200 }))
+
+    expect(wrapper.emitted('move')).toEqual([
+      [{ items: [items[2]], target: items[1], position: 'inside' }],
+    ])
+
+    // The click that ends the drag doesn't select the row under it
+    await notes.trigger('click')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+    spies.forEach((spy) => spy.mockRestore())
+    wrapper.unmount()
+  })
+
+  it('draggable: a drop inside a collapsed folder opens it', async () => {
+    const items = createItems()
+    const wrapper = mount(Tree, { props: { items, draggable: true }, attachTo: document.body })
+    const license = rowByLabel(wrapper, 'LICENSE')
+
+    await license.trigger('keydown', { key: 'Enter' })
+    await license.trigger('keydown', { key: 'ArrowUp' })
+    await license.trigger('keydown', { key: 'Enter' })
+
+    expect(announcement()).toBe('Moved LICENSE into notes.')
+    expect(wrapper.emitted('toggle')?.[0]?.[1]).toEqual(items[1])
+    expect(wrapper.emitted('update:expanded')?.at(-1)?.[0]).toContain('notes')
+    wrapper.unmount()
+  })
+
+  it('draggable: Right opens the collapsed folder a keyboard drag is inside, and its rows become spots', async () => {
+    const items = createItems()
+    items[0]!.defaultExpanded = false
+    const wrapper = mount(Tree, { props: { items, draggable: true }, attachTo: document.body })
+    const license = rowByLabel(wrapper, 'LICENSE')
+
+    await license.trigger('keydown', { key: 'Enter' })
+    await license.trigger('keydown', { key: 'Home' })
+    await license.trigger('keydown', { key: 'ArrowDown' })
+    expect(rowByLabel(wrapper, 'docs').attributes('data-drop-target')).toBe('inside')
+
+    await license.trigger('keydown', { key: 'ArrowRight' })
+    await nextTick()
+    expect(labels(wrapper)).toContain('intro.md')
+    expect(rowByLabel(wrapper, 'docs').attributes('data-drop-target')).toBe('inside')
+
+    await license.trigger('keydown', { key: 'ArrowDown' })
+    expect(rowByLabel(wrapper, 'intro.md').attributes('data-drop-target')).toBe('before')
+
+    await license.trigger('keydown', { key: 'Escape' })
+    wrapper.unmount()
+  })
+
+  it('draggable: a pointer resting inside a collapsed folder opens it', async () => {
+    vi.useFakeTimers()
+    const items = createItems()
+    items[0]!.defaultExpanded = false
+    const wrapper = mount(Tree, { props: { items, draggable: true }, attachTo: document.body })
+    const license = rowByLabel(wrapper, 'LICENSE')
+    const docs = rowByLabel(wrapper, 'docs')
+
+    const spies = [
+      vi
+        .spyOn(document, 'elementFromPoint')
+        .mockReturnValue(docs.find('[data-slot=tree-label]').element),
+      vi
+        .spyOn(docs.element, 'getBoundingClientRect')
+        .mockReturnValue(DOMRect.fromRect({ x: 0, y: 190, width: 280, height: 20 })),
+    ]
+
+    license.element.dispatchEvent(pointer('pointerdown', { y: 300 }))
+    window.dispatchEvent(pointer('pointermove', { y: 200 }))
+    await nextTick()
+    expect(docs.attributes('data-drop-target')).toBe('inside')
+
+    vi.advanceTimersByTime(300)
+    expect(wrapper.emitted('update:expanded')).toBeUndefined()
+    vi.advanceTimersByTime(300)
+    expect(wrapper.emitted('update:expanded')?.[0]?.[0]).toEqual(['docs'])
+
+    window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 1 }))
+    spies.forEach((spy) => spy.mockRestore())
+    wrapper.unmount()
+    vi.useRealTimers()
+  })
+
+  it('draggable: a pointer drag carries a copy of the row beside the pointer until the drop', async () => {
+    const wrapper = mount(Tree, {
+      props: { items: createItems(), draggable: true },
+      attachTo: document.body,
+    })
+
+    const license = rowByLabel(wrapper, 'LICENSE')
+    const notes = rowByLabel(wrapper, 'notes')
+    const spies = [
+      vi
+        .spyOn(document, 'elementFromPoint')
+        .mockReturnValue(notes.find('[data-slot=tree-label]').element),
+      vi
+        .spyOn(notes.element, 'getBoundingClientRect')
+        .mockReturnValue(DOMRect.fromRect({ x: 0, y: 190, width: 280, height: 30 })),
+    ]
+
+    license.element.dispatchEvent(pointer('pointerdown', { y: 300 }))
+    expect(dragPreview()).toBeNull()
+
+    // The copy shows the icon and label only, 14px after the pointer and 4px below the hovered row
+    window.dispatchEvent(pointer('pointermove', { y: 200 }))
+    await nextFrame()
+    const preview = dragPreview()
+    expect(preview?.textContent).toBe('LICENSE')
+    expect(preview?.getAttribute('aria-hidden')).toBe('true')
+    expect(preview?.querySelector('[data-slot=tree-chevron]')).toBeNull()
+    expect(preview?.style.transform).toBe('translate(24px, 224px)')
+    expect(document.head.textContent).toContain('cursor: grabbing')
+
+    // Past the hovered row, it keeps 14px below the pointer too
+    window.dispatchEvent(pointer('pointermove', { x: 40, y: 230 }))
+    await nextFrame()
+    expect(preview?.style.transform).toBe('translate(54px, 244px)')
+
+    window.dispatchEvent(pointer('pointerup', { x: 40, y: 230 }))
+    expect(dragPreview()).toBeNull()
+    expect(document.head.textContent).not.toContain('cursor: grabbing')
+
+    spies.forEach((spy) => spy.mockRestore())
+    wrapper.unmount()
+  })
+
+  it('draggable: the cursor turns not-allowed over a row that refuses the drop', async () => {
+    const wrapper = mount(Tree, {
+      props: { items: createItems(), draggable: true, canDrop: () => false },
+      attachTo: document.body,
+    })
+
+    const notes = rowByLabel(wrapper, 'notes')
+    const spy = vi
+      .spyOn(document, 'elementFromPoint')
+      .mockReturnValue(notes.find('[data-slot=tree-label]').element)
+
+    rowByLabel(wrapper, 'LICENSE').element.dispatchEvent(pointer('pointerdown', { y: 300 }))
+    window.dispatchEvent(pointer('pointermove', { y: 200 }))
+    expect(document.head.textContent).toContain('cursor: not-allowed')
+
+    window.dispatchEvent(pointer('pointerup', { y: 200 }))
+    expect(document.head.textContent).not.toContain('cursor: not-allowed')
+    expect(wrapper.emitted('move')).toBeUndefined()
+
+    spy.mockRestore()
+    wrapper.unmount()
+  })
+
+  it('draggable: Escape cancels a pointer drag and removes its copy', async () => {
+    const wrapper = mount(Tree, {
+      props: { items: createItems(), draggable: true },
+      attachTo: document.body,
+    })
+
+    const license = rowByLabel(wrapper, 'LICENSE')
+    license.element.dispatchEvent(pointer('pointerdown', { y: 300 }))
+    window.dispatchEvent(pointer('pointermove', { y: 200 }))
+    expect(dragPreview()).not.toBeNull()
+
+    license.element.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+    )
+
+    await nextTick()
+    expect(dragPreview()).toBeNull()
+    expect(license.attributes('data-dragging')).toBeUndefined()
+
+    // The release that follows neither drops nor selects the row under it
+    window.dispatchEvent(pointer('pointerup', { y: 200 }))
+    await license.trigger('click')
+    expect(wrapper.emitted('move')).toBeUndefined()
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('draggable: a pointer press that does not move still selects the row', async () => {
+    const wrapper = mount(Tree, {
+      props: { items: createItems(), draggable: true },
+      attachTo: document.body,
+    })
+
+    const license = rowByLabel(wrapper, 'LICENSE')
+
+    license.element.dispatchEvent(pointer('pointerdown', { y: 300 }))
+    window.dispatchEvent(pointer('pointermove', { y: 302 }))
+    window.dispatchEvent(pointer('pointerup', { y: 302 }))
+    await license.trigger('click')
+
+    expect(wrapper.emitted('move')).toBeUndefined()
+    expect(license.attributes('aria-selected')).toBe('true')
+    wrapper.unmount()
+  })
+
+  it('virtualize: a keyboard drag reaches rows outside the rendered window', async () => {
+    const sizes = [
+      vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(280),
+      vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(300),
+      vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(280),
+      vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockReturnValue(300),
+    ]
+
+    const items = Array.from({ length: 500 }, (_, index) => ({ label: `file-${index}.ts` }))
+    const wrapper = mount(Tree, {
+      props: { items, virtualize: true, draggable: true },
+      attachTo: document.body,
+    })
+
+    await nextTick()
+    await nextTick()
+
+    const first = rows(wrapper)[0]!
+    await first.trigger('keydown', { key: 'Enter' })
+    await first.trigger('keydown', { key: 'End' })
+    expect(announcement()).toBe('Drop after file-499.ts')
+
+    await first.trigger('keydown', { key: 'Enter' })
+
+    expect(wrapper.emitted('move')).toEqual([
+      [{ items: [items[0]], target: items[499], position: 'after' }],
+    ])
+
+    sizes.forEach((size) => size.mockRestore())
+    wrapper.unmount()
+  })
+})
+
+describe('moveTreeItems', () => {
+  it('moves items before, after or inside a target and keeps untouched folders', () => {
+    const items = createItems()
+    const [docs, notes, license] = items as [TreeItem, TreeItem, TreeItem]
+    const [intro, guides] = docs.children as [TreeItem, TreeItem]
+
+    const after = moveTreeItems(items, { items: [license], target: intro, position: 'after' })
+    expect(after.map((item) => item.label)).toEqual(['docs', 'notes'])
+    expect(after[0]!.children!.map((item) => item.label)).toEqual(['intro.md', 'LICENSE', 'guides'])
+    expect(after[1]).toBe(notes)
+    expect(docs.children).toHaveLength(2)
+
+    const inside = moveTreeItems(items, {
+      items: [guides, license],
+      target: notes,
+      position: 'inside',
+    })
+
+    expect(inside[1]!.children).toEqual([guides, license])
+    expect(inside[1]!.children![0]!.children).toBe(guides.children)
+
+    const before = moveTreeItems(items, { items: [license], target: docs, position: 'before' })
+    expect(before).toEqual([license, docs, notes])
+    expect(before[1]).toBe(docs)
   })
 })
