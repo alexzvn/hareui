@@ -25,3 +25,7 @@ description: Changes merged since the last release.
 
 - 29 components render short BEM classes instead of long Tailwind class lists: Button, ToggleButton, Checkbox, CheckboxButtonGroup, RadioGroup, RadioButtonGroup, Switch, Calendar, RangeCalendar, Label, FieldError, Input, TextArea, InputGroup, NumberField, NumberStepper, DateInputGroup, SearchField, Select, ComboBox, ListBox, Dropdown, ContextMenu, Table, RichTable, Tree, TagGroup, Pagination and Tabs. For example, a Button's root went from 1745 characters of classes to a few names like `h-button h-button--primary`. Each component's styles live next to it as `<name>.css` and ship in `@hareui/vue/style.css`. The rendered result is unchanged.
 - The classes sit in `@layer components`, below Tailwind utilities, so a utility you pass through `class` or `ui` now wins in every state, including hover and selected. Before, the component's state styles could win over it. Focus and invalid rings are the exception: a plain `ring-1` doesn't remove them, while a state utility like `focus-visible:ring-4` still replaces them. Each component page lists its classes under "CSS classes".
+
+## Fixed
+
+- ListView keeps keyboard focus when an arrow key moves it to a row that is scrolled out of view. Before, focus could drop to the page when the scroll took longer than a few frames.
