@@ -94,6 +94,45 @@ default mode, `prose` for `prose` mode) you can target in selectors.
 | `base`   | `typography` | Base typography primitive |
 | `prose`  | `prose`      | Rich prose container      |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Typography component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/typography/typography.css)):
+
+#### Base Classes
+
+- `.h-typography` - Base typography primitive
+- `.h-typography-prose` - Rich prose container
+
+#### Type Classes
+
+- `.h-typography--h1`
+- `.h-typography--h2`
+- `.h-typography--h3`
+- `.h-typography--h4`
+- `.h-typography--h5`
+- `.h-typography--h6`
+- `.h-typography--body`
+- `.h-typography--body-sm`
+- `.h-typography--body-xs`
+- `.h-typography--code`
+
+#### Modifier Classes
+
+- `.h-typography--align-start`
+- `.h-typography--align-center`
+- `.h-typography--align-end`
+- `.h-typography--align-justify`
+- `.h-typography--color-muted`
+- `.h-typography--truncate`
+- `.h-typography--weight-normal`
+- `.h-typography--weight-medium`
+- `.h-typography--weight-semibold`
+- `.h-typography--weight-bold`
+
+The default color adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

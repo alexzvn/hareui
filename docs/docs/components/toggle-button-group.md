@@ -103,6 +103,25 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | `separator` | `toggle-button-group-separator` | Divider inside each ToggleButton           |
 | `button`    | `toggle-button`                 | Classes added to each grouped ToggleButton |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ToggleButtonGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/toggle-button-group/toggle-button-group.css)):
+
+#### Base & Layout Classes
+
+- `.h-toggle-button-group` - Base container styles
+- `.h-toggle-button-group--horizontal` - Horizontal orientation
+- `.h-toggle-button-group--vertical` - Vertical orientation
+- `.h-toggle-button-group--full-width` - Full width modifier
+- `.h-toggle-button-group__button` - Each of the group's own ToggleButtons: edge radii, no press scale, inset focus ring
+- `.h-toggle-button-group__separator` - Separator element between buttons
+
+#### Modifier Classes
+
+- `.h-toggle-button-group--detached` - Detached mode (separated buttons with gaps)
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

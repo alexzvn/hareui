@@ -44,6 +44,15 @@ import { Popover } from '@hareui/vue'
 
 <ComponentPreview name="popover/interactive" />
 
+### Non-modal
+
+By default, a `click` popover makes the rest of the page inert while it's open, so the first click outside only closes
+it. With `:modal="false"`, the page stays usable: a click outside reaches whatever was clicked and also closes the
+popover. Use it for a toggletip, an info button whose popover sits next to controls people keep using. Open the
+popover below, then press "Save draft".
+
+<ComponentPreview name="popover/non-modal" />
+
 ### Hover Mode
 
 With `mode="hover"`, the popover opens when the pointer rests on the trigger or the trigger gets focus. It doesn't
@@ -91,7 +100,20 @@ app.use(
 | `heading` | `popover-heading`       | The heading (shown when `title` prop or `title` slot is set) |
 | `arrow`   | `popover-overlay-arrow` | The arrow `<svg>` (shown when `arrow` is `true`)             |
 
-### Interactive states
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Popover component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/popover/popover.css)):
+
+#### Base Classes
+
+- `.h-popover` - Base popover container styles, with the enter and exit animations
+- `.h-popover__dialog` - Dialog content wrapper
+- `.h-popover__heading` - Heading text styles
+- `.h-popover__arrow` - The arrow `<svg>`
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
+### Interactive States
 
 - **Open/closed**: `data-state="open" | "closed"` (drives the enter/exit animation)
 - **Side**: `data-side="top" | "right" | "bottom" | "left"`

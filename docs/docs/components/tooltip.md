@@ -111,6 +111,17 @@ app.use(
 | `base`   | —               | The floating content                           |
 | `arrow`  | `overlay-arrow` | The arrow SVG, rendered when `arrow` is `true` |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Tooltip component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/tooltip/tooltip.css)):
+
+#### Base Classes
+
+- `.h-tooltip` - Base tooltip styles with animations, including its arrow
+- `.h-tooltip__kbds` - The keyboard shortcuts after the text, hidden on small screens
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - `data-[state=delayed-open]` / `data-[state=instant-open]` — applied while the tooltip is

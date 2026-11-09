@@ -183,9 +183,46 @@ app.use(
 
 ## Styling Reference
 
-### CSS classes
+### CSS Classes
 
-Each slot carries a `.h-calendar__{slot}` class on the `.h-calendar` root (`__header`, `__nav-button`, `__grid`, `__header-cell`, `__cell`, `__cell-indicator`, …), and the year picker's parts carry `.h-calendar-year-picker__{trigger|trigger-heading|trigger-indicator|grid|year-cell}`. Week and day views add `.h-calendar--week-view` / `.h-calendar--day-view` to the root. RangeCalendar shares these classes. Day states come from the data attributes below, not from classes. The classes sit in `@layer components`, so any utility you pass through `class` or `ui` wins.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Calendar component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/calendar/calendar.css)):
+
+#### Base Classes
+
+- `.h-calendar` - Root container
+- `.h-calendar__panels` - Wrapper of the visible month panels
+- `.h-calendar__panel` - One month panel
+- `.h-calendar__header` - Header row containing nav buttons and heading
+- `.h-calendar__heading` - Current month label
+- `.h-calendar__nav-button` - Previous/next navigation controls
+- `.h-calendar__nav-button-icon` - Chevron icon inside a nav button
+- `.h-calendar__grid` - Main day grid
+- `.h-calendar__grid-header` - Weekday header row wrapper
+- `.h-calendar__grid-body` - Date rows wrapper
+- `.h-calendar__grid-row` - One week row
+- `.h-calendar__header-cell` - Weekday header cell
+- `.h-calendar__cell` - Interactive day cell
+- `.h-calendar__cell-indicator` - Dot indicator inside a day cell
+- `.h-calendar__range-cell` - Day cell wrapper that draws the range track (RangeCalendar)
+- `.h-calendar__range-cell-button` - Day button inside a range cell (RangeCalendar)
+
+#### Year Picker Classes
+
+- `.h-calendar-year-picker__trigger` - Year picker toggle button
+- `.h-calendar-year-picker__trigger-heading` - Heading text inside the year picker trigger
+- `.h-calendar-year-picker__trigger-indicator` - Indicator icon inside the year picker trigger
+- `.h-calendar-year-picker__grid` - Overlay grid of selectable years
+- `.h-calendar-year-picker__year-cell` - Individual year option
+
+#### Modifier Classes
+
+- `.h-calendar--range` - Root of a RangeCalendar
+- `.h-calendar--week-view` - Week view
+- `.h-calendar--day-view` - Day view
+
+RangeCalendar shares these classes. Day states come from the data attributes below, not from classes.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

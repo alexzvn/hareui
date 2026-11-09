@@ -240,9 +240,58 @@ Use the `class` prop to style the root and the `ui` prop to style each part.
 
 <ComponentPreview name="rich-table/custom-styles" minHeight="360px" />
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-rich-table` plus `.h-rich-table--{primary|secondary}`. Parts carry `.h-rich-table__{content|thead|tbody|tfoot|th|td|drag-column|drag-cell|drag-handle|empty|loading|corners}`, and the body adds `.h-rich-table__tbody--{primary|secondary}` to match the variant. The sticky header and footer add `.h-rich-table__thead--sticky` / `.h-rich-table__tfoot--sticky`, plus `.h-rich-table__thead--masked` / `.h-rich-table__tfoot--masked` in the primary variant. The corners add `.h-rich-table__corners--masked` in the primary variant and `.h-rich-table__corners--hidden` when an ancestor scrolls the rows. The loading bar adds `.h-rich-table__thead--loading` with `--loading-{color}` and `--loading-{animation}`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The RichTable component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/rich-table/rich-table.css)):
+
+#### Base Classes
+
+- `.h-rich-table` - Root scroll container
+- `.h-rich-table__content` - The `<table>` element
+- `.h-rich-table__thead` - Header section (`<thead>`)
+- `.h-rich-table__tbody` - Body section (`<tbody>`)
+- `.h-rich-table__tfoot` - Footer section (`<tfoot>`)
+- `.h-rich-table__th` - Header and footer cell (`<th>`)
+- `.h-rich-table__td` - Data cell (`<td>`)
+- `.h-rich-table__empty` - Cell shown when there are no rows
+- `.h-rich-table__loading` - Cell shown while loading with no rows
+- `.h-rich-table__corners` - Rounded corners drawn over the body
+
+#### Advanced Classes
+
+- `.h-rich-table__drag-column` - Header and footer cells of the handle column
+- `.h-rich-table__drag-cell` - Body cell holding a row's drag handle
+- `.h-rich-table__drag-handle` - Drag handle button of a row
+
+#### Variant Classes
+
+- `.h-rich-table--primary` - Gray background container with card-style body (default)
+- `.h-rich-table--secondary` - No background, standalone rounded headers
+- `.h-rich-table__tbody--primary` - Body of the primary variant
+- `.h-rich-table__tbody--secondary` - Body of the secondary variant
+
+#### Modifier Classes
+
+- `.h-rich-table--external-scroll` - Root when an ancestor scrolls the rows: clips to the frame and grows with the table
+- `.h-rich-table__thead--masked` - Sticky header masking the rows under it (primary variant)
+- `.h-rich-table__tfoot--masked` - Sticky footer masking the rows under it (primary variant)
+- `.h-rich-table__corners--masked` - Corners masked in the primary variant
+- `.h-rich-table__corners--hidden` - Corners hidden when an ancestor scrolls the rows
+
+#### Loading Classes
+
+- `.h-rich-table__thead--loading` - Header showing the loading bar
+- `.h-rich-table__thead--loading-accent` - Accent loading bar
+- `.h-rich-table__thead--loading-success` - Success loading bar
+- `.h-rich-table__thead--loading-warning` - Warning loading bar
+- `.h-rich-table__thead--loading-danger` - Danger loading bar
+- `.h-rich-table__thead--loading-neutral` - Neutral loading bar
+- `.h-rich-table__thead--loading-carousel` - Carousel animation
+- `.h-rich-table__thead--loading-carousel-inverse` - Inverse carousel animation
+- `.h-rich-table__thead--loading-swing` - Swing animation
+- `.h-rich-table__thead--loading-elastic` - Elastic animation
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Global theme override
 

@@ -67,6 +67,23 @@ Use the `orientation` prop to lay the toolbar out `horizontal` or `vertical`. Se
 Inside a Toolbar, ToggleButtonGroups and ButtonGroups take the toolbar's orientation and Separators take the perpendicular
 one, unless they set `orientation` themselves.
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Toolbar component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/toolbar/toolbar.css)):
+
+#### Base Classes
+
+- `.h-toolbar` - Base container; also sizes the Separators inside it
+
+The default `horizontal` orientation adds no class.
+
+#### Modifier Classes
+
+- `.h-toolbar--vertical` - Vertical orientation
+- `.h-toolbar--attached` - Attached variant with surface background and full rounding
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

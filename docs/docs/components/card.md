@@ -136,8 +136,27 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `content`     | `card-content`     | Flexible content container (default slot)              |
 | `footer`      | `card-footer`      | Footer with row layout                                 |
 
-The `variant` prop sets the surface. HareUI renders utility classes, so style through `class`, `ui`
-or `createHareUI`.
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Card component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/card/card.css)):
+
+#### Base Classes
+
+- `.h-card` - Base container with padding and border radius
+- `.h-card__header` - Header section container
+- `.h-card__title` - Title with base font size and weight
+- `.h-card__description` - Muted description text
+- `.h-card__content` - Flexible content container
+- `.h-card__footer` - Footer with row layout
+
+#### Variant Classes
+
+- `.h-card--transparent` - Minimal prominence, transparent background
+- `.h-card--default` - Standard appearance on the surface (default)
+- `.h-card--secondary` - Medium prominence on the secondary surface
+- `.h-card--tertiary` - Higher prominence on the tertiary surface
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

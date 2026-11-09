@@ -174,9 +174,31 @@ app.use(
 
 ## Styling Reference
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-select` (plus `.h-select--full-width`) and the trigger carries `.h-select__trigger` (plus `--secondary` and `--full-width` modifiers). They live in `@layer components`, so any utility from `class` or `ui` wins over them. The value, clear button, indicator and popover keep Tailwind utilities.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Select component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/select/select.css)):
+
+#### Base Classes
+
+- `.h-select` - Base select container
+- `.h-select__trigger` - The button that triggers the select
+- `.h-select__value` - The displayed value or placeholder
+- `.h-select__clear-button` - The clear button
+- `.h-select__indicator` - The dropdown indicator
+- `.h-select__popover` - The popover holding the list box
+
+#### Variant Classes
+
+- `.h-select__trigger--secondary` - Secondary variant without shadow, suitable for use in surfaces
+
+#### Modifier Classes
+
+- `.h-select--full-width` - Stretches to the container width
+- `.h-select__trigger--full-width` - Stretches the trigger to the container width
+
+The default `primary` variant adds no class. The options carry the [ListBox](/docs/components/list-box) classes.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

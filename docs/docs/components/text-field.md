@@ -157,6 +157,20 @@ app.use(
 
 > **Note:** The child components ([Label](/docs/components/label), [Input](/docs/components/input), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The TextField component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/text-field/text-field.css)):
+
+#### Base Classes
+
+- `.h-textfield` - Root container. Hides the description while invalid
+
+#### Modifier Classes
+
+- `.h-textfield--full-width` - Stretches the field and its input or textarea to the container width
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 TextField sets these data attributes on its root:

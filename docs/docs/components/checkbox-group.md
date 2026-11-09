@@ -121,6 +121,18 @@ app.use(
 - `base` → `[data-slot="checkbox-group"]` — `flex flex-col`. Each item after the first gets `mt-4`
 - Items use the [Checkbox](/docs/components/checkbox) theme (`content`, `control`, `indicator`)
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The CheckboxGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/checkbox-group/checkbox-group.css)):
+
+#### Base Classes
+
+- `.h-checkbox-group` - Base checkbox group container
+
+The items carry the [Checkbox](/docs/components/checkbox) classes.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

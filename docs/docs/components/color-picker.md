@@ -88,6 +88,18 @@ app.use(
 | `trigger` | `color-picker-trigger` | Trigger button                          |
 | `popover` | `color-picker-popover` | Popover container (portalled to `body`) |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ColorPicker component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/color-picker/color-picker.css)):
+
+#### Base Classes
+
+- `.h-color-picker` - Base container
+- `.h-color-picker__trigger` - Trigger button
+- `.h-color-picker__popover` - Popover container
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Focus**: `:focus-visible` or `data-focus-visible="true"`

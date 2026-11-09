@@ -137,20 +137,46 @@ app.use(
 | `handle`       | `drawer-handle`        | Visual drag handle indicator (bar: `data-slot="drawer-handle-bar"`), rendered when `handle` is `true` |
 | `closeTrigger` | `drawer-close-trigger` | Close button, rendered unless `closeButton` is `false`                                                |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Drawer component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/drawer/drawer.css)):
+
+#### Base Classes
+
+- `.h-drawer__backdrop` - Overlay backdrop behind the drawer
+- `.h-drawer__content` - Positioning wrapper for the drawer panel
+- `.h-drawer__dialog` - The drawer panel itself
+- `.h-drawer__header` - Header section for titles
+- `.h-drawer__heading` - Main title text
+- `.h-drawer__body` - Main scrollable content area
+- `.h-drawer__footer` - Footer section for actions
+- `.h-drawer__handle` - Visual drag handle indicator, styling its `drawer-handle-bar` child
+
+The close button carries the [CloseButton](/docs/components/close-button) classes.
+
 #### Backdrop Variants
 
-- `variant="opaque"` - Opaque colored backdrop (default)
-- `variant="blur"` - Blurred backdrop with glass effect
-- `variant="transparent"` - Transparent backdrop (no overlay)
+- `.h-drawer__backdrop--opaque` - Opaque colored backdrop (default)
+- `.h-drawer__backdrop--blur` - Blurred backdrop with glass effect
+- `.h-drawer__backdrop--transparent` - Transparent backdrop (no overlay)
 
 #### Placement Variants
 
-- `placement="bottom"` - Slides up from the bottom edge (default)
-- `placement="top"` - Slides down from the top edge (the handle renders below the footer)
-- `placement="left"` - Slides in from the left edge
-- `placement="right"` - Slides in from the right edge
+- `.h-drawer__content--bottom` - Docks the panel to the bottom edge (default)
+- `.h-drawer__content--top` - Docks the panel to the top edge
+- `.h-drawer__content--left` - Docks the panel to the left edge
+- `.h-drawer__content--right` - Docks the panel to the right edge
 
 In right-to-left layouts `left` and `right` still dock on that physical side.
+
+#### Dialog Variants
+
+- `.h-drawer__dialog--bottom` - Slides up from the bottom edge (default)
+- `.h-drawer__dialog--top` - Slides down from the top edge (the handle renders below the footer)
+- `.h-drawer__dialog--left` - Slides in from the left edge
+- `.h-drawer__dialog--right` - Slides in from the right edge
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

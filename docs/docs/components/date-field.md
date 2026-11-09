@@ -166,9 +166,33 @@ app.use(
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options. The group, input, segment, prefix and suffix keys belong to the internal `date-input-group` part, shared with [TimeField](/docs/components/time-field).
 
-### CSS classes
+### CSS Classes
 
-The input group carries `.h-date-input-group` plus `.h-date-input-group--secondary` and `.h-date-input-group--full-width`. Its parts carry `.h-date-input-group__input-container`, `.h-date-input-group__input`, `.h-date-input-group__segment`, `.h-date-input-group__prefix` and `.h-date-input-group__suffix`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The DateField component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/date-field/date-field.css)):
+
+#### Base Classes
+
+- `.h-date-field` - Root container
+
+#### Modifier Classes
+
+- `.h-date-field--full-width` - Stretches to the container width
+
+#### Input Group Classes
+
+The group and its parts carry the classes of the internal DateInputGroup part, shared with TimeField, DatePicker and DateRangePicker ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/date-input-group/date-input-group.css)):
+
+- `.h-date-input-group` - Container for the prefix, segments and suffix, with border and background styling
+- `.h-date-input-group__input` - Wrapper around the segments
+- `.h-date-input-group__segment` - Each individual date part
+- `.h-date-input-group__prefix` - Content before the segments, rendered with the `prefix` slot
+- `.h-date-input-group__suffix` - Content after the segments, rendered with the `suffix` slot
+- `.h-date-input-group--secondary` - Secondary variant without shadow, suitable for use in surfaces
+- `.h-date-input-group--full-width` - Stretches the group to the container width
+
+The default `primary` variant adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

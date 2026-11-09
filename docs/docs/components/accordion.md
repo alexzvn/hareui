@@ -149,14 +149,34 @@ app.use(
 - `panel` → `[data-slot="accordion-panel"]` – collapsible panel container
 - `trigger` → `[data-slot="accordion-trigger"]` – clickable trigger button
 
-#### Variants
+### CSS Classes
 
-- `variant="surface"` – surface background with rounded corners
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Accordion component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/accordion/accordion.css)):
 
-#### State Attributes
+#### Base Classes
 
-- `[data-slot="accordion-trigger"][aria-expanded="true"]` – expanded state
-- `[data-slot="accordion-panel"][aria-hidden="false"]` – panel visible state
+- `.h-accordion` - Base accordion container
+- `.h-accordion__item` - Individual accordion item, with its bottom separator
+- `.h-accordion__heading` - Heading wrapper
+- `.h-accordion__trigger` - Clickable trigger button
+- `.h-accordion__icon` - Leading icon inside the trigger
+- `.h-accordion__indicator` - Expand/collapse indicator icon
+- `.h-accordion__panel` - Collapsible panel container
+- `.h-accordion__body` - Content body container
+- `.h-accordion__body-inner` - Padded wrapper inside the body
+
+#### Variant Classes
+
+- `.h-accordion--surface` - Surface background with rounded corners
+
+The `default` variant adds no class.
+
+#### State Classes
+
+- `.h-accordion__trigger[aria-expanded="true"]` - Expanded state
+- `.h-accordion__panel[aria-hidden="false"]` - Panel visible state
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

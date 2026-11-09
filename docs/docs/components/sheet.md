@@ -192,20 +192,45 @@ app.use(
 | `handleBar`    | `sheet-handle-bar`    | Visual grip inside the handle                                                     |
 | `closeTrigger` | `sheet-close-trigger` | Close button, rendered when `closeButton` is set                                  |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Sheet component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/sheet/sheet.css)):
+
+#### Base Classes
+
+- `.h-sheet__overlay` - Modal overlay container
+- `.h-sheet__backdrop` - Backdrop behind the sheet
+- `.h-sheet__content` - Sheet sizing and stacking wrapper
+- `.h-sheet__dialog` - Dialog surface
+- `.h-sheet__header` - Header section
+- `.h-sheet__heading` - Dialog title
+- `.h-sheet__body` - Content area that scrolls after full expansion
+- `.h-sheet__footer` - Footer actions
+- `.h-sheet__handle` - Draggable handle area
+- `.h-sheet__handle-bar` - Default visual grip
+
+The close button carries the [CloseButton](/docs/components/close-button) classes. `detached` and `snapPoints` add no class: the content reads its `data-detached` and `data-snap-points` attributes.
+
 #### Backdrop Variants
 
-- `variant="opaque"` - Dimmed backdrop (default)
-- `variant="blur"` - Blurred backdrop
-- `variant="transparent"` - Transparent backdrop
+- `.h-sheet__backdrop--opaque` - Dimmed backdrop (default)
+- `.h-sheet__backdrop--blur` - Blurred backdrop
+- `.h-sheet__backdrop--transparent` - Transparent backdrop
 
 Only the bottom-most sheet in a nested stack dims the page.
 
 #### Placement Variants
 
-- `placement="bottom"` - Bottom edge (default)
-- `placement="top"` - Top edge (the handle renders below the footer)
-- `placement="left"` - Left edge
-- `placement="right"` - Right edge
+- `.h-sheet__content--bottom` - Bottom edge (default)
+- `.h-sheet__dialog--bottom` - Bottom edge (default)
+- `.h-sheet__content--top` - Top edge (the handle renders below the footer)
+- `.h-sheet__dialog--top` - Top edge
+- `.h-sheet__content--left` - Left edge
+- `.h-sheet__dialog--left` - Left edge
+- `.h-sheet__content--right` - Right edge
+- `.h-sheet__dialog--right` - Right edge
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

@@ -81,13 +81,26 @@ app.use(
 | `base`   | `avatar-group`       | Base avatar group container |
 | `count`  | `avatar-group-count` | Overflow count avatar       |
 
-Layout is controlled by the `grid` and `overlap` props. HareUI renders utility classes, so style
-through `class`, `ui` or `createHareUI`.
+Layout is controlled by the `grid` and `overlap` props.
 
 The stacked layout overlaps siblings with a negative margin. Set it with `--avatar-group-overlap`,
 `0.5rem` by default. Clip mode masks each overlapped avatar, except the last child and the count.
 It also nudges fallback glyphs so they look centered. Ring mode draws a thin outline in the
 `--background` color instead.
+
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The AvatarGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/avatar-group/avatar-group.css)):
+
+#### Base Classes
+
+- `.h-avatar-group` - Base avatar group container
+- `.h-avatar-group--grid` - Grid layout modifier (no overlap)
+- `.h-avatar-group--clip` - Transparent seam tracing the next avatar's outline (default stacked overlap)
+- `.h-avatar-group--ring` - Solid box-shadow outline via `--background`
+- `.h-avatar-group__count` - Overflow count avatar
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

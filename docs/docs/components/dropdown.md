@@ -191,9 +191,30 @@ Item labels and descriptions render with the [Label](/docs/components/label) and
 - `variant="default"` - Default item styling (per item, `item.variant`)
 - `variant="danger"` - Danger item styling: label and indicators in the danger colour
 
-### CSS classes
+### CSS Classes
 
-The popover carries `.h-dropdown__popover` and the menu `.h-dropdown__menu`; items carry `.h-dropdown__item`, their indicators `.h-dropdown__indicator` and `.h-dropdown__submenu-indicator` (plus `--danger` on danger items), and sections, headers and separators `.h-dropdown__{section|header|separator}`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Dropdown component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/dropdown/dropdown.css)):
+
+#### Base Classes
+
+- `.h-dropdown__popover` - The popover container
+- `.h-dropdown__menu` - The menu container inside the popover
+
+#### MenuItem Classes
+
+- `.h-dropdown__item` - Base menu item container
+- `.h-dropdown__indicator` - Selection indicator (checkmark or dot)
+- `.h-dropdown__indicator--danger` - Indicator of a danger item
+- `.h-dropdown__submenu-indicator` - Submenu indicator (chevron)
+- `.h-dropdown__submenu-indicator--danger` - Submenu indicator of a danger item
+
+#### MenuSection Classes
+
+- `.h-dropdown__section` - Base menu section container
+- `.h-dropdown__header` - Section header
+- `.h-dropdown__separator` - Separator between items or sections
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

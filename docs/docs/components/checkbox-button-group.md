@@ -171,9 +171,34 @@ app.use(
 
 The default indicator uses the `control` and `indicator` classes of the [Checkbox](/docs/components/checkbox) theme. Its `variant` and global `checkbox` overrides apply to it too.
 
-### CSS classes
+### CSS Classes
 
-CheckboxButtonGroup's own styles are `.h-checkbox-button-group` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-checkbox-button-group` (plus `.h-checkbox-button-group--grid` with `layout="grid"`). Each card carries `.h-checkbox-button-group__item`, and its parts carry `__indicator` (plus `__indicator--custom` for a custom icon), `__content`, `__icon`, `__text`, `__label` and `__description`. With an icon, `__content--with-icon` and `__text--with-icon` are added.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The CheckboxButtonGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/checkbox-button-group/checkbox-button-group.css)):
+
+#### Base Classes
+
+- `.h-checkbox-button-group` - Root container
+- `.h-checkbox-button-group__item` - One selectable card
+- `.h-checkbox-button-group__indicator` - Checkbox indicator in the card corner
+- `.h-checkbox-button-group__content` - Content row of the card
+- `.h-checkbox-button-group__icon` - Leading icon
+- `.h-checkbox-button-group__text` - Label and description column
+- `.h-checkbox-button-group__label` - Card label
+- `.h-checkbox-button-group__description` - Card description
+
+#### Modifier Classes
+
+- `.h-checkbox-button-group--grid` - `layout="grid"`
+- `.h-checkbox-button-group__indicator--custom` - Indicator with a custom icon
+- `.h-checkbox-button-group__content--with-icon` - Content row when an icon is set
+- `.h-checkbox-button-group__text--with-icon` - Text column when an icon is set
+
+#### Checkbox Classes
+
+- `.h-checkbox__control` - Checkbox control box, restyled inside a card
+- `.h-checkbox__indicator` - Checkmark, restyled inside a card
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

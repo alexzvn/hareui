@@ -219,6 +219,32 @@ app.use(
 
 ## Styling Reference
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Autocomplete component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/autocomplete/autocomplete.css)):
+
+#### Base Classes
+
+- `.h-autocomplete` - Base autocomplete container
+- `.h-autocomplete__trigger` - The button that triggers the autocomplete
+- `.h-autocomplete__value` - The displayed value or placeholder
+- `.h-autocomplete__clear-button` - The clear button that removes the selected value
+- `.h-autocomplete__indicator` - The dropdown indicator icon
+- `.h-autocomplete__popover` - The popover container
+
+#### Variant Classes
+
+- `.h-autocomplete--secondary` - Secondary variant without shadow, suitable for use in surfaces
+
+The default `primary` variant adds no class.
+
+#### Modifier Classes
+
+- `.h-autocomplete--full-width` - Stretches the autocomplete to the container width
+- `.h-autocomplete__trigger--full-width` - Stretches the trigger to the container width
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Hover**: `:hover` or `[data-hovered="true"]` on the trigger

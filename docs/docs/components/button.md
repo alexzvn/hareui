@@ -164,11 +164,40 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `trailingIcon` | `button-trailing-icon` | The `trailingIcon` prop's icon                     |
 | `avatar`       | `button-avatar`        | The `avatar` prop's `Avatar`                       |
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-button` plus one modifier per prop: `.h-button--{variant}`, `.h-button--{sm|lg}` (none for the default `md`), `.h-button--icon-only` and `.h-button--full-width`. The `leadingIcon` and `trailingIcon` elements carry `.h-button__icon`.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Button component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/button/button.css)):
 
-### Interactive states
+#### Base & Size Classes
+
+- `.h-button` - Base button styles
+- `.h-button--sm` - Small size variant
+- `.h-button--lg` - Large size variant
+
+The default `md` size adds no class.
+
+#### Variant Classes
+
+- `.h-button--primary`
+- `.h-button--secondary`
+- `.h-button--tertiary`
+- `.h-button--outline`
+- `.h-button--ghost`
+- `.h-button--danger`
+- `.h-button--danger-soft`
+
+#### Modifier Classes
+
+- `.h-button--icon-only` - Square button, as wide as it is tall
+- `.h-button--full-width` - Stretches to the container width
+
+#### Element Classes
+
+- `.h-button__icon` - The `leadingIcon` and `trailingIcon` icons
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
+### Interactive States
 
 - **Hover**: `:hover` / `[data-hovered=true]`
 - **Active/Pressed**: `:active`

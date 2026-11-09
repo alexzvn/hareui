@@ -113,9 +113,23 @@ The `secondary` variant adds the `--input-bg` token and its hover and focus vers
 
 - `base` → `[data-slot="input"]` – native input element styling
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-input` plus `.h-input--secondary` and `.h-input--full-width` from the matching props. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Input component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/input/input.css)):
+
+#### Base Classes
+
+- `.h-input` - Native input element styling
+
+#### Variant Classes
+
+- `.h-input--secondary` - Secondary variant without shadow, for use in surfaces
+
+#### Modifier Classes
+
+- `.h-input--full-width` - Stretches to the container width
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

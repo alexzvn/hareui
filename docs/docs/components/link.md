@@ -122,6 +122,17 @@ app.use(
 - `base` → `[data-slot="link"]` – Base link styles with hover underline
 - `icon` → `[data-slot="link-icon"]` – Link icon wrapper (`data-default-icon="true"` while it shows the built-in arrow)
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Link component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/link/link.css)):
+
+#### Base Classes
+
+- `.h-link` - Base link styles
+- `.h-link__icon` - Link icon styles
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Focus**: `:focus-visible`

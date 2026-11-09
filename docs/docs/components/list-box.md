@@ -142,9 +142,27 @@ app.use(
 
 ## Styling Reference
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-list-box`; options carry `.h-list-box__item`, their checkmark `.h-list-box__indicator` (plus `--danger` on danger items), and sections, headers, separators and the empty state `.h-list-box__{section|header|separator|empty-state}`. Select, ComboBox and Autocomplete popovers render the same classes. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ListBox component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/list-box/list-box.css)):
+
+#### Base Classes
+
+- `.h-list-box` - Base listbox container
+- `.h-list-box__item` - Individual listbox item
+- `.h-list-box__indicator` - Selection indicator icon
+- `.h-list-box__section` - Section container for grouping items
+- `.h-list-box__header` - Section header
+- `.h-list-box__separator` - Separator between items or sections
+- `.h-list-box__empty-state` - Shown when there are no items
+
+#### Variant Classes
+
+- `.h-list-box__indicator--danger` - Indicator of a danger item
+
+Select, ComboBox and Autocomplete popovers render the same classes.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

@@ -188,9 +188,30 @@ The group's styles are `.h-number-field__group` classes in `@layer components`, 
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-number-field` (plus `.h-number-field--full-width`). The group carries `.h-number-field__group` (plus `--secondary` and `--full-width` modifiers), and the parts carry `.h-number-field__input`, `.h-number-field__increment-button` and `.h-number-field__decrement-button`.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The NumberField component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/number-field/number-field.css)):
+
+#### Base Classes
+
+- `.h-number-field` - Root container
+- `.h-number-field__group` - Container for input and buttons with border and background styling
+- `.h-number-field__input` - The numeric input field
+- `.h-number-field__increment-button` - Button to increment the value
+- `.h-number-field__decrement-button` - Button to decrement the value
+
+#### Variant Classes
+
+- `.h-number-field__group--secondary` - Secondary variant without shadow, suitable for use in surfaces
+
+#### Modifier Classes
+
+- `.h-number-field--full-width` - Stretches to the container width
+- `.h-number-field__group--full-width` - Stretches the group to the container width
+
+The default `primary` variant adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

@@ -90,9 +90,39 @@ app.use(
 | `image`    | —                 | Image element with aspect-square sizing, rendered when `src` is set |
 | `fallback` | `avatar-fallback` | Fallback container with centered content (text or `#fallback` slot) |
 
-The `size`, `variant` and `color` props control the appearance. HareUI renders utility classes, so
-style through `class`, `ui` or `createHareUI`. `color` only affects the fallback. It has no effect
+The `size`, `variant` and `color` props control the appearance. `color` only affects the fallback. It has no effect
 once an image has loaded.
+
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Avatar component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/avatar/avatar.css)):
+
+#### Base Classes
+
+- `.h-avatar` - Base container with default size (`size-10`)
+- `.h-avatar__image` - Image element with aspect-square sizing
+- `.h-avatar__fallback` - Fallback container with centered content
+
+#### Size Classes
+
+- `.h-avatar--sm` - Small avatar (`size-8`)
+- `.h-avatar--lg` - Large avatar (`size-12`)
+
+The default `md` size adds no class.
+
+#### Variant Classes
+
+- `.h-avatar--soft` - Soft variant with lighter background
+
+#### Color Classes
+
+- `.h-avatar__fallback--default` - Default text color
+- `.h-avatar__fallback--accent` - Accent text color
+- `.h-avatar__fallback--success` - Success text color
+- `.h-avatar__fallback--warning` - Warning text color
+- `.h-avatar__fallback--danger` - Danger text color
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

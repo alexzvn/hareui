@@ -122,6 +122,47 @@ app.use(
 | `close`       | `toast-close`         | The close button                                              |
 | `action`      | `toast-action-button` | The optional action button                                    |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Toast component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/toast-provider/toast-provider.css)):
+
+#### Base Classes
+
+- `.h-toast` - Base toast container
+- `.h-toast-region` - Toast region container
+- `.h-toast__content` - Content wrapper for title and description
+- `.h-toast__indicator` - Icon/indicator container
+- `.h-toast__title` - Toast title text
+- `.h-toast__description` - Toast description text
+- `.h-toast__action` - Action button
+- `.h-toast__close-button` - Close button, shown on hover
+
+#### Variant Classes
+
+- `.h-toast--accent` - Accent blue variant
+- `.h-toast--success` - Success green variant
+- `.h-toast--warning` - Warning yellow/orange variant
+- `.h-toast--danger` - Danger red variant
+
+The default variant adds no class.
+
+#### Modifier Classes
+
+- `.h-toast-region--bottom` - Region at the bottom center
+- `.h-toast-region--bottom-start` - Region at the bottom start corner
+- `.h-toast-region--bottom-end` - Region at the bottom end corner
+- `.h-toast-region--top` - Region at the top center
+- `.h-toast-region--top-start` - Region at the top start corner
+- `.h-toast-region--top-end` - Region at the top end corner
+- `.h-toast--bottom` - Stacks upward from the bottom
+- `.h-toast--bottom-start` - Stacks upward from the bottom
+- `.h-toast--bottom-end` - Stacks upward from the bottom
+- `.h-toast--top` - Stacks downward from the top
+- `.h-toast--top-start` - Stacks downward from the top
+- `.h-toast--top-end` - Stacks downward from the top
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - `[data-frontmost]` — applied to the topmost visible toast

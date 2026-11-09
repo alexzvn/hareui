@@ -190,6 +190,56 @@ The `--header-height` CSS variable holds the height of the header. While the men
 - `--header-menu-width`
 - `--header-menu-height`
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Header component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/header/header.css)):
+
+#### Base Classes
+
+- `.h-header` - The sticky bar; slides out while `data-hidden="true"`
+
+#### Element Classes
+
+- `.h-header__container` - Width-limited flex row
+- `.h-header__left` - Start area
+- `.h-header__center` - Center area (the default slot)
+- `.h-header__right` - End area
+- `.h-header__title` - The title link
+- `.h-header__toggle` - The toggle Button
+- `.h-header__toggle-icon` - The animated hamburger icon
+- `.h-header__menu-header` - The menu's own header row
+- `.h-header__menu-body` - The scrollable menu body
+
+#### Breakpoint Classes
+
+- `.h-header__left--sm` - Grows to fill the row from `sm` up
+- `.h-header__left--md` - Grows to fill the row from `md` up
+- `.h-header__left--lg` - Grows to fill the row from `lg` up
+- `.h-header__left--xl` - Grows to fill the row from `xl` up
+- `.h-header__right--sm` - Grows to fill the row from `sm` up
+- `.h-header__right--md` - Grows to fill the row from `md` up
+- `.h-header__right--lg` - Grows to fill the row from `lg` up
+- `.h-header__right--xl` - Grows to fill the row from `xl` up
+- `.h-header__center--sm` - Hidden below `sm`
+- `.h-header__center--md` - Hidden below `md`
+- `.h-header__center--lg` - Hidden below `lg`
+- `.h-header__center--xl` - Hidden below `xl`
+- `.h-header__toggle--sm` - Hidden from `sm` up
+- `.h-header__toggle--md` - Hidden from `md` up
+- `.h-header__toggle--lg` - Hidden from `lg` up
+- `.h-header__toggle--xl` - Hidden from `xl` up
+- `.h-header__center--none` - Hidden at every width (`breakpoint="none"`)
+
+#### Modifier Classes
+
+- `.h-header__toggle--left` - Pulls the toggle toward the start edge
+- `.h-header__toggle--right` - Pulls the toggle toward the end edge
+- `.h-header__menu-body--drawer` - Extra top padding in `drawer` mode
+
+The menu's `overlay` and `content` classes are utilities, not CSS classes: they go to the Modal or Drawer through its `ui`.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

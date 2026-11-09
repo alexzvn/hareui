@@ -88,6 +88,27 @@ app.use(
 
 - `showDots` – adds a dot grid overlay for precision picking
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ColorArea component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/color-area/color-area.css)):
+
+#### Base Classes
+
+- `.h-color-area` - Base styles with gradient background and inner shadow
+- `.h-color-area--show-dots` - Adds dot grid overlay for precision picking
+
+#### Element Classes
+
+- `.h-color-area__thumb` - Draggable thumb indicator
+
+#### State Classes
+
+- `.h-color-area[data-disabled]` - Disabled area
+- `.h-color-area__thumb[data-dragging="true"]` - Thumb being dragged (grows)
+- `.h-color-area__thumb[data-focus-visible="true"]` - Thumb keyboard focused
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Disabled**: `[data-disabled]` on the area and thumb

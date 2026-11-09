@@ -111,6 +111,32 @@ app.use(
 - `track` → `[data-slot="color-slider-track"]` – gradient track. Its `::before` and `::after` are the edge caps
 - `thumb` → `[data-slot="color-slider-thumb"]`
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ColorSlider component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/color-slider/color-slider.css)):
+
+#### Base Classes
+
+- `.h-color-slider` - Base slider container
+- `.h-color-slider__label` - Label element
+- `.h-color-slider__output` - Output element displaying the current value
+- `.h-color-slider__track` - Track element with the colour gradient
+- `.h-color-slider__thumb` - Thumb element showing the current colour
+
+#### Variant Classes
+
+- `.h-color-slider--horizontal` - Horizontal orientation (default)
+- `.h-color-slider--vertical` - Vertical orientation
+
+#### State Classes
+
+- `.h-color-slider[data-disabled]` - Disabled slider state
+- `.h-color-slider__thumb[data-dragging="true"]` - Thumb being dragged
+- `.h-color-slider__thumb:focus-visible` - Thumb keyboard focused
+- `.h-color-slider__thumb[data-disabled]` - Disabled thumb state
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Disabled**: `[data-disabled]` on the root and the thumb

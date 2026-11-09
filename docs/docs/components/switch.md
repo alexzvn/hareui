@@ -138,9 +138,31 @@ app.use(
 - `thumb` → `[data-slot="switch-thumb"]` – the moving thumb
 - `icon` → `[data-slot="switch-icon"]` – optional icon inside the thumb
 
-### CSS classes
+### CSS Classes
 
-Switch's own styles are `.h-switch` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-switch` plus `.h-switch--sm` or `.h-switch--lg`, and the slots carry `.h-switch__content`, `.h-switch__control` and `.h-switch__thumb`. The track colors come from `--switch-control-bg`, `--switch-control-bg-hover`, `--switch-control-bg-pressed`, `--switch-control-bg-checked` and `--switch-control-bg-checked-hover`, set on the root.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Switch component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/switch/switch.css)):
+
+#### Switch Classes
+
+- `.h-switch` - Base switch container
+- `.h-switch__content` - Optional content container
+- `.h-switch__control` - Switch control track
+- `.h-switch__thumb` - Switch thumb that moves
+- `.h-switch--sm` - Small size variant
+- `.h-switch--lg` - Large size variant
+
+The default `md` size adds no class.
+
+#### SwitchGroup Classes
+
+The SwitchGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/switch-group/switch-group.css)):
+
+- `.h-switch-group` - Switch group container
+- `.h-switch-group__items` - Container for switch items
+- `.h-switch-group--horizontal` - Horizontal layout
+- `.h-switch-group--vertical` - Vertical layout (default)
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

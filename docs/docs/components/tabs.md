@@ -179,9 +179,39 @@ app.use(
 - `align="start"` – aligns tab content to the start
 - `align="end"` – aligns tab content to the end
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-tabs` plus `.h-tabs--secondary` (none for the default `primary`), `.h-tabs--{horizontal|vertical}` and `.h-tabs--{start|end}` (none for the default `center`). Parts carry `.h-tabs__{list-container|list|tab|indicator|panel|separator|scroll-prev|scroll-next}`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Tabs component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/tabs/tabs.css)):
+
+#### Base Classes
+
+- `.h-tabs` - Base tabs container
+- `.h-tabs__list-container` - Tab list container wrapper
+- `.h-tabs__scroll-prev` - Scroll chevron button for the previous (left / up) direction
+- `.h-tabs__scroll-next` - Scroll chevron button for the next (right / down) direction
+- `.h-tabs__list` - Tab list container
+- `.h-tabs__tab` - Individual tab button
+- `.h-tabs__separator` - Separator between tabs
+- `.h-tabs__panel` - Tab panel content
+- `.h-tabs__indicator` - Tab indicator
+
+#### Orientation Classes
+
+- `.h-tabs--horizontal` - Horizontal tab layout (default)
+- `.h-tabs--vertical` - Vertical tab layout
+
+#### Variant Classes
+
+- `.h-tabs--secondary` - Secondary variant with underline indicator
+
+#### Alignment Classes
+
+- `.h-tabs--start` - Aligns tab content to the start
+- `.h-tabs--end` - Aligns tab content to the end
+
+The default `primary` variant and `center` alignment add no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

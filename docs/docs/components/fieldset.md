@@ -78,6 +78,19 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `fieldGroup`  | `fieldset-field-group` | Wrapper for grouped fields   |
 | `actions`     | `fieldset-actions`     | Action bar below the fields  |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Fieldset component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/fieldset/fieldset.css)):
+
+#### Base Classes
+
+- `.h-fieldset` - Root container
+- `.h-fieldset__legend` - Legend element
+- `.h-fieldset__field-group` - Wrapper for grouped fields
+- `.h-fieldset__actions` - Action bar below the fields
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

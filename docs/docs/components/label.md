@@ -99,9 +99,23 @@ app.use(
 - groups: `role="group"`, `role="radiogroup"` or `role="checkboxgroup"`
 - items: `data-slot="radio"` or `data-slot="checkbox"`
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-label` plus `.h-label--required`, `.h-label--disabled` and `.h-label--invalid` from the matching props. The same styles also follow a `[data-required]`, `[data-disabled]` or `[data-invalid]` parent field.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Label component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/label/label.css)):
+
+#### Base Classes
+
+- `.h-label` - Base label styles
+
+#### State Modifier Classes
+
+- `.h-label--required` - Shows the required asterisk
+- `.h-label--disabled` - Disabled state styling
+- `.h-label--invalid` - Invalid state styling (danger text color)
+
+The same states also follow a `[data-required]`, `[data-disabled]` or `[data-invalid]` parent field.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 
