@@ -1,12 +1,16 @@
 /**
- * Visual parity check: HareUI playground (:5173) vs @heroui/react reference (:5174).
+ * Visual parity check: HareUI playground vs @heroui/react reference.
  * Compares computed styles of every [data-slot] element and pixel screenshots.
+ * Builds both apps into private temp dirs and serves them on ephemeral ports, so no dev servers are needed
+ * and concurrent runs don't collide.
  *
  * Cases: parity/cases/<component>.json + playground/src/parity/cases/<component>.ts + reference/src/cases/<component>.tsx
  * Usage: bun parity/compare.ts [--component <name>] [--case <id>] [--concurrency <n>]
  */
-import type { Browser, ElementHandle, Page } from 'puppeteer'
-import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import type { ElementHandle, Page } from 'puppeteer'
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pixelmatch from 'pixelmatch'
 import { PNG } from 'pngjs'
@@ -29,8 +33,9 @@ type Theme = 'light' | 'dark'
 
 type SlotSnapshot = { slot: string, tag: string, styles: Record<string, string> }
 
-const VUE = 'http://localhost:5173'
-const REACT = 'http://localhost:5174'
+type App = { name: 'vue' | 'react', url: string }
+
+const TOOLING = fileURLToPath(new URL('../', import.meta.url))
 const OUT = fileURLToPath(new URL('./out/', import.meta.url))
 const CASES_DIR = fileURLToPath(new URL('./cases/', import.meta.url))
 const caseList: Case[] = readdirSync(CASES_DIR).filter(f => f.endsWith('.json')).sort().flatMap(f => JSON.parse(readFileSync(CASES_DIR + f, 'utf8')))
@@ -56,23 +61,36 @@ function flag(name: string): string | undefined {
   return i >= 0 ? args[i + 1] : undefined
 }
 
-async function ensureServers() {
-  for (const url of [VUE, REACT]) {
-    try {
-      await fetch(url)
-    }
-    catch {
-      console.error('start playground (bun run dev) and reference (bun run reference) first')
-      process.exit(1)
-    }
+const tempDirs: string[] = []
+process.on('exit', () => tempDirs.forEach(d => rmSync(d, { recursive: true, force: true })))
+
+// Bundled builds instead of the dev servers: a dev-server page load fetches ~800 unbundled library modules,
+// a bundled one a handful of cached files, and parity reloads the page for every case/state/theme.
+async function serveApp(name: App['name'], dir: string, buildArgs: string[], entry: string): Promise<App> {
+  const outDir = mkdtempSync(join(tmpdir(), `parity-${name}-`))
+  tempDirs.push(outDir)
+  const build = Bun.spawn(['bun', 'x', 'vite', 'build', ...buildArgs, '--outDir', outDir, '--logLevel', 'error'], { cwd: join(TOOLING, dir), stdout: 'pipe', stderr: 'pipe' })
+  if (await build.exited !== 0) {
+    console.error(`${name} build failed:\n${await new Response(build.stdout).text()}${await new Response(build.stderr).text()}`)
+    process.exit(1)
   }
+  const server = Bun.serve({
+    port: 0,
+    async fetch(req) {
+      const file = Bun.file(join(outDir, new URL(req.url).pathname))
+      if (new URL(req.url).pathname.startsWith('/assets/') && await file.exists())
+        return new Response(file, { headers: { 'cache-control': 'public, max-age=31536000, immutable' } })
+      return new Response(Bun.file(join(outDir, entry)))
+    },
+  })
+  return { name, url: server.url.origin }
 }
 
-async function load(page: Page, base: string, c: Case, theme: Theme) {
-  await page.goto(`${base}/parity/${encodeURIComponent(c.id)}${theme === 'dark' ? '?theme=dark' : ''}`, { waitUntil: 'load' })
+async function load(page: Page, app: App, c: Case, theme: Theme) {
+  await page.goto(`${app.url}/parity/${encodeURIComponent(c.id)}${theme === 'dark' ? '?theme=dark' : ''}`, { waitUntil: 'load' })
   await page.waitForSelector('#case, #case-missing')
   if (await page.$('#case-missing'))
-    throw new Error(`case missing in ${base === VUE ? 'vue' : 'react'} app`)
+    throw new Error(`case missing in ${app.name} app`)
   await page.waitForSelector('#case')
   await page.evaluate(() => document.fonts.ready)
   await sleep(300)
@@ -189,6 +207,8 @@ function diffSnapshots(c: Case, react: SlotSnapshot[], vue: SlotSnapshot[]): str
 }
 
 function diffImages(c: Case, a: Buffer, b: Buffer, name: string): string | null {
+  if (a.equals(b))
+    return null
   const ra = PNG.sync.read(a)
   const vb = PNG.sync.read(b)
   const save = (diff?: PNG) => {
@@ -212,9 +232,9 @@ function diffImages(c: Case, a: Buffer, b: Buffer, name: string): string | null 
   return null
 }
 
-async function capture(page: Page, base: string, c: Case, state: State, theme: Theme) {
-  debug(c.id, state, theme, base)
-  await load(page, base, c, theme)
+async function capture(page: Page, app: App, c: Case, state: State, theme: Theme) {
+  debug(c.id, state, theme, app.name)
+  await load(page, app, c, theme)
   await act(page, c, state)
   // Sheets enter by smooth scrolling, and their backdrop follows the scroll: wait until every sheet scroller rests.
   await page.waitForFunction(() => {
@@ -247,10 +267,11 @@ async function capture(page: Page, base: string, c: Case, state: State, theme: T
   return { snap, shot }
 }
 
-async function runOne(page: Page, c: Case, state: State, theme: Theme): Promise<string[]> {
+async function runOne(page: Page, apps: { vue: App, react: App }, job: { c: Case, state: State, theme: Theme }): Promise<string[]> {
+  const { c, state, theme } = job
   try {
-    const r = await capture(page, REACT, c, state, theme)
-    const v = await capture(page, VUE, c, state, theme)
+    const r = await capture(page, apps.react, c, state, theme)
+    const v = await capture(page, apps.vue, c, state, theme)
     const errors = diffSnapshots(c, r.snap, v.snap)
     const img = diffImages(c, r.shot, v.shot, `${c.id}-${state}-${theme}`)
     if (img)
@@ -262,30 +283,19 @@ async function runOne(page: Page, c: Case, state: State, theme: Theme): Promise<
   }
 }
 
-const liveBrowsers = new Set<Browser>()
+let closeBrowser: (() => Promise<void>) | undefined
 
-// Close every worker browser on Ctrl-C / kill so no orphaned Chrome processes are left behind.
+// Close the browser on Ctrl-C / kill so no orphaned Chrome processes are left behind.
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.on(signal, () => {
-    Promise.allSettled([...liveBrowsers].map(b => b.close())).finally(() => process.exit(130))
+    Promise.allSettled([closeBrowser?.()]).finally(() => process.exit(130))
   })
 }
 
-async function newWorkerPage(): Promise<{ browser: Browser, page: Page }> {
-  const browser = await puppeteer.launch({ headless: true })
-  liveBrowsers.add(browser)
-  const page = await browser.newPage()
-  page.setDefaultTimeout(15000)
-  await page.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 })
-  return { browser, page }
-}
-
 async function main() {
-  await ensureServers()
-  rmSync(OUT, { recursive: true, force: true })
   const component = flag('component')
   const only = flag('case')
-  const concurrency = Number(flag('concurrency') ?? 4)
+  const concurrency = Number(flag('concurrency') ?? 2)
   const cases = caseList.filter(c => (!component || c.component === component) && (!only || c.id === only))
   if (!cases.length) {
     console.error('no matching cases')
@@ -299,23 +309,38 @@ async function main() {
         jobs.push({ c, state, theme })
     }
   }
+  // Clear only this run's PNGs: out/ is shared with parity runs for other components.
+  for (const { c, state, theme } of jobs) {
+    for (const side of ['react', 'vue', 'diff'])
+      rmSync(`${OUT}${c.id}-${state}-${theme}-${side}.png`, { force: true })
+  }
+
+  const apps = await Promise.all([
+    serveApp('vue', 'playground', ['--mode', 'parity'], 'parity.html'),
+    serveApp('react', 'reference', [], 'index.html'),
+  ]).then(([vue, react]) => ({ vue, react }))
+  // One browser; each worker gets its own isolated context instead of a whole Chrome instance. The headless
+  // shell renders both apps with the same engine and costs about a third less CPU than full headless Chrome.
+  const browser = await puppeteer.launch({ headless: 'shell' })
+  closeBrowser = () => browser.close()
 
   const failures = new Map<string, string[]>()
   let next = 0
   await Promise.all(Array.from({ length: Math.min(concurrency, jobs.length) }, async () => {
-    const { browser, page } = await newWorkerPage()
+    const page = await (await browser.createBrowserContext()).newPage()
+    page.setDefaultTimeout(15000)
+    await page.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 })
     while (next < jobs.length) {
-      const { c, state, theme } = jobs[next++]!
-      const errors = await runOne(page, c, state, theme)
+      const job = jobs[next++]!
+      const errors = await runOne(page, apps, job)
       if (errors.length) {
-        const list = failures.get(c.id) ?? []
-        list.push(...errors.map(e => `${state}/${theme}: ${e}`))
-        failures.set(c.id, list)
+        const list = failures.get(job.c.id) ?? []
+        list.push(...errors.map(e => `${job.state}/${job.theme}: ${e}`))
+        failures.set(job.c.id, list)
       }
     }
-    await browser.close()
-    liveBrowsers.delete(browser)
   }))
+  await browser.close()
 
   for (const c of cases) {
     const errors = failures.get(c.id)

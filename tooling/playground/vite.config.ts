@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vite'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [vue(), tailwindcss()],
   resolve: {
     // Exact matches, so `@hareui/vue/<entry>` subpaths don't resolve as paths inside `@hareui/vue`.
@@ -21,4 +21,6 @@ export default defineConfig({
     ],
   },
   server: { port: 5173, strictPort: true },
-})
+  // `vite build --mode parity` (run by tooling/parity/compare.ts): bundle only the parity cases.
+  build: mode === 'parity' ? { rolldownOptions: { input: fileURLToPath(new URL('./parity.html', import.meta.url)) } } : {},
+}))
