@@ -7,7 +7,8 @@ export default {
     label: 'w-fit text-sm font-medium [grid-area:label]',
     output: 'text-sm font-medium tabular-nums [grid-area:output]',
     track: [
-      'relative rounded-2xl [grid-area:track]',
+      // `relative` sits in ColorSlider.vue, so the thumb Reka positions inline stays on the track under `unstyled`
+      'rounded-2xl [grid-area:track]',
       "before:absolute before:z-0 before:pointer-events-none before:content-['']",
       "after:absolute after:z-0 after:pointer-events-none after:content-['']",
     ],

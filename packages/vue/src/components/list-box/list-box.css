@@ -1,0 +1,61 @@
+/* ListBox: ported from @heroui/styles components/{list-box,list-box-item,list-box-section,header,empty-state,separator}.css.
+ * Utilities from a parent's popover (Select, ComboBox, Autocomplete) win over it too. */
+.h-list-box {
+  @apply relative w-full overflow-clip p-1;
+
+  /* Spacing between direct children (HeroUI avoids flex+gap for its virtualizer) */
+  @apply [&>*+*]:mt-1;
+
+  & [data-slot='separator'][data-orientation='horizontal'] {
+    @apply ms-[3%] w-[94%];
+  }
+}
+
+.h-list-box__item {
+  @apply relative flex min-h-9 w-full items-center justify-start gap-3 rounded-2xl px-2 py-1.5 outline-none no-highlight;
+  @apply [transition:transform_250ms_var(--ease-out-quart),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none;
+  @apply cursor-(--cursor-interactive);
+
+  & [data-slot='label'] {
+    @apply pointer-events-none w-fit select-none;
+  }
+
+  & [data-slot='description'] {
+    @apply pointer-events-none text-wrap select-none;
+  }
+
+  /* `:where()` keeps hover at one class of specificity (HeroUI's), so a user `data-[selected=true]:bg-*` wins.
+   * Reka's ListboxItem sets `data-disabled=""` itself (it wins over ours), so disabled matches on presence. */
+  @apply has-[[data-slot=list-box-item-indicator]]:pe-7 active:[transform:scale(0.98)] data-[pressed=true]:[transform:scale(0.98)] [@media(hover:hover)]:[&:where(:hover,[data-hovered=true])]:bg-default data-disabled:status-disabled;
+}
+
+.h-list-box__indicator {
+  @apply absolute end-2 top-1/2 flex size-4 shrink-0 -translate-y-1/2 items-center justify-center text-default-foreground;
+  @apply transition duration-250 motion-reduce:transition-none;
+
+  /* HeroUI's selected-checkmark `stroke-dashoffset 250ms linear` rule is nested under the indicator, so it never
+   * matches; not ported */
+  & [data-slot='list-box-item-indicator--checkmark'] {
+    @apply size-2.5 transition-all duration-300 motion-reduce:transition-none;
+  }
+}
+
+.h-list-box__section {
+  @apply flex flex-col items-start gap-0;
+}
+
+.h-list-box__header {
+  @apply w-full px-2 pt-1.5 pb-1 text-start text-xs font-medium text-muted;
+}
+
+.h-list-box__separator {
+  @apply h-px w-full shrink-0 rounded-sm border-t-0 border-b-0 bg-separator;
+}
+
+.h-list-box__empty-state {
+  @apply p-2 text-sm text-muted;
+}
+
+.h-list-box__indicator--danger {
+  @apply text-danger;
+}

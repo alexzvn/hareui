@@ -2,7 +2,8 @@
 export default {
   slots: {
     base: [
-      'relative aspect-square w-full max-w-56 shrink-0 rounded-2xl no-highlight',
+      // `relative` sits in ColorArea.vue, so the thumb Reka positions inline stays inside the area under `unstyled`
+      'aspect-square w-full max-w-56 shrink-0 rounded-2xl no-highlight',
       // Background is set inline by ColorArea.vue from Reka's `getAreaBackgroundStyle` (a
       // `backgroundImage`/`backgroundColor` pair, not a single CSS value a Tailwind var could hold).
       'shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]',

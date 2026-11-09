@@ -19,7 +19,7 @@ export default {
     ],
     removeIcon: '',
     overlay: 'absolute inset-0 flex items-center justify-center bg-background/60',
-    live: 'sr-only',
+    live: '',
   },
   variants: {
     variant: {

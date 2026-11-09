@@ -14,6 +14,6 @@ describe('TextArea theme', () => {
       slots: { default: () => h(TextArea) },
     })
 
-    expect(wrapper.get('textarea').classes()).toContain('bg-(--textarea-bg)')
+    expect(wrapper.get('textarea').classes()).toContain('h-text-area--secondary')
   })
 })

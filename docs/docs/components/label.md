@@ -59,7 +59,7 @@ Label renders a single `<label>` element.
 
 ### Tailwind CSS
 
-Pass utilities through `class` on the root, or through `:ui="{ base: '…' }"`. They are merged with tailwind-merge, so conflicting utilities replace the defaults.
+Pass utilities through `class` on the root, or through `:ui="{ base: '…' }"`. Label's own styles are `.h-label` classes in `@layer components`, so any utility you add wins.
 
 <ComponentPreview name="label/custom-styles" />
 
@@ -98,6 +98,10 @@ app.use(
 
 - groups: `role="group"`, `role="radiogroup"` or `role="checkboxgroup"`
 - items: `data-slot="radio"` or `data-slot="checkbox"`
+
+### CSS classes
+
+The root carries `.h-label` plus `.h-label--required`, `.h-label--disabled` and `.h-label--invalid` from the matching props. The same styles also follow a `[data-required]`, `[data-disabled]` or `[data-invalid]` parent field.
 
 ## API Reference
 

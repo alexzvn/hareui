@@ -3,7 +3,7 @@ title: Theming
 description: Customize HareUI's design system with CSS variables and app-level theme overrides.
 ---
 
-HareUI uses CSS variables for color/spacing tokens and [tailwind-variants](https://tailwind-variants.org/) slot themes for component styles. Customize everything from colors to individual component slots with standard CSS or an app-level config object — no BEM classes required.
+HareUI uses CSS variables for color/spacing tokens and [tailwind-variants](https://tailwind-variants.org/) slot themes for component styles. Customize everything from colors to individual component slots with standard CSS or an app-level config object, using plain Tailwind utilities.
 
 ## How It Works
 
@@ -85,7 +85,7 @@ Use the `:ui` prop for per-slot overrides, or `class` for the root slot, on one 
 
 ```vue
 <template>
-  <!-- Root-only override, tailwind-merged into the base slot -->
+  <!-- Root-only override: the utility wins over the button's own classes -->
   <Button class="rounded-none">Square corners</Button>
 
   <!-- Per-slot override -->
@@ -95,7 +95,7 @@ Use the `:ui` prop for per-slot overrides, or `class` for the root slot, on one 
 
 ## Precedence
 
-When the same slot is targeted at multiple layers, HareUI resolves conflicts with [tailwind-merge](https://github.com/dcastil/tailwind-merge) — the last applied class wins. Layers are applied in this order, lowest to highest priority:
+Each layer below adds classes to a slot, lowest to highest priority:
 
 1. **Theme file** — the component's built-in default (`src/components/<name>/theme.ts`)
 2. **`hareui({ ui })`** — build-time config from the [Vite plugin](/docs/getting-started/frameworks#vite-plugin-optional)
@@ -104,16 +104,64 @@ When the same slot is targeted at multiple layers, HareUI resolves conflicts wit
 5. **`:ui` slot classes** — per-instance, per-slot
 6. **`class` prop** — per-instance, root slot only, highest priority
 
+When two layers set the same CSS property with utilities, [tailwind-merge](https://github.com/dcastil/tailwind-merge) keeps only the later one. Components with BEM classes, such as Button's `h-button`, put them in `@layer components`, so any utility from another layer wins over them without merging. Focus and invalid rings are the exception, see [Styling](/docs/getting-started/styling#focus-and-invalid-rings).
+
 ```vue
 <template>
   <Button :ui="{ base: 'px-2' }" class="px-3">Click me</Button>
 </template>
 
 <script setup lang="ts">
-// Theme default: 'px-4'. App config sets 'px-1'. :ui sets 'px-2'. class sets 'px-3'.
-// Final root class: 'px-3' — class wins over everything else via tailwind-merge.
+// The h-button class sets px-4. App config sets 'px-1'. :ui sets 'px-2'. class sets 'px-3'.
+// tailwind-merge keeps 'px-3' of the three utilities, and as a utility it wins over the h-button class.
 </script>
 ```
+
+## Unstyled Components
+
+Set `unstyled` in `createHareUI()` to drop HareUI's classes and style components yourself. Behavior, ARIA and `data-*` attributes stay, so you can style with `data-slot` and state selectors.
+
+```ts [main.ts]
+// Every component
+createApp(App).use(createHareUI({ unstyled: true }))
+
+// Only these components; keys are the same as in `ui`
+createApp(App).use(createHareUI({ unstyled: ['button', 'card'] }))
+```
+
+An unstyled component drops:
+
+- its theme file classes, variants included
+- the `ui` overrides from `createHareUI({ ui })` and the [Vite plugin](/docs/getting-started/frameworks#vite-plugin-optional)
+
+It keeps:
+
+- the `:ui` and `class` props, still merged with tailwind-merge
+- the few classes a component needs to work: `sr-only` on visually hidden labels, `touch-none` and `select-none` on drag handles, the hit area of table column resizers, the RichTable scroll container, and the positioning of parts that scripts size or move, such as the slider fill, rating stars, chart tooltip and overlay, carousel track, pinned table columns and the map's canvas, markers, popups and controls
+- `inert` on controls the theme hides: empty clear buttons of SearchField and Select, and the calendar nav buttons and day grid while the year picker is open
+
+```vue
+<template>
+  <!-- With `unstyled: true`, the root gets only these classes -->
+  <Button class="rounded border px-3 py-1 data-[pending=true]:opacity-50">Save</Button>
+</template>
+```
+
+The array form is per component, not per tree. `unstyled: ['select']` strips the Select's own slots, but the ListBox inside its popover keeps its theme. Add `'listBox'` to strip it too.
+
+Keep importing the `@hareui/vue` stylesheet. It provides the color tokens and the Tailwind source for the classes components keep.
+
+`unstyled` can change at runtime. Set it on the config that `inject(hareUIConfigKey)` returns, the one from `createHareUI()` or from an enclosing `<App>`, and mounted components restyle:
+
+```ts
+import { hareUIConfigKey } from '@hareui/vue'
+import { inject } from 'vue'
+
+const config = inject(hareUIConfigKey)!
+config.unstyled = true
+```
+
+Inside an `<App>`, this changes the config the `<App>` inherits, so the enclosing and nested `<App>`s follow.
 
 ## Adding Custom Colors
 

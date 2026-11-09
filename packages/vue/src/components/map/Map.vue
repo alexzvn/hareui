@@ -4,9 +4,9 @@
     data-slot="map"
     :data-loaded="isLoaded || undefined"
     :data-loading="isLoading || undefined"
-    :class="ui.base()"
+    :class="ui.base({ class: 'relative isolate size-full overflow-hidden' })"
   >
-    <div ref="container" data-slot="map-canvas" :class="ui.canvas()" />
+    <div ref="container" data-slot="map-canvas" :class="ui.canvas({ class: CANVAS_CLASS })" />
     <span ref="probe" hidden />
 
     <div v-if="isLoading" data-slot="map-loader" :class="ui.loader()">
@@ -159,6 +159,42 @@ const HANDLERS = [
   'touchPitch',
   'touchZoomRotate',
 ] as const
+
+// What maplibre-gl's own stylesheet does for its DOM, so the map works with `unstyled`; the theme only styles it.
+const CANVAS_CLASS = [
+  'absolute inset-0 [-webkit-tap-highlight-color:transparent]',
+  // Canvas, sized by maplibre-gl
+  '[&_.maplibregl-canvas]:absolute [&_.maplibregl-canvas]:top-0 [&_.maplibregl-canvas]:left-0',
+  // Grab cursors while the map can be dragged
+  '[&_.maplibregl-interactive]:cursor-grab [&_.maplibregl-interactive]:select-none [&_.maplibregl-interactive:active]:cursor-grabbing',
+  '[&_.maplibregl-interactive.maplibregl-track-pointer]:cursor-pointer',
+  // Touch gestures the map handles itself, so the page doesn't pan or zoom with them
+  '[&_.maplibregl-touch-zoom-rotate]:[touch-action:pan-x_pan-y] [&_.maplibregl-touch-zoom-rotate_canvas]:[touch-action:pan-x_pan-y]',
+  '[&_.maplibregl-touch-drag-pan]:[touch-action:pinch-zoom] [&_.maplibregl-touch-drag-pan_canvas]:[touch-action:pinch-zoom]',
+  '[&_.maplibregl-touch-zoom-rotate.maplibregl-touch-drag-pan]:touch-none [&_.maplibregl-touch-zoom-rotate.maplibregl-touch-drag-pan_canvas]:touch-none',
+  '[&_.maplibregl-touch-zoom-rotate.maplibregl-touch-drag-pan.maplibregl-cooperative-gestures]:[touch-action:pan-x_pan-y]',
+  '[&_.maplibregl-touch-zoom-rotate.maplibregl-touch-drag-pan.maplibregl-cooperative-gestures_canvas]:[touch-action:pan-x_pan-y]',
+  // Markers and popups, moved by maplibre-gl transforms
+  '[&_.maplibregl-marker]:absolute [&_.maplibregl-marker]:top-0 [&_.maplibregl-marker]:left-0 [&_.maplibregl-marker]:will-change-transform',
+  '[&_.maplibregl-popup]:pointer-events-none [&_.maplibregl-popup]:absolute [&_.maplibregl-popup]:top-0 [&_.maplibregl-popup]:left-0 [&_.maplibregl-popup]:z-10 [&_.maplibregl-popup]:flex [&_.maplibregl-popup]:will-change-transform',
+  '[&_.maplibregl-popup-content]:pointer-events-auto',
+  // Control corners
+  '[&_:is(.maplibregl-ctrl-top-left,.maplibregl-ctrl-top-right,.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right)]:pointer-events-none',
+  '[&_:is(.maplibregl-ctrl-top-left,.maplibregl-ctrl-top-right,.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right)]:absolute',
+  '[&_:is(.maplibregl-ctrl-top-left,.maplibregl-ctrl-top-right,.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right)]:z-10',
+  '[&_.maplibregl-ctrl-top-left]:top-0 [&_.maplibregl-ctrl-top-left]:left-0 [&_.maplibregl-ctrl-top-right]:top-0 [&_.maplibregl-ctrl-top-right]:right-0',
+  '[&_.maplibregl-ctrl-bottom-left]:bottom-0 [&_.maplibregl-ctrl-bottom-left]:left-0 [&_.maplibregl-ctrl-bottom-right]:right-0 [&_.maplibregl-ctrl-bottom-right]:bottom-0',
+  '[&_.maplibregl-ctrl]:pointer-events-auto',
+  // Attribution: the button shows only when compact, the credits only when not compact or opened
+  '[&_.maplibregl-ctrl-attrib-button]:hidden [&_.maplibregl-compact_.maplibregl-ctrl-attrib-button]:block',
+  '[&_.maplibregl-compact:not(.maplibregl-compact-show)_.maplibregl-ctrl-attrib-inner]:hidden [&_.maplibregl-attrib-empty]:hidden',
+  // Shift-drag box zoom outline, sized by maplibre-gl
+  '[&_.maplibregl-boxzoom]:absolute [&_.maplibregl-boxzoom]:top-0 [&_.maplibregl-boxzoom]:left-0 [&_.maplibregl-boxzoom]:size-0',
+  // The `cooperativeGestures` hint: over the map, shown only while maplibre-gl flags it, with the message for the pointer
+  '[&_.maplibregl-cooperative-gesture-screen]:pointer-events-none [&_.maplibregl-cooperative-gesture-screen]:absolute [&_.maplibregl-cooperative-gesture-screen]:inset-0',
+  '[&_.maplibregl-cooperative-gesture-screen]:z-20 [&_.maplibregl-cooperative-gesture-screen]:opacity-0 [&_.maplibregl-cooperative-gesture-screen.maplibregl-show]:opacity-100',
+  '[&_.maplibregl-mobile-message]:hidden pointer-coarse:[&_.maplibregl-mobile-message]:block pointer-coarse:[&_.maplibregl-desktop-message]:hidden',
+]
 
 const props = withDefaults(defineProps<MapProps<M, P>>(), {
   projection: 'mercator',

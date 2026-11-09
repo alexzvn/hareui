@@ -1,145 +1,57 @@
-// RichTable slots, styled as a data grid (built on the HeroUI Table: see components/table/theme.ts).
-// Body-row styles live on `tbody` and target `[data-slot=rich-table-row]`, so header, footer and expanded rows (which share the `tr` slot) stay plain.
-// Reordering: rows drag by a 32px handle column holding a 16px `text-muted` grip (`text-foreground` on hover), headers
-// drag themselves. A dragged row or header fades to 50%; the drop target draws a 2px `accent` line on the edge the
-// drop lands on: a row's top or bottom, a header's start or end.
-
-// Primary body card corners while rows scroll: the visible window of rows keeps the card's rounded corners, but only the
-// first and last rows are rounded. Each mask paints the gutter colour outside a quarter circle, so a row cut by the
-// sticky header, the sticky footer or the bottom of the scrollport still shows a rounded corner. Kept as literal
-// strings so Tailwind finds them.
-const cornerMaskBox =
-  "before:pointer-events-none before:absolute before:inset-x-0 before:h-(--rich-table-corner) before:content-['']"
-
-// Corners cut out at the box's top edge, for a box hanging under the sticky header
-const cornerMaskBelow =
-  'before:[background:radial-gradient(circle_at_100%_100%,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_left_top/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat,radial-gradient(circle_at_0_100%,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_right_top/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat]'
-
-// Corners cut out at the box's bottom edge, for a box resting on the sticky footer or the scrollport bottom
-const cornerMaskAbove =
-  'before:[background:radial-gradient(circle_at_100%_0,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_left_bottom/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat,radial-gradient(circle_at_0_0,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_right_bottom/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat]'
-
+// Maps props to the BEM classes of ./rich-table.css: a data grid built on the HeroUI Table (see
+// ../table/table.css).
+// Single elements (thead, tbody, tfoot, corners) take element modifiers; repeated cells follow the root modifier.
 export default {
   slots: {
-    root: 'relative scrollbar overflow-auto outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus',
-    base: 'min-w-full overflow-clip border-separate border-spacing-0 text-sm',
-    caption: 'sr-only',
-    thead: 'relative',
-    tbody: [
-      'isolate',
-      '[&>[data-slot=rich-table-row]]:relative [&>[data-slot=rich-table-row]]:outline-none',
-      '[&>[data-slot=rich-table-row]]:data-[selectable=true]:cursor-(--cursor-interactive)',
-      // Hover/selected backgrounds go on the cells, like HeroUI's '.table__row:hover .table__cell'
-      '[&>[data-slot=rich-table-row]]:hover:*:bg-surface/40 [&>[data-slot=rich-table-row]]:data-[selected=true]:*:bg-surface/10',
-      // Pinned cells stay opaque so the cells scrolling underneath never show through: mix the translucent tint into the header colour instead
-      '[&>[data-slot=rich-table-row]]:hover:*:data-pinned:bg-[color-mix(in_oklch,var(--surface)_40%,var(--surface-secondary))]',
-      '[&>[data-slot=rich-table-row]]:data-[selected=true]:*:data-pinned:bg-[color-mix(in_oklch,var(--surface)_10%,var(--surface-secondary))]',
-      // Row focus ring: one continuous inset ring split across the cells
-      '[&>[data-slot=rich-table-row]]:focus-visible:*:shadow-[inset_0_2px_0_0_var(--focus),inset_0_-2px_0_0_var(--focus)]',
-      '[&>[data-slot=rich-table-row]]:focus-visible:*:first:rounded-s-lg [&>[data-slot=rich-table-row]]:focus-visible:*:first:shadow-[inset_2px_0_0_0_var(--focus),inset_0_2px_0_0_var(--focus),inset_0_-2px_0_0_var(--focus)]',
-      '[&>[data-slot=rich-table-row]]:focus-visible:*:last:rounded-e-lg [&>[data-slot=rich-table-row]]:focus-visible:*:last:shadow-[inset_-2px_0_0_0_var(--focus),inset_0_2px_0_0_var(--focus),inset_0_-2px_0_0_var(--focus)]',
-      '[&>[data-slot=rich-table-row]]:focus-visible:*:only:rounded-lg [&>[data-slot=rich-table-row]]:focus-visible:*:only:shadow-[inset_0_0_0_2px_var(--focus)]',
-      '[&>[data-slot=rich-table-row]]:aria-disabled:status-disabled',
-      '[&>[data-slot=rich-table-row]]:data-dragging:opacity-50',
-      // The drop line is one straight bar across the row, above the pinned cells, whatever the cells' corners and edges
-      "[&>[data-slot=rich-table-row]]:data-drop-target:after:pointer-events-none [&>[data-slot=rich-table-row]]:data-drop-target:after:absolute [&>[data-slot=rich-table-row]]:data-drop-target:after:inset-x-0 [&>[data-slot=rich-table-row]]:data-drop-target:after:z-3 [&>[data-slot=rich-table-row]]:data-drop-target:after:h-0.5 [&>[data-slot=rich-table-row]]:data-drop-target:after:bg-accent [&>[data-slot=rich-table-row]]:data-drop-target:after:content-['']",
-      '[&>[data-slot=rich-table-row]]:data-[drop-target=before]:after:top-0 [&>[data-slot=rich-table-row]]:data-[drop-target=after]:after:bottom-0',
-      // The body card ends with its last row, so it carries no separator
-      '[&>tr:last-child>td]:border-b-0',
-    ],
-    tfoot: 'relative',
+    root: 'h-rich-table',
+    base: 'h-rich-table__content',
+    caption: '',
+    thead: 'h-rich-table__thead',
+    tbody: 'h-rich-table__tbody',
+    tfoot: 'h-rich-table__tfoot',
     tr: '',
-    th: [
-      'relative px-4 py-2.5 text-start text-xs font-medium whitespace-nowrap text-muted bg-surface-secondary',
-      // Pill separator between columns, hidden after the last one, after blank (e.g. expand) and selection columns, on columns with a resize handle
-      // (the handle is the separator) and on pinned columns (whose facing edge gets a full-height line once content scrolls under it)
-      "not-last:after:pointer-events-none not-last:after:absolute not-last:after:end-0 not-last:after:top-1/2 not-last:after:h-4 not-last:after:w-px not-last:after:-translate-y-1/2 not-last:after:rounded-sm not-last:after:bg-separator not-last:after:content-['']",
-      'empty:after:content-none! [&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pe-0 [&:has([role=checkbox])]:after:content-none [&:has([role=separator])]:after:content-none data-pinned:after:content-none!',
-      // Pinned columns: `data-pinned` is `left` | `right` (TanStack pins to physical sides), `data-edge` marks the edge facing the scrolling columns while content is scrolled under it.
-      'data-pinned:sticky data-pinned:z-2 data-[pinned=left]:left-(--rich-table-pin) data-[pinned=right]:right-(--rich-table-pin)',
-      'data-[edge=left]:shadow-[inset_-1px_0_0_0_var(--separator)] data-[edge=right]:shadow-[inset_1px_0_0_0_var(--separator)]',
-      // Draggable headers (`reorderableColumns`) are focusable: the drop line is a `before` element, as `after` draws the separator
-      'data-[reorder-column]:cursor-grab data-[reorder-column]:active:cursor-grabbing data-dragging:opacity-50',
-      'focus-visible:outline-none focus-visible:shadow-[inset_0_0_0_2px_var(--focus)]',
-      "data-drop-target:before:pointer-events-none data-drop-target:before:absolute data-drop-target:before:inset-y-0 data-drop-target:before:z-1 data-drop-target:before:w-0.5 data-drop-target:before:bg-accent data-drop-target:before:content-['']",
-      'data-[drop-target=before]:before:start-0 data-[drop-target=after]:before:end-0',
-    ],
-    td: [
-      'border-b border-separator-tertiary/50 bg-surface px-4 py-3 align-middle text-sm whitespace-nowrap text-foreground',
-      '[&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pe-0',
-      'data-pinned:sticky data-pinned:z-2 data-[pinned=left]:left-(--rich-table-pin) data-[pinned=right]:right-(--rich-table-pin)',
-      'data-[edge=left]:shadow-[inset_-1px_0_0_0_var(--separator)] data-[edge=right]:shadow-[inset_1px_0_0_0_var(--separator)]',
-    ],
-    // Drag handle column (`reorderable`), outside TanStack's columns: with left-pinned columns it sticks to the left edge
-    // too, and they stick after it.
-    dragColumn:
-      'w-8 min-w-8 bg-surface-secondary p-0 data-pinned:sticky data-pinned:left-0 data-pinned:z-2',
-    dragColumnLabel: 'sr-only',
-    dragCell: [
-      'w-8 min-w-8 border-b border-separator-tertiary/50 bg-surface p-0 text-center align-middle',
-      'data-pinned:sticky data-pinned:left-0 data-pinned:z-2',
-    ],
-    dragHandle: [
-      'inline-flex size-6 cursor-grab touch-none items-center justify-center rounded-md text-muted outline-none select-none',
-      'transition-colors motion-reduce:transition-none hover:text-foreground active:cursor-grabbing [&_svg]:size-4',
-      'focus-visible:status-focused disabled:status-disabled',
-    ],
-    empty: 'py-12 text-center text-sm text-muted',
-    loading: 'py-12 text-center',
+    th: 'h-rich-table__th',
+    td: 'h-rich-table__td',
+    dragColumn: 'h-rich-table__drag-column',
+    dragColumnLabel: '',
+    dragCell: 'h-rich-table__drag-cell',
+    dragHandle: 'h-rich-table__drag-handle',
+    empty: 'h-rich-table__empty',
+    loading: 'h-rich-table__loading',
     // Sticky, zero-height box after the table that carries the bottom corner masks (primary only)
-    corners: 'hidden',
+    corners: 'h-rich-table__corners',
   },
   variants: {
     variant: {
       primary: {
-        // The gutter around the body card is a transparent border rather than padding: it sits outside the scrollport, so
-        // rows scrolling under the sticky footer or the pinned columns never show through it, and sticky cells rest on its inner edge.
-        root: 'rounded-[min(32px,calc(var(--radius)*2.5))] border-x-4 border-t-0 border-b-4 border-transparent bg-surface-secondary [--rich-table-corner:min(32px,var(--radius-2xl))]',
-        // '.table__body tr:first-child td:first-child' etc.
-        tbody: [
-          '[&_tr:first-child_td:first-child]:rounded-ss-(--rich-table-corner) [&_tr:first-child_td:last-child]:rounded-se-(--rich-table-corner)',
-          '[&_tr:last-child_td:first-child]:rounded-es-(--rich-table-corner) [&_tr:last-child_td:last-child]:rounded-ee-(--rich-table-corner)',
-          // A corner cell that is also the pinned edge goes square while content scrolls under it, so nothing shows through its rounded corner
-          '[&_tr:first-child_td:first-child[data-edge=left]]:rounded-none [&_tr:last-child_td:first-child[data-edge=left]]:rounded-none',
-          '[&_tr:first-child_td:last-child[data-edge=right]]:rounded-none [&_tr:last-child_td:last-child[data-edge=right]]:rounded-none',
-        ],
-        corners: [
-          'pointer-events-none sticky bottom-0 left-0 z-3 block h-0',
-          cornerMaskBox,
-          'before:bottom-0',
-          cornerMaskAbove,
-        ],
+        root: 'h-rich-table--primary',
+        tbody: 'h-rich-table__tbody--primary',
+        corners: 'h-rich-table__corners--masked',
       },
       secondary: {
-        th: 'bg-surface-secondary first:rounded-s-[min(32px,var(--radius-2xl))] last:rounded-e-[min(32px,var(--radius-2xl))]',
-        td: 'bg-transparent data-pinned:bg-background',
-        dragColumn: 'rounded-s-[min(32px,var(--radius-2xl))]',
-        dragCell: 'bg-transparent data-pinned:bg-background',
-        tbody: '[&>[data-slot=rich-table-row]]:hover:*:bg-default/50',
+        root: 'h-rich-table--secondary',
+        tbody: 'h-rich-table__tbody--secondary',
       },
     },
     sticky: {
       true: {
-        thead: 'sticky top-0 inset-x-0 z-3',
-        tfoot: 'sticky bottom-0 inset-x-0 z-3',
+        thead: 'h-rich-table__thead--sticky',
+        tfoot: 'h-rich-table__tfoot--sticky',
       },
       header: {
-        thead: 'sticky top-0 inset-x-0 z-3',
+        thead: 'h-rich-table__thead--sticky',
       },
       footer: {
-        tfoot: 'sticky bottom-0 inset-x-0 z-3',
+        tfoot: 'h-rich-table__tfoot--sticky',
       },
     },
     loading: {
       true: {
-        thead:
-          "after:absolute after:start-0 after:bottom-0 after:z-3 after:h-0.5 after:w-1/2 after:content-[''] motion-reduce:after:inset-x-0 motion-reduce:after:w-full motion-reduce:after:animate-pulse",
+        thead: 'h-rich-table__thead--loading',
       },
     },
     externalScroll: {
-      true: {
-        root: 'overflow-visible',
-      },
+      true: '',
     },
     loadingAnimation: {
       carousel: '',
@@ -156,58 +68,55 @@ export default {
     },
   },
   compoundVariants: [
+    { variant: 'primary', sticky: true, class: { thead: 'h-rich-table__thead--masked' } },
+    { variant: 'primary', sticky: 'header', class: { thead: 'h-rich-table__thead--masked' } },
+    { variant: 'primary', sticky: true, class: { tfoot: 'h-rich-table__tfoot--masked' } },
+    { variant: 'primary', sticky: 'footer', class: { tfoot: 'h-rich-table__tfoot--masked' } },
+    { externalScroll: true, class: { corners: 'h-rich-table__corners--hidden' } },
     {
-      variant: 'primary',
-      sticky: true,
-      class: { thead: [cornerMaskBox, 'before:top-full', cornerMaskBelow] },
+      loading: true,
+      loadingColor: 'accent',
+      class: { thead: 'h-rich-table__thead--loading-accent' },
     },
     {
-      variant: 'primary',
-      sticky: 'header',
-      class: { thead: [cornerMaskBox, 'before:top-full', cornerMaskBelow] },
+      loading: true,
+      loadingColor: 'success',
+      class: { thead: 'h-rich-table__thead--loading-success' },
     },
     {
-      variant: 'primary',
-      sticky: true,
-      class: { tfoot: [cornerMaskBox, 'before:bottom-full', cornerMaskAbove] },
+      loading: true,
+      loadingColor: 'warning',
+      class: { thead: 'h-rich-table__thead--loading-warning' },
     },
     {
-      variant: 'primary',
-      sticky: 'footer',
-      class: { tfoot: [cornerMaskBox, 'before:bottom-full', cornerMaskAbove] },
+      loading: true,
+      loadingColor: 'danger',
+      class: { thead: 'h-rich-table__thead--loading-danger' },
     },
-    // Rows scroll with the page, so there's no scrollport bottom to mask
-    { externalScroll: true, class: { corners: 'hidden' } },
-    { loading: true, loadingColor: 'accent', class: { thead: 'after:bg-accent' } },
-    { loading: true, loadingColor: 'success', class: { thead: 'after:bg-success' } },
-    { loading: true, loadingColor: 'warning', class: { thead: 'after:bg-warning' } },
-    { loading: true, loadingColor: 'danger', class: { thead: 'after:bg-danger' } },
-    { loading: true, loadingColor: 'neutral', class: { thead: 'after:bg-foreground' } },
+    {
+      loading: true,
+      loadingColor: 'neutral',
+      class: { thead: 'h-rich-table__thead--loading-neutral' },
+    },
     {
       loading: true,
       loadingAnimation: 'carousel',
-      class: {
-        thead:
-          'motion-safe:after:animate-rich-table-carousel motion-safe:rtl:after:animate-rich-table-carousel-rtl',
-      },
+      class: { thead: 'h-rich-table__thead--loading-carousel' },
     },
     {
       loading: true,
       loadingAnimation: 'carousel-inverse',
-      class: {
-        thead:
-          'motion-safe:after:animate-rich-table-carousel-inverse motion-safe:rtl:after:animate-rich-table-carousel-inverse-rtl',
-      },
+      class: { thead: 'h-rich-table__thead--loading-carousel-inverse' },
     },
     {
       loading: true,
       loadingAnimation: 'swing',
-      class: { thead: 'motion-safe:after:animate-rich-table-swing' },
+      class: { thead: 'h-rich-table__thead--loading-swing' },
     },
     {
       loading: true,
       loadingAnimation: 'elastic',
-      class: { thead: 'motion-safe:after:animate-rich-table-elastic' },
+      class: { thead: 'h-rich-table__thead--loading-elastic' },
     },
   ],
   defaultVariants: {

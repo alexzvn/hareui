@@ -9,7 +9,7 @@
       heading: 'text-sm font-medium text-foreground',
       navButton: 'rounded-md text-success hover:bg-success-soft active:scale-95',
       headerCell: 'pb-2 text-xs font-medium text-muted',
-      cell: 'rounded-md',
+      cell: cellClass,
       cellButton: cellButtonClass,
     }"
   />
@@ -19,19 +19,20 @@
 import { RangeCalendar } from '@hareui/vue'
 import { parseDate } from '@internationalized/date'
 
+// The cell is the range band: square inside the range, rounded at its ends and at row edges
+const cellClass = [
+  'rounded-none data-[selected]:bg-success-soft',
+  'data-[outside-view]:data-[selected]:bg-default/20',
+  'data-[selected]:in-[td:first-child]:rounded-s-md data-[selected]:in-[td:last-child]:rounded-e-md',
+  'data-[selection-start]:rounded-s-md data-[selection-end]:rounded-e-md',
+].join(' ')
+
+// The pill inside it: solid at the range ends
 const cellButtonClass = [
   'rounded-md',
-  'data-[outside-view]:text-muted data-[outside-view]:opacity-50',
-  'hover:not-data-[selected]:bg-default',
-  'data-[today]:bg-success-soft data-[today]:text-success-soft-foreground',
-  'data-[today]:hover:not-data-[selected]:bg-success-soft-hover',
-  'data-[selected=true]:rounded-none data-[selected=true]:bg-success-soft',
-  'data-[outside-view]:data-[selected=true]:bg-default/20',
-  'data-[selection-start=true]:rounded-tl-md data-[selection-start=true]:rounded-bl-md',
-  'data-[selection-end=true]:rounded-tr-md data-[selection-end=true]:rounded-br-md',
-  'data-[selection-start=true]:bg-success data-[selection-start=true]:text-success-foreground',
-  'data-[selection-start=true]:active:bg-success-hover',
-  'data-[selection-end=true]:bg-success data-[selection-end=true]:text-success-foreground',
-  'data-[selection-end=true]:active:bg-success-hover',
+  'in-data-[outside-view]:text-muted in-data-[outside-view]:opacity-50',
+  'in-data-[today]:text-success',
+  'in-data-[selection-start]:bg-success in-data-[selection-start]:text-success-foreground',
+  'in-data-[selection-end]:bg-success in-data-[selection-end]:text-success-foreground',
 ].join(' ')
 </script>

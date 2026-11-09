@@ -1,5 +1,10 @@
 <template>
-  <Primitive :as="as" role="separator" data-slot="dashboard-resize-handle" :class="ui.base()">
+  <Primitive
+    :as="as"
+    role="separator"
+    data-slot="dashboard-resize-handle"
+    :class="ui.base({ class: 'touch-none select-none' })"
+  >
     <slot />
   </Primitive>
 </template>

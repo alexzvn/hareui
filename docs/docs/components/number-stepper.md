@@ -176,6 +176,10 @@ app.use(
 - `size`: `sm`, `md` (default), `lg`. Sets the button, icon and value sizes. Below the `md` breakpoint each size is one step larger for touch.
 - `reversed`: `true` swaps the button order.
 
+### CSS classes
+
+The root carries `.h-number-stepper` plus `.h-number-stepper--sm` or `.h-number-stepper--lg`. The parts carry `.h-number-stepper__group` (plus `--reversed`), `.h-number-stepper__button` and `.h-number-stepper__value`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Hover**: the button icon turns from `text-muted` to `text-foreground`

@@ -12,7 +12,7 @@ describe('FormField theme', () => {
       h(FormField, { label: 'Guests', size: 'sm' }, () => h(NumberStepper, { defaultValue: 2 })),
     )
 
-    expect(wrapper.get('[data-slot=number-stepper-value]').classes()).toContain('text-xs')
+    expect(wrapper.get('[data-slot=number-stepper]').classes()).toContain('h-number-stepper--sm')
   })
 
   it('size reaches an inner Switch', () => {
@@ -20,7 +20,7 @@ describe('FormField theme', () => {
       h(FormField, { label: 'Notifications', size: 'sm' }, () => h(Switch)),
     )
 
-    expect(wrapper.get('[data-slot=switch-control]').classes()).toContain('h-4')
+    expect(wrapper.get('[data-slot=switch]').classes()).toContain('h-switch--sm')
   })
 
   it("the control's own size wins over the field's", () => {
@@ -28,6 +28,8 @@ describe('FormField theme', () => {
       h(FormField, { label: 'Notifications', size: 'sm' }, () => h(Switch, { size: 'lg' })),
     )
 
-    expect(wrapper.get('[data-slot=switch-control]').classes()).toContain('h-6')
+    const classes = wrapper.get('[data-slot=switch]').classes()
+    expect(classes).toContain('h-switch--lg')
+    expect(classes).not.toContain('h-switch--sm')
   })
 })

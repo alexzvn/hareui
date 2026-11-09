@@ -1,0 +1,74 @@
+/* ComboBox root, input group and trigger: ported from @heroui/styles components/combo-box.css. */
+.h-combo-box {
+  @apply flex flex-col gap-1;
+
+  &:is([data-invalid='true'], [aria-invalid='true']) [data-slot='description'] {
+    @apply hidden;
+  }
+
+  & [data-slot='label'] {
+    @apply w-fit;
+  }
+
+  /* Nested under the root as in HeroUI, so these outrank the Input classes by specificity */
+  & [data-slot='input'] {
+    @apply min-w-0 flex-1;
+
+    &:has(+ [data-slot='combo-box-trigger']) {
+      @apply pe-7;
+    }
+
+    &:focus {
+      border-color: var(--field-border-focus);
+      background-color: var(--field-focus);
+    }
+
+    &:disabled,
+    &[aria-disabled='true'] {
+      @apply status-disabled;
+    }
+  }
+}
+
+.h-combo-box__input-group {
+  @apply relative isolate inline-flex items-center;
+}
+
+.h-combo-box__trigger {
+  @apply absolute end-0 top-1/2 flex h-full shrink-0 -translate-y-1/2 cursor-pointer items-center justify-center border-none bg-transparent pe-2 text-field-placeholder outline-none transition duration-150 no-highlight;
+
+  &:hover,
+  &[data-hovered='true'] {
+    @media (hover: hover) {
+      @apply text-field-foreground;
+    }
+  }
+
+  &:focus-visible:not([data-focused]),
+  &[data-focus-visible='true'] {
+    @apply rounded;
+  }
+
+  &[data-pressed='true'] {
+    @apply opacity-70;
+  }
+
+  &:disabled,
+  &[data-disabled],
+  &[aria-disabled='true'] {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  & [data-slot='combo-box-trigger-default-icon'] {
+    @apply size-4 transition-transform duration-150 motion-reduce:transition-none;
+  }
+
+  &[data-open='true'] [data-slot='combo-box-trigger-default-icon'] {
+    @apply rotate-180;
+  }
+}
+
+.h-combo-box--full-width,
+.h-combo-box__input-group--full-width {
+  @apply w-full;
+}

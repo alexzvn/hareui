@@ -1,0 +1,51 @@
+/* Input: ported from @heroui/styles components/input.css. */
+.h-input {
+  @apply rounded-field px-3 py-2 text-base text-field-foreground shadow-field outline-none placeholder:text-field-placeholder sm:text-sm;
+  @apply border-(length:--border-width-field) border-(--field-border);
+
+  /* The secondary variant swaps these */
+  --input-bg: var(--field-background, var(--default));
+  --input-bg-hover: var(--field-hover);
+  --input-bg-focus: var(--field-focus);
+  background-color: var(--input-bg);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  &:hover:not(:focus):not(:focus-visible) {
+    @media (hover: hover) {
+      background-color: var(--input-bg-hover);
+      border-color: var(--field-border-hover);
+    }
+  }
+
+  &:focus {
+    border-color: var(--field-border-focus);
+    background-color: var(--input-bg-focus);
+  }
+
+  &[data-invalid='true'] {
+    background-color: var(--input-bg-focus);
+  }
+
+  &:disabled,
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-input--secondary {
+  @apply shadow-none;
+  --input-bg: var(--default);
+  --input-bg-hover: var(--default-hover);
+  --input-bg-focus: var(--default);
+}
+
+.h-input--full-width {
+  @apply w-full;
+}

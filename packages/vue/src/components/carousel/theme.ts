@@ -6,13 +6,14 @@
 // `rounded-2xl` buttons 12px apart in a horizontal scroll shadow, 16px below; the selected one gets a 2px accent ring
 // (a box shadow, so the row doesn't shift), hover dims to 85% and press scales to 95% over 150ms `ease`. The scroll
 // shadow lines up with the slides; its 4px padding keeps the selection and focus rings inside the clipped area. An
-// arrow that can't move further stays disabled but keeps its full opacity.
+// arrow that can't move further stays disabled but keeps its full opacity. Embla needs the viewport's `overflow-hidden`
+// and the container's flex row (or column), so Carousel.vue sets those and they survive `unstyled`.
 export default {
   slots: {
     root: 'relative focus-visible:outline-none',
     wrapper: 'relative',
-    viewport: 'overflow-hidden',
-    container: 'flex',
+    viewport: '',
+    container: '',
     item: 'relative min-w-0 shrink-0 grow-0 basis-full',
     prev: 'absolute disabled:opacity-100!',
     next: 'absolute disabled:opacity-100!',
@@ -35,12 +36,10 @@ export default {
   variants: {
     orientation: {
       horizontal: {
-        container: 'flex-row',
         prev: 'rtl:[&_svg]:-scale-x-100',
         next: 'rtl:[&_svg]:-scale-x-100',
       },
       vertical: {
-        container: 'flex-col',
         prev: '[&_svg]:rotate-90',
         next: '[&_svg]:rotate-90',
       },

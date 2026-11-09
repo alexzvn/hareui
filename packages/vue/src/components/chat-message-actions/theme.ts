@@ -5,6 +5,6 @@ export default {
     base: 'flex items-start',
     action: 'text-muted aria-pressed:text-foreground',
     icon: 'size-4',
-    status: 'sr-only',
+    status: '',
   },
 }

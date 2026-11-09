@@ -5,7 +5,7 @@
 export default {
   slots: {
     base: [
-      'relative z-10 hidden w-0 shrink-0 cursor-col-resize touch-none select-none outline-none md:block',
+      'relative z-10 hidden w-0 shrink-0 cursor-col-resize outline-none md:block',
       'before:absolute before:inset-y-0 before:-inset-x-1 before:z-1',
       'after:absolute after:inset-y-0 after:start-0 after:w-px after:-translate-x-full after:bg-transparent after:transition-[background-color,width] after:duration-[120ms] motion-reduce:after:transition-none rtl:after:translate-x-full data-[side=right]:after:translate-x-0',
       'hover:after:bg-separator-secondary data-[dragging=true]:after:bg-separator-secondary',

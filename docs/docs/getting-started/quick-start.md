@@ -42,12 +42,12 @@ Add to your main CSS file:
 ```
 
 ::: warning
-Import order matters. Always import `tailwindcss` first.
+Import order matters. Always import `tailwindcss` first. Otherwise a plain utility like `ring-1` on a component shrinks its keyboard focus ring.
 :::
 
 ## Register Plugin (Optional)
 
-HareUI components work without any setup. Install the plugin only if you want to override themes globally or set an app-wide overlay portal target with `createHareUI`:
+HareUI components work without any setup. Install the plugin only if you want to override themes globally, render components [unstyled](/docs/getting-started/theming#unstyled-components) or set an app-wide overlay portal target with `createHareUI`:
 
 ```ts [main.ts]
 import { createHareUI } from '@hareui/vue'

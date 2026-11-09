@@ -1,0 +1,144 @@
+/* Checkbox: ported from @heroui/styles components/checkbox.css. The root mirrors HeroUI's state attributes
+ * (`data-selected`, `data-indeterminate`, `data-disabled`, `data-invalid` = "true"). */
+.h-checkbox {
+  @apply flex flex-col items-start gap-1 outline-none no-highlight;
+  cursor: var(--cursor-interactive);
+
+  & > [data-slot='description'],
+  & > [data-slot='field-error'] {
+    @apply w-full min-w-0 cursor-default ps-7 text-xs text-wrap wrap-break-word text-muted select-none;
+  }
+
+  /* Doubled so it beats FieldError's own toggle-field reset (`p-0`), as HeroUI's later-loaded checkbox.css does */
+  && > [data-slot='field-error'] {
+    @apply ps-7;
+  }
+
+  & [data-slot='label'] {
+    @apply select-none;
+  }
+
+  &[data-disabled='true'] {
+    @apply status-disabled;
+
+    & [data-slot='description'],
+    & [data-slot='field-error'] {
+      @apply status-disabled;
+    }
+  }
+
+  /* Default checkmark / indeterminate icons */
+  & [data-slot='checkbox-default-indicator--checkmark'] {
+    @apply size-2.5 stroke-[2.5px] text-accent-foreground transition-all duration-200 motion-reduce:transition-none;
+  }
+
+  &[data-selected='true'] [data-slot='checkbox-default-indicator--checkmark'] {
+    transition: stroke-dashoffset 150ms linear 15ms;
+  }
+
+  &[data-invalid='true'][data-selected='true'] [data-slot='checkbox-default-indicator--checkmark'] {
+    @apply text-danger-foreground;
+  }
+
+  &[data-indeterminate='true'] [data-slot='checkbox-default-indicator--indeterminate'] {
+    @apply size-3;
+  }
+
+  &[data-indeterminate='true'][data-invalid='true']
+    [data-slot='checkbox-default-indicator--indeterminate'] {
+    @apply text-danger-foreground;
+  }
+}
+
+.h-checkbox__content {
+  @apply relative inline-flex cursor-[inherit] items-center gap-3 text-start text-sm font-medium text-foreground outline-none select-none no-highlight;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  & [data-slot='label'] {
+    cursor: var(--cursor-interactive);
+  }
+}
+
+.h-checkbox__control {
+  @apply relative inline-flex size-4 shrink-0 items-center justify-center overflow-hidden rounded-md border border-field-border bg-field shadow-field outline-none no-highlight;
+  border-width: var(--border-width-field);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 200ms var(--ease-out),
+    border-color 200ms var(--ease-out),
+    transform 100ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  cursor: var(--cursor-interactive);
+
+  &::before {
+    @apply pointer-events-none absolute inset-0 z-0 origin-center scale-70 rounded-md bg-accent opacity-0 content-[''];
+    transition:
+      scale 100ms var(--ease-linear),
+      opacity 200ms var(--ease-linear),
+      background-color 200ms var(--ease-out);
+    @apply motion-reduce:transition-none;
+  }
+
+  /* HeroUI's hover selector list includes `:has(… [data-hovered])`, so it out-ranks the selected rules. RAC never sets
+   * `data-hovered` on a read-only field, leaving only the `:hover` branch, which ties with (and loses to) the selected rule. */
+  .h-checkbox:not([data-readonly='true'][data-selected='true']):hover & {
+    @apply border-field-border-hover;
+  }
+
+  .h-checkbox:hover &::before {
+    @apply bg-accent-hover;
+  }
+
+  .h-checkbox[data-selected='true'] & {
+    @apply border-transparent text-accent-foreground;
+
+    &::before {
+      @apply scale-100 opacity-100;
+    }
+  }
+
+  .h-checkbox[data-indeterminate='true'] & {
+    @apply bg-accent text-accent-foreground;
+  }
+
+  .h-checkbox[data-indeterminate='true']:active & {
+    @apply bg-accent-hover;
+  }
+
+  .h-checkbox[data-invalid='true'][data-selected='true'] & {
+    @apply border-transparent bg-danger text-danger-foreground;
+
+    &::before {
+      @apply scale-100 bg-danger opacity-100;
+    }
+  }
+
+  .h-checkbox[data-invalid='true'][data-indeterminate='true'] & {
+    @apply bg-danger text-danger-foreground;
+  }
+}
+
+/* On the control (not the root): CheckboxButtonGroup reuses the control as its card indicator */
+.h-checkbox__control--secondary {
+  @apply shadow-none;
+  --checkbox-control-bg: var(--default);
+  background-color: var(--checkbox-control-bg);
+}
+
+.h-checkbox__indicator {
+  @apply relative z-10 flex size-3 items-center justify-center;
+
+  /* :where(): HeroUI's `.checkbox__indicator svg` sits in @layer components, so an icon's own utilities win */
+  :where(& svg) {
+    @apply size-full transform-gpu;
+  }
+
+  .h-checkbox:is([data-selected='true'], [data-indeterminate='true']) & {
+    @apply border-accent-foreground;
+  }
+}

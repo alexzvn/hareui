@@ -1,0 +1,23 @@
+/* Label: ported from @heroui/styles components/label.css. */
+.h-label {
+  @apply text-sm font-medium text-foreground;
+}
+
+/* Asterisks only on atomic field labels and group labels, not on the options inside a group */
+.h-label--required,
+[data-required='true']:not([role='group']):not([role='radiogroup']):not([role='checkboxgroup'])
+  > .h-label,
+[data-required='true']:not([data-slot='radio']):not([data-slot='checkbox']) > .h-label {
+  @apply after:ms-0.5 after:text-danger after:content-['*'];
+}
+
+/* Ancestor states keep the label's own specificity (`:where`), as the former `in-data-*` utilities did */
+.h-label--disabled,
+:where([data-disabled='true']) .h-label {
+  @apply status-disabled;
+}
+
+.h-label--invalid,
+:where([data-invalid='true'], [aria-invalid='true']) .h-label {
+  @apply text-danger;
+}

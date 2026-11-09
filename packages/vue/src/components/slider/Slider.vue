@@ -55,13 +55,13 @@
       data-slot="slider-track"
       :data-fill-start="fillStart ? 'true' : undefined"
       :data-fill-end="fillEnd ? 'true' : undefined"
-      :class="ui.track()"
+      :class="ui.track({ class: 'relative touch-none' })"
     >
       <!-- RAC sizes the fill with an explicit width/height (Reka only sets both edges, which rounds differently) -->
       <SliderRange
         data-slot="slider-fill"
         :style="{ [orientation === 'vertical' ? 'height' : 'width']: `${fillFraction * 100}%` }"
-        :class="ui.fill()"
+        :class="ui.fill({ class: 'pointer-events-none absolute' })"
       />
       <SliderThumb
         v-for="index in current.keys()"

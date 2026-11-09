@@ -3,7 +3,7 @@ title: Styling
 description: Style HareUI components with the class prop, the ui prop, and data attribute selectors.
 ---
 
-Every HareUI component accepts a `class` prop for the root element and a `:ui` prop for per-slot overrides. Both merge on top of the component's built-in theme with [tailwind-merge](https://github.com/dcastil/tailwind-merge), so conflicting utilities resolve predictably instead of stacking.
+Every HareUI component accepts a `class` prop for the root element and a `:ui` prop for per-slot overrides. The Tailwind utilities you pass win over the component's built-in styles, and [tailwind-merge](https://github.com/dcastil/tailwind-merge) resolves conflicts between utilities, so they replace each other instead of stacking.
 
 ## The `class` Prop
 
@@ -15,7 +15,7 @@ Every HareUI component accepts a `class` prop for the root element and a `:ui` p
 </template>
 ```
 
-Because HareUI uses tailwind-merge, `bg-purple-500` replaces the theme's `bg-(--button-bg)` instead of both classes competing at the same specificity.
+Button's own styles are the `h-button` classes of a stylesheet in Tailwind's `components` layer. Your utilities sit in the later `utilities` layer, so `bg-purple-500` beats the button's background whatever the selectors. That includes the button's state styles: without `hover:bg-purple-600`, the button stays purple on hover.
 
 ## The `:ui` Prop
 
@@ -50,14 +50,27 @@ Component scroll areas, such as a modal's body, use the `scrollbar` utility. It 
 
 Global and per-subtree control uses `data-scrollbar` on an ancestor. See [Theming](/docs/getting-started/theming#scrollbars) for tokens and modes.
 
-## Tailwind-Merge Conflict Resolution
+## How Overrides Win
 
-Classes are combined in this order — later layers win when they target the same CSS property: theme file → `createHareUI({ ui })` → variant props → `:ui` → `class` (root only). See [Theming](/docs/getting-started/theming#precedence) for the full precedence table.
+Two mechanisms decide which class wins.
+
+**CSS layers.** The most used components, such as Button, the form fields, Select, ListBox, Table, Tabs and Calendar, style themselves with short [BEM](https://getbem.com/) classes like `h-button` and `h-button--primary`, defined in `@layer components`. Every Tailwind utility lives in `@layer utilities`, which comes later, so any utility from `class`, `:ui` or `createHareUI({ ui })` wins over them. Each of these components lists its classes in the **CSS classes** section of its page.
 
 ```vue
-<!-- Theme default is rounded-3xl; class overrides it to rounded-none -->
+<!-- The h-button class sets rounded-3xl; the utility wins over it -->
 <Button class="rounded-none">Square corners</Button>
 ```
+
+**tailwind-merge.** Utilities are combined in this order, and later layers win when they set the same CSS property: theme file → `hareui({ ui })` → `createHareUI({ ui })` → variant props → `:ui` → `class` (root only). This decides between your own utilities, and between yours and the themes of components that style themselves with utilities. See [Theming](/docs/getting-started/theming#precedence) for the full precedence list.
+
+```vue
+<!-- Card's theme sets p-4; tailwind-merge drops it for p-6 -->
+<Card class="p-6">Roomy card</Card>
+```
+
+### Focus and Invalid Rings
+
+The keyboard focus ring and the invalid-field ring of the BEM components are the exception. They live in `@layer utilities`, after Tailwind's own utilities, so a plain ring utility such as `ring-1` styles the resting state and the focus ring still shows on keyboard focus. A state utility such as `focus-visible:ring-4` replaces the ring. This relies on importing `tailwindcss` before `@hareui/vue`, as in [Quick Start](/docs/getting-started/quick-start).
 
 ## State-Based Styling
 
@@ -121,7 +134,7 @@ To add a variant the component doesn't have:
 
 <ComponentPreview name="button/custom-variants" />
 
-Because `tv({ extend })` merges with tailwind-merge, the new variant's classes win over the base theme's conflicting utilities without touching the original `button` theme file.
+The extension's classes are utilities, so they win over Button's `h-button` classes, and tailwind-merge resolves conflicts between them and the original theme's utilities. The original `button` theme file stays untouched.
 
 ## Responsive Design
 

@@ -6,17 +6,18 @@ export default {
     // The error drops its field inset so it lines up with the label, description and icons
     base: 'inline-flex flex-col items-start gap-1.5 [&>[data-slot=field-error]]:px-0',
     items: 'flex items-center',
+    // Rating.vue holds the positioning that the inline step and fill widths rely on, so it survives `unstyled`
     item: [
-      'relative flex shrink-0 items-center justify-center no-highlight',
+      'flex shrink-0 items-center justify-center no-highlight',
       '[transition:scale_150ms_ease] motion-reduce:transition-none',
     ],
     icon: [
       'flex shrink-0 items-center justify-center text-surface-tertiary [&>svg]:size-full',
       '[transition:color_100ms_ease-out] motion-reduce:transition-none',
     ],
-    fill: 'pointer-events-none absolute inset-y-0 start-0 flex items-center overflow-hidden',
+    fill: 'flex items-center',
     step: [
-      'absolute inset-y-0 start-0 cursor-[inherit] rounded-[calc(var(--radius)*0.5)] outline-none',
+      'cursor-[inherit] rounded-[calc(var(--radius)*0.5)] outline-none',
       'focus-visible:status-focused',
     ],
   },

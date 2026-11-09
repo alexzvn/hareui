@@ -12,7 +12,6 @@ describe('InputGroup theme', () => {
       slots: { default: () => h(InputGroup, { 'data-test': 'g' }) },
     })
 
-    // The secondary variant drops the shadow utility present on primary.
-    expect(wrapper.get('[data-test=g]').classes()).not.toContain('shadow-field')
+    expect(wrapper.get('[data-test=g]').classes()).toContain('h-input-group--secondary')
   })
 })

@@ -7,7 +7,7 @@
     :data-holding="slotProps.holding ? 'true' : undefined"
     :data-progressing="slotProps.progressing ? 'true' : undefined"
     :data-complete="slotProps.complete ? 'true' : undefined"
-    :class="ui.base()"
+    :class="ui.base({ class: 'relative' })"
     @pointerenter="onPointerEnter"
     @pointerleave="onPointerLeave"
     @pointerdown="onPointerDown"
@@ -28,7 +28,7 @@
         '--pressable-feedback-hover-opacity': rippleOptions.hoverOpacity,
         '--pressable-feedback-pressed-opacity': rippleOptions.pressedOpacity,
       }"
-      :class="ui.ripple()"
+      :class="ui.ripple({ class: 'pointer-events-none absolute inset-0 overflow-hidden' })"
     >
       <span
         v-for="wave in ripple.waves.value"
@@ -36,7 +36,7 @@
         :data-wave="wave.id"
         :data-released="wave.phase === 'released' ? 'true' : undefined"
         :style="{ width: `${wave.size}px`, height: `${wave.size}px`, transform: wave.to }"
-        :class="ui.rippleWave()"
+        :class="ui.rippleWave({ class: 'pointer-events-none absolute top-0 left-0' })"
       />
     </span>
 

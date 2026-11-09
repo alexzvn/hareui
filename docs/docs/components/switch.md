@@ -138,6 +138,10 @@ app.use(
 - `thumb` → `[data-slot="switch-thumb"]` – the moving thumb
 - `icon` → `[data-slot="switch-icon"]` – optional icon inside the thumb
 
+### CSS classes
+
+Switch's own styles are `.h-switch` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-switch` plus `.h-switch--sm` or `.h-switch--lg`, and the slots carry `.h-switch__content`, `.h-switch__control` and `.h-switch__thumb`. The track colors come from `--switch-control-bg`, `--switch-control-bg-hover`, `--switch-control-bg-pressed`, `--switch-control-bg-checked` and `--switch-control-bg-checked-hover`, set on the root.
+
 ### Interactive States
 
 - **Selected**: `[data-selected="true"]` on the root (thumb position and background color change)

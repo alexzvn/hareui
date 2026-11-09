@@ -1,0 +1,123 @@
+/* Table: ported from @heroui/styles components/table.css (non-virtualized selectors only). A column's `class` utilities
+ * win over it too.
+ * Variant rules wrap the root modifier in `:where()` and reach rows and cells through child combinators: they keep the
+ * specificity of the slot class, and a nested Table keeps its own variant. A variant rule that overrides a state colour
+ * re-applies the states that must still win over it. */
+.h-table {
+  @apply relative grid w-full grid-cols-[minmax(0,1fr)] overflow-clip;
+}
+
+.h-table__scroll-container {
+  @apply scrollbar overflow-x-auto [scrollbar-gutter:auto];
+}
+
+.h-table__resizable-container {
+  @apply relative scrollbar overflow-auto [scrollbar-gutter:auto];
+}
+
+.h-table__content {
+  @apply w-full border-separate border-spacing-0 text-sm;
+}
+
+.h-table__header {
+  @apply border-b border-separator/50 bg-surface-secondary;
+}
+
+.h-table__column {
+  @apply relative px-4 py-2.5 text-start text-xs font-medium text-muted;
+
+  /* '&::after' separator, hidden on the last column and when a resizer replaces it */
+  @apply after:pointer-events-none after:absolute after:end-0 after:top-1/2 after:h-4 after:w-px after:-translate-y-1/2 after:rounded-sm after:bg-separator;
+  @apply last:not-only:after:content-none has-data-[slot=table-column-resizer]:after:content-none;
+  @apply data-[allows-sorting=true]:cursor-(--cursor-interactive) data-[allows-sorting=true]:hover:text-foreground;
+  @apply focus-visible:rounded-lg focus-visible:outline-none;
+}
+
+.h-table__sortable-column-header {
+  @apply flex items-center justify-between;
+}
+
+.h-table__sortable-column-indicator {
+  @apply inline-grid size-3 transform place-content-center transition-transform duration-100 ease-out data-[direction=descending]:rotate-180;
+}
+
+.h-table__row {
+  @apply relative h-full border-b border-separator/50 last:border-b-0;
+
+  /* Hover/selected backgrounds go on the cells ('.table__row:hover .table__cell') */
+  @apply hover:*:bg-surface/40 data-[selected=true]:*:bg-surface/10;
+  @apply aria-disabled:status-disabled data-[disabled=true]:status-disabled;
+
+  /* Row focus: rounded ends here, the ring in focus.css */
+  @apply focus-visible:outline-none;
+  @apply focus-visible:*:first:rounded-s-lg focus-visible:*:last:rounded-e-lg focus-visible:*:only:rounded-lg;
+}
+
+.h-table__cell {
+  @apply h-full border-b border-separator-tertiary/50 bg-surface px-4 py-3 align-middle text-sm text-foreground;
+  @apply focus-visible:rounded-lg focus-visible:outline-none;
+
+  /* '.table__cell[data-tree-column]'; the row sets '--table-row-level' (1-based) */
+  @apply data-tree-column:ps-[calc(1rem*var(--table-row-level,1))];
+}
+
+.h-table__footer {
+  @apply flex items-center px-4 py-2.5;
+}
+
+.h-table__column-resizer {
+  /* The element is the hit area, sized and placed in the markup (RESIZER_CLASS in Table.vue); the line is drawn by
+   * '::before' */
+  @apply outline-none;
+  @apply before:pointer-events-none before:absolute before:top-1/2 before:left-1/2 before:h-4 before:w-px before:-translate-1/2 before:rounded-sm before:bg-separator before:content-[''];
+  @apply hover:before:h-full hover:before:w-0.5 hover:before:bg-accent;
+  @apply data-[resizing=true]:before:h-full data-[resizing=true]:before:w-0.5 data-[resizing=true]:before:bg-accent;
+  @apply focus-visible:before:h-full focus-visible:before:w-0.5 focus-visible:before:bg-focus;
+}
+
+.h-table__load-more {
+  @apply [&_td]:py-3 [&_td]:text-center [&_td>*]:mx-auto;
+}
+
+.h-table__load-more-content {
+  @apply flex items-center justify-center gap-2 py-2;
+}
+
+.h-table--primary {
+  @apply rounded-[min(32px,calc(var(--radius)*2.5))] bg-surface-secondary px-1 pb-1;
+}
+
+:where(.h-table--primary > * > table) {
+  &.h-table__content {
+    @apply overflow-clip;
+  }
+
+  /* '.table__body tr:first-child td:first-child' etc. */
+  & > .h-table__body {
+    @apply [&_tr:first-child_td:first-child]:rounded-ss-[min(32px,var(--radius-2xl))] [&_tr:first-child_td:last-child]:rounded-se-[min(32px,var(--radius-2xl))];
+    @apply [&_tr:last-child_td:first-child]:rounded-es-[min(32px,var(--radius-2xl))] [&_tr:last-child_td:last-child]:rounded-ee-[min(32px,var(--radius-2xl))];
+  }
+}
+
+:where(.h-table--secondary > * > table) {
+  & > .h-table__header {
+    @apply border-b-0 bg-transparent;
+  }
+
+  & > .h-table__body {
+    @apply shadow-none;
+  }
+}
+
+:where(.h-table--secondary > * > table > thead > tr) > .h-table__column {
+  @apply bg-surface-secondary first:rounded-s-[min(32px,var(--radius-2xl))] last:rounded-e-[min(32px,var(--radius-2xl))];
+  @apply focus-visible:rounded-lg;
+}
+
+:where(.h-table--secondary > * > table > tbody) > .h-table__row {
+  @apply hover:*:bg-default/50 data-[selected=true]:*:bg-surface/10;
+}
+
+:where(.h-table--secondary > * > table > tbody > tr) > .h-table__cell {
+  @apply bg-transparent;
+}

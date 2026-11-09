@@ -1,22 +1,9 @@
-// Translated from @heroui/styles components/select.css
-// Trigger states set a private var instead of `bg-*`, so a plain user `bg-*` wins in every state, as with HeroUI's
-// `@layer components` rules. The secondary variant swaps the vars, like HeroUI's `--select-trigger-bg*`.
+// Root and trigger map to the BEM classes of ./select.css (ported from @heroui/styles
+// components/select.css). The other slots stay utilities.
 export default {
   slots: {
-    base: 'flex flex-col gap-1 data-[invalid=true]:[&_[data-slot=description]]:hidden aria-[invalid=true]:[&_[data-slot=description]]:hidden [&_[data-slot=label]]:w-fit',
-    trigger: [
-      'relative isolate inline-flex min-h-9 items-center rounded-field px-3 py-2 text-sm text-field-foreground shadow-field outline-none select-none no-highlight',
-      'bg-(--select-trigger-bg-current) [--select-trigger-bg-current:var(--select-trigger-bg)] [--select-trigger-bg:var(--field-background,var(--default))] [--select-trigger-bg-hover:var(--field-hover)] [--select-trigger-bg-focus:var(--field-focus)]',
-      'border-(length:--border-width-field) border-(--field-border)',
-      '[transition:background-color_150ms_var(--ease-smooth),border-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out)] motion-reduce:transition-none',
-      'cursor-(--cursor-interactive)',
-      'has-[[data-slot=select-indicator],[data-slot=select-default-indicator]]:pe-7',
-      // Hover, except while the clear button is hovered
-      '[@media(hover:hover)]:[&:where(:hover,[data-hovered=true]):not(:has([data-slot=select-clear-button]:hover))]:[--select-trigger-bg-current:var(--select-trigger-bg-hover)] [@media(hover:hover)]:[&:where(:hover,[data-hovered=true]):not(:has([data-slot=select-clear-button]:hover))]:border-(--field-border-hover)',
-      'data-[focus-visible=true]:status-focused data-[focus-visible=true]:border-(--field-border-focus) data-[focus-visible=true]:[--select-trigger-bg-current:var(--select-trigger-bg-focus)]',
-      '[[data-slot=select][data-invalid=true]_&]:status-invalid-field [[data-slot=select][data-invalid=true]_&]:[--select-trigger-bg-current:var(--select-trigger-bg-focus)]',
-      'disabled:status-disabled data-[disabled=true]:status-disabled aria-disabled:status-disabled',
-    ],
+    base: 'h-select',
+    trigger: 'h-select__trigger',
     value: [
       'flex-1 text-start text-base wrap-break-word text-current sm:text-sm',
       'data-[placeholder=true]:text-field-placeholder',
@@ -27,7 +14,8 @@ export default {
       'cursor-(--cursor-interactive)',
       "after:absolute after:-inset-0.5 after:content-['']",
       'not-data-[empty=true]:[transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none',
-      'data-[empty=true]:pointer-events-none data-[empty=true]:opacity-0',
+      // The markup makes the hidden button non-interactive, so that survives `unstyled`
+      'data-[empty=true]:opacity-0',
       '[&_[data-slot=select-clear-button-icon]]:size-3.5',
       '[@media(hover:hover)]:hover:bg-default-hover [@media(hover:hover)]:data-[hovered=true]:bg-default-hover',
       'active:scale-[0.93] data-[pressed=true]:scale-[0.93]',
@@ -53,13 +41,10 @@ export default {
   variants: {
     variant: {
       primary: {},
-      secondary: {
-        trigger:
-          'shadow-none [--select-trigger-bg:var(--default)] [--select-trigger-bg-hover:var(--default-hover)] [--select-trigger-bg-focus:var(--default)]',
-      },
+      secondary: { trigger: 'h-select__trigger--secondary' },
     },
     fullWidth: {
-      true: { base: 'w-full', trigger: 'w-full' },
+      true: { base: 'h-select--full-width', trigger: 'h-select__trigger--full-width' },
       false: {},
     },
   },

@@ -103,6 +103,7 @@
             ref="prevButton"
             type="button"
             :aria-label="t('calendar.prev')"
+            :inert="isYearPickerOpen || undefined"
             :class="ui.navButton()"
           >
             <slot name="navIcon" direction="previous">
@@ -119,6 +120,7 @@
             ref="nextButton"
             type="button"
             :aria-label="t('calendar.next')"
+            :inert="isYearPickerOpen || undefined"
             :class="ui.navButton()"
           >
             <slot name="navIcon" direction="next">
@@ -141,6 +143,7 @@
         :week-days="weekDays"
         :rows="grid[0]?.rows ?? []"
         :month="resolveDisplayedMonth(grid)"
+        :inert="isYearPickerOpen || undefined"
       >
         <template #cell="cell">
           <slot name="monthCell" v-bind="cell" />
@@ -210,6 +213,7 @@
     </div>
     <div
       v-if="yearPicker"
+      v-show="isYearPickerOpen"
       ref="yearPickerGrid"
       data-slot="calendar-year-picker-grid"
       role="listbox"

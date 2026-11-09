@@ -1,0 +1,164 @@
+/* Switch: ported from @heroui/styles components/switch.css. The root mirrors HeroUI's state attributes
+ * (`data-selected`, `data-disabled` = "true"). */
+.h-switch {
+  @apply flex flex-col items-start gap-1 no-highlight;
+  cursor: var(--cursor-interactive);
+
+  --switch-control-bg: var(--default);
+  --switch-control-bg-hover: color-mix(in oklab, var(--switch-control-bg), transparent 20%);
+  --switch-control-bg-pressed: var(--switch-control-bg-hover);
+  --switch-control-bg-checked: var(--accent);
+  --switch-control-bg-checked-hover: var(--accent-hover);
+
+  &[data-disabled='true'] {
+    @apply status-disabled;
+
+    & [data-slot='description'],
+    & [data-slot='field-error'] {
+      @apply status-disabled;
+    }
+  }
+
+  & > [data-slot='description'],
+  & > [data-slot='field-error'] {
+    @apply w-full min-w-0;
+  }
+
+  & > [data-slot='description'] {
+    @apply ps-[calc(2.5rem+0.75rem)];
+  }
+
+  & > [data-slot='field-error'] {
+    @apply text-xs text-muted;
+  }
+
+  /* Doubled so it beats FieldError's own toggle-field reset (`p-0`) */
+  && > [data-slot='field-error'] {
+    @apply ps-[calc(2.5rem+0.75rem)];
+  }
+
+  & [data-slot='label'] {
+    @apply select-none;
+  }
+
+  & [data-slot='description'] {
+    @apply cursor-default select-none;
+  }
+}
+
+.h-switch__content {
+  @apply relative inline-flex cursor-[inherit] items-center gap-3 text-start text-sm font-medium text-foreground outline-none select-none no-highlight;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  & [data-slot='label'] {
+    cursor: var(--cursor-interactive);
+  }
+}
+
+/* States only swap `--switch-control-bg-current`; the single background is what a `ui.control` class replaces */
+.h-switch__control {
+  @apply relative flex h-5 w-10 shrink-0 items-center overflow-hidden rounded-xl;
+  --switch-control-bg-current: var(--switch-control-bg);
+  background-color: var(--switch-control-bg-current);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 250ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  .h-switch[data-selected='true'] & {
+    --switch-control-bg-current: var(--switch-control-bg-checked);
+  }
+
+  /* HeroUI's hover/pressed selector lists include `:has(… [data-hovered|data-pressed])`, so they out-rank the checked rule */
+  .h-switch:hover & {
+    --switch-control-bg-current: var(--switch-control-bg-hover);
+  }
+
+  .h-switch:active & {
+    --switch-control-bg-current: var(--switch-control-bg-pressed);
+    @apply motion-reduce:transform-none;
+  }
+
+  .h-switch[data-selected='true']:is(:hover, :active) & {
+    --switch-control-bg-current: var(--switch-control-bg-checked-hover);
+  }
+}
+
+.h-switch__thumb {
+  @apply ms-0.5 flex h-4 w-[1.375rem] origin-center rounded-lg bg-white text-black shadow-field;
+
+  /* motion-reduce must come after the transition */
+  transition:
+    margin 300ms var(--ease-out-fluid),
+    background-color 200ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  .h-switch[data-disabled='true'] & {
+    @apply bg-default-foreground/20;
+  }
+
+  .h-switch[data-selected='true'] & {
+    @apply ms-[calc(100%-1.5rem)] bg-accent-foreground text-accent;
+    box-shadow:
+      0px 0px 5px 0px rgb(0 0 0 / 0.02),
+      0px 2px 10px 0px rgb(0 0 0 / 0.06),
+      0px 0px 1px 0px rgb(0 0 0 / 0.3);
+  }
+
+  .h-switch[data-disabled='true'][data-selected='true'] & {
+    @apply opacity-40;
+  }
+
+  & > * {
+    @apply flex size-full items-center justify-center;
+  }
+}
+
+.h-switch--sm {
+  & > [data-slot='description'] {
+    @apply ps-[calc(2rem+0.75rem)];
+  }
+
+  && > [data-slot='field-error'] {
+    @apply ps-[calc(2rem+0.75rem)];
+  }
+
+  & .h-switch__control {
+    @apply h-4 w-8 rounded-lg;
+  }
+
+  & .h-switch__thumb {
+    @apply h-3 w-[1.03125rem] rounded-md;
+  }
+
+  &[data-selected='true'] .h-switch__thumb {
+    @apply ms-[calc(100%-1.15625rem)];
+  }
+}
+
+.h-switch--lg {
+  & > [data-slot='description'] {
+    @apply ps-[calc(3rem+0.75rem)];
+  }
+
+  && > [data-slot='field-error'] {
+    @apply ps-[calc(3rem+0.75rem)];
+  }
+
+  & .h-switch__control {
+    @apply h-6 w-12;
+  }
+
+  & .h-switch__thumb {
+    @apply h-5 w-[1.71875rem] rounded-xl;
+  }
+
+  &[data-selected='true'] .h-switch__thumb {
+    @apply ms-[calc(100%-1.84375rem)];
+  }
+}

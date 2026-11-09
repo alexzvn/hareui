@@ -171,7 +171,7 @@
         :aria-describedby="describedBy"
         :aria-label="attrs['aria-label']"
         :aria-labelledby="attrs['aria-labelledby']"
-        :class="ui.input()"
+        :class="ui.input({ class: 'sr-only' })"
         @blur="commitIfEmptied"
         @keydown="onKeydown"
       />

@@ -15,9 +15,9 @@ describe('ButtonGroup theme', () => {
     })
 
     const [a, b] = buttons(wrapper)
-    expect(a!.classes()).toContain('border')
-    expect(a!.classes()).toContain('px-3')
-    expect(b!.classes()).not.toContain('border')
+    expect(a!.classes()).toEqual(expect.arrayContaining(['h-button--outline', 'h-button--sm']))
+    expect(b!.classes()).toContain('h-button--danger')
+    expect(b!.classes()).not.toContain('h-button--outline')
   })
 
   it('does not style a Button nested inside a Button with the group variant', () => {
@@ -26,7 +26,7 @@ describe('ButtonGroup theme', () => {
       slots: { default: () => h(Button, { as: 'div' }, () => h(Button, () => 'inner')) },
     })
 
-    expect(wrapper.find('button[data-slot="button"]').classes()).not.toContain('border')
+    expect(wrapper.find('button[data-slot="button"]').classes()).not.toContain('h-button--outline')
   })
 
   it('lets a user rounded-* class replace the group edge radii', () => {

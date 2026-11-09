@@ -87,7 +87,8 @@
             aria-hidden="true"
             data-slot="select-clear-button"
             :data-empty="isPlaceholder ? 'true' : undefined"
-            :class="ui.clearButton()"
+            :inert="isPlaceholder || undefined"
+            :class="ui.clearButton({ class: isPlaceholder && 'pointer-events-none' })"
             @pointerdown.stop
             @click.stop.prevent="clear"
           >

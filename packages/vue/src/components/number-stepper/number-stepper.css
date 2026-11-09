@@ -1,0 +1,91 @@
+/* NumberStepper: HareUI component in the HeroUI field style. */
+.h-number-stepper {
+  @apply inline-flex shrink-0 flex-col items-start gap-1.5;
+
+  &[data-invalid='true'] [data-slot='description'] {
+    @apply hidden;
+  }
+}
+
+.h-number-stepper__group {
+  @apply inline-flex items-center gap-0 rounded-full bg-default p-0.5 shadow-none;
+}
+
+.h-number-stepper__button {
+  @apply relative flex size-9 shrink-0 items-center justify-center rounded-full border-0 bg-surface shadow-surface outline-none no-highlight md:size-8;
+  cursor: var(--cursor-interactive);
+  transform: translateZ(0);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 100ms var(--ease-out),
+    box-shadow 100ms var(--ease-out),
+    transform 250ms var(--ease-smooth);
+  @apply motion-reduce:transition-none;
+
+  & svg {
+    @apply size-4 shrink-0 text-muted transition-colors duration-150 motion-reduce:transition-none;
+  }
+
+  &:hover svg {
+    @media (hover: hover) {
+      @apply text-foreground;
+    }
+  }
+
+  &:active,
+  &[data-pressed='true'] {
+    @apply scale-98;
+  }
+
+  &:disabled,
+  &[data-disabled],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-number-stepper__value {
+  @apply flex h-9 min-w-7 items-center justify-center text-sm font-semibold text-foreground tabular-nums md:h-8 md:min-w-6;
+}
+
+.h-number-stepper--sm {
+  & .h-number-stepper__button {
+    @apply size-8 md:size-7;
+
+    & svg {
+      @apply size-3.5;
+    }
+  }
+
+  & .h-number-stepper__value {
+    @apply h-8 min-w-6 text-xs md:h-7 md:min-w-5;
+  }
+}
+
+.h-number-stepper--lg {
+  & .h-number-stepper__group {
+    @apply gap-0.5;
+  }
+
+  & .h-number-stepper__button {
+    @apply size-10 md:size-9;
+
+    &:active,
+    &[data-pressed='true'] {
+      @apply scale-96;
+    }
+
+    & svg {
+      @apply size-5 md:size-4;
+    }
+  }
+
+  & .h-number-stepper__value {
+    @apply h-10 min-w-8 text-base md:h-9 md:min-w-7;
+  }
+}
+
+.h-number-stepper__group--reversed {
+  @apply flex-row-reverse;
+}

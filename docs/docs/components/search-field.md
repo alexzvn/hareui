@@ -147,6 +147,10 @@ app.use(
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
+### CSS classes
+
+The root carries `.h-search-field` (plus `.h-search-field--full-width`). The group carries `.h-search-field__group` (plus `--secondary` and `--full-width` modifiers), and the parts carry `.h-search-field__input` and `.h-search-field__search-icon`. They live in `@layer components`, so any utility from `class` or `ui` wins over them. The clear button keeps Tailwind utilities.
+
 ### Interactive States
 
 SearchField sets these data attributes:

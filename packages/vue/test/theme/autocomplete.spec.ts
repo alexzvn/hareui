@@ -9,6 +9,6 @@ describe('Autocomplete theme', () => {
       props: { items: [{ value: 'florida', label: 'Florida' }], label: 'State', required: true },
     })
 
-    expect(wrapper.get('[data-slot=label]').classes()).toContain("after:content-['*']")
+    expect(wrapper.get('[data-slot=label]').classes()).toContain('h-label--required')
   })
 })

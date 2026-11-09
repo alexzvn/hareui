@@ -7,7 +7,7 @@ export default {
     // Transparent at rest and on focus; Select's hover var (`--field-hover`) still paints a rounded pill on hover
     trigger: [
       'min-h-0 gap-2 rounded-md border-0 px-1 py-0.5 text-sm text-muted shadow-none [--select-trigger-bg:transparent] [--select-trigger-bg-focus:transparent]',
-      // Same variant as Select's `pe-7` (room for its absolute chevron) so tailwind-merge replaces it; the indicator here is in the flow
+      // Replaces Select's `pe-7` (room for its absolute chevron); the indicator here is in the flow
       'has-[[data-slot=select-indicator],[data-slot=select-default-indicator]]:pe-1',
       'transition-colors duration-100 motion-reduce:transition-none',
       '[@media(hover:hover)]:hover:text-foreground [@media(hover:hover)]:data-[hovered=true]:text-foreground',

@@ -1,95 +1,37 @@
-// Translated from @heroui/styles components/tabs.css
+// Maps props to the BEM classes of ./tabs.css (ported from @heroui/styles components/tabs.css).
 // The list scroller is a ScrollShadow (overflow, hidden scrollbar and fade come from it).
 export default {
   slots: {
-    base: 'flex gap-2 data-[orientation=horizontal]:flex-col data-[orientation=vertical]:flex-row',
-    tabListContainer: 'relative bg-default [border-radius:calc(var(--radius)*2.5)]',
+    base: 'h-tabs',
+    tabListContainer: 'h-tabs__list-container',
     scroller: '',
     // Overflow chevrons; Tabs.vue adds `inline-flex` while there's hidden content on that side.
-    scrollPrev: [
-      'absolute z-2 hidden size-4 cursor-(--cursor-interactive) items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none',
-      '[transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none',
-      '[@media(hover:hover)]:hover:opacity-70 focus-visible:status-focused',
-    ],
-    scrollNext: [
-      'absolute z-2 hidden size-4 cursor-(--cursor-interactive) items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none',
-      '[transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none',
-      '[@media(hover:hover)]:hover:opacity-70 focus-visible:status-focused',
-    ],
-    tabList:
-      'isolate inline-flex p-1 data-[orientation=horizontal]:w-max data-[orientation=horizontal]:min-w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:gap-1',
-    tab: [
-      'relative flex h-8 w-full items-center justify-center rounded-3xl px-4 text-center text-sm font-medium text-muted outline-none no-highlight',
-      'z-[1] cursor-(--cursor-interactive)',
-      '[transition:color_150ms_var(--ease-smooth),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out),opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none',
-      'data-[state=active]:text-segment-foreground',
-      'disabled:status-disabled data-disabled:status-disabled aria-disabled:status-disabled',
-      '[@media(hover:hover){&:not([data-state=active]):not([data-disabled]):hover}]:opacity-70',
-      'focus-visible:status-focused',
-      'data-[orientation=vertical]:min-w-20',
-    ],
+    scrollPrev: 'h-tabs__scroll-prev',
+    scrollNext: 'h-tabs__scroll-next',
+    tabList: 'h-tabs__list',
+    tab: 'h-tabs__tab',
+    // Utilities, not CSS: an icon's own classes (an iconify class string) must not outrank them.
     tabIcon: 'me-1.5 size-4 shrink-0',
-    // `left-0`, not `start-0`: `--tabs-indicator-x` is measured from the list's left edge, in RTL too
-    tabIndicator: [
-      'absolute left-0 top-0 rounded-3xl bg-segment shadow-surface -z-1',
-      'text-center text-sm leading-5 font-medium text-segment-foreground cursor-(--cursor-interactive)',
-      '[transition-duration:250ms] [transition-property:translate,width,height] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none',
-      'w-(--tabs-indicator-width) h-(--tabs-indicator-height) translate-x-(--tabs-indicator-x) translate-y-(--tabs-indicator-y)',
-    ],
-    tabPanel: 'w-full p-2 outline-none',
-    separator: [
-      'pointer-events-none absolute rounded-sm bg-muted/25',
-      '[transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none',
-      'data-[orientation=horizontal]:start-0 data-[orientation=horizontal]:top-1/4 data-[orientation=horizontal]:h-1/2 data-[orientation=horizontal]:w-px',
-      'data-[orientation=vertical]:start-[5%] data-[orientation=vertical]:top-0 data-[orientation=vertical]:h-px data-[orientation=vertical]:w-[90%]',
-    ],
+    tabIndicator: 'h-tabs__indicator',
+    tabPanel: 'h-tabs__panel',
+    separator: 'h-tabs__separator',
   },
   variants: {
     align: {
       center: {},
-      start: { tab: 'justify-start text-start', tabIndicator: 'text-start' },
-      end: { tab: 'justify-end text-end', tabIndicator: 'text-end' },
+      start: { base: 'h-tabs--start' },
+      end: { base: 'h-tabs--end' },
     },
     variant: {
       primary: {},
-      secondary: {
-        tabListContainer: 'rounded-none bg-transparent',
-        tabList: 'p-0',
-        tab: 'rounded-none data-[state=active]:text-foreground',
-        tabIndicator: 'rounded-none bg-accent text-foreground shadow-none',
-        separator: 'hidden',
-      },
+      secondary: { base: 'h-tabs--secondary' },
     },
     orientation: {
-      horizontal: {
-        scrollPrev: 'start-1 top-1/2 -translate-y-1/2 rtl:rotate-180',
-        scrollNext: 'end-1 top-1/2 -translate-y-1/2 rtl:rotate-180',
-      },
-      vertical: {
-        scroller: 'h-full',
-        scrollPrev: 'top-1 left-1/2 -translate-x-1/2',
-        scrollNext: 'bottom-1 left-1/2 -translate-x-1/2',
-      },
+      horizontal: { base: 'h-tabs--horizontal' },
+      // Utilities, not CSS: `scroller` goes to ScrollShadow's `class`.
+      vertical: { base: 'h-tabs--vertical', scroller: 'h-full' },
     },
   },
-  compoundVariants: [
-    {
-      variant: 'secondary',
-      orientation: 'horizontal',
-      class: {
-        tabListContainer: 'border-b border-border',
-        tabIndicator: 'top-auto bottom-0 h-0.5 translate-y-0',
-      },
-    },
-    {
-      variant: 'secondary',
-      orientation: 'vertical',
-      class: {
-        tabListContainer: 'border-s border-border',
-        tabIndicator: 'start-0 w-0.5 translate-x-0',
-      },
-    },
-  ],
   defaultVariants: {
     align: 'center',
     variant: 'primary',

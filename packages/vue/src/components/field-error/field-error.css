@@ -1,0 +1,16 @@
+/* FieldError: ported from @heroui/styles components/field-error.css. */
+.h-field-error {
+  @apply h-0 px-1 text-xs wrap-break-word text-danger opacity-0 data-visible:h-auto data-visible:opacity-100;
+
+  /* motion-reduce must come after the transition */
+  transition:
+    opacity 150ms var(--ease-out),
+    height 350ms var(--ease-smooth);
+  @apply motion-reduce:transition-none;
+
+  /* Toggle fields stack the error below the label like a description, without the collapse animation */
+  :is([data-slot='checkbox'], [data-slot='switch'], [data-slot='radio']) > & {
+    @apply m-0 h-auto min-h-0 p-0 text-muted opacity-100;
+    transition: none;
+  }
+}

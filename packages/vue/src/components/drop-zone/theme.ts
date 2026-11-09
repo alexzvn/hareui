@@ -9,15 +9,16 @@ export default {
       'data-[focus-visible=true]:status-focused',
       'data-[disabled=true]:status-disabled',
     ],
-    // Visually hidden button that makes the area focusable: Enter / Space open the picker, paste adds files
-    focusTarget: 'sr-only',
+    // Visually hidden button (`sr-only` in the markup) that makes the area focusable: Enter / Space open the
+    // picker, paste adds files
+    focusTarget: '',
     // `:where()` keeps the default icon size at zero specificity, so a size utility on your own icon wins
     icon: 'flex items-center justify-center text-muted [:where(&_svg)]:size-8',
     label: 'text-sm font-medium text-foreground',
     description: 'text-xs text-muted',
     // Rendered with the outline Button underneath
     trigger: 'mt-1',
-    input: 'sr-only',
+    input: '',
     // `empty:hidden` keeps an empty list out of the root's gap; `relative` anchors leaving items
     fileList: 'relative flex flex-col gap-2 empty:hidden',
     fileItem: [

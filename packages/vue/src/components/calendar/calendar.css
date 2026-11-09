@@ -1,0 +1,396 @@
+/* Calendar and RangeCalendar: ported from @heroui/styles components/calendar.css, range-calendar.css and
+ * calendar-year-picker.css. Both roots share one shell (`.h-calendar`, RangeCalendar adds `.h-calendar--range`);
+ * only the day cells differ.
+ * Reka emits `data-outside-view` where React Aria emits `data-outside-month`. State rules keep HeroUI's
+ * `:where()` (zero added specificity), so rules of equal weight resolve in source order, as in HeroUI. */
+.h-calendar {
+  @apply w-63 max-w-63;
+  container-type: inline-size;
+
+  /* The year grid is absolutely positioned over the day grid */
+  &:has(> .h-calendar-year-picker__grid) {
+    @apply relative;
+  }
+}
+
+/* Multi-month layout (`numberOfMonths > 1`), from the HeroUI docs' multiple-months demo markup */
+.h-calendar__panels {
+  @apply mx-auto flex w-max gap-8;
+}
+
+.h-calendar__panel {
+  @apply w-64;
+}
+
+.h-calendar__header {
+  @apply flex items-center justify-between px-0.5 pb-4;
+
+  &:has(.h-calendar-year-picker__trigger[data-open='true']) .h-calendar__nav-button {
+    @apply pointer-events-none opacity-0;
+  }
+}
+
+.h-calendar__heading {
+  @apply flex-1 text-sm font-medium;
+}
+
+.h-calendar__nav-button {
+  @apply flex size-6 transform-gpu items-center justify-center rounded-2xl text-accent-soft-foreground;
+  cursor: var(--cursor-interactive);
+  transition:
+    transform 250ms var(--ease-out),
+    background-color 100ms var(--ease-out),
+    box-shadow 100ms var(--ease-out),
+    opacity 150ms var(--ease-out);
+
+  &:hover {
+    @media (hover: hover) {
+      @apply bg-default text-accent-soft-foreground;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+
+  @apply motion-reduce:transition-none;
+
+  &:where([data-disabled]) {
+    @apply status-disabled;
+  }
+}
+
+.h-calendar--range .h-calendar__nav-button {
+  @apply rounded-xl;
+}
+
+.h-calendar__nav-button-icon {
+  @apply size-4 rtl:rotate-180;
+}
+
+.h-calendar__grid {
+  @apply grid w-full grid-cols-7 motion-reduce:transition-none;
+
+  &[aria-readonly='true'] :is(.h-calendar__cell, .h-calendar__range-cell) {
+    @apply pointer-events-none;
+  }
+}
+
+/* Year-picker crossfade: the day grid fades out (then hides) while the year grid is open. `:where()` keeps it
+ * under the grid's `motion-reduce` rule. */
+:where(.h-calendar:has(> .h-calendar-year-picker__grid)) .h-calendar__grid {
+  will-change: opacity;
+  transition:
+    opacity 150ms var(--ease-out),
+    visibility 0ms linear;
+}
+
+:where(.h-calendar:has(> .h-calendar-year-picker__grid[data-open='true'])) .h-calendar__grid {
+  @apply pointer-events-none invisible opacity-0;
+  transition:
+    opacity 150ms var(--ease-out),
+    visibility 0ms linear 150ms;
+}
+
+.h-calendar__grid-header {
+  @apply contents;
+
+  & > tr {
+    @apply contents;
+  }
+}
+
+.h-calendar__grid-body {
+  @apply contents;
+
+  & > tr {
+    @apply contents;
+  }
+
+  & > tr:first-child > td {
+    @apply mt-1;
+  }
+}
+
+.h-calendar__grid-row {
+  @apply contents;
+}
+
+.h-calendar__header-cell {
+  @apply flex items-center justify-center pb-2 text-xs font-medium text-muted;
+}
+
+/* Day cells. Calendar's cell is the date pill itself; RangeCalendar's cell is the range track around an inner
+ * `__range-cell-button` pill. The base and the availability states are shared. */
+.h-calendar__cell,
+.h-calendar__range-cell {
+  @apply relative transform-gpu rounded-3xl outline-none motion-reduce:transition-none;
+  cursor: var(--cursor-interactive);
+
+  &:where(:disabled:not([data-outside-view])),
+  &:where([data-disabled]:not([data-outside-view])) {
+    @apply status-disabled line-through;
+  }
+
+  &:where([data-outside-view]) {
+    @apply text-muted opacity-50;
+  }
+
+  &:where([data-unavailable]) {
+    @apply status-disabled;
+  }
+}
+
+.h-calendar__cell {
+  @apply flex aspect-square size-full items-center justify-center text-center text-sm font-medium no-highlight;
+  transition:
+    transform 250ms var(--ease-out),
+    box-shadow 100ms var(--ease-out);
+
+  &:active {
+    @apply bg-default;
+    transform: scale(0.95);
+  }
+
+  /* Before the selected background, as in HeroUI's cascade: a pressed selected day shows `:active`'s background */
+  &:where([data-selected]:active) {
+    @apply bg-accent-hover;
+  }
+
+  &:where([data-selected]:not(:is([data-disabled], :disabled))) {
+    @apply bg-accent text-accent-foreground;
+  }
+
+  &:where([data-selected][data-outside-view]) {
+    @apply bg-default;
+  }
+
+  &:where([data-today]:not([data-selected]), [data-today]:is([data-disabled], :disabled)) {
+    @apply bg-accent-soft text-accent-soft-foreground;
+  }
+
+  @media (hover: hover) {
+    &:where(:hover:not([data-selected])) {
+      @apply bg-default;
+    }
+
+    &:where([data-today]:hover:not([data-selected])) {
+      @apply bg-accent-soft-hover;
+    }
+  }
+}
+
+/* The range track. Corner radii are mutually exclusive per side (selection cap > row boundary > plain track). */
+.h-calendar__range-cell {
+  @apply z-1 mx-0 my-0.5 p-0;
+  transition:
+    box-shadow 100ms var(--ease-out),
+    border-color 100ms var(--ease-out);
+
+  &:active .h-calendar__range-cell-button {
+    scale: 0.9;
+  }
+
+  /* One attribute's worth of specificity outside `:where()`, so the pressed cap beats the cap colour */
+  &:is(:active, [data-pressed='true']):where([data-selection-start], [data-selection-end])
+    .h-calendar__range-cell-button {
+    @apply bg-accent-hover;
+  }
+
+  /* HeroUI's `:focus-visible:not([data-focused])`: RAC's `data-focused` flags pointer focus. Reka's `data-focused`
+   * marks the focused date instead, so RangeCalendar flags pointer focus with `data-pointer-focus`. */
+  &:where(:focus-visible:not([data-pointer-focus]), [data-focus-visible='true']) {
+    @apply z-2;
+  }
+
+  &:where([data-pressed='true']) .h-calendar__range-cell-button {
+    scale: 0.9;
+  }
+
+  &:where([data-selected]:not([data-outside-view]):not(:is([data-disabled], :disabled))) {
+    @apply bg-accent-soft;
+  }
+
+  &:where(
+    [data-selected]:not([data-outside-view]):not([data-selection-end]):not(
+        :is(td:last-child > *, td:has(+ [aria-disabled='true']) > *)
+      )
+  ) {
+    @apply rounded-e-none;
+  }
+
+  &:where(
+    [data-selected]:not([data-outside-view]):not([data-selection-start]):not(
+        :is(td:first-child > *, [aria-disabled='true'] + td > *)
+      )
+  ) {
+    @apply rounded-s-none;
+  }
+
+  &:where(
+    [data-selected]:not([data-selection-end]):is(
+        td:last-child > *,
+        td:has(+ [aria-disabled='true']) > *
+      )
+  ) {
+    @apply rounded-e-lg;
+  }
+
+  &:where(
+    [data-selected]:not([data-selection-start]):is(
+        td:first-child > *,
+        [aria-disabled='true'] + td > *
+      )
+  ) {
+    @apply rounded-s-lg;
+  }
+
+  &:where(
+    [data-selected][data-outside-view]:not([data-selection-start]):not([data-selection-end])
+  ) {
+    @apply bg-default/20;
+  }
+
+  &:where([data-selection-end]:not([data-outside-view])) {
+    @apply z-2 rounded-e-3xl;
+  }
+
+  &:where([data-selection-start]:not([data-outside-view])) {
+    @apply z-2 rounded-s-3xl;
+  }
+
+  &:where(
+      [data-selection-start]:not([data-outside-view]):not(:is([data-disabled], :disabled)),
+      [data-selection-end]:not([data-outside-view]):not(:is([data-disabled], :disabled))
+    )
+    .h-calendar__range-cell-button {
+    @apply bg-accent text-accent-foreground;
+  }
+
+  &:where([data-today]:not([data-selected]), [data-today]:is([data-disabled], :disabled))
+    .h-calendar__range-cell-button {
+    @apply bg-accent-soft text-accent-soft-foreground;
+  }
+
+  @media (hover: hover) {
+    &:where(:hover:not([data-selected])) .h-calendar__range-cell-button {
+      @apply bg-default;
+    }
+
+    &:where([data-today]:hover:not([data-selected])) .h-calendar__range-cell-button {
+      @apply bg-accent-soft-hover;
+    }
+  }
+}
+
+.h-calendar__range-cell-button {
+  @apply flex aspect-square w-full transform-gpu items-center justify-center rounded-3xl text-sm font-medium text-foreground no-highlight motion-reduce:transition-none;
+  transition: scale 200ms var(--ease-out);
+}
+
+.h-calendar__cell-indicator {
+  @apply absolute bottom-1 left-1/2 size-[3px] -translate-x-1/2 rounded-xs bg-muted;
+
+  :where([data-selected]) & {
+    @apply bg-accent-foreground;
+  }
+}
+
+/* `visibleDuration` week/day views (`.calendar--week-view` / `.calendar--day-view`), rendered by the custom grid in
+ * the component (Reka only builds month grids) */
+:is(.h-calendar--week-view, .h-calendar--day-view) :is(.h-calendar__cell, .h-calendar__range-cell) {
+  @apply aspect-square size-auto w-full place-self-center;
+}
+
+/* Separate 7-column grids for header and body, so fewer than 7 weekday headers don't share a row with dates */
+.h-calendar--day-view {
+  & .h-calendar__grid {
+    @apply flex flex-col;
+  }
+
+  & .h-calendar__grid-header {
+    @apply grid w-full grid-cols-7;
+  }
+
+  & .h-calendar__grid-body {
+    @apply mt-1 grid w-full grid-cols-7;
+
+    & > tr:first-child > td {
+      @apply mt-0;
+    }
+  }
+}
+
+/* Year picker (calendar-year-picker.css), swapped in for the plain heading */
+.h-calendar-year-picker__trigger {
+  @apply flex flex-1 touch-manipulation items-center justify-start gap-1 rounded-lg outline-none;
+  cursor: var(--cursor-interactive);
+}
+
+.h-calendar-year-picker__trigger-heading {
+  @apply text-sm font-medium motion-reduce:transition-none;
+  transition: color 150ms var(--ease-out);
+
+  :where([data-open='true']) & {
+    @apply text-accent-soft-foreground;
+  }
+}
+
+.h-calendar-year-picker__trigger-indicator {
+  @apply text-xs text-accent-soft-foreground motion-reduce:transition-none;
+  transition: transform 150ms var(--ease-out);
+
+  :where([data-open='true']) & {
+    transform: rotate(90deg);
+  }
+
+  /* After the open rotation: an open RTL indicator stays mirrored */
+  @variant rtl {
+    transform: rotate(180deg);
+  }
+}
+
+.h-calendar-year-picker__grid {
+  @apply absolute start-0 end-0 grid scrollbar content-start gap-1 overflow-y-auto p-1;
+  grid-template-columns: repeat(3, 1fr);
+
+  &:where([data-open='true']) {
+    transition: opacity 200ms var(--ease-out) 50ms;
+    @apply motion-reduce:transition-none;
+
+    /* The closed grid isn't rendered (`v-show`, so it stays hidden under `unstyled`): fade in from its first frame */
+    @starting-style {
+      @apply opacity-0;
+    }
+  }
+}
+
+.h-calendar-year-picker__year-cell {
+  @apply relative inline-flex h-8 origin-center transform-gpu touch-manipulation items-center justify-center rounded-3xl px-2.5 text-sm font-medium outline-none select-none no-highlight motion-reduce:transition-none;
+  cursor: var(--cursor-interactive);
+  transition:
+    color 100ms var(--ease-smooth),
+    scale 100ms var(--ease-smooth),
+    opacity 100ms var(--ease-smooth),
+    background-color 100ms var(--ease-smooth),
+    box-shadow 100ms var(--ease-out);
+
+  &:where([data-selected]) {
+    @apply bg-accent text-accent-foreground;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:where(:hover:not([data-selected])) {
+      @apply bg-default text-default-foreground;
+    }
+
+    &:where([data-selected]:hover) {
+      @apply bg-accent-hover;
+    }
+  }
+}

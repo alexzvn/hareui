@@ -12,6 +12,14 @@ export type HareUIConfig = {
   /** Per-component theme overrides merged on top of the default themes. */
   ui?: { [K in keyof Themes]?: ThemeOverride<Themes[K]> }
   /**
+   * Renders components headless: their default theme and every `ui` override (Vite plugin and `ui` above) are
+   * dropped, while the `ui` / `class` props, data attributes and behavior stay. `true` strips every component;
+   * an array strips only the listed theme keys (the keys of `ui`). Per component, not inherited: `['select']`
+   * keeps the theme of the `ListBox` inside a `Select`.
+   * @defaultValue false
+   */
+  unstyled?: boolean | Array<keyof Themes>
+  /**
    * Components registered globally under the given names (`app.component(name, component)`), e.g. presets made
    * with `defineAlias`.
    */

@@ -14,12 +14,13 @@
 
 <script setup lang="ts">
 import { ConfigProvider, useDirection, useLocale as useRekaLocale } from 'reka-ui'
-import { computed, inject, provide, useId } from 'vue'
+import { computed, inject, provide, reactive, useId } from 'vue'
 
 import { overlayHostKey } from '@/components/overlay-provider/overlayHost'
 import OverlayProvider from '@/components/overlay-provider/OverlayProvider.vue'
 import ToastProvider from '@/components/toast-provider/ToastProvider.vue'
 import { localeKey } from '@/composables/useLocale'
+import type { HareUIConfig } from '@/config'
 import { hareUIConfigKey } from '@/config'
 
 import type { AppProps, AppSlots } from './App.types'
@@ -35,14 +36,28 @@ const props = withDefaults(defineProps<AppProps>(), {
 
 defineSlots<AppSlots>()
 
-// A child config that reads through to the parent one: `portal` from this component's prop when set.
-const parent = inject(hareUIConfigKey, {})
+// A child config that reads and writes through to the parent one, so setting `unstyled` or `ui` on it at runtime
+// changes the app's config, as with `createHareUI()`'s (a fresh reactive one without it). `portal` reads this
+// component's prop when set.
+const parent = inject(hareUIConfigKey, () => reactive({}) as HareUIConfig, true)
 provide(hareUIConfigKey, {
   get ui() {
     return parent.ui
   },
+  set ui(value) {
+    parent.ui = value
+  },
+  get unstyled() {
+    return parent.unstyled
+  },
+  set unstyled(value) {
+    parent.unstyled = value
+  },
   get portal() {
     return props.portal ?? parent.portal
+  },
+  set portal(value) {
+    parent.portal = value
   },
 })
 

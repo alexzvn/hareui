@@ -127,6 +127,10 @@ app.use(
 - `size="md"` – medium size variant (default)
 - `size="lg"` – large size variant
 
+### CSS classes
+
+The root carries `.h-pagination` plus `.h-pagination--{sm|lg}` (none for the default `md`). Parts carry `.h-pagination__{summary|content|item|link|ellipsis}`; Previous / Next links add `.h-pagination__link--nav` and their icon wrappers `.h-pagination__icon`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 The component supports both CSS pseudo-classes and data attributes for flexibility:

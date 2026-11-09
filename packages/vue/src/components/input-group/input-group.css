@@ -1,0 +1,117 @@
+/* InputGroup: ported from @heroui/styles components/input-group.css. */
+.h-input-group {
+  @apply inline-flex min-h-9 items-center rounded-field text-sm text-field-foreground shadow-field outline-none;
+  @apply border-(length:--border-width-field) border-(--field-border);
+
+  /* The secondary variant swaps these */
+  --input-group-bg: var(--field-background, var(--default));
+  --input-group-bg-hover: var(--field-hover);
+  --input-group-bg-focus: var(--field-focus);
+  background-color: var(--input-group-bg);
+
+  /* A textarea (consumer-supplied `data-slot="input-group-textarea"`) aligns to the start and grows */
+  &:has([data-slot='input-group-textarea']) {
+    @apply h-auto items-start;
+  }
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  &:hover:not(:focus-within) {
+    @media (hover: hover) {
+      background-color: var(--input-group-bg-hover);
+      border-color: var(--field-border-hover);
+    }
+  }
+
+  /* The focus colours follow the input/textarea only, not an interactive prefix/suffix button */
+  &:has([data-slot='input-group-input']:focus, [data-slot='input-group-textarea']:focus) {
+    border-color: var(--field-border-focus);
+    background-color: var(--input-group-bg-focus);
+  }
+
+  /* Autofill paints only the inner <input>; lift the highlight onto the group so the rounded shell + prefix/suffix share it */
+  &:has([data-slot='input-group-input']:autofill) {
+    background-color: var(--field-focus);
+    border-color: var(--field-border-focus);
+  }
+
+  /* Below the `:has()` focus and autofill rules in specificity */
+  &[data-invalid='true'] {
+    background-color: var(--input-group-bg-focus);
+    border-color: var(--color-field-border-invalid);
+  }
+
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-input-group__input {
+  @apply min-w-0 flex-1 rounded-none border-0 bg-transparent px-3 py-2 text-base shadow-none outline-none placeholder:text-field-placeholder sm:text-sm;
+
+  .h-input-group:has([data-slot='input-group-prefix']) & {
+    @apply rounded-s-none ps-0;
+  }
+
+  .h-input-group:has([data-slot='input-group-suffix']) & {
+    @apply rounded-e-none pe-0;
+  }
+
+  /* Neutralise the browser's per-input autofill paint; the group above carries the highlight */
+  &:autofill {
+    @apply shadow-[inset_0_0_0_1000px_transparent] caret-(--field-foreground);
+    -webkit-text-fill-color: var(--field-foreground);
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+  &[data-slot='input-group-textarea'] {
+    @apply min-h-[38px] resize-y;
+  }
+}
+
+.h-input-group__prefix,
+.h-input-group__suffix {
+  @apply flex h-full items-center justify-center bg-transparent px-3 text-field-placeholder;
+
+  .h-input-group:has([data-slot='input-group-textarea']) & {
+    @apply items-start pt-2;
+  }
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth);
+  @apply motion-reduce:transition-none;
+}
+
+/* A divider on the side facing the input; the other sides have no border */
+.h-input-group__prefix {
+  @apply rounded-s-field rounded-e-none border-e-(length:--border-width-field) border-e-(--field-border);
+  border-top: none;
+  border-bottom: none;
+  border-inline-start: none;
+}
+
+.h-input-group__suffix {
+  @apply rounded-s-none rounded-e-field border-s-(length:--border-width-field) border-s-(--field-border);
+  border-top: none;
+  border-bottom: none;
+  border-inline-end: none;
+}
+
+.h-input-group--secondary {
+  @apply shadow-none;
+  --input-group-bg: var(--default);
+  --input-group-bg-hover: var(--default-hover);
+  --input-group-bg-focus: var(--default);
+}
+
+.h-input-group--full-width {
+  @apply w-full;
+}

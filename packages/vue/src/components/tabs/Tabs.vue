@@ -77,8 +77,9 @@
         </TabsList>
       </ScrollShadow>
       <button
+        v-show="scrollState.before"
         :aria-label="orientation === 'vertical' ? t('tabs.scrollUp') : t('tabs.scrollLeft')"
-        :class="ui.scrollPrev({ class: scrollState.before ? 'inline-flex' : undefined })"
+        :class="ui.scrollPrev()"
         tabindex="-1"
         type="button"
         @click="scrollByPage(-1)"
@@ -109,8 +110,9 @@
         </svg>
       </button>
       <button
+        v-show="scrollState.after"
         :aria-label="orientation === 'vertical' ? t('tabs.scrollDown') : t('tabs.scrollRight')"
-        :class="ui.scrollNext({ class: scrollState.after ? 'inline-flex' : undefined })"
+        :class="ui.scrollNext()"
         tabindex="-1"
         type="button"
         @click="scrollByPage(1)"

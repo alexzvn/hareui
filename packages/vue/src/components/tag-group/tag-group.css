@@ -1,0 +1,47 @@
+/* TagGroup and its tags: ported from @heroui/styles components/{tag-group,tag}.css. Utilities from `ui.tag` win over
+ * the tag classes too. */
+.h-tag-group {
+  @apply relative flex flex-col gap-1;
+
+  & [data-slot='description'],
+  & [data-slot='error-message'] {
+    @apply p-1;
+  }
+}
+
+.h-tag-group__list {
+  @apply relative flex flex-wrap gap-1.5;
+}
+
+.h-tag {
+  @apply relative inline-flex items-center gap-1 rounded-xl px-2 py-1 text-xs font-medium select-none no-highlight;
+  @apply [transition:color_100ms_var(--ease-smooth),scale_100ms_var(--ease-smooth),opacity_100ms_var(--ease-smooth),background-color_100ms_var(--ease-smooth),box-shadow_100ms_var(--ease-out)] origin-center transform-gpu motion-reduce:transition-none;
+  @apply cursor-(--cursor-interactive);
+
+  /* :where(): an icon's own utilities win, as over HeroUI's `.tag svg` */
+  :where(& svg) {
+    @apply pointer-events-none size-3 shrink-0 self-center text-current;
+  }
+
+  @apply data-[disabled=true]:status-disabled aria-disabled:status-disabled;
+  @apply data-[selected=true]:bg-accent-soft data-[selected=true]:text-accent-soft-foreground;
+  @apply [@media(hover:hover)]:[&[data-selected=true]:is(:hover,[data-hovered=true])]:bg-accent-soft-hover;
+}
+
+.h-tag--sm {
+  @apply px-2 py-0.5 text-xs;
+}
+
+.h-tag--lg {
+  @apply rounded-2xl px-2.5 py-1.5 text-sm;
+}
+
+.h-tag--default {
+  @apply bg-default text-default-foreground;
+  @apply [@media(hover:hover)]:[&:is(:hover,[data-hovered=true]):not([data-selected=true]):not([data-disabled=true])]:bg-default-hover;
+}
+
+.h-tag--surface {
+  @apply bg-surface text-surface-foreground;
+  @apply [@media(hover:hover)]:[&:is(:hover,[data-hovered=true]):not([data-selected=true]):not([data-disabled=true])]:bg-surface-hover;
+}

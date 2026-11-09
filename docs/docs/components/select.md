@@ -174,6 +174,10 @@ app.use(
 
 ## Styling Reference
 
+### CSS classes
+
+The root carries `.h-select` (plus `.h-select--full-width`) and the trigger carries `.h-select__trigger` (plus `--secondary` and `--full-width` modifiers). They live in `@layer components`, so any utility from `class` or `ui` wins over them. The value, clear button, indicator and popover keep Tailwind utilities.
+
 ### Interactive States
 
 - **Hover**: `:hover` or `[data-hovered="true"]` on the trigger
