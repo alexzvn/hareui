@@ -90,6 +90,7 @@ const props = withDefaults(defineProps<PopoverProps<M>>(), {
   openDelay: 700,
   closeDelay: 300,
   enableTouch: false,
+  modal: true,
   side: 'bottom',
   align: 'center',
   sideOffset: 8,
@@ -141,10 +142,11 @@ const { isOpen, setOpen } = useControllableOpen({
 
 // `isOpen` turns false synchronously in `setOpen` (Reka's `update:open`) and with the `open` prop. The
 // content instance stays mounted while closed and its `$el` isn't reactive, so re-read it on every open.
-// A hover card isn't modal, so the page stays interactive.
+// A hover card or a non-modal popover leaves the page interactive.
+const isModal = computed(() => !isHover.value && props.modal)
 useInertOutside(
-  () => (isOpen.value && !isHover.value ? contentRef.value?.$el : null),
-  () => isOpen.value && !isHover.value,
+  () => (isOpen.value && isModal.value ? contentRef.value?.$el : null),
+  () => isOpen.value && isModal.value,
 )
 
 // React Aria's useInteractOutside only reacts to the primary button, so a right click outside keeps the popover open.
@@ -165,7 +167,7 @@ const rootProps = computed(() =>
         closeDelay: props.closeDelay,
         enableTouch: props.enableTouch,
       }
-    : { open: isOpen.value, modal: true },
+    : { open: isOpen.value, modal: props.modal },
 )
 
 // Reka hard-codes `aria-labelledby` to the trigger id below any attrs we pass, so relabel the dialog

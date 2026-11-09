@@ -41,6 +41,12 @@ export type PopoverProps<M extends PopoverMode = PopoverMode> = {
    */
   enableTouch?: boolean
   /**
+   * In `click` mode, makes the page outside the popover inert while it is open. Set `false` for a toggletip: the page
+   * stays interactive, and a press outside reaches its target while it closes the popover.
+   * @defaultValue true
+   */
+  modal?: boolean
+  /**
    * The controlled open state of the popover.
    */
   open?: boolean
