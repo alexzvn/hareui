@@ -1,0 +1,33 @@
+/* Breadcrumbs: ported from @heroui/styles components/breadcrumbs.css. */
+.h-breadcrumbs {
+  @apply flex items-center gap-1.5;
+}
+
+.h-breadcrumbs__item {
+  @apply flex shrink-0 items-center justify-center gap-1;
+}
+
+/* Sits on the Link component (HeroUI's `link breadcrumbs__link`). `opacity-100` keeps one class of specificity, so
+ * Link's `[aria-disabled]` dimming still wins on a disabled item. */
+.h-breadcrumbs__link {
+  @apply relative text-sm leading-5 font-medium no-underline opacity-100 hover:underline;
+}
+
+/* Two classes, over Link's `text-link` whatever the import order */
+.h-breadcrumbs .h-breadcrumbs__link {
+  @apply text-muted;
+
+  /* HeroUI's `[data-current]` rule outranks `.link[aria-disabled]` (the current item is disabled) */
+  &[data-current='true'] {
+    @apply text-link aria-disabled:opacity-100;
+  }
+}
+
+.h-breadcrumbs__separator {
+  @apply size-3 text-muted rtl:rotate-180;
+}
+
+/* `item.icon`, before the label inside the link */
+.h-breadcrumbs__icon {
+  @apply me-1 size-4 shrink-0;
+}

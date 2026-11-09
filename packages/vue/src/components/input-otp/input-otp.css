@@ -1,0 +1,118 @@
+/* InputOtp: ported from @heroui/styles components/input-otp.css. `.h-input-otp-field` and `.h-input-otp__input` are
+ * HareUI's own: the wrapper around the label, box, description and error, and the real (invisible) `<input>` that
+ * overlays the box, styled as the `input-otp` library's inline style. */
+.h-input-otp-field {
+  @apply flex w-full flex-col gap-1;
+}
+
+/* The cursor follows the `input-otp` library's container style */
+.h-input-otp {
+  @apply relative flex w-full cursor-text items-center gap-2;
+
+  &:has(> input[data-disabled='true']) {
+    @apply cursor-default;
+  }
+
+  &[data-disabled='true'] {
+    @apply cursor-not-allowed opacity-50;
+  }
+}
+
+.h-input-otp__group {
+  @apply flex min-w-0 items-center gap-2;
+}
+
+.h-input-otp__slot {
+  @apply relative flex h-10 w-9.5 min-w-0 flex-1 items-center justify-center;
+  @apply border bg-field text-field-foreground shadow-field;
+  @apply rounded-field text-sm font-semibold outline-none;
+  @apply border-(length:--border-width-field) border-(--field-border);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  &:hover {
+    @media (hover: hover) {
+      @apply bg-field-hover;
+      border-color: var(--field-border-hover);
+    }
+  }
+
+  &[data-hovered='true'] {
+    @apply bg-field-hover;
+    border-color: var(--field-border-hover);
+  }
+
+  &[data-active='true'] {
+    @apply z-10;
+    background-color: var(--field-focus);
+  }
+
+  &[data-disabled='true'] {
+    @apply status-disabled;
+  }
+
+  &[data-filled='true'],
+  &[data-invalid='true'] {
+    background-color: var(--field-focus);
+  }
+}
+
+.h-input-otp__slot-value {
+  @apply text-lg leading-6 tracking-[-0.27px];
+
+  /* motion-reduce must come after the animation */
+  @apply animate-slot-value-in motion-reduce:animate-none;
+  transform-origin: bottom center;
+}
+
+.h-input-otp__caret {
+  @apply absolute h-4 w-[2px] animate-caret-blink rounded-sm bg-field-placeholder;
+}
+
+.h-input-otp__separator {
+  @apply h-[2px] w-[6px] shrink-0 rounded-sm bg-separator;
+}
+
+/* Invisible text, caret and selection; the glyphs are sized to the box height (`--root-height`, measured by the
+ * component) */
+.h-input-otp__input {
+  @apply absolute inset-0 flex h-full w-full bg-transparent text-left leading-none tracking-[-.5em] text-transparent tabular-nums caret-transparent opacity-100 shadow-none;
+  @apply selection:bg-transparent selection:text-transparent;
+  border: 0 solid transparent;
+  outline: 0 solid transparent;
+  font-size: var(--root-height, 16px);
+  font-family: monospace;
+}
+
+/* Unlike HeroUI's, an invalid secondary slot keeps the field focus background */
+.h-input-otp--secondary .h-input-otp__slot {
+  @apply shadow-none;
+  --input-otp-slot-bg: var(--default);
+  --input-otp-slot-bg-hover: var(--default-hover);
+  --input-otp-slot-bg-focus: var(--default);
+  background-color: var(--input-otp-slot-bg);
+
+  &:hover {
+    @media (hover: hover) {
+      background-color: var(--input-otp-slot-bg-hover);
+    }
+  }
+
+  &[data-hovered='true'] {
+    background-color: var(--input-otp-slot-bg-hover);
+  }
+
+  &[data-active='true'],
+  &[data-filled='true'] {
+    background-color: var(--input-otp-slot-bg-focus);
+  }
+
+  &[data-invalid='true'] {
+    background-color: var(--field-focus);
+  }
+}

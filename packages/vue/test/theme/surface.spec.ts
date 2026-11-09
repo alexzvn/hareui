@@ -5,20 +5,20 @@ import Surface from '@/components/surface/Surface.vue'
 
 describe('Surface theme', () => {
   it('defaults to the default variant background', () => {
-    expect(mount(Surface).classes()).toContain('bg-surface')
+    expect(mount(Surface).classes()).toContain('h-surface--default')
   })
 
   it('applies variant-specific background classes', () => {
     expect(mount(Surface, { props: { variant: 'secondary' } }).classes()).toContain(
-      'bg-surface-secondary',
+      'h-surface--secondary',
     )
 
     expect(mount(Surface, { props: { variant: 'tertiary' } }).classes()).toContain(
-      'bg-surface-tertiary',
+      'h-surface--tertiary',
     )
 
     expect(mount(Surface, { props: { variant: 'transparent' } }).classes()).toContain(
-      'bg-transparent',
+      'h-surface--transparent',
     )
   })
 })

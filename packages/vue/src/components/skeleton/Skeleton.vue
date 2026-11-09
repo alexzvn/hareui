@@ -1,5 +1,5 @@
 <template>
-  <Primitive :as="as" :class="ui.base()">
+  <Primitive :as="as" :class="ui.base({ class: 'pointer-events-none' })">
     <slot />
   </Primitive>
 </template>

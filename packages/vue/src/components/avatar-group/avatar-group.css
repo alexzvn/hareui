@@ -1,0 +1,48 @@
+/* AvatarGroup: ported from @heroui/styles components/avatar-group.css. Every rendered child is an Avatar, so `> *`
+ * stands for `> .avatar` / `> .avatar-group__count`. */
+.h-avatar-group {
+  --avatar-group-overlap: 0.5rem;
+  --avatar-group-seam: 2px;
+  @apply inline-flex items-center;
+}
+
+.h-avatar-group--grid {
+  @apply flex-wrap gap-3;
+}
+
+.h-avatar-group:not(.h-avatar-group--grid) > * + * {
+  margin-inline-start: calc(-1 * var(--avatar-group-overlap, 0.5rem));
+}
+
+.h-avatar-group__count {
+  @apply shrink-0;
+}
+
+.h-avatar-group--ring:not(.h-avatar-group--grid) > * {
+  position: relative;
+  box-shadow: 0 0 0 var(--avatar-group-seam, 2px) var(--background);
+}
+
+/* Crescent cut on the inline-end edge of every avatar but the last; fallback glyphs get an optical nudge */
+.h-avatar-group--clip:not(.h-avatar-group--grid) > *:not(:last-child) {
+  --avatar-group-cut-center: calc(
+    100% + (var(--avatar-size, 2.5rem) / 2) - var(--avatar-group-overlap, 0.5rem)
+  );
+  --avatar-group-cut-radius: calc((var(--avatar-size, 2.5rem) / 2) + var(--avatar-group-seam, 2px));
+  mask-image: radial-gradient(
+    circle at var(--avatar-group-cut-center) 50%,
+    transparent var(--avatar-group-cut-radius),
+    #000 var(--avatar-group-cut-radius)
+  );
+
+  @variant rtl {
+    --avatar-group-cut-center: calc(
+      0% - (var(--avatar-size, 2.5rem) / 2) + var(--avatar-group-overlap, 0.5rem)
+    );
+  }
+
+  & [data-slot='avatar-fallback'] {
+    box-sizing: border-box;
+    padding-inline-end: calc(var(--avatar-group-overlap, 0.5rem) * 0.35);
+  }
+}

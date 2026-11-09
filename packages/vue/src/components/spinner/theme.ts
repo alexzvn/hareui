@@ -1,21 +1,21 @@
-// Translated from @heroui/styles components/spinner.css
+// Maps props to the BEM classes of ./spinner.css (ported from @heroui/styles components/spinner.css).
 export default {
   slots: {
-    base: 'pointer-events-none inline-flex size-6 shrink-0 animate-spin-fast motion-reduce:animate-none',
+    base: 'h-spinner',
   },
   variants: {
     color: {
-      accent: { base: 'text-accent' },
-      current: { base: 'text-inherit' },
-      danger: { base: 'text-danger' },
-      success: { base: 'text-success' },
-      warning: { base: 'text-warning' },
+      accent: { base: 'h-spinner--accent' },
+      current: { base: 'h-spinner--current' },
+      danger: { base: 'h-spinner--danger' },
+      success: { base: 'h-spinner--success' },
+      warning: { base: 'h-spinner--warning' },
     },
     size: {
-      sm: { base: 'size-4' },
-      md: { base: '' },
-      lg: { base: 'size-8' },
-      xl: { base: 'size-10' },
+      sm: { base: 'h-spinner--sm' },
+      md: {},
+      lg: { base: 'h-spinner--lg' },
+      xl: { base: 'h-spinner--xl' },
     },
   },
   defaultVariants: {

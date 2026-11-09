@@ -1,0 +1,4 @@
+/* Description: ported from @heroui/styles components/description.css. */
+.h-description {
+  @apply text-xs text-wrap wrap-break-word text-muted;
+}

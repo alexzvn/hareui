@@ -45,22 +45,30 @@ describe('class precedence', () => {
 })
 
 describe('font-size merging', () => {
-  // HeroUI's `.description { @apply text-xs }` lives in a lower CSS layer, so a `text-[10px]` override keeps
-  // text-xs's line-height. Both classes must survive the merge for HareUI to render the same.
+  // `text-xs` (here from the app config) sets a line-height that a `text-[10px]` override doesn't, so both classes
+  // must survive the merge, as the line-height would under HeroUI's lower-layer `.description`.
+  const mountDescription = (className: string) =>
+    mount(Description, {
+      props: { class: className },
+      global: {
+        plugins: [createHareUI({ ui: { description: { slots: { base: 'text-xs text-muted' } } } })],
+      },
+    })
+
   it('keeps the named size (and its line-height) under an arbitrary length size', () => {
-    const classes = mount(Description, { props: { class: 'text-[10px]' } }).classes()
+    const classes = mountDescription('text-[10px]').classes()
     expect(classes).toEqual(expect.arrayContaining(['text-xs', 'text-muted', 'text-[10px]']))
   })
 
   it('lets a later named size evict both the base size and an earlier arbitrary size', () => {
-    const classes = mount(Description, { props: { class: 'text-[10px] text-sm' } }).classes()
+    const classes = mountDescription('text-[10px] text-sm').classes()
     expect(classes).toEqual(expect.arrayContaining(['text-sm', 'text-muted']))
     expect(classes).not.toContain('text-xs')
     expect(classes).not.toContain('text-[10px]')
   })
 
   it('still treats arbitrary colors as colors', () => {
-    const classes = mount(Description, { props: { class: 'text-[#fff]' } }).classes()
+    const classes = mountDescription('text-[#fff]').classes()
     expect(classes).toEqual(expect.arrayContaining(['text-xs', 'text-[#fff]']))
     expect(classes).not.toContain('text-muted')
   })

@@ -26,19 +26,17 @@ describe('Drawer theme', () => {
     document.body.innerHTML = ''
   })
 
-  it('docks a left drawer to the physical left in both directions', async () => {
-    const classes = await contentClasses('left')
+  // drawer.css docks each side modifier to the physical edge in both directions (`rtl:` flips the justification)
+  it.each(['left', 'right', 'top', 'bottom'] as const)(
+    'gives a %s drawer its placement modifier',
+    async (placement) => {
+      const classes = (await contentClasses(placement)).split(' ')
 
-    expect(classes.split(' ')).toContain('justify-start')
-    expect(classes).toContain('rtl:justify-end')
-  })
-
-  it('docks a right drawer to the physical right in both directions', async () => {
-    const classes = await contentClasses('right')
-
-    expect(classes.split(' ')).toContain('justify-end')
-    expect(classes).toContain('rtl:justify-start')
-  })
+      expect(classes).toEqual(
+        expect.arrayContaining(['h-drawer__content', `h-drawer__content--${placement}`]),
+      )
+    },
+  )
 
   it.each(['left', 'right'] as const)(
     'lets ui.content override a %s drawer justification in LTR',

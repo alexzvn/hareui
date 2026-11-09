@@ -47,8 +47,8 @@ describe('RichTable theme', () => {
       props: { data: people, columns: [{ accessorKey: 'name', footer: 'x' }], sticky },
     })
 
-    expect(wrapper.get('thead').classes().includes('h-rich-table__thead--sticky')).toBe(header)
-    expect(wrapper.get('tfoot').classes().includes('h-rich-table__tfoot--sticky')).toBe(footer)
+    expect(wrapper.get('thead').classes().includes('sticky')).toBe(header)
+    expect(wrapper.get('tfoot').classes().includes('sticky')).toBe(footer)
   })
 
   it('merges column and table meta classes into cells and rows', () => {

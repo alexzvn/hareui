@@ -1,11 +1,11 @@
-// Translated from @heroui/styles components/fieldset.css
+// Maps to the BEM classes of ./fieldset.css (ported from @heroui/styles components/fieldset.css).
 export default {
   slots: {
-    // shrink/grow/basis-0: Safari flexbox fix for a fieldset with a legend inside a flex container.
-    base: 'flex shrink grow basis-0 flex-col gap-6',
-    legend: 'text-base font-medium text-foreground',
+    base: 'h-fieldset',
+    legend: 'h-fieldset__legend',
+    // Extra classes for the Description (its own theme still applies)
     description: '',
-    fieldGroup: 'w-full space-y-4',
-    actions: 'flex items-center gap-2 pt-1',
+    fieldGroup: 'h-fieldset__field-group',
+    actions: 'h-fieldset__actions',
   },
 }

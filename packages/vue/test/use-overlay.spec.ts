@@ -71,9 +71,10 @@ const stubExitAnimations = () => {
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
     const real = original(el, pseudo)
 
+    // The Modal parts whose closed state runs an exit animation in `modal.css`.
     const animatesClosed =
       el.getAttribute?.('data-state') === 'closed' &&
-      /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
+      /\bh-modal__(backdrop|container|dialog)\b/.test(el.getAttribute('class') ?? '')
 
     if (!animatesClosed) return real
 

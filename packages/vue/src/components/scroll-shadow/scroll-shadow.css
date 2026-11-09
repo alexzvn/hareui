@@ -1,0 +1,175 @@
+/* ScrollShadow: ported from @heroui/styles components/scroll-shadow.css. */
+
+/* Fade sizes for the scroll-driven variant below. They stay at 0px whenever the scroll timeline is inactive, which is
+ * exactly the state of a container without overflow. */
+@property --scroll-shadow-start-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --scroll-shadow-end-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+@keyframes scroll-shadow-start-fade {
+  from {
+    --scroll-shadow-start-fade: 0px;
+  }
+  to {
+    --scroll-shadow-start-fade: var(--scroll-shadow-size);
+  }
+}
+
+@keyframes scroll-shadow-end-fade {
+  from {
+    --scroll-shadow-end-fade: var(--scroll-shadow-size);
+  }
+  to {
+    --scroll-shadow-end-fade: 0px;
+  }
+}
+
+.h-scroll-shadow {
+  @apply relative scrollbar;
+  --scroll-shadow-size: 40px;
+  --scroll-shadow-scrollbar-size: 10px;
+  --scroll-shadow-offset: 0px;
+
+  /* `--scroll-linear-gradient` is read only by the element's own `mask-image`; reset it on children so its per-frame
+     changes don't restyle the scrolled subtree. A reset rather than `@property { inherits: false }`, which shadow roots
+     ignore. */
+  & > * {
+    --scroll-linear-gradient: initial;
+  }
+}
+
+.h-scroll-shadow--vertical {
+  @apply overflow-y-auto;
+}
+
+.h-scroll-shadow--horizontal {
+  @apply overflow-x-auto;
+}
+
+/* After `.h-scroll-shadow`, so its scrollbar utility and gutter size lose */
+.h-scroll-shadow--hide-scrollbar {
+  @apply scrollbar-none;
+  --scroll-shadow-scrollbar-size: 0px;
+}
+
+/* Fade, vertical. `[data-scroll-shadow-mode='auto']` lets the scroll-driven variant below reuse this plumbing: it only
+   paints once `--scroll-linear-gradient` is set, since an undefined variable makes `mask-image` invalid at
+   computed-value time, which resolves to `none`. */
+.h-scroll-shadow.h-scroll-shadow--vertical {
+  &:where(
+    [data-top-scroll='true'],
+    [data-bottom-scroll='true'],
+    [data-top-bottom-scroll='true'],
+    [data-scroll-shadow-mode='auto']
+  ) {
+    mask-image: linear-gradient(var(--scroll-linear-gradient)), linear-gradient(#000, #000);
+    mask-position:
+      left top,
+      right top;
+    mask-repeat: no-repeat;
+    mask-size:
+      calc(100% - var(--scroll-shadow-scrollbar-size)) 100%,
+      var(--scroll-shadow-scrollbar-size) 100%;
+  }
+
+  &[data-top-scroll='true'] {
+    --scroll-linear-gradient: 0deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+  }
+
+  &[data-bottom-scroll='true'] {
+    --scroll-linear-gradient: 180deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+  }
+
+  &[data-top-bottom-scroll='true'] {
+    --scroll-linear-gradient:
+      #000, #000, transparent 0, #000 var(--scroll-shadow-size),
+      #000 calc(100% - var(--scroll-shadow-size)), transparent;
+  }
+}
+
+/* Fade, horizontal */
+.h-scroll-shadow.h-scroll-shadow--horizontal {
+  &:where(
+    [data-left-scroll='true'],
+    [data-right-scroll='true'],
+    [data-left-right-scroll='true'],
+    [data-scroll-shadow-mode='auto']
+  ) {
+    mask-image: linear-gradient(var(--scroll-linear-gradient)), linear-gradient(#000, #000);
+    mask-position:
+      left top,
+      left bottom;
+    mask-repeat: no-repeat;
+    mask-size:
+      100% calc(100% - var(--scroll-shadow-scrollbar-size)),
+      100% var(--scroll-shadow-scrollbar-size);
+  }
+
+  /* `left`/`right` are logical (before/after the scroll position); swap physically in RTL. */
+  &[data-left-scroll='true'] {
+    --scroll-linear-gradient: 270deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+
+    &:dir(rtl) {
+      --scroll-linear-gradient: 90deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+    }
+  }
+
+  &[data-right-scroll='true'] {
+    --scroll-linear-gradient: 90deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+
+    &:dir(rtl) {
+      --scroll-linear-gradient: 270deg, #000 calc(100% - var(--scroll-shadow-size)), transparent;
+    }
+  }
+
+  &[data-left-right-scroll='true'] {
+    --scroll-linear-gradient:
+      to right, #000, #000, transparent 0, #000 var(--scroll-shadow-size),
+      #000 calc(100% - var(--scroll-shadow-size)), transparent;
+  }
+}
+
+/* Scroll-driven fade: correct from the first paint, no measurement needed. A container without overflow has an
+   inactive timeline, leaving both fades at 0px (mask is a no-op). The attribute-driven rules above stay the fallback
+   for engines without scroll timelines and serve the manual mode. `.h-scroll-shadow` is repeated so these rules
+   outrank the attribute-driven gradients on specificity rather than on source order. */
+@supports (animation-timeline: scroll(self)) {
+  .h-scroll-shadow.h-scroll-shadow[data-scroll-shadow-mode='auto'] {
+    animation:
+      scroll-shadow-start-fade linear both,
+      scroll-shadow-end-fade linear both;
+    animation-range:
+      var(--scroll-shadow-offset) calc(var(--scroll-shadow-offset) + var(--scroll-shadow-size)),
+      calc(100% - var(--scroll-shadow-size) - var(--scroll-shadow-offset))
+        calc(100% - var(--scroll-shadow-offset));
+  }
+
+  /* The orientation rules also outrank the `animation` shorthand above, which resets `animation-timeline` */
+  .h-scroll-shadow.h-scroll-shadow.h-scroll-shadow--vertical[data-scroll-shadow-mode='auto'] {
+    animation-timeline: scroll(self block), scroll(self block);
+    --scroll-linear-gradient:
+      180deg, transparent 0, #000 var(--scroll-shadow-start-fade),
+      #000 calc(100% - var(--scroll-shadow-end-fade)), transparent 100%;
+  }
+
+  .h-scroll-shadow.h-scroll-shadow.h-scroll-shadow--horizontal[data-scroll-shadow-mode='auto'] {
+    animation-timeline: scroll(self inline), scroll(self inline);
+    --scroll-linear-gradient:
+      90deg, transparent 0, #000 var(--scroll-shadow-start-fade),
+      #000 calc(100% - var(--scroll-shadow-end-fade)), transparent 100%;
+
+    &:dir(rtl) {
+      --scroll-linear-gradient:
+        270deg, transparent 0, #000 var(--scroll-shadow-start-fade),
+        #000 calc(100% - var(--scroll-shadow-end-fade)), transparent 100%;
+    }
+  }
+}

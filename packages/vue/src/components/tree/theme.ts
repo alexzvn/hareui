@@ -20,11 +20,7 @@ export default {
     guideLine: 'h-tree__guide-line',
     linkCheckbox: 'shrink-0',
     linkChevron: 'h-tree__chevron',
-    linkIndicator: [
-      'size-3.5 shrink-0 text-muted',
-      'transition-[rotate] duration-150 motion-reduce:transition-none',
-      'rtl:rotate-180 group-data-expanded/row:rotate-90',
-    ],
+    linkIndicator: 'h-tree__link-indicator',
     linkLeadingIcon: 'shrink-0 text-muted',
     linkLabel: 'h-tree__label',
     linkTrailing: 'h-tree__trailing',
@@ -37,7 +33,6 @@ export default {
       default: {},
       accent: {
         root: 'h-tree--accent',
-        linkIndicator: 'group-data-selected/row:text-accent-soft-foreground',
         linkLeadingIcon: 'group-data-selected/row:text-accent-soft-foreground',
       },
     },

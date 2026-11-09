@@ -1,0 +1,90 @@
+/* ColorField: ported from @heroui/styles components/color-field.css and color-input-group.css. */
+.h-color-field {
+  @apply flex flex-col gap-1;
+
+  &:is([data-invalid='true'], [aria-invalid='true']) [data-slot='description'] {
+    @apply hidden;
+  }
+
+  & [data-slot='label'] {
+    @apply w-fit;
+  }
+}
+
+.h-color-field--full-width {
+  @apply w-full;
+}
+
+.h-color-input-group {
+  @apply inline-flex h-9 items-center overflow-hidden rounded-field border text-sm text-field-foreground shadow-field outline-none;
+  @apply border-(length:--border-width-field) border-(--field-border);
+
+  /* The secondary variant swaps these */
+  --color-input-group-bg: var(--field-background, var(--default));
+  --color-input-group-bg-hover: var(--field-hover);
+  --color-input-group-bg-focus: var(--color-input-group-bg);
+  background-color: var(--color-input-group-bg);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  &:hover:not(:focus-within) {
+    @media (hover: hover) {
+      background-color: var(--color-input-group-bg-hover);
+      border-color: var(--field-border-hover);
+    }
+  }
+
+  &:focus-within {
+    background-color: var(--color-input-group-bg-focus);
+  }
+
+  &[data-invalid='true'] {
+    background-color: var(--field-focus);
+    border-color: var(--color-field-border-invalid);
+  }
+
+  &[data-disabled],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-color-input-group--secondary {
+  @apply shadow-none;
+  --color-input-group-bg: var(--default);
+  --color-input-group-bg-hover: var(--default-hover);
+  --color-input-group-bg-focus: var(--default);
+
+  &[data-invalid='true'] {
+    background-color: var(--color-input-group-bg-focus);
+  }
+}
+
+.h-color-input-group--full-width {
+  @apply w-full;
+}
+
+.h-color-input-group__input {
+  @apply flex h-full flex-1 cursor-text items-center rounded-none border-0 bg-transparent px-3 py-2 text-base shadow-none outline-none placeholder:text-field-placeholder sm:text-sm;
+
+  .h-color-input-group:has([data-slot='color-input-group-prefix']) & {
+    @apply rounded-s-none ps-2;
+  }
+
+  .h-color-input-group:has([data-slot='color-input-group-suffix']) & {
+    @apply rounded-e-none pe-2;
+  }
+}
+
+.h-color-input-group__prefix {
+  @apply ms-3 me-0 flex shrink-0 items-center text-field-placeholder;
+}
+
+.h-color-input-group__suffix {
+  @apply me-3 flex shrink-0 items-center text-field-placeholder;
+}

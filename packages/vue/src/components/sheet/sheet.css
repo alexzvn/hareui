@@ -1,0 +1,154 @@
+/* Sheet: ported from @heroui/styles components/sheet.css. The sheet moves by native scrolling (scroll snap), never by
+ * transforms on the panel: the backdrop fade and the stacked-sheet scale are scroll-driven animations bound to the
+ * dialog's view timeline (inline styles in `sheetGeometry.ts`, keyframes in styles/keyframes.css), so no class here
+ * animates on its own. */
+.h-sheet__overlay {
+  @apply z-50;
+}
+
+/* Only the bottom-most sheet of a stack dims the page */
+.h-sheet__backdrop {
+  @apply bg-transparent motion-reduce:[animation-duration:1ms];
+}
+
+.h-sheet__backdrop--opaque[data-stack-index='0'] {
+  @apply bg-backdrop;
+}
+
+.h-sheet__backdrop--blur[data-stack-index='0'] {
+  @apply bg-background/[0.01] backdrop-blur-sm;
+}
+
+.h-sheet__backdrop--transparent {
+  @apply bg-transparent;
+}
+
+.h-sheet__content {
+  /* Overscroll padding sits outside the height, so a 100% dialog fills the sheet */
+  @apply z-1 box-content overflow-clip outline-none motion-reduce:[animation-duration:1ms];
+
+  /* Promote only stacked sheets: Chrome rounds fractional bounds on promoted layers */
+  &[data-has-descendants] {
+    @apply [transform:perspective(1000px)] will-change-transform;
+  }
+}
+
+.h-sheet__content--bottom,
+.h-sheet__content--top {
+  @apply max-h-[calc(100%-2rem)] w-full;
+}
+
+.h-sheet__content--bottom {
+  @apply rounded-t-2xl;
+}
+
+.h-sheet__content--top {
+  @apply rounded-b-2xl;
+}
+
+.h-sheet__content--left,
+.h-sheet__content--right {
+  @apply h-full max-h-none w-[min(24rem,96vw)];
+}
+
+.h-sheet__content--left {
+  @apply rounded-r-2xl;
+}
+
+.h-sheet__content--right {
+  @apply rounded-l-2xl;
+}
+
+.h-sheet__content[data-detached] {
+  @apply m-2 max-h-[calc(100%-1rem)] rounded-2xl;
+}
+
+.h-sheet__content--bottom[data-detached],
+.h-sheet__content--top[data-detached] {
+  @apply w-[calc(100%-1rem)];
+}
+
+.h-sheet__content--left[data-detached],
+.h-sheet__content--right[data-detached] {
+  @apply h-[calc(100%-1rem)] max-h-none;
+}
+
+/* Snap points need a definite size so flex children (a virtualized list) can fill it; the first snap point reveals
+ * only part of that size. */
+.h-sheet__content--bottom[data-snap-points],
+.h-sheet__content--top[data-snap-points] {
+  @apply h-full max-h-none;
+}
+
+.h-sheet__content--left[data-snap-points],
+.h-sheet__content--right[data-snap-points] {
+  @apply w-full max-w-none;
+}
+
+/* The full snap position includes the detached margins inside the viewport */
+.h-sheet__content--bottom[data-detached][data-snap-points],
+.h-sheet__content--top[data-detached][data-snap-points] {
+  @apply h-[calc(100%-1rem)];
+}
+
+.h-sheet__content--left[data-detached][data-snap-points],
+.h-sheet__content--right[data-detached][data-snap-points] {
+  @apply w-[calc(100%-1rem)];
+}
+
+.h-sheet__dialog {
+  @apply relative flex min-h-0 flex-col overflow-hidden bg-overlay text-overlay-foreground shadow-overlay outline-none;
+}
+
+.h-sheet__dialog--bottom {
+  @apply rounded-t-2xl;
+}
+
+.h-sheet__dialog--top {
+  @apply rounded-b-2xl;
+}
+
+.h-sheet__dialog--left {
+  @apply rounded-r-2xl;
+}
+
+.h-sheet__dialog--right {
+  @apply rounded-l-2xl;
+}
+
+.h-sheet__content[data-detached] .h-sheet__dialog {
+  @apply rounded-2xl;
+}
+
+.h-sheet__header {
+  @apply flex shrink-0 flex-col gap-1 px-5 pt-4 pb-2;
+}
+
+.h-sheet__heading {
+  @apply text-lg font-semibold;
+}
+
+.h-sheet__body {
+  @apply scrollbar min-h-0 flex-auto overflow-hidden px-5 py-2;
+}
+
+/* The body scrolls only once the sheet is fully expanded, so a swipe at a snap point moves the sheet instead */
+.h-sheet__content[data-expanded] .h-sheet__body {
+  @apply overflow-y-auto [-webkit-overflow-scrolling:touch];
+}
+
+.h-sheet__footer {
+  @apply flex shrink-0 items-center justify-end gap-2 px-5 pt-2 pb-4;
+}
+
+.h-sheet__handle {
+  @apply relative flex shrink-0 cursor-grab items-center justify-center py-3;
+
+  &[data-dragging] {
+    @apply cursor-grabbing;
+  }
+}
+
+.h-sheet__handle-bar {
+  @apply block h-[0.3rem] w-8 rounded-full bg-default;
+}

@@ -1,0 +1,10 @@
+/* ErrorMessage: ported from @heroui/styles components/error-message.css. */
+.h-error-message {
+  @apply h-auto text-xs wrap-break-word text-danger;
+
+  /* motion-reduce must come after the transition */
+  transition:
+    opacity 150ms var(--ease-out),
+    height 350ms var(--ease-smooth);
+  @apply motion-reduce:transition-none;
+}

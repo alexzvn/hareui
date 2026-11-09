@@ -24,14 +24,14 @@
           data-slot="modal-container"
           :data-state="isOpen ? 'open' : 'closed'"
           :data-placement="placement"
-          :class="ui.container()"
+          :class="ui.container({ class: 'pointer-events-none' })"
         >
           <DialogContent
             ref="dialogContent"
             data-slot="modal-dialog"
             :data-placement="placement"
             v-bind="slots.description ? {} : { 'aria-describedby': undefined }"
-            :class="ui.dialog()"
+            :class="ui.dialog({ class: 'pointer-events-auto' })"
             @escape-key-down="onEscapeKeyDown"
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
@@ -42,7 +42,11 @@
             <slot name="content" :close="close">
               <div v-if="hasHeader" data-slot="modal-header" :class="ui.header()">
                 <slot name="header">
-                  <div v-if="!!slots.icon" data-slot="modal-icon" :class="ui.icon()">
+                  <div
+                    v-if="!!slots.icon"
+                    data-slot="modal-icon"
+                    :class="ui.icon({ class: 'select-none' })"
+                  >
                     <slot name="icon" />
                   </div>
                   <DialogTitle

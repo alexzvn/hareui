@@ -10,7 +10,7 @@
 export default {
   slots: {
     base: [
-      'z-(--z-index-overlay) flex w-80 max-w-[calc(100vw-16px)] flex-col overflow-hidden rounded-3xl bg-overlay p-1',
+      'z-(--z-index-overlay) flex w-80 max-w-[calc(100vw-16px)] flex-col overflow-hidden rounded-3xl bg-overlay text-overlay-foreground p-1',
       'text-sm text-foreground shadow-overlay outline-none',
     ],
     viewport: 'flex max-h-80 min-h-0 flex-col gap-1 overflow-y-auto overscroll-contain',

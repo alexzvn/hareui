@@ -88,8 +88,8 @@
     @apply opacity-50;
   }
 
-  /* Reads the group's own `data-invalid` (set from validation), not Reka's per-segment attribute:
-   * see reka-limitations in dateField.ts / timeField.ts */
+  /* Reads the group's own `data-invalid` (set from validation), not Reka's per-segment attribute,
+   * which doesn't follow the field's validation state */
   .h-date-input-group[data-invalid='true'] & {
     @apply text-danger;
 

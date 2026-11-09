@@ -1,0 +1,24 @@
+/* Separator: ported from @heroui/styles components/separator.css */
+.h-separator {
+  @apply shrink-0 rounded-sm border-t-0 border-b-0;
+}
+
+.h-separator--horizontal {
+  @apply h-px w-full;
+}
+
+.h-separator--vertical {
+  @apply h-auto min-h-2 w-px self-stretch;
+}
+
+.h-separator--default {
+  @apply bg-separator;
+}
+
+.h-separator--secondary {
+  @apply bg-separator-secondary;
+}
+
+.h-separator--tertiary {
+  @apply bg-separator-tertiary;
+}

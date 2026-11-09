@@ -158,3 +158,92 @@
     @apply shadow-[inset_0_0_0_2px_var(--focus)];
   }
 }
+
+/* === Accordion and Disclosure === */
+.h-accordion__trigger:where(:focus-visible),
+.h-disclosure__trigger:where(:focus-visible) {
+  @apply status-focused;
+}
+
+/* === ToggleButtonGroup and Header === */
+/* Grouped ToggleButtons draw the ring inset, inside the button's own bounds */
+.h-toggle-button-group__button:where(:focus-visible) {
+  --tw-ring-offset-width: 0px;
+  @apply ring-inset;
+}
+
+.h-header__title:where(:focus-visible) {
+  @apply status-focused;
+}
+
+/* === Date pickers === */
+.h-date-picker__trigger:where(:focus-visible:not([data-focused]), [data-focus-visible='true']),
+.h-date-range-picker__trigger:where(
+  :focus-visible:not([data-focused]),
+  [data-focus-visible='true']
+) {
+  @apply status-focused;
+}
+
+.h-date-picker__popover:where(:focus-visible:not([data-focused]), [data-focus-visible='true']),
+.h-date-range-picker__popover:where(
+  :focus-visible:not([data-focused]),
+  [data-focus-visible='true']
+) {
+  @apply outline-none;
+}
+
+/* === Sliders and colour pickers === */
+.h-slider__thumb:where([data-focus-visible='true']),
+.h-color-area__thumb:where([data-focus-visible='true']),
+.h-color-picker__trigger:where(:focus-visible, [data-focus-visible='true']),
+.h-color-swatch-picker__item:where(:focus-visible) {
+  @apply status-focused;
+}
+
+/* Reka focuses the thumb itself, so reset the UA `:focus-visible` outline width/colour as RAC's inner input does */
+.h-color-slider__thumb:where(:focus-visible) {
+  @apply status-focused;
+  outline-width: medium;
+  outline-color: currentcolor;
+}
+
+/* The invalid ring wins over the focus ring */
+.h-color-input-group:where(:focus-within) {
+  @apply status-focused-field;
+}
+
+.h-color-input-group:where([data-invalid='true']) {
+  @apply status-invalid-field;
+}
+
+/* === Floating: Toast === */
+.h-toast-region:where(:focus-visible),
+.h-toast:where(:focus-visible) {
+  @apply outline-2 outline-offset-2 outline-focus;
+}
+
+/* === Display: CloseButton, Link === */
+.h-close-button:where(:focus-visible),
+.h-link:where(:focus-visible) {
+  @apply status-focused;
+}
+
+/* === Forms: InputOtp, Autocomplete === */
+/* The invalid ring wins over the active slot's ring */
+.h-input-otp__slot:where([data-active='true']) {
+  @apply status-focused-field;
+}
+
+.h-input-otp__slot:where([data-invalid='true']) {
+  @apply status-invalid-field;
+}
+
+/* The invalid ring wins over the focus ring */
+.h-autocomplete__trigger:where([data-focus-visible='true']) {
+  @apply status-focused;
+}
+
+:where([data-slot='autocomplete'][data-invalid='true']) .h-autocomplete__trigger {
+  @apply status-invalid-field;
+}

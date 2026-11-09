@@ -1,0 +1,88 @@
+/* ToggleButtonGroup: ported from @heroui/styles components/toggle-button-group.css. The group's own ToggleButtons
+ * carry `.h-toggle-button-group__button`; their inset focus ring lives in styles/focus.css. */
+.h-toggle-button-group {
+  @apply inline-flex h-auto w-fit items-center justify-center gap-0;
+}
+
+.h-toggle-button-group--horizontal {
+  @apply flex-row;
+}
+
+.h-toggle-button-group--vertical {
+  @apply flex-col;
+}
+
+.h-toggle-button-group--full-width {
+  @apply w-full;
+}
+
+.h-toggle-button-group .h-toggle-button-group__button {
+  @apply rounded-none;
+
+  &:active,
+  &[data-pressed='true'] {
+    transform: none;
+  }
+}
+
+.h-toggle-button-group--horizontal .h-toggle-button-group__button {
+  &:first-child {
+    @apply rounded-s-3xl;
+  }
+
+  &:last-child {
+    @apply rounded-e-3xl;
+  }
+}
+
+.h-toggle-button-group--vertical .h-toggle-button-group__button {
+  &:first-child {
+    @apply rounded-t-3xl;
+  }
+
+  &:last-child {
+    @apply rounded-b-3xl;
+  }
+}
+
+.h-toggle-button-group--full-width .h-toggle-button-group__button {
+  @apply flex-1;
+}
+
+.h-toggle-button-group__separator {
+  @apply pointer-events-none absolute rounded-sm bg-current opacity-15;
+
+  /* motion-reduce must come after the transition */
+  transition: opacity 150ms var(--ease-smooth);
+  @apply motion-reduce:transition-none;
+
+  :first-child > & {
+    display: none;
+  }
+
+  .h-toggle-button-group--horizontal & {
+    inset-inline-start: -1px;
+    top: 25%;
+    width: 1px;
+    height: 50%;
+  }
+
+  .h-toggle-button-group--vertical & {
+    inset-inline-start: 25%;
+    top: -1px;
+    width: 50%;
+    height: 1px;
+  }
+}
+
+.h-toggle-button-group--detached {
+  @apply gap-1;
+
+  & .h-toggle-button-group__button {
+    @apply rounded-3xl;
+  }
+
+  & .h-toggle-button-group__separator {
+    display: none;
+  }
+}

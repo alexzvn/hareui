@@ -6,7 +6,7 @@
 }
 
 .h-context-menu__popover {
-  @apply max-h-(--reka-popper-available-height) origin-(--reka-popper-transform-origin) scroll-py-1 scrollbar overflow-y-auto overscroll-contain bg-overlay p-0 text-sm;
+  @apply max-h-(--reka-popper-available-height) origin-(--reka-popper-transform-origin) scroll-py-1 scrollbar overflow-y-auto overscroll-contain bg-overlay text-overlay-foreground p-0 text-sm;
 
   /* Phones get the viewport minus the 12px collision padding on each side, so labels don't wrap */
   @apply max-w-[min(100svw-1.5rem,24rem)] md:max-w-[min(48svw,24rem)];

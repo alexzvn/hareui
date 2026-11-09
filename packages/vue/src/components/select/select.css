@@ -70,3 +70,98 @@
 .h-select__trigger--full-width {
   @apply w-full;
 }
+
+.h-select__value {
+  @apply flex-1 text-start text-base wrap-break-word text-current sm:text-sm;
+
+  &[data-placeholder='true'] {
+    @apply text-field-placeholder;
+  }
+
+  /* The selected item's re-rendered indicator */
+  & [data-slot='list-box-item-indicator'] {
+    @apply hidden;
+  }
+}
+
+/* The markup makes the hidden (empty) button non-interactive, so that survives `unstyled` */
+.h-select__clear-button {
+  @apply relative isolate inline-flex size-5 shrink-0 origin-center transform-gpu items-center justify-center self-center rounded-xl bg-transparent p-1 text-muted select-none no-highlight;
+  cursor: var(--cursor-interactive);
+
+  &::after {
+    @apply absolute -inset-0.5;
+    content: '';
+  }
+
+  /* Only while visible: it disappears at once when cleared */
+  &:not([data-empty='true']) {
+    transition: opacity 150ms var(--ease-smooth);
+  }
+
+  @apply motion-reduce:transition-none;
+
+  &[data-empty='true'] {
+    @apply opacity-0;
+  }
+
+  & [data-slot='select-clear-button-icon'] {
+    @apply size-3.5;
+  }
+
+  &:hover,
+  &[data-hovered='true'] {
+    @media (hover: hover) {
+      @apply bg-default-hover;
+    }
+  }
+
+  &:active,
+  &[data-pressed='true'] {
+    transform: scale(0.93);
+  }
+}
+
+.h-select__indicator {
+  @apply absolute inset-y-0 end-2 my-auto flex shrink-0 items-center justify-center text-field-placeholder transition duration-150;
+
+  &[data-open='true'] {
+    @apply rotate-180;
+  }
+
+  &[data-slot='select-default-indicator'] {
+    @apply size-4;
+  }
+}
+
+/* Same open/close animations as Popover; the states sit in zero-specificity selectors, so user utilities win */
+.h-select__popover {
+  @apply z-(--z-index-overlay) min-w-(--reka-popover-trigger-width) origin-(--reka-popover-content-transform-origin) max-h-(--reka-popover-content-available-height);
+  @apply scroll-py-1 scrollbar overflow-y-auto overscroll-contain bg-overlay text-overlay-foreground p-0 text-sm outline-none;
+  border-radius: min(32px, var(--radius-3xl));
+  box-shadow: var(--overlay-shadow);
+  @apply [&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-animation-duration:150ms] [&:where([data-state=open])]:ease-smooth [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-95;
+  @apply [&:where([data-state=open])]:[&:where([data-side=top])]:slide-in-from-bottom-1 [&:where([data-state=open])]:[&:where([data-side=bottom])]:slide-in-from-top-1 [&:where([data-state=open])]:[&:where([data-side=left])]:slide-in-from-right-1 [&:where([data-state=open])]:[&:where([data-side=right])]:slide-in-from-left-1;
+  @apply [&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-animation-duration:100ms] [&:where([data-state=closed])]:ease-smooth [&:where([data-state=closed])]:zoom-out-95 [&:where([data-state=closed])]:fade-out [&:where([data-state=closed])]:pointer-events-none;
+
+  & [data-slot='list-box'] {
+    @apply p-1.5 outline-none;
+  }
+
+  /* `px-2.5` resets the item's room for its absolutely positioned checkmark: give it back */
+  & [data-slot='list-box-item'] {
+    @apply px-2.5;
+
+    &:has([data-slot='list-box-item-indicator']) {
+      @apply pe-7;
+    }
+  }
+
+  /* The popover closes too fast in single mode for the checkmark transition to show */
+  & [data-slot='list-box']:not([aria-multiselectable='true']) {
+    & [data-slot='list-box-item-indicator'],
+    & [data-slot='list-box-item-indicator--checkmark'] {
+      @apply transition-none;
+    }
+  }
+}

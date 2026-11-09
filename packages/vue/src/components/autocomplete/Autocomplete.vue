@@ -85,7 +85,7 @@
             :aria-hidden="isPlaceholder ? 'true' : undefined"
             :data-empty="isPlaceholder ? 'true' : undefined"
             :disabled="disabled"
-            :class="ui.clearButton()"
+            :class="ui.clearButton({ class: isPlaceholder && 'pointer-events-none' })"
             @click="clear"
           >
             <slot name="clear">

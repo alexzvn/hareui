@@ -1,0 +1,162 @@
+/* Autocomplete: ported from @heroui/styles components/autocomplete.css. */
+.h-autocomplete {
+  @apply flex flex-col gap-1;
+}
+
+.h-autocomplete__trigger {
+  @apply relative isolate inline-flex min-h-9 rounded-field px-3 py-2 text-sm text-field-foreground shadow-field outline-none select-none no-highlight;
+  @apply border-(length:--border-width-field) border-(--field-border);
+
+  /* The secondary variant swaps these */
+  --autocomplete-trigger-bg: var(--field-background, var(--default));
+  --autocomplete-trigger-bg-hover: var(--field-hover);
+  --autocomplete-trigger-bg-focus: var(--field-focus);
+  background-color: var(--autocomplete-trigger-bg);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  cursor: var(--cursor-interactive);
+
+  &:has([data-slot='autocomplete-indicator'], [data-slot='autocomplete-default-indicator']) {
+    @apply pe-7;
+  }
+
+  /* Except while the clear button is hovered */
+  &:where(:hover, [data-hovered='true']):not(:has([data-slot='autocomplete-clear-button']:hover)) {
+    @media (hover: hover) {
+      background-color: var(--autocomplete-trigger-bg-hover);
+      border-color: var(--field-border-hover);
+    }
+  }
+
+  &[data-focus-visible='true'] {
+    border-color: var(--field-border-focus);
+    background-color: var(--autocomplete-trigger-bg-focus);
+  }
+
+  [data-slot='autocomplete'][data-invalid='true'] & {
+    background-color: var(--autocomplete-trigger-bg-focus);
+  }
+
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-autocomplete--secondary .h-autocomplete__trigger {
+  @apply shadow-none;
+  --autocomplete-trigger-bg: var(--default);
+  --autocomplete-trigger-bg-hover: var(--default-hover);
+  --autocomplete-trigger-bg-focus: var(--default);
+}
+
+.h-autocomplete__value {
+  @apply flex-1 text-start text-base wrap-break-word text-current sm:text-sm;
+
+  &[data-placeholder='true'] {
+    @apply text-field-placeholder;
+  }
+
+  /* The selected item's re-rendered indicator */
+  & [data-slot='list-box-item-indicator'] {
+    @apply hidden;
+  }
+}
+
+/* The markup makes the hidden (empty) button non-interactive, so that survives `unstyled` */
+.h-autocomplete__clear-button {
+  @apply relative isolate me-0 inline-flex size-5 shrink-0 origin-center transform-gpu items-center justify-center self-center rounded-xl bg-transparent p-1 text-muted select-none no-highlight;
+  cursor: var(--cursor-interactive);
+
+  /* Only while visible: it disappears at once when cleared */
+  &:not([data-empty='true']) {
+    transition: opacity 150ms var(--ease-smooth);
+  }
+
+  @apply motion-reduce:transition-none;
+
+  &[data-empty='true'] {
+    @apply opacity-0;
+  }
+
+  & [data-slot='autocomplete-clear-button-icon'] {
+    @apply size-3.5;
+  }
+
+  &:hover,
+  &[data-hovered='true'] {
+    @media (hover: hover) {
+      @apply bg-default-hover;
+    }
+  }
+
+  &:active,
+  &[data-pressed='true'] {
+    transform: scale(0.93);
+  }
+}
+
+.h-autocomplete__indicator {
+  @apply absolute inset-y-0 end-2 my-auto flex shrink-0 items-center justify-center text-field-placeholder transition duration-150;
+  cursor: var(--cursor-interactive);
+
+  &[data-open='true'] {
+    @apply rotate-180;
+  }
+
+  &[data-slot='autocomplete-default-indicator'] {
+    @apply size-4;
+  }
+}
+
+/* The open/close states sit in zero-specificity selectors, so user utilities win */
+.h-autocomplete__popover {
+  @apply z-(--z-index-overlay) flex max-h-(--reka-popover-content-available-height) w-(--reka-popover-trigger-width) max-w-(--reka-popover-trigger-width) origin-(--reka-popover-content-transform-origin);
+  @apply scroll-py-1 flex-col overflow-hidden overscroll-contain bg-overlay text-overlay-foreground p-0 pt-2 text-sm outline-none;
+  border-radius: min(32px, var(--radius-3xl));
+  box-shadow: var(--overlay-shadow);
+  @apply [&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-animation-duration:250ms] [&:where([data-state=open])]:ease-out-fluid [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-95;
+  @apply [&:where([data-state=open])]:[&:where([data-side=top])]:slide-in-from-bottom-1 [&:where([data-state=open])]:[&:where([data-side=bottom])]:slide-in-from-top-1 [&:where([data-state=open])]:[&:where([data-side=left])]:slide-in-from-right-1 [&:where([data-state=open])]:[&:where([data-side=right])]:slide-in-from-left-1;
+  @apply [&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-animation-duration:100ms] [&:where([data-state=closed])]:ease-out-quad [&:where([data-state=closed])]:zoom-out-95 [&:where([data-state=closed])]:fade-out [&:where([data-state=closed])]:pointer-events-none;
+
+  /* The popover's flex column lets the list shrink below 320px when the popover is constrained */
+  & [data-slot='list-box'] {
+    @apply max-h-[320px] min-h-0 scrollbar overflow-y-auto p-1.5 outline-none;
+  }
+
+  /* Nested under the list, this shorthand outranks the item's own indicator gutter, so the gutter is re-added */
+  & [data-slot='list-box'] [data-slot='list-box-item'] {
+    @apply px-2.5;
+
+    &:has([data-slot='list-box-item-indicator']) {
+      @apply pe-7;
+    }
+  }
+
+  /* Single-select closes on selection, so the checkmark isn't animated */
+  & [data-slot='list-box']:not([aria-multiselectable='true']) {
+    & [data-slot='list-box-item-indicator'],
+    & [data-slot='list-box-item-indicator--checkmark'] {
+      @apply transition-none;
+    }
+  }
+
+  & [data-slot='search-field'] {
+    @apply shrink-0 px-3 py-1 outline-none;
+  }
+
+  & [data-slot='empty-state'] {
+    @apply text-center text-sm text-overlay-foreground/60;
+  }
+}
+
+.h-autocomplete--full-width,
+.h-autocomplete__trigger--full-width {
+  @apply w-full;
+}

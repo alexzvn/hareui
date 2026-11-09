@@ -1,4 +1,5 @@
 <template>
+  <!-- The hidden-state pointer rule is kept in the .vue (not BEM) so it survives `unstyled` -->
   <Primitive
     ref="root"
     v-bind="$attrs"
@@ -7,7 +8,7 @@
     :data-hidden="hidden ? 'true' : undefined"
     :data-menu-open="open ? 'true' : undefined"
     :style="heightStyle"
-    :class="ui.root()"
+    :class="[ui.root(), 'data-[hidden=true]:pointer-events-none']"
     @focusin="onFocusIn"
   >
     <slot name="top" />
@@ -26,6 +27,7 @@
   </Primitive>
 
   <Teleport v-if="hasMenu" :to="portal.to" :disabled="portal.disabled">
+    <!-- `contents` is kept in the .vue (not BEM) so it survives `unstyled` -->
     <div ref="anchor" data-slot="header-menu-anchor" class="contents" :style="anchorStyle">
       <Modal v-if="mode === 'modal'" v-model:open="open" v-bind="modalProps">
         <template #content="{ close }">
@@ -129,7 +131,8 @@ const Toggle: FunctionalComponent = () => {
       'aria-hidden': 'true',
       'data-slot': 'header-toggle-icon',
       'data-open': isIconOpen.value ? 'true' : 'false',
-      class: ui.value.toggleIcon(),
+      // `pointer-events-none` is kept in the .vue (not BEM) so it survives `unstyled`
+      class: ['pointer-events-none', ui.value.toggleIcon()],
     })
 
   return h(

@@ -1,0 +1,176 @@
+/* Modal: ported from @heroui/styles components/modal.css. Header's menu passes utilities to these slots, so they win
+ * over it too. Enter/exit run on Reka's `data-state`; every state sits in `:where()` so it adds no specificity. */
+.h-modal__backdrop {
+  @apply fixed inset-x-0 top-(--visual-viewport-top) z-(--z-index-overlay) flex h-(--visual-viewport-height) w-full flex-row items-center justify-center;
+
+  &:where([data-state='open']) {
+    @apply animate-in fade-in-0 ease-out [--tw-duration:150ms];
+  }
+
+  /* HeroUI sets will-change only while entering/exiting; Reka has no entering state, so only exiting gets it (a
+   * permanent will-change puts the open dialog on its own layer and changes text rasterization). */
+  &:where([data-state='closed']) {
+    @apply animate-out fade-out-0 ease-out will-change-[opacity] [--tw-duration:100ms];
+  }
+
+  /* motion-reduce must come after the animations */
+  &:where([data-state]) {
+    @apply motion-reduce:animate-none;
+  }
+}
+
+.h-modal__backdrop--opaque {
+  @apply bg-backdrop;
+}
+
+.h-modal__backdrop--blur {
+  @apply bg-backdrop backdrop-blur-md;
+}
+
+.h-modal__backdrop--transparent {
+  @apply bg-transparent;
+}
+
+/* The backdrop scrolls instead of the container, which stays click-through */
+.h-modal__backdrop:has(.h-modal__container--scroll-outside) {
+  @apply scrollbar items-start overflow-y-auto [-webkit-overflow-scrolling:touch];
+}
+
+.h-modal__container {
+  @apply flex h-(--visual-viewport-height) w-full min-w-0 flex-1 flex-col items-center p-4 sm:w-fit sm:p-10;
+
+  &:where([data-state='open']) {
+    @apply animate-in fade-in-0 zoom-in-105 ease-out-quad [--tw-duration:250ms];
+  }
+
+  &:where([data-state='open'][data-placement='auto']) {
+    @apply slide-in-from-bottom-1 sm:slide-in-from-bottom-0;
+  }
+
+  &:where([data-state='open'][data-placement='top']) {
+    @apply slide-in-from-top-1;
+  }
+
+  &:where([data-state='open'][data-placement='center']) {
+    @apply slide-in-from-top-0;
+  }
+
+  &:where([data-state='open'][data-placement='bottom']) {
+    @apply slide-in-from-bottom-1;
+  }
+
+  &:where([data-state='closed']) {
+    @apply animate-out fade-out-0 zoom-out-95 ease-out-quad will-change-[opacity,transform] [--tw-duration:100ms];
+  }
+
+  &:where([data-state]) {
+    @apply motion-reduce:animate-none;
+  }
+}
+
+.h-modal__container--scroll-outside {
+  @apply h-auto min-h-(--visual-viewport-height) overflow-y-visible;
+}
+
+/* Fade only: no zoom or placement slide */
+.h-modal__container--full {
+  @apply p-0;
+  --tw-enter-scale: 1;
+  --tw-exit-scale: 1;
+  --tw-enter-translate-y: 0;
+}
+
+.h-modal__dialog {
+  @apply relative flex w-full flex-col bg-overlay text-overlay-foreground p-6 shadow-overlay outline-none;
+  border-radius: min(32px, var(--radius-3xl));
+
+  /* Keeps the dialog mounted through the container's exit (see `presence-hold` in styles/keyframes.css) */
+  &:where([data-state='closed']) {
+    @apply animate-presence-hold;
+  }
+
+  &[data-placement='auto'] {
+    @apply mt-auto sm:my-auto;
+  }
+
+  &[data-placement='top'] {
+    @apply mt-0;
+  }
+
+  &[data-placement='center'] {
+    @apply my-auto;
+  }
+
+  &[data-placement='bottom'] {
+    @apply mt-auto;
+  }
+}
+
+.h-modal__dialog--scroll-inside {
+  @apply max-h-full min-h-0 overflow-clip;
+}
+
+.h-modal__dialog--scroll-outside {
+  @apply h-auto min-h-0 shrink-0;
+}
+
+.h-modal__dialog--xs {
+  @apply max-w-xs;
+}
+
+.h-modal__dialog--sm {
+  @apply max-w-sm;
+}
+
+.h-modal__dialog--md {
+  @apply max-w-md;
+}
+
+.h-modal__dialog--lg {
+  @apply max-w-lg;
+}
+
+.h-modal__dialog--cover {
+  @apply h-full min-h-full w-full;
+}
+
+.h-modal__dialog--full {
+  @apply h-full min-h-full w-full rounded-none shadow-none;
+}
+
+.h-modal__header {
+  @apply mb-0 flex flex-col gap-3;
+}
+
+.h-modal__heading {
+  @apply align-middle text-base font-medium text-foreground;
+}
+
+.h-modal__icon {
+  @apply mb-0 flex size-10 shrink-0 items-center justify-center rounded-3xl;
+}
+
+.h-modal__body {
+  @apply -m-[3px] my-0 min-h-0 flex-1 overflow-visible p-[3px] text-sm leading-[1.43] text-muted;
+}
+
+.h-modal__body--scroll-inside {
+  @apply scrollbar overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch];
+}
+
+.h-modal__body--scroll-outside {
+  @apply overflow-y-visible;
+}
+
+.h-modal__footer {
+  @apply mt-0 flex flex-row items-center justify-end gap-2;
+}
+
+.h-modal__header + .h-modal__body {
+  @apply mt-2;
+}
+
+.h-modal__header + .h-modal__footer,
+.h-modal__body + .h-modal__footer {
+  @apply mt-5;
+}

@@ -1,0 +1,19 @@
+/* Fieldset: ported from @heroui/styles components/fieldset.css. */
+.h-fieldset {
+  @apply flex flex-col gap-6;
+
+  /* Safari flexbox fix for a fieldset with a legend inside a flex container */
+  @apply shrink grow basis-0;
+}
+
+.h-fieldset__legend {
+  @apply text-base font-medium text-foreground;
+}
+
+.h-fieldset__field-group {
+  @apply w-full space-y-4;
+}
+
+.h-fieldset__actions {
+  @apply flex items-center gap-2 pt-1;
+}

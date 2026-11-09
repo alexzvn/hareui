@@ -7,7 +7,8 @@
 // - Enter/exit: opacity 0 → 1 and translateY 8px → 0 (reversed on exit) over 300ms on a critically damped spring,
 //   sampled as `linear()`. Off under `prefers-reduced-motion`, so the bar appears and disappears at once.
 // - `label`: text-sm medium, visually hidden (`sr-only`) below 640px so buttons collapse to their icons.
-// State variants use `[&:where([data-…])]:` (zero added specificity), as in theme/modal.ts.
+// State variants use `[&:where([data-…])]:` (zero added specificity), so a user state-variant utility
+// (e.g. `data-[state=open]:animate-none`) still wins; a plain utility does not.
 export default {
   slots: {
     base: [

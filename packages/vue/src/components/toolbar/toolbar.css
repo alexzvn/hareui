@@ -1,0 +1,24 @@
+/* Toolbar: ported from @heroui/styles components/toolbar.css */
+.h-toolbar {
+  @apply grid w-fit grid-flow-col items-center gap-2;
+
+  & .h-separator--vertical {
+    @apply h-1/2 self-center;
+  }
+
+  & .h-separator--horizontal {
+    @apply w-1/2 justify-center justify-self-center;
+  }
+}
+
+.h-toolbar--vertical {
+  @apply grid-flow-row items-start justify-start;
+
+  & .h-button-group {
+    @apply justify-start;
+  }
+}
+
+.h-toolbar--attached {
+  @apply rounded-3xl bg-surface p-1 shadow-overlay;
+}

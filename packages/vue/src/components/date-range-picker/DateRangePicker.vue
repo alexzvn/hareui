@@ -52,7 +52,7 @@
             <span
               aria-hidden="true"
               data-slot="date-range-picker-range-separator"
-              :class="ui.rangeSeparator()"
+              :class="ui.rangeSeparator({ class: 'select-none' })"
             >
               <slot name="separator">{{ ' - ' }}</slot>
             </span>

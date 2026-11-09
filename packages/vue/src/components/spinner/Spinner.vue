@@ -1,5 +1,10 @@
 <template>
-  <span :aria-label="t('spinner.label')" data-slot="spinner" role="status" :class="ui.base()">
+  <span
+    :aria-label="t('spinner.label')"
+    data-slot="spinner"
+    role="status"
+    :class="ui.base({ class: 'pointer-events-none' })"
+  >
     <svg aria-hidden="true" data-slot="spinner-icon" viewBox="0 0 24 24">
       <defs>
         <linearGradient

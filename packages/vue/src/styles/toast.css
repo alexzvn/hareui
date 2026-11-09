@@ -1,5 +1,5 @@
 /*
- * Toast stacking variables are set inline (ToastItem) or by the toast slot's own utilities and read only
+ * Toast stacking variables are set inline by ToastItem and read only
  * by that same element's transform/height, so non-inherited registration keeps per-frame changes from
  * restyling the toast's subtree.
  */

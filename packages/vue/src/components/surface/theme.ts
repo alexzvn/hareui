@@ -1,14 +1,14 @@
-// Translated from @heroui/styles components/surface.css
+// Maps props to the BEM classes of ./surface.css (ported from @heroui/styles components/surface.css).
 export default {
   slots: {
-    base: 'relative text-foreground',
+    base: 'h-surface',
   },
   variants: {
     variant: {
-      transparent: { base: 'bg-transparent' },
-      default: { base: 'bg-surface text-surface-foreground' },
-      secondary: { base: 'bg-surface-secondary text-surface-secondary-foreground' },
-      tertiary: { base: 'bg-surface-tertiary text-surface-tertiary-foreground' },
+      transparent: { base: 'h-surface--transparent' },
+      default: { base: 'h-surface--default' },
+      secondary: { base: 'h-surface--secondary' },
+      tertiary: { base: 'h-surface--tertiary' },
     },
   },
   defaultVariants: {

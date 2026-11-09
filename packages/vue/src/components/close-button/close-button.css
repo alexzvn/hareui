@@ -1,0 +1,41 @@
+/* CloseButton: ported from @heroui/styles components/close-button.css. It sits inside many parents (Autocomplete,
+ * Toast, Sheet, …), so every rule is zero-specificity: a parent's own class wins whatever the import order. */
+:where(.h-close-button) {
+  @apply relative isolate inline-flex h-6 w-6 shrink-0 origin-center items-center justify-center rounded-xl p-1 no-highlight;
+  cursor: var(--cursor-interactive);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    transform 250ms var(--ease-out-quart),
+    color 150ms var(--ease-out),
+    background-color 100ms var(--ease-out),
+    box-shadow 150ms var(--ease-out);
+  @apply transform-gpu motion-reduce:transition-none;
+}
+
+:where(.h-close-button:disabled, .h-close-button[aria-disabled='true']) {
+  @apply status-disabled;
+}
+
+:where(.h-close-button[data-pending='true']) {
+  @apply status-pending;
+}
+
+/* Any class on the icon wins */
+:where(.h-close-button svg) {
+  @apply pointer-events-none -mx-0.5 my-0.5 size-4 shrink-0 self-center;
+}
+
+:where(.h-close-button--default) {
+  @apply bg-default text-muted;
+}
+
+@media (hover: hover) {
+  :where(.h-close-button--default:hover) {
+    @apply bg-default-hover;
+  }
+}
+
+:where(.h-close-button--default:active) {
+  transform: scale(0.93);
+}

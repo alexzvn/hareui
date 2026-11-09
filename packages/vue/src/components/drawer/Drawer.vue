@@ -20,7 +20,7 @@
           data-slot="drawer-content"
           :data-state="isOpen ? 'open' : 'closed'"
           :data-placement="placement"
-          :class="ui.content()"
+          :class="ui.content({ class: 'pointer-events-none' })"
         >
           <DialogContent
             ref="dialogContent"
@@ -28,7 +28,7 @@
             :data-placement="placement"
             :aria-describedby="undefined"
             style="touch-action: none"
-            :class="ui.dialog()"
+            :class="ui.dialog({ class: 'pointer-events-auto' })"
             @escape-key-down="onEscapeKeyDown"
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
@@ -75,7 +75,11 @@
                   </DialogTitle>
                 </slot>
               </div>
-              <div v-if="!!slots.body" data-slot="drawer-body" :class="ui.body()">
+              <div
+                v-if="!!slots.body"
+                data-slot="drawer-body"
+                :class="ui.body({ class: 'touch-pan-y' })"
+              >
                 <slot name="body" :close="close" />
               </div>
               <div v-if="!!slots.footer" data-slot="drawer-footer" :class="ui.footer()">

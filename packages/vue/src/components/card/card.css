@@ -1,0 +1,40 @@
+/* Card: ported from @heroui/styles components/card.css */
+.h-card {
+  @apply relative flex flex-col gap-3 overflow-visible rounded-[min(32px,var(--radius-3xl))] p-4 shadow-surface;
+}
+
+.h-card__header {
+  @apply flex flex-col;
+}
+
+.h-card__title {
+  @apply text-sm leading-6 font-medium text-foreground;
+}
+
+.h-card__description {
+  @apply text-sm leading-5 text-muted;
+}
+
+.h-card__content {
+  @apply flex flex-1 flex-col gap-1;
+}
+
+.h-card__footer {
+  @apply flex flex-row items-center;
+}
+
+.h-card--default {
+  @apply bg-surface;
+}
+
+.h-card--secondary {
+  @apply bg-surface-secondary;
+}
+
+.h-card--tertiary {
+  @apply bg-surface-tertiary;
+}
+
+.h-card--transparent {
+  @apply border-none bg-transparent shadow-none;
+}

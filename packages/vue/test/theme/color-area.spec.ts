@@ -6,11 +6,11 @@ import ColorArea from '@/components/color-area/ColorArea.vue'
 const area = '[data-slot=color-area]'
 
 describe('ColorArea theme', () => {
-  it('showDots adds the dot overlay classes', () => {
+  it('showDots adds the dot overlay modifier', () => {
     const on = mount(ColorArea, { props: { showDots: true, defaultValue: '#0485F7' } })
     const off = mount(ColorArea, { props: { defaultValue: '#0485F7' } })
-    expect(on.find(area).classes().join(' ')).toContain('after:')
-    expect(off.find(area).classes().join(' ')).not.toContain('after:')
+    expect(on.find(area).classes()).toContain('h-color-area--show-dots')
+    expect(off.find(area).classes()).not.toContain('h-color-area--show-dots')
   })
 
   it('a user class on the root is merged and wins over the default size', () => {

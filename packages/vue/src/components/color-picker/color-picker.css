@@ -1,0 +1,33 @@
+/* ColorPicker: ported from @heroui/styles components/color-picker.css. React Aria's `[data-entering]`/`[data-exiting]`
+ * map to Reka's `data-state`; the state/side rules sit in `:where()`, as in Popover, so a user utility wins. */
+.h-color-picker {
+  @apply inline-flex;
+}
+
+.h-color-picker__trigger {
+  @apply inline-flex cursor-(--cursor-interactive) items-center gap-3 rounded-sm text-sm no-highlight;
+  transition:
+    background-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  [data-slot='label'] {
+    @apply cursor-(--cursor-interactive);
+  }
+
+  &:disabled,
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-color-picker__popover {
+  /* React Aria sets `z-index: 100000` inline on popovers (HeroUI base.css `--z-index-overlay`) */
+  @apply z-(--z-index-overlay) flex min-w-62 origin-(--reka-popover-content-transform-origin) scrollbar-none flex-col gap-3 overflow-x-hidden overflow-y-auto overscroll-contain bg-overlay text-overlay-foreground px-2 pt-2 pb-3 focus-visible:outline-none;
+  box-shadow: var(--overlay-shadow);
+  border-radius: min(32px, calc(var(--radius) * 2.5));
+  @apply [&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-animation-duration:150ms] [&:where([data-state=open])]:ease-smooth [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-95;
+  @apply [&:where([data-state=open])]:[&:where([data-side=top])]:slide-in-from-bottom-1 [&:where([data-state=open])]:[&:where([data-side=bottom])]:slide-in-from-top-1 [&:where([data-state=open])]:[&:where([data-side=left])]:slide-in-from-right-1 [&:where([data-state=open])]:[&:where([data-side=right])]:slide-in-from-left-1;
+  @apply [&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-animation-duration:100ms] [&:where([data-state=closed])]:ease-smooth [&:where([data-state=closed])]:zoom-out-95 [&:where([data-state=closed])]:fade-out [&:where([data-state=closed])]:pointer-events-none;
+}

@@ -1,0 +1,216 @@
+/* Toast: ported from @heroui/styles components/toast.css. ToastItem sets the stacking variables inline
+ * (`--offset-collapsed`, `--offset-expanded`, `--scale-collapsed`, `--front-height`, `--toast-height`); their
+ * registration lives in ../../styles/toast.css. */
+.h-toast-region {
+  @apply pointer-events-none fixed z-(--z-index-toast) block outline-none;
+  @apply w-[calc(100vw-2rem)] sm:w-auto sm:min-w-(--toast-width);
+}
+
+/* left-1/2 + -translate-x-1/2 centers in both LTR and RTL */
+.h-toast-region--bottom {
+  @apply bottom-4 left-1/2 -translate-x-1/2;
+}
+
+.h-toast-region--bottom-start {
+  @apply start-4 bottom-4;
+}
+
+.h-toast-region--bottom-end {
+  @apply end-4 bottom-4;
+}
+
+.h-toast-region--top {
+  @apply top-4 left-1/2 -translate-x-1/2;
+}
+
+.h-toast-region--top-start {
+  @apply start-4 top-4;
+}
+
+.h-toast-region--top-end {
+  @apply end-4 top-4;
+}
+
+.h-toast {
+  @apply pointer-events-auto absolute start-0 end-0 flex flex-row items-start justify-start gap-1.5 bg-surface px-4 py-3 shadow-overlay;
+  @apply rounded-[min(32px,var(--radius-3xl))];
+
+  /* Motion state */
+  --toast-y: var(--offset-collapsed, 0px);
+  --toast-enter: 0%;
+  --toast-scale: var(--scale-collapsed, 1);
+  transform: translateY(calc(var(--dir, 1) * (var(--toast-y) + var(--toast-enter))))
+    scale(var(--toast-scale));
+  height: var(--toast-height, auto);
+
+  --toast-ease: var(--ease-out-fluid);
+  --toast-enter-duration: 350ms;
+  --toast-exit-duration: 250ms;
+  --toast-translate-duration: var(--toast-enter-duration);
+  --toast-height-duration: var(--toast-enter-duration);
+  --toast-opacity-duration: 150ms;
+
+  /* motion-reduce must come after the transition */
+  transition:
+    transform var(--toast-translate-duration) var(--toast-ease),
+    height var(--toast-height-duration) var(--toast-ease),
+    opacity var(--toast-opacity-duration) var(--toast-ease);
+  @apply motion-reduce:animate-none motion-reduce:transition-none;
+}
+
+/* Stacking direction */
+.h-toast--bottom,
+.h-toast--bottom-start,
+.h-toast--bottom-end {
+  --dir: -1;
+  @apply bottom-0 [transform-origin:bottom_center];
+
+  &[data-expanded='true']::after {
+    @apply top-[calc(-1*var(--gap,12px)-1px)] bottom-0;
+  }
+}
+
+.h-toast--top,
+.h-toast--top-start,
+.h-toast--top-end {
+  --dir: 1;
+  @apply top-0 [transform-origin:top_center];
+
+  &[data-expanded='true']::after {
+    @apply top-0 bottom-[calc(-1*var(--gap,12px)-1px)];
+  }
+}
+
+.h-toast[data-entering='true'] {
+  --toast-enter: -100%;
+}
+
+/* Content fade between collapsed / expanded */
+.h-toast > :not([data-slot='toast-close']) {
+  transition: opacity 200ms var(--toast-ease);
+  @apply motion-reduce:transition-none;
+}
+
+/* Collapsed non-front: force height to front toast (Sonner-style unified stack height) */
+.h-toast:not([data-frontmost='true']):not([data-expanded='true']) {
+  --toast-y: var(--offset-collapsed, 0px);
+  height: var(--front-height, 0px);
+  @apply overflow-hidden;
+
+  & > :not([data-slot='toast-close']) {
+    @apply opacity-0;
+  }
+
+  & .h-toast__close-button {
+    @apply pointer-events-none opacity-0 outline-none;
+  }
+}
+
+.h-toast[data-expanded='true'] {
+  --toast-y: var(--offset-expanded, 0px);
+  --toast-scale: 1;
+  height: var(--toast-height, auto);
+
+  /* Hit area that covers the gap between toasts */
+  &::after {
+    @apply absolute start-0 end-0 z-[-1] content-[''];
+  }
+}
+
+/* Exit */
+.h-toast[data-exiting='true'] {
+  @apply opacity-0;
+}
+
+.h-toast[data-exiting='true'][data-frontmost='true'] {
+  --toast-translate-duration: var(--toast-exit-duration);
+  --toast-opacity-duration: 150ms;
+  --toast-enter: -100%;
+  --toast-scale: 1;
+}
+
+.h-toast[data-exiting='true'][data-expanded='true']:not([data-frontmost='true']) {
+  --toast-translate-duration: 200ms;
+  --toast-opacity-duration: 150ms;
+  --toast-scale: 0.96;
+}
+
+.h-toast[data-exiting='true']:not([data-expanded='true']):not([data-frontmost='true']) {
+  --toast-translate-duration: 200ms;
+  --toast-opacity-duration: 150ms;
+  --toast-scale: calc(var(--scale-collapsed, 1) * 0.96);
+}
+
+/* Hidden (beyond maxVisibleToasts) */
+.h-toast[data-hidden='true'] {
+  @apply pointer-events-none flex opacity-0;
+}
+
+.h-toast__content {
+  @apply flex grow flex-col items-start self-center;
+}
+
+.h-toast__indicator {
+  @apply flex shrink-0 items-center justify-center p-1 text-overlay-foreground;
+
+  & [data-slot='toast-default-icon'] {
+    @apply box-content size-4;
+  }
+
+  & [data-slot='spinner'],
+  & [data-slot='spinner-icon'] {
+    @apply size-4;
+  }
+}
+
+/* Settled promise icon (data-swapped skips first paint) */
+.h-toast__indicator[data-swapped='true'] > :not([data-slot='spinner']) {
+  @apply animate-toast-indicator-swap motion-reduce:animate-none;
+}
+
+.h-toast__title {
+  @apply text-sm leading-5 font-medium text-overlay-foreground;
+}
+
+.h-toast__description {
+  @apply text-sm text-muted;
+}
+
+/* Only what CloseButton leaves unset: the rest of the close slot stays utilities that replace CloseButton's own */
+.h-toast__close-button {
+  @apply pointer-events-none -end-1 -top-1 border-border opacity-0 sm:border;
+}
+
+/* Reveal the close button on hover; it outranks the exiting rule below, as it did in the tv theme */
+.h-toast[data-frontmost='true']:hover .h-toast__close-button,
+.h-toast[data-expanded='true']:hover .h-toast__close-button {
+  @apply pointer-events-auto opacity-100;
+}
+
+.h-toast[data-exiting='true'] .h-toast__close-button {
+  @apply pointer-events-none opacity-0;
+}
+
+.h-toast__action {
+  @apply mt-2 sm:mt-0;
+}
+
+/* Variants */
+.h-toast--accent .h-toast__title {
+  @apply text-accent-soft-foreground;
+}
+
+.h-toast--success .h-toast__title,
+.h-toast--success .h-toast__indicator {
+  @apply text-success-soft-foreground;
+}
+
+.h-toast--warning .h-toast__title,
+.h-toast--warning .h-toast__indicator {
+  @apply text-warning-soft-foreground;
+}
+
+.h-toast--danger .h-toast__title,
+.h-toast--danger .h-toast__indicator {
+  @apply text-danger-soft-foreground;
+}

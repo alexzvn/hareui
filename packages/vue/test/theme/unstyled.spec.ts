@@ -227,7 +227,7 @@ describe('unstyled: array of theme keys', () => {
     const plugins = [createHareUI({ unstyled: ['button'] })]
 
     expect(mount(Button, { global: { plugins } }).classes()).toEqual([])
-    expect(mount(Description, { global: { plugins } }).classes()).toContain('text-xs')
+    expect(mount(Description, { global: { plugins } }).classes()).toEqual(['h-description'])
   })
 })
 

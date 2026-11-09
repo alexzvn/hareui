@@ -1,0 +1,82 @@
+/* Meter: ported from @heroui/styles components/meter.css. */
+.h-meter {
+  @apply grid w-full grid-cols-[1fr_auto] gap-1;
+  grid-template-areas:
+    'label output'
+    'track track';
+  --meter-fill: var(--accent);
+
+  &:disabled,
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+
+  /* The label also carries the Label classes */
+  & [data-slot='label'] {
+    @apply w-fit text-sm font-medium;
+    grid-area: label;
+
+    /* The meter is dimmed as a whole: the Label's own disabled dimming would stack on top */
+    &:where([data-disabled='true'] *, [aria-disabled='true'] *) {
+      @apply opacity-100;
+    }
+  }
+}
+
+.h-meter__output {
+  @apply text-sm font-medium tabular-nums;
+  grid-area: output;
+}
+
+.h-meter__track {
+  @apply relative h-2 overflow-hidden rounded-sm bg-default;
+  grid-area: track;
+}
+
+.h-meter__fill {
+  @apply absolute start-0 top-0 h-full rounded-sm bg-(--meter-fill);
+
+  /* motion-reduce must come after the transition */
+  @apply transition-[width] duration-300 ease-out motion-reduce:transition-none;
+}
+
+.h-meter--sm {
+  & .h-meter__track {
+    @apply h-1 rounded-xs;
+  }
+
+  & .h-meter__fill {
+    @apply rounded-xs;
+  }
+}
+
+.h-meter--lg {
+  & .h-meter__track {
+    @apply h-3 rounded-md;
+  }
+
+  & .h-meter__fill {
+    @apply rounded-md;
+  }
+}
+
+.h-meter--default {
+  --meter-fill: var(--default-foreground);
+}
+
+.h-meter--accent {
+  --meter-fill: var(--accent);
+}
+
+.h-meter--success {
+  --meter-fill: var(--success);
+}
+
+.h-meter--warning {
+  --meter-fill: var(--warning);
+}
+
+.h-meter--danger {
+  --meter-fill: var(--danger);
+}

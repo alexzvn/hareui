@@ -1,0 +1,47 @@
+/* DatePicker: ported from @heroui/styles components/date-picker.css. Its input group carries the classes of
+ * ../date-input-group/date-input-group.css and the popover's Calendar those of ../calendar/calendar.css. HeroUI's
+ * `.date-picker .date-input-group__suffix { pointer-events-auto }` is behaviour: DatePicker.vue passes it to the group. */
+.h-date-picker {
+  @apply inline-flex flex-col gap-1;
+}
+
+.h-date-picker--full-width {
+  @apply w-full;
+}
+
+.h-date-picker__trigger {
+  @apply inline-flex w-full items-center rounded-field p-1 text-sm no-highlight;
+  cursor: var(--cursor-interactive);
+
+  /* motion-reduce must come after the transition */
+  transition: box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  &:disabled,
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-date-picker__trigger-indicator {
+  @apply inline-flex size-4 items-center justify-center text-field-placeholder;
+}
+
+/* Reka keeps `data-state="open"` for the popover's whole visible life (React Aria's `data-entering` is transient), so
+ * the enter/exit are one-shot `animate-in`/`animate-out` keyframes, as in Popover. Reka copies the z-index onto its
+ * positioning wrapper. */
+.h-date-picker__popover {
+  @apply z-(--z-index-overlay) w-fit origin-(--reka-popover-content-transform-origin) scrollbar-none overflow-y-auto overscroll-contain bg-overlay text-overlay-foreground p-3;
+  @apply motion-reduce:transition-none;
+  box-shadow: var(--overlay-shadow);
+  border-radius: min(32px, calc(var(--radius) * 2.5));
+  @apply [&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-animation-duration:150ms] [&:where([data-state=open])]:ease-smooth [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-95;
+  @apply [&:where([data-state=open])]:[&:where([data-side=top])]:slide-in-from-bottom-1 [&:where([data-state=open])]:[&:where([data-side=bottom])]:slide-in-from-top-1 [&:where([data-state=open])]:[&:where([data-side=left])]:slide-in-from-right-1 [&:where([data-state=open])]:[&:where([data-side=right])]:slide-in-from-left-1;
+  @apply [&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-animation-duration:100ms] [&:where([data-state=closed])]:ease-smooth [&:where([data-state=closed])]:zoom-out-95 [&:where([data-state=closed])]:fade-out [&:where([data-state=closed])]:pointer-events-none;
+}
+
+/* Undoes the calendar's RTL flip of the nav chevrons inside the popover, as HeroUI does */
+.h-date-picker__popover .h-calendar__nav-button-icon {
+  @apply rotate-0;
+}

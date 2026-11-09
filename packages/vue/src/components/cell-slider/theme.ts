@@ -24,7 +24,7 @@ export default {
     ],
     fill: 'inset-y-0 rounded-none bg-default',
     thumb: [
-      'z-2 cursor-(--cursor-interactive) rounded-none bg-transparent',
+      'z-2 cursor-(--cursor-interactive) data-disabled:cursor-default rounded-none bg-transparent',
       'data-[orientation=horizontal]:w-5 data-[orientation=horizontal]:after:h-4 data-[orientation=horizontal]:after:w-0.5',
       'after:rounded-md after:bg-foreground after:opacity-0 after:shadow-none',
       'after:transition-none after:[transition:opacity_150ms_var(--ease-smooth),transform_120ms_var(--ease-smooth)] motion-reduce:after:transition-none',

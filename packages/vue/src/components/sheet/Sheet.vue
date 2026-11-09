@@ -14,7 +14,7 @@
         :data-exiting="isExiting ? '' : undefined"
         :inert="!isOpen"
         :style="overlayStyle(metrics, isOpen)"
-        :class="ui.overlay()"
+        :class="ui.overlay({ class: 'data-[closed]:pointer-events-none' })"
       >
         <div
           data-slot="sheet-backdrop"
@@ -22,7 +22,13 @@
           :style="backdrop"
           :class="ui.backdrop()"
         />
-        <div ref="scroller" data-sheet-scroll :style="geometry.scroller" :class="ui.scroller()">
+        <!-- A handle drag scrolls the scroller directly, so snapping pauses meanwhile -->
+        <div
+          ref="scroller"
+          data-sheet-scroll
+          :style="geometry.scroller"
+          :class="ui.scroller({ class: 'data-[handle-dragging]:snap-none!' })"
+        >
           <div
             data-sheet-snap
             :data-sheet-expanded="config.after ? undefined : ''"

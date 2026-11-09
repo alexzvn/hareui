@@ -1,0 +1,87 @@
+/* ProgressBar: ported from @heroui/styles components/progress-bar.css. */
+.h-progress-bar {
+  @apply grid w-full grid-cols-[1fr_auto] gap-1;
+  grid-template-areas:
+    'label output'
+    'track track';
+  --progress-bar-fill: var(--accent);
+
+  &:disabled,
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+
+  /* The label also carries the Label classes */
+  & [data-slot='label'] {
+    @apply w-fit text-sm font-medium;
+    grid-area: label;
+
+    /* The bar is dimmed as a whole: the Label's own disabled dimming would stack on top */
+    &:where([data-disabled='true'] *, [aria-disabled='true'] *) {
+      @apply opacity-100;
+    }
+  }
+}
+
+.h-progress-bar__output {
+  @apply text-sm font-medium tabular-nums;
+  grid-area: output;
+}
+
+.h-progress-bar__track {
+  @apply relative h-2 overflow-hidden rounded-sm bg-default;
+  grid-area: track;
+}
+
+.h-progress-bar__fill {
+  @apply absolute start-0 top-0 h-full rounded-sm bg-(--progress-bar-fill);
+
+  /* motion-reduce must come after the transition */
+  @apply transition-[width] duration-300 ease-out motion-reduce:transition-none;
+
+  /* Indeterminate: the root has no `aria-valuenow` */
+  .h-progress-bar:not([aria-valuenow]) & {
+    @apply w-2/5 animate-progress-bar-indeterminate motion-reduce:animate-none;
+  }
+}
+
+.h-progress-bar--sm {
+  & .h-progress-bar__track {
+    @apply h-1 rounded-xs;
+  }
+
+  & .h-progress-bar__fill {
+    @apply rounded-xs;
+  }
+}
+
+.h-progress-bar--lg {
+  & .h-progress-bar__track {
+    @apply h-3 rounded-md;
+  }
+
+  & .h-progress-bar__fill {
+    @apply rounded-md;
+  }
+}
+
+.h-progress-bar--default {
+  --progress-bar-fill: var(--default-foreground);
+}
+
+.h-progress-bar--accent {
+  --progress-bar-fill: var(--accent);
+}
+
+.h-progress-bar--success {
+  --progress-bar-fill: var(--success);
+}
+
+.h-progress-bar--warning {
+  --progress-bar-fill: var(--warning);
+}
+
+.h-progress-bar--danger {
+  --progress-bar-fill: var(--danger);
+}

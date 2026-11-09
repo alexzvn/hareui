@@ -7,7 +7,7 @@
 // a right-aligned row of Remove and Apply.
 export default {
   slots: {
-    root: 'z-50 rounded-3xl bg-overlay p-1 shadow-overlay',
+    root: 'z-50 rounded-3xl bg-overlay text-overlay-foreground p-1 shadow-overlay',
     base: 'flex items-center gap-1',
     group: 'flex items-center gap-1',
     separator: 'mx-1 h-6 w-px shrink-0 self-center rounded-sm bg-separator',

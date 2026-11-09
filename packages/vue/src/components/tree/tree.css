@@ -36,6 +36,11 @@
   @apply flex size-5 shrink-0 items-center justify-center rounded-md data-leaf:invisible;
 }
 
+.h-tree__link-indicator {
+  @apply size-3.5 shrink-0 text-muted transition-[rotate] duration-150 motion-reduce:transition-none;
+  @apply rtl:rotate-180 group-data-expanded/row:rotate-90;
+}
+
 .h-tree__label {
   @apply min-w-0 flex-1 truncate px-0.5;
 }
@@ -58,6 +63,7 @@
     @apply data-selected:bg-accent-soft data-selected:text-accent-soft-foreground;
   }
 
+  .h-tree__link-indicator,
   .h-tree__trailing {
     @apply group-data-selected/row:text-accent-soft-foreground;
   }
