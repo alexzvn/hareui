@@ -13,6 +13,10 @@ const setSize = (el: HTMLElement, size: 'auto' | '0px' | 'measure') => {
     '--disclosure-panel-height',
     size === 'measure' ? `${el.scrollHeight}px` : size,
   )
+
+  // Clip only while the size is pinned (animating or closed); a settled open panel lets focus
+  // rings and shadows of its content paint past its edges.
+  el.style.setProperty('--disclosure-panel-overflow', size === 'auto' ? 'visible' : 'clip')
 }
 
 const afterAnimations = (el: HTMLElement) => Promise.all(el.getAnimations().map((a) => a.finished))
