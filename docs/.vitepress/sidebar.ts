@@ -95,6 +95,7 @@ export const sidebar: SidebarSection[] = [
       { text: 'v0.4.0 → v0.5.0', link: r('migrations/v0.4.0-v0.5.0') },
       { text: 'v0.3.0 → v0.4.0', link: r('migrations/v0.3.0-v0.4.0') },
       { separator: 'Versions' },
+      { text: 'v0.7.0', link: r('v0-7-0') },
       { text: 'v0.6.0', link: r('v0-6-0') },
       { text: 'v0.5.0', link: r('v0-5-0') },
       { text: 'v0.4.0', link: r('v0-4-0') },
