@@ -1,11 +1,6 @@
 import type { Component } from 'vue'
 
-/** The props of a component: the `$props` of an SFC, or the first argument of a functional component. */
-type ComponentProps<T> = T extends new (...args: never[]) => { $props: infer P }
-  ? NonNullable<P>
-  : T extends (props: infer P, ...args: never[]) => unknown
-    ? P
-    : Record<string, unknown>
+import type { ComponentProps } from '@/types/component'
 
 /** The typed `emit` of a component. */
 type ComponentEmit<T> = T extends new (...args: never[]) => { $emit: infer E }

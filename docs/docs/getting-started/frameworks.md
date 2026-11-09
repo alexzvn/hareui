@@ -99,6 +99,7 @@ export default defineConfig({
 | Option       | Type                                       | Default | Description                                                                                                                                                                                                       |
 | ------------ | ------------------------------------------ | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `prefix`     | `string`                                   | `''`    | Template prefix for HareUI components. `'H'` resolves `<HButton>` and `<h-button>` to `Button`. Kebab-case (`'h-'`) is accepted.                                                                                  |
+| `aliases`    | `Record<string, string>`                   | `{}`    | Extra tag names, as `{ tag: componentName }`. See [Aliases](#aliases).                                                                                                                                            |
 | `ui`         | same as `createHareUI({ ui })`             | —       | App-wide theme overrides, inlined at build time, so values must be JSON-serializable. Applied above the theme files and below `createHareUI({ ui })`. See [Precedence](/docs/getting-started/theming#precedence). |
 | `components` | unplugin-vue-components options \| `false` | `{}`    | Forwarded to unplugin-vue-components (`dts`, `dirs`, extra `resolvers`, …); the HareUI resolver is appended to `resolvers`. `false` turns auto import off.                                                        |
 
@@ -112,6 +113,31 @@ export default defineConfig({
   plugins: [vue(), tailwindcss(), Components({ resolvers: [HareUIResolver({ prefix: 'H' })] })],
 })
 ```
+
+#### Aliases
+
+`aliases` gives a HareUI component another tag name. The alias is imported like any other component, so it stays tree-shaken. `HareUIResolver` takes the same option.
+
+```ts [vite.config.ts]
+hareui({
+  prefix: 'H',
+  aliases: { Btn: 'Button', 'text-input': 'TextField' },
+})
+```
+
+```vue
+<template>
+  <Btn variant="secondary">Save</Btn>
+  <TextInput label="Name" />
+</template>
+```
+
+- Keys are tag names. `<Btn>` and `<btn>` both resolve. Kebab-case keys work too.
+- `prefix` doesn't apply to alias keys, so `<HBtn>` doesn't resolve.
+- Values are HareUI component names. An unknown name stops the build with an error naming the alias.
+- The generated `components.d.ts` types `Btn` as `Button`.
+
+An alias renames a component. To also give it default props or classes, make a [preset](/docs/getting-started/composition#presets) with `defineAlias`.
 
 ## Nuxt
 

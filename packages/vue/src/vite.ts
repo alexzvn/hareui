@@ -16,6 +16,12 @@ export type HareUIResolverOptions = {
    * @defaultValue ''
    */
   prefix?: string
+  /**
+   * Extra template names for HareUI components, as `{ tag: componentName }`. `{ Btn: 'Button' }` resolves
+   * `<Btn>` and `<btn>` to `Button`. Keys get no `prefix`; kebab-case keys are converted to PascalCase.
+   * An unknown component name throws when the plugin starts.
+   */
+  aliases?: Record<string, string>
 }
 
 /** Options for the `hareui()` Vite plugin; also accepts every `HareUIResolverOptions` key. */
@@ -41,15 +47,29 @@ const pascalCase = (value: string): string => {
     .join('')
 }
 
+const resolveAlias = ([tag, component]: [string, string]) => {
+  const from = components.get(component)
+  if (!from)
+    throw new Error(
+      `[hareui] alias "${tag}" targets "${component}", which is not a HareUI component.`,
+    )
+
+  return [pascalCase(tag), { name: component, from }] as const
+}
+
 /**
  * unplugin-vue-components resolver for HareUI components, for setups that register unplugin-vue-components themselves.
  * Chart components resolve to `@hareui/vue/charts`.
  */
 export const HareUIResolver = (options: HareUIResolverOptions = {}): ComponentResolver => {
   const prefix = pascalCase(options.prefix ?? '')
+  const aliases = new Map(Object.entries(options.aliases ?? {}).map(resolveAlias))
+
   return {
     type: 'component',
     resolve(name) {
+      const alias = aliases.get(name)
+      if (alias) return alias
       if (!name.startsWith(prefix)) return
       const component = name.slice(prefix.length)
       const from = components.get(component)
@@ -59,8 +79,8 @@ export const HareUIResolver = (options: HareUIResolverOptions = {}): ComponentRe
 }
 
 /**
- * Vite plugin: auto-imports HareUI components (optionally prefixed), applies app-wide theme overrides and serves the
- * maplibre-gl worker to `Map` when `maplibre-gl` is installed.
+ * Vite plugin: auto-imports HareUI components (optionally prefixed or aliased), applies app-wide theme overrides and
+ * serves the maplibre-gl worker to `Map` when `maplibre-gl` is installed.
  */
 export const hareui = (options: HareUIPluginOptions = {}): Plugin[] => {
   const plugins: Plugin[] = [hareuiMapWorker()]
@@ -78,7 +98,10 @@ export const hareui = (options: HareUIPluginOptions = {}): Plugin[] => {
     plugins.push(
       Components({
         ...rest,
-        resolvers: [...resolvers, HareUIResolver({ prefix: options.prefix })],
+        resolvers: [
+          ...resolvers,
+          HareUIResolver({ prefix: options.prefix, aliases: options.aliases }),
+        ],
       }),
     )
   }
