@@ -157,6 +157,10 @@ app.use(
 - `tag` (from the `tag` theme) → `[data-slot="tag"]` – one tag
 - `removeButton` (from the `tag` theme) → `[data-slot="tag-remove-button"]` – the remove button
 
+### CSS classes
+
+The root carries `.h-tag-group` and the list `.h-tag-group__list`. Each tag carries `.h-tag` plus `.h-tag--{sm|lg}` (none for the default `md`) and `.h-tag--{default|surface}`. The remove button keeps plain utilities, because they must replace CloseButton's own size. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Selected**: `aria-selected="true"` / `[data-selected="true"]` on a tag. Only applies when tags are selectable.

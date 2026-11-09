@@ -144,6 +144,10 @@ app.use(
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options. The group, input, segment, prefix and suffix keys belong to the internal `date-input-group` part shared with [DateField](/docs/components/date-field).
 
+### CSS classes
+
+The input group carries `.h-date-input-group` plus `.h-date-input-group--secondary` and `.h-date-input-group--full-width`. Its parts carry `.h-date-input-group__input-container`, `.h-date-input-group__input`, `.h-date-input-group__segment`, `.h-date-input-group__prefix` and `.h-date-input-group__suffix`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 TimeField sets these data attributes:

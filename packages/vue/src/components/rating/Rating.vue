@@ -33,7 +33,7 @@
         data-slot="rating-item"
         :data-active="getFill(item) === 1 ? 'true' : undefined"
         :data-partial="isPartial(item) ? 'true' : undefined"
-        :class="ui.item()"
+        :class="ui.item({ class: 'relative' })"
       >
         <span
           data-slot="rating-icon"
@@ -50,7 +50,9 @@
           data-slot="rating-fill"
           aria-hidden="true"
           :style="{ width: `${getFill(item) * 100}%` }"
-          :class="ui.fill()"
+          :class="
+            ui.fill({ class: 'pointer-events-none absolute inset-y-0 start-0 overflow-hidden' })
+          "
         >
           <span data-slot="rating-icon" data-active="true" :class="ui.icon()">
             <slot name="item" :index="item" :filled="true">
@@ -67,7 +69,7 @@
           data-slot="rating-step"
           :data-value="value"
           :style="{ width: `${fraction * 100}%`, zIndex: steps.length - index }"
-          :class="ui.step()"
+          :class="ui.step({ class: 'absolute inset-y-0 start-0' })"
           @select="onSelect($event, value)"
           @mouseenter="onStepEnter(value)"
           @pointerdown="onStepPress($event, value)"

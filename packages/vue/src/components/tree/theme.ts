@@ -1,6 +1,6 @@
-// Tree: rows are the focusable treeitems. Each row is `rounded-lg` (8px) with a 2px gap between the optional 16px
-// checkbox, a 20px chevron slot (14px chevron, `text-muted`, rotating 90° in 150ms), the icon (`text-muted`) and the
-// label (2px side padding).
+// Maps props to the BEM classes of ./tree.css.
+// Rows are `rounded-lg` (8px) with a 2px gap between the optional 16px checkbox, a 20px chevron slot (14px chevron,
+// `text-muted`, rotating 90° in 150ms), the icon (`text-muted`) and the label (2px side padding).
 // Hover, pressed and selected rows get `bg-default`; adjacent selected rows merge into one
 // block. Nesting indents by `--tree-indent` per level and draws a 1px guide line (`currentColor` at 10%) 10px from the
 // start of every ancestor level: through its chevron, or through its checkbox when rows have one. Nested lists animate
@@ -9,87 +9,59 @@
 // drop before or after a row draws a 2px `accent` line on that edge, from the row's indent to its end.
 // Sizes (row padding / font / icon / indent): sm 6×2px, 12px, 14px, 10px · md 8×4px, 14px, 16px, 12px ·
 // lg 10×6px, 16px, 20px, 24px; rows are 20, 28 and 36px tall.
+// Icon and checkbox slots stay utilities: an icon's own classes (an iconify class string) or the Checkbox's must not
+// outrank them.
 export default {
   slots: {
-    // The virtualizer's rows are absolutely positioned, so as a flex item it would shrink to the viewport and cut
-    // the scroll range short
-    root: 'group/tree relative isolate flex flex-col overflow-auto p-1 scrollbar outline-none [&>[data-reka-virtualizer]]:shrink-0',
-    item: [
-      'w-full',
-      // Adjacent selected rows share their inner corners. Rows sit one per `li`, so siblings are matched on the `li`.
-      '[&:has(+*>[data-selected])>[data-selected]]:rounded-b-none',
-      '[*:has(>[data-selected])+&>[data-selected]]:rounded-t-none',
-    ],
-    listWithChildren:
-      'flex flex-col transition-[height,opacity] duration-200 ease-out motion-reduce:transition-none',
-    link: [
-      'group/row relative flex w-full items-center gap-0.5 rounded-lg text-start text-foreground select-none',
-      'ps-[calc(var(--tree-px)+(var(--tree-level)-1)*var(--tree-indent))] pe-(--tree-px)',
-      'cursor-(--cursor-interactive) outline-none no-highlight',
-      'hover:bg-default active:bg-default data-selected:bg-default',
-      'focus-visible:status-focused data-disabled:status-disabled',
-      'data-dragging:opacity-40',
-      'data-[drop-target=inside]:bg-accent-soft data-[drop-target=inside]:outline-2 data-[drop-target=inside]:-outline-offset-2 data-[drop-target=inside]:outline-accent data-[drop-target=inside]:outline-solid',
-    ],
-    guideLine:
-      'pointer-events-none absolute inset-y-0 start-[calc(var(--tree-px)+10px+var(--tree-guide)*var(--tree-indent))] w-px bg-current/10 select-none',
+    root: 'group/tree h-tree',
+    item: 'h-tree__item',
+    listWithChildren: 'h-tree__group',
+    link: 'group/row h-tree__link',
+    guideLine: 'h-tree__guide-line',
     linkCheckbox: 'shrink-0',
-    linkChevron: 'flex size-5 shrink-0 items-center justify-center rounded-md data-leaf:invisible',
+    linkChevron: 'h-tree__chevron',
     linkIndicator: [
       'size-3.5 shrink-0 text-muted',
       'transition-[rotate] duration-150 motion-reduce:transition-none',
       'rtl:rotate-180 group-data-expanded/row:rotate-90',
     ],
     linkLeadingIcon: 'shrink-0 text-muted',
-    linkLabel: 'min-w-0 flex-1 truncate px-0.5',
-    linkTrailing: 'inline-flex shrink-0 items-center gap-1.5 text-muted',
+    linkLabel: 'h-tree__label',
+    linkTrailing: 'h-tree__trailing',
     linkTrailingIcon: 'shrink-0',
-    dropIndicator: [
-      'pointer-events-none absolute end-0 start-[calc(var(--tree-px)+(var(--tree-level)-1)*var(--tree-indent))] h-0.5 rounded-full bg-accent',
-      'data-[position=after]:-bottom-px data-[position=before]:-top-px',
-    ],
-    empty: 'px-(--tree-px) text-muted',
+    dropIndicator: 'h-tree__drop-indicator',
+    empty: 'h-tree__empty',
   },
   variants: {
     color: {
       default: {},
       accent: {
-        link: 'data-selected:bg-accent-soft data-selected:text-accent-soft-foreground',
+        root: 'h-tree--accent',
         linkIndicator: 'group-data-selected/row:text-accent-soft-foreground',
         linkLeadingIcon: 'group-data-selected/row:text-accent-soft-foreground',
-        linkTrailing: 'group-data-selected/row:text-accent-soft-foreground',
       },
     },
     size: {
       sm: {
-        root: '[--tree-indent:10px] [--tree-px:6px]',
-        link: 'py-0.5 text-xs',
-        empty: 'py-0.5 text-xs',
+        root: 'h-tree--sm',
         linkLeadingIcon: 'size-3.5',
         linkTrailingIcon: 'size-3.5',
       },
       md: {
-        root: '[--tree-indent:12px] [--tree-px:8px]',
-        link: 'py-1 text-sm',
-        empty: 'py-1 text-sm',
+        root: 'h-tree--md',
         linkLeadingIcon: 'size-4',
         linkTrailingIcon: 'size-4',
       },
       lg: {
-        root: '[--tree-indent:24px] [--tree-px:10px]',
-        link: 'py-1.5 text-base',
-        empty: 'py-1.5 text-base',
+        root: 'h-tree--lg',
         linkLeadingIcon: 'size-5',
         linkTrailingIcon: 'size-5',
       },
     },
     showGuideLines: {
       true: {},
-      false: { guideLine: 'hidden' },
-      hover: {
-        guideLine:
-          'opacity-0 transition-opacity duration-150 group-hover/tree:opacity-100 motion-reduce:transition-none',
-      },
+      false: { root: 'h-tree--guide-lines-false' },
+      hover: { root: 'h-tree--guide-lines-hover' },
     },
   },
   defaultVariants: {

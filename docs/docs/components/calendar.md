@@ -183,6 +183,10 @@ app.use(
 
 ## Styling Reference
 
+### CSS classes
+
+Each slot carries a `.h-calendar__{slot}` class on the `.h-calendar` root (`__header`, `__nav-button`, `__grid`, `__header-cell`, `__cell`, `__cell-indicator`, …), and the year picker's parts carry `.h-calendar-year-picker__{trigger|trigger-heading|trigger-indicator|grid|year-cell}`. Week and day views add `.h-calendar--week-view` / `.h-calendar--day-view` to the root. RangeCalendar shares these classes. Day states come from the data attributes below, not from classes. The classes sit in `@layer components`, so any utility you pass through `class` or `ui` wins.
+
 ### Interactive States
 
 Calendar sets these data attributes:

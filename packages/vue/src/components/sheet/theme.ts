@@ -29,7 +29,7 @@ export default {
     ],
     footer: 'flex shrink-0 items-center justify-end gap-2 px-5 pt-2 pb-4',
     handle:
-      'relative flex shrink-0 cursor-grab touch-none items-center justify-center py-3 select-none data-[dragging]:cursor-grabbing',
+      'relative flex shrink-0 cursor-grab items-center justify-center py-3 data-[dragging]:cursor-grabbing',
     handleBar: 'block h-[0.3rem] w-8 rounded-full bg-default',
     closeTrigger: [
       'absolute top-3 right-3 z-10 cursor-(--cursor-interactive) text-muted outline-none no-highlight',

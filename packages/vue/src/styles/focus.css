@@ -1,0 +1,160 @@
+/* Focus and invalid rings of the BEM component classes. Imported into `@layer utilities` (after the components block),
+ * so a ring beats the component layer and a plain user utility like `ring-1`, as the tv utilities did; every state sits
+ * inside `:where()`, leaving one class of specificity, so a user state utility like `focus-visible:ring-4` still wins.
+ * Both hold only while these styles are imported after `@import "tailwindcss"`, as documented.
+ *
+ * Only the rings live here (`status-focused*`, `status-invalid-field`, focus box-shadows and outlines); the focus
+ * backgrounds, borders and radii stay with their block. Within a block the order keeps the old precedence: where the
+ * invalid ring won over the focus ring it comes after it, otherwise before. The focused branch of
+ * `status-invalid-field` (`&:focus` etc.) adds a pseudo-class, so a focused invalid field shows the danger ring. */
+
+/* === Buttons === */
+.h-button:where(:focus-visible),
+.h-toggle-button:where(:focus-visible),
+.h-number-stepper__button:where(:focus-visible) {
+  @apply status-focused;
+}
+
+/* === Calendar === */
+.h-calendar__nav-button:where(:focus-visible),
+.h-calendar-year-picker__trigger:where(:focus-visible),
+.h-calendar-year-picker__year-cell:where(:focus-visible) {
+  @apply status-focused;
+}
+
+/* HeroUI: `:focus-visible:not([data-focused])` (RAC's own flag) or `[data-focus-visible]`. Reka sets `data-focused` on
+ * the focused date with no visibility flag, so the browser's `:focus-visible` alone carries it. */
+.h-calendar__cell:where(:focus-visible) {
+  @apply status-focused;
+}
+
+/* RangeCalendar flags pointer focus with `data-pointer-focus` (see calendar.css) */
+:where(
+    .h-calendar__range-cell:is(
+      :focus-visible:not([data-pointer-focus]),
+      [data-focus-visible='true']
+    )
+  )
+  .h-calendar__range-cell-button {
+  @apply status-focused;
+}
+
+/* === Checkbox, Radio, Switch and their button groups === */
+:where(.h-checkbox:has(:focus-visible)) .h-checkbox__control,
+:where(.h-checkbox-button-group__item:focus-visible) .h-checkbox__control,
+:where(.h-radio__content:focus-visible) .h-radio__control,
+:where(.h-radio-button-group__item:focus-visible) .h-radio__control,
+:where(.h-switch:has(:focus-visible)) .h-switch__control,
+.h-checkbox-button-group__item:where(:focus-visible),
+.h-radio-button-group__item:where(:focus-visible) {
+  @apply status-focused;
+}
+
+:where(.h-checkbox[data-invalid='true']:not([data-selected='true'], [data-indeterminate='true']))
+  .h-checkbox__control,
+:where(.h-radio[data-invalid='true']) .h-radio__control {
+  @apply status-invalid-field;
+}
+
+/* === Fields: the invalid ring wins over the focus ring === */
+.h-input:where(:focus),
+.h-text-area:where(:focus),
+.h-number-field__group:where(:focus-within),
+.h-search-field__group:where(:focus-within) {
+  @apply status-focused-field;
+}
+
+.h-select__trigger:where([data-focus-visible='true']) {
+  @apply status-focused;
+}
+
+.h-input:where([data-invalid='true']),
+.h-text-area:where([data-invalid='true']),
+.h-number-field__group:where([data-invalid='true']),
+.h-search-field__group:where([data-invalid='true']),
+:where([data-slot='select'][data-invalid='true']) .h-select__trigger {
+  @apply status-invalid-field;
+}
+
+/* After the input's invalid ring: the ComboBox input's focus ring replaces its unfocused outline */
+:where(.h-combo-box) [data-slot='input']:where(:focus) {
+  @apply status-focused-field;
+}
+
+.h-combo-box__trigger:where(:focus-visible:not([data-focused]), [data-focus-visible='true']) {
+  @apply ring-2 ring-focus ring-offset-2 ring-offset-background;
+}
+
+/* === Fields: the focus ring wins over the invalid outline (the focused invalid branch still turns it danger) === */
+.h-input-group:where([data-invalid='true']),
+.h-number-stepper__group:where([data-invalid='true']),
+.h-date-input-group:where([data-invalid='true']) {
+  @apply status-invalid-field;
+}
+
+/* The ring follows the input/textarea only, not an interactive prefix/suffix button */
+.h-input-group:where(
+  :has([data-slot='input-group-input']:focus, [data-slot='input-group-textarea']:focus)
+) {
+  @apply status-focused-field;
+}
+
+.h-number-stepper__group:where(:has([data-slot='number-stepper-input']:focus-visible)) {
+  @apply status-focused;
+}
+
+/* No field ring while the (Date|DateRange)Picker trigger button itself holds focus: it draws its own ring */
+.h-date-input-group:where(
+  :focus-within:not(
+    :has([data-slot='date-picker-trigger']:focus, [data-slot='date-range-picker-trigger']:focus)
+  )
+) {
+  @apply status-focused-field;
+}
+
+/* === Collections === */
+.h-dropdown__item:where([data-focus-visible='true']),
+.h-list-box__item:where([data-focus-visible='true']),
+.h-tag:where(:focus-visible, [data-focus-visible='true']),
+.h-tabs__tab:where(:focus-visible),
+.h-tabs__scroll-prev:where(:focus-visible),
+.h-tabs__scroll-next:where(:focus-visible),
+.h-pagination__link:where(:focus-visible),
+.h-tree__link:where(:focus-visible),
+.h-rich-table__drag-handle:where(:focus-visible) {
+  @apply status-focused;
+}
+
+.h-rich-table:where(:focus-visible) {
+  @apply outline-2 -outline-offset-2 outline-focus;
+}
+
+/* A pinned header's edge line wins over its focus ring, as the tv `data-[edge]` utility did */
+.h-table__column:where(:focus-visible),
+.h-table__cell:where(:focus-visible),
+.h-rich-table__th:where(:focus-visible:not([data-edge='left'], [data-edge='right'])) {
+  @apply shadow-[inset_0_0_0_2px_var(--focus)];
+}
+
+/* Row focus: one continuous inset ring split across the cells. `:nth-child(n)` matches every cell with one class of
+ * specificity, so the first/last/only rules after it win. */
+:where(
+  .h-table__row:focus-visible,
+  .h-rich-table__tbody > [data-slot='rich-table-row']:focus-visible
+) {
+  & > :nth-child(n) {
+    @apply shadow-[inset_0_2px_0_0_var(--focus),inset_0_-2px_0_0_var(--focus)];
+  }
+
+  & > :first-child {
+    @apply shadow-[inset_2px_0_0_0_var(--focus),inset_0_2px_0_0_var(--focus),inset_0_-2px_0_0_var(--focus)];
+  }
+
+  & > :last-child {
+    @apply shadow-[inset_-2px_0_0_0_var(--focus),inset_0_2px_0_0_var(--focus),inset_0_-2px_0_0_var(--focus)];
+  }
+
+  & > :only-child {
+    @apply shadow-[inset_0_0_0_2px_var(--focus)];
+  }
+}

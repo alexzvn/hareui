@@ -1,0 +1,51 @@
+/* TextArea: ported from @heroui/styles components/textarea.css. */
+.h-text-area {
+  @apply min-h-[38px] rounded-field px-3 py-2 text-base text-field-foreground shadow-field outline-none placeholder:text-field-placeholder sm:text-sm;
+  @apply border-(length:--border-width-field) border-(--field-border);
+
+  /* The secondary variant swaps these */
+  --textarea-bg: var(--field-background, var(--default));
+  --textarea-bg-hover: var(--field-hover);
+  --textarea-bg-focus: var(--field-focus);
+  background-color: var(--textarea-bg);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  &:hover:not(:focus):not(:focus-visible) {
+    @media (hover: hover) {
+      background-color: var(--textarea-bg-hover);
+      border-color: var(--field-border-hover);
+    }
+  }
+
+  &:focus {
+    border-color: var(--field-border-focus);
+    background-color: var(--textarea-bg-focus);
+  }
+
+  &[data-invalid='true'] {
+    background-color: var(--textarea-bg-focus);
+  }
+
+  &:disabled,
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-text-area--secondary {
+  @apply shadow-none;
+  --textarea-bg: var(--default);
+  --textarea-bg-hover: var(--default-hover);
+  --textarea-bg-focus: var(--default);
+}
+
+.h-text-area--full-width {
+  @apply w-full;
+}

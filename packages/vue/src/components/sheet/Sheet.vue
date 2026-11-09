@@ -70,7 +70,7 @@
                     v-if="showHandle && placement !== 'top'"
                     aria-hidden="true"
                     data-slot="sheet-handle"
-                    :class="ui.handle()"
+                    :class="ui.handle({ class: 'touch-none select-none' })"
                     v-bind="handleDrag"
                   >
                     <span data-slot="sheet-handle-bar" :class="ui.handleBar()" />
@@ -111,7 +111,7 @@
                     v-if="showHandle && placement === 'top'"
                     aria-hidden="true"
                     data-slot="sheet-handle"
-                    :class="ui.handle()"
+                    :class="ui.handle({ class: 'touch-none select-none' })"
                     v-bind="handleDrag"
                   >
                     <span data-slot="sheet-handle-bar" :class="ui.handleBar()" />

@@ -29,7 +29,7 @@
       />
     </template>
     <!-- Last, so the dots and bars keep their `nth-child` delays and widths. -->
-    <span :class="ui.label()">{{ label ?? t('chatLoader.label') }}</span>
+    <span :class="ui.label({ class: 'sr-only' })">{{ label ?? t('chatLoader.label') }}</span>
   </div>
 </template>
 

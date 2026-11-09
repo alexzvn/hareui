@@ -240,6 +240,10 @@ Use the `class` prop to style the root and the `ui` prop to style each part.
 
 <ComponentPreview name="rich-table/custom-styles" minHeight="360px" />
 
+### CSS classes
+
+The root carries `.h-rich-table` plus `.h-rich-table--{primary|secondary}`. Parts carry `.h-rich-table__{content|thead|tbody|tfoot|th|td|drag-column|drag-cell|drag-handle|empty|loading|corners}`, and the body adds `.h-rich-table__tbody--{primary|secondary}` to match the variant. The sticky header and footer add `.h-rich-table__thead--sticky` / `.h-rich-table__tfoot--sticky`, plus `.h-rich-table__thead--masked` / `.h-rich-table__tfoot--masked` in the primary variant. The corners add `.h-rich-table__corners--masked` in the primary variant and `.h-rich-table__corners--hidden` when an ancestor scrolls the rows. The loading bar adds `.h-rich-table__thead--loading` with `--loading-{color}` and `--loading-{animation}`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Global theme override
 
 ```ts

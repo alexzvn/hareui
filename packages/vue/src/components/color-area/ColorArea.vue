@@ -18,7 +18,7 @@
       <ColorAreaArea
         data-slot="color-area"
         :style="areaStyle"
-        :class="ui.base()"
+        :class="ui.base({ class: 'relative' })"
         @pointerdown.capture="onPointerDownCapture"
         @keyup="onKeyup"
       >

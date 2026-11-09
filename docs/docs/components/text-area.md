@@ -89,6 +89,10 @@ app.use(
 
 - `base` → `[data-slot="textarea"]` – Underlying `<textarea>` element styling
 
+### CSS classes
+
+The root carries `.h-text-area` plus `.h-text-area--secondary` and `.h-text-area--full-width` from the matching props. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Hover**: `:hover` (when not focused)

@@ -179,6 +179,10 @@ app.use(
 - `align="start"` – aligns tab content to the start
 - `align="end"` – aligns tab content to the end
 
+### CSS classes
+
+The root carries `.h-tabs` plus `.h-tabs--secondary` (none for the default `primary`), `.h-tabs--{horizontal|vertical}` and `.h-tabs--{start|end}` (none for the default `center`). Parts carry `.h-tabs__{list-container|list|tab|indicator|panel|separator|scroll-prev|scroll-next}`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 Tabs sets these data attributes:

@@ -14,7 +14,7 @@ export default {
     avatar: 'shrink-0 rounded-full bg-default',
     bars: 'flex min-w-0 flex-1 flex-col gap-2',
     bar: 'w-full rounded-[calc(var(--radius)*0.75)] bg-default nth-2:w-[85%] last:w-[65%]',
-    label: 'sr-only',
+    label: '',
   },
   variants: {
     variant: {

@@ -198,6 +198,10 @@ Set `virtualize` to render only the rows in view, for trees with hundreds or tho
 
 <ComponentPreview name="tree/virtualize" />
 
+## CSS classes
+
+The root carries `.h-tree` plus `.h-tree--{sm|md|lg}`, `.h-tree--accent` (none for the default color) and, for `showGuideLines`, `.h-tree--guide-lines-{false|hover}`. Rows carry `.h-tree__link` inside `.h-tree__item`; their parts carry `.h-tree__{guide-line|chevron|label|trailing|drop-indicator}`, nested lists `.h-tree__group` and the empty state `.h-tree__empty`. Icon and checkbox parts keep plain utilities. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ## Motion
 
 Folders open and close with a 200ms height and opacity animation, and the chevron turns in 150ms. Both are switched off when the user prefers reduced motion.

@@ -16,7 +16,7 @@ describe('Vite plugin ui theme', () => {
     globals.__HAREUI_UI__ = { button: { slots: { base: 'px-1' }, defaultVariants: { size: 'lg' } } }
     const classes = mount(Button).classes()
     expect(classes).toContain('px-1')
-    expect(classes).toContain('text-base')
+    expect(classes).toContain('h-button--lg')
   })
 
   it('sits below createHareUI({ ui }) and the class prop', () => {

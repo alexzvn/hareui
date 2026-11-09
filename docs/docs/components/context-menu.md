@@ -185,6 +185,10 @@ Submenu popovers use the `popover` and `menu` classes too. Their `data-slot` val
 - `variant="default"` - Default item styling (per item, `item.variant`)
 - `variant="danger"` - Danger item styling: label and indicators in the danger colour
 
+### CSS classes
+
+The menu reuses the [Dropdown](/docs/components/dropdown) classes (`.h-dropdown__menu`, `.h-dropdown__item`, …). The trigger carries `.h-context-menu__trigger`, the popover `.h-context-menu__popover`, and items and separators add `.h-context-menu__item` and `.h-context-menu__separator`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Open**: `[data-state="open"]` on the trigger area and the popover

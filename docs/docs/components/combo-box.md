@@ -219,6 +219,10 @@ app.use(
 
 ## Styling Reference
 
+### CSS classes
+
+The root carries `.h-combo-box` (plus `.h-combo-box--full-width`), the input group carries `.h-combo-box__input-group` (plus `.h-combo-box__input-group--full-width`) and the trigger carries `.h-combo-box__trigger`. They live in `@layer components`, so any utility from `class` or `ui` wins over them. The text input carries the [Input](/docs/components/input) classes. The value and popover keep Tailwind utilities.
+
 ### Interactive States
 
 - **Hover**: `:hover` or `[data-hovered="true"]` on the trigger

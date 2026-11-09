@@ -67,7 +67,7 @@
     >
       <XmarkIcon :class="ui.removeIcon()" />
     </button>
-    <span aria-live="polite" :class="ui.live()">{{ statusText }}</span>
+    <span aria-live="polite" :class="ui.live({ class: 'sr-only' })">{{ statusText }}</span>
   </div>
 </template>
 

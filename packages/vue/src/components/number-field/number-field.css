@@ -1,0 +1,133 @@
+/* NumberField: ported from @heroui/styles components/number-field.css. */
+.h-number-field {
+  @apply flex flex-col gap-1;
+
+  &:is([data-invalid='true'], [aria-invalid='true']) [data-slot='description'] {
+    @apply hidden;
+  }
+
+  & [data-slot='label'] {
+    @apply w-fit;
+  }
+}
+
+.h-number-field__group {
+  @apply grid h-9 grid-cols-[1fr] items-center overflow-hidden rounded-field text-sm text-field-foreground shadow-field outline-none;
+  @apply border-(length:--border-width-field) border-(--field-border);
+
+  /* The secondary variant swaps these */
+  --number-field-group-bg: var(--field-background, var(--default));
+  --number-field-group-bg-hover: var(--field-hover);
+  --number-field-group-bg-focus: var(--field-focus);
+  background-color: var(--number-field-group-bg);
+
+  &:has([slot='decrement']) {
+    @apply grid-cols-[40px_1fr];
+  }
+
+  &:has([slot='increment']) {
+    @apply grid-cols-[1fr_40px];
+  }
+
+  &:has([slot='decrement']):has([slot='increment']) {
+    @apply grid-cols-[40px_1fr_40px];
+  }
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  &:hover:not(:focus-within) {
+    @media (hover: hover) {
+      background-color: var(--number-field-group-bg-hover);
+      border-color: var(--field-border-hover);
+    }
+  }
+
+  &:focus-within {
+    border-color: var(--field-border-focus);
+    background-color: var(--number-field-group-bg-focus);
+  }
+
+  /* After focus: the invalid border wins over the focus one */
+  &[data-invalid='true'] {
+    background-color: var(--number-field-group-bg-focus);
+    border-color: var(--color-field-border-invalid);
+  }
+
+  &[data-disabled],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+
+  /* Autofill paints only the inner <input>; lift the highlight onto the group */
+  &:has([data-slot='number-field-input']:autofill) {
+    background-color: var(--field-focus);
+    border-color: var(--field-border-focus);
+  }
+}
+
+.h-number-field__input {
+  @apply min-w-0 rounded-none border-0 bg-transparent px-3 py-2 text-base tabular-nums shadow-none outline-none sm:text-sm;
+
+  /* Neutralise the browser's per-input autofill paint; the group above carries the highlight */
+  &:autofill {
+    @apply shadow-[inset_0_0_0_1000px_transparent] caret-(--field-foreground);
+    -webkit-text-fill-color: var(--field-foreground);
+    transition: background-color 9999s ease-in-out 0s;
+  }
+}
+
+.h-number-field__increment-button,
+.h-number-field__decrement-button {
+  @apply flex h-full w-10 items-center justify-center rounded-none bg-transparent text-field-foreground outline-none;
+  @apply border-solid border-(length:--border-width-field) border-(--field-border);
+
+  /* motion-reduce must come after the transition */
+  transition:
+    background-color 150ms var(--ease-smooth),
+    border-color 150ms var(--ease-smooth);
+  @apply motion-reduce:transition-none;
+
+  cursor: var(--cursor-interactive);
+
+  &:active,
+  &[data-pressed='true'] {
+    @apply bg-field-foreground/10;
+    transform: scale(0.97);
+  }
+
+  &:disabled,
+  &[data-disabled],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+
+  & [data-slot='number-field-increment-button-icon'],
+  & [data-slot='number-field-decrement-button-icon'] {
+    @apply size-4;
+  }
+}
+
+.h-number-field__increment-button {
+  @apply rounded-s-none rounded-e-field border-s border-field-placeholder/15;
+}
+
+.h-number-field__decrement-button {
+  @apply rounded-s-field rounded-e-none border-e border-field-placeholder/15;
+}
+
+.h-number-field__group--secondary {
+  @apply shadow-none;
+  --number-field-group-bg: var(--default);
+  --number-field-group-bg-hover: var(--default-hover);
+  --number-field-group-bg-focus: var(--default);
+}
+
+.h-number-field--full-width,
+.h-number-field__group--full-width {
+  @apply w-full;
+}

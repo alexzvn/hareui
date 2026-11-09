@@ -377,8 +377,7 @@ const groupUiProps = computed<DateInputGroupProps['ui']>(() => ({
   segment: props.ui?.segment,
   // HeroUI's `.date-picker .date-input-group__suffix { pointer-events-auto }`: the suffix slot
   // defaults to `pointer-events-none` (it's normally just a decorative icon), but here it holds the
-  // clickable trigger button. `pointer-events-none`/`-auto` share no variant prefix, so twMerge drops
-  // the group default cleanly.
+  // clickable trigger button. The utility wins over the group's `@layer components` CSS.
   suffix: 'pointer-events-auto',
 }))
 </script>

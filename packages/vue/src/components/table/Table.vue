@@ -38,7 +38,12 @@
               :aria-sort="column.sortable ? (sortDirectionFor(column) ?? 'none') : undefined"
               :tabindex="headerTabindex(headerIndexOf(columnIndex))"
               :style="widthStyle(column)"
-              :class="ui.column({ override: [column.class, getAlignClass(column)] })"
+              :class="
+                ui.column({
+                  class: column.resizable && 'relative',
+                  override: [column.class, getAlignClass(column)],
+                })
+              "
               @click="toggleSort(column)"
               @focus="onHeaderFocus(headerIndexOf(columnIndex))"
               @keydown.enter.prevent="toggleSort(column)"
@@ -100,7 +105,7 @@
                 :aria-valuemax="column.maxWidth"
                 tabindex="0"
                 :data-resizing="resizingKey === column.key ? 'true' : undefined"
-                :class="ui.columnResizer()"
+                :class="ui.columnResizer({ class: RESIZER_CLASS })"
                 @click.stop
                 @pointerdown.stop="onResizerPointerDown(column, $event)"
                 @keydown="onResizerKeydown(column, $event)"
@@ -253,6 +258,9 @@ const sortDescriptorModel = defineModel<TableSortDescriptor | undefined>('sortDe
 
 defineSlots<TableSlots<T>>()
 const slots = useSlots()
+
+// The resize handle's hit area and position, so it can be dragged under `unstyled`; the theme draws its line
+const RESIZER_CLASS = 'absolute inset-y-0 end-0 w-4 translate-x-1/2 cursor-col-resize touch-none'
 
 const ui = useComponentUI('table', {
   theme,

@@ -7,9 +7,8 @@
 // dropped entirely so the steady-state (data-state="open" the whole time it's visible) element
 // doesn't carry a stray `transition-property`.
 // `.date-input-group__suffix { pointer-events-auto }` (HeroUI's own `.date-picker` nesting) is applied
-// instead as a direct `ui.suffix` override on `DatePicker.vue`'s embedded `DateInputGroup`: `pointer-events-none`
-// and `pointer-events-auto` share no variant prefix there, so twMerge's own group-conflict resolution
-// drops the former cleanly (no CSS specificity race needed, unlike the nav-button-icon reset below).
+// instead as a direct `ui.suffix` utility on `DatePicker.vue`'s embedded `DateInputGroup`, which wins over the
+// group's `@layer components` CSS (no CSS specificity race needed, unlike the nav-button-icon reset below).
 export default {
   slots: {
     base: 'inline-flex flex-col gap-1',

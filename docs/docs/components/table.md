@@ -148,6 +148,10 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 
 Use the `variant` prop to change the look: `primary` (the default, rows on a secondary surface) or `secondary`. To restyle further, use `class`, `ui` or `createHareUI`.
 
+### CSS classes
+
+The root carries `.h-table` plus `.h-table--{primary|secondary}`; every other part carries `.h-table__{part}` (`__scroll-container`, `__content`, `__header`, `__column`, `__body`, `__row`, `__cell`, `__column-resizer`, `__footer`, …). They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Hover**: `:hover` (row background change)

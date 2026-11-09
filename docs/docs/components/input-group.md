@@ -243,6 +243,10 @@ app.use(
 - `variant: 'secondary'` – without shadow, `bg-default`, for use in surfaces
 - `fullWidth: true` – `w-full`
 
+### CSS classes
+
+The root carries `.h-input-group` plus `.h-input-group--secondary` and `.h-input-group--full-width`. The parts carry `.h-input-group__input`, `.h-input-group__prefix` and `.h-input-group__suffix`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Hover**: `:hover` while the input isn't focused

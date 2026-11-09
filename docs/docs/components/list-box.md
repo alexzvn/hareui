@@ -142,6 +142,10 @@ app.use(
 
 ## Styling Reference
 
+### CSS classes
+
+The root carries `.h-list-box`; options carry `.h-list-box__item`, their checkmark `.h-list-box__indicator` (plus `--danger` on danger items), and sections, headers, separators and the empty state `.h-list-box__{section|header|separator|empty-state}`. Select, ComboBox and Autocomplete popovers render the same classes. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Hover**: `:hover` or `[data-hovered="true"]` on the item

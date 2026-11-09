@@ -180,13 +180,17 @@ app.use(
 - `incrementButton` → `[data-slot="number-field-increment-button"]` – button that increments the value
 - `decrementButton` → `[data-slot="number-field-decrement-button"]` – button that decrements the value
 
-The group's background follows `--number-field-group-bg-current`, so a plain `bg-*` class in `ui.group` wins in every state. The `secondary` variant reads these variables:
+The group's styles are `.h-number-field__group` classes in `@layer components`, so a plain `bg-*` class in `ui.group` wins in every state. Every variant reads these variables, and the `secondary` variant swaps them:
 
 - `--number-field-group-bg`
 - `--number-field-group-bg-hover`
 - `--number-field-group-bg-focus`
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
+
+### CSS classes
+
+The root carries `.h-number-field` (plus `.h-number-field--full-width`). The group carries `.h-number-field__group` (plus `--secondary` and `--full-width` modifiers), and the parts carry `.h-number-field__input`, `.h-number-field__increment-button` and `.h-number-field__decrement-button`.
 
 ### Interactive States
 

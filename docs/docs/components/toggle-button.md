@@ -66,6 +66,10 @@ app.use(
 
 The root carries `data-slot="toggle-button"`. `ui` key: `base`.
 
+### CSS classes
+
+ToggleButton's own styles are `.h-toggle-button` classes in `@layer components`, so any utility you add wins. The root carries `.h-toggle-button` plus `.h-toggle-button--ghost`, `.h-toggle-button--{sm|lg}` and `.h-toggle-button--icon-only` when those props are set. Colors and height come from `--toggle-button-bg`, `--toggle-button-bg-hover`, `--toggle-button-bg-pressed`, `--toggle-button-fg`, their `-selected` counterparts and `--toggle-button-height`.
+
 ### Interactive States
 
 - **Selected**: `[data-selected="true"]` (accent background and foreground)

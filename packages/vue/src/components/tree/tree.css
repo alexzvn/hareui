@@ -1,0 +1,99 @@
+/* Tree: rows are the focusable treeitems. Utilities from the slot-scope `ui` win over it too. Size, colour and
+ * guide-line modifiers sit on the root. */
+
+/* The virtualizer's rows are absolutely positioned, so as a flex item it would shrink to the viewport and cut the
+ * scroll range short */
+.h-tree {
+  @apply relative isolate flex flex-col overflow-auto p-1 scrollbar outline-none [&>[data-reka-virtualizer]]:shrink-0;
+}
+
+/* Adjacent selected rows share their inner corners. Rows sit one per `li`, so siblings are matched on the `li`. */
+.h-tree__item {
+  @apply w-full;
+  @apply [&:has(+*>[data-selected])>[data-selected]]:rounded-b-none;
+  @apply [*:has(>[data-selected])+&>[data-selected]]:rounded-t-none;
+}
+
+.h-tree__group {
+  @apply flex flex-col transition-[height,opacity] duration-200 ease-out motion-reduce:transition-none;
+}
+
+.h-tree__link {
+  @apply relative flex w-full items-center gap-0.5 rounded-lg text-start text-foreground select-none;
+  @apply ps-[calc(var(--tree-px)+(var(--tree-level)-1)*var(--tree-indent))] pe-(--tree-px);
+  @apply cursor-(--cursor-interactive) outline-none no-highlight;
+  @apply hover:bg-default active:bg-default data-selected:bg-default;
+  @apply data-disabled:status-disabled;
+  @apply data-dragging:opacity-40;
+  @apply data-[drop-target=inside]:bg-accent-soft data-[drop-target=inside]:outline-2 data-[drop-target=inside]:-outline-offset-2 data-[drop-target=inside]:outline-accent data-[drop-target=inside]:outline-solid;
+}
+
+.h-tree__guide-line {
+  @apply pointer-events-none absolute inset-y-0 start-[calc(var(--tree-px)+10px+var(--tree-guide)*var(--tree-indent))] w-px bg-current/10 select-none;
+}
+
+.h-tree__chevron {
+  @apply flex size-5 shrink-0 items-center justify-center rounded-md data-leaf:invisible;
+}
+
+.h-tree__label {
+  @apply min-w-0 flex-1 truncate px-0.5;
+}
+
+.h-tree__trailing {
+  @apply inline-flex shrink-0 items-center gap-1.5 text-muted;
+}
+
+.h-tree__drop-indicator {
+  @apply pointer-events-none absolute end-0 start-[calc(var(--tree-px)+(var(--tree-level)-1)*var(--tree-indent))] h-0.5 rounded-full bg-accent;
+  @apply data-[position=after]:-bottom-px data-[position=before]:-top-px;
+}
+
+.h-tree__empty {
+  @apply px-(--tree-px) text-muted;
+}
+
+.h-tree--accent {
+  .h-tree__link {
+    @apply data-selected:bg-accent-soft data-selected:text-accent-soft-foreground;
+  }
+
+  .h-tree__trailing {
+    @apply group-data-selected/row:text-accent-soft-foreground;
+  }
+}
+
+.h-tree--sm {
+  @apply [--tree-indent:10px] [--tree-px:6px];
+
+  .h-tree__link,
+  .h-tree__empty {
+    @apply py-0.5 text-xs;
+  }
+}
+
+.h-tree--md {
+  @apply [--tree-indent:12px] [--tree-px:8px];
+
+  .h-tree__link,
+  .h-tree__empty {
+    @apply py-1 text-sm;
+  }
+}
+
+.h-tree--lg {
+  @apply [--tree-indent:24px] [--tree-px:10px];
+
+  .h-tree__link,
+  .h-tree__empty {
+    @apply py-1.5 text-base;
+  }
+}
+
+.h-tree--guide-lines-false .h-tree__guide-line {
+  @apply hidden;
+}
+
+.h-tree--guide-lines-hover .h-tree__guide-line {
+  @apply opacity-0 transition-opacity duration-150 group-hover/tree:opacity-100 motion-reduce:transition-none;
+}

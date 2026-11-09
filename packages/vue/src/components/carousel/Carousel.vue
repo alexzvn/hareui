@@ -12,8 +12,17 @@
     @keydown="onKeyDown"
   >
     <div data-slot="carousel-wrapper" :class="ui.wrapper()">
-      <div ref="emblaRef" data-slot="carousel-viewport" :class="ui.viewport()">
-        <div data-slot="carousel-container" :class="ui.container()">
+      <div
+        ref="emblaRef"
+        data-slot="carousel-viewport"
+        :class="ui.viewport({ class: 'overflow-hidden' })"
+      >
+        <div
+          data-slot="carousel-container"
+          :class="
+            ui.container({ class: orientation === 'vertical' ? 'flex flex-col' : 'flex flex-row' })
+          "
+        >
           <div
             v-for="(item, index) in items"
             :key="index"

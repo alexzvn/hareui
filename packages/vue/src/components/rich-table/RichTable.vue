@@ -1,17 +1,26 @@
 <template>
-  <Primitive ref="rootRef" :as="props.as" data-slot="rich-table" v-bind="$attrs" :class="ui.root()">
+  <Primitive
+    ref="rootRef"
+    :as="props.as"
+    data-slot="rich-table"
+    v-bind="$attrs"
+    :class="ui.root({ class: isExternalScroll ? 'relative' : 'relative overflow-auto' })"
+  >
     <table ref="tableRef" data-slot="rich-table-content" :class="ui.base()">
       <caption
         v-if="props.caption || !!slots.caption"
         data-slot="rich-table-caption"
-        :class="ui.caption()"
+        :class="ui.caption({ class: 'sr-only' })"
       >
         <slot name="caption">
           {{ props.caption }}
         </slot>
       </caption>
 
-      <thead data-slot="rich-table-header" :class="ui.thead()">
+      <thead
+        data-slot="rich-table-header"
+        :class="ui.thead({ class: isHeaderSticky && STICKY_HEADER_CLASS })"
+      >
         <tr
           v-for="(headerGroup, headerGroupIndex) in tableApi.getHeaderGroups()"
           :key="headerGroup.id"
@@ -24,9 +33,12 @@
             :rowspan="tableApi.getHeaderGroups().length"
             :data-pinned="dragColumnPinned"
             data-slot="rich-table-drag-column"
-            :class="ui.dragColumn()"
+            :class="ui.dragColumn({ class: dragColumnPinned && PINNED_DRAG_CLASS })"
           >
-            <span data-slot="rich-table-drag-column-label" :class="ui.dragColumnLabel()">
+            <span
+              data-slot="rich-table-drag-column-label"
+              :class="ui.dragColumnLabel({ class: 'sr-only' })"
+            >
               {{ t('richTable.dragColumn') }}
             </span>
           </th>
@@ -43,7 +55,10 @@
             :aria-sort="getAriaSort(tableApi, header)"
             data-slot="rich-table-column"
             :class="
-              ui.th({ override: resolveValue(getColumnMeta(header.column)?.class?.th, header) })
+              ui.th({
+                class: getHeaderCellClass(header.column.getIsPinned()),
+                override: resolveValue(getColumnMeta(header.column)?.class?.th, header),
+              })
             "
             :style="[
               getColumnStyles(header.column, header.getSize()),
@@ -100,7 +115,7 @@
                   v-if="props.reorderable"
                   :data-pinned="dragColumnPinned"
                   data-slot="rich-table-drag-cell"
-                  :class="ui.dragCell()"
+                  :class="ui.dragCell({ class: dragColumnPinned && PINNED_DRAG_CLASS })"
                 >
                   <button
                     v-if="entry.row.depth === 0"
@@ -109,7 +124,7 @@
                     :aria-label="t('dragAndDrop.handle', { item: getRowLabel(entry.row) })"
                     :aria-description="t('dragAndDrop.instructions')"
                     data-slot="rich-table-drag-handle"
-                    :class="ui.dragHandle()"
+                    :class="ui.dragHandle({ class: 'touch-none select-none' })"
                     @pointerdown="onHandlePointerDown($event, entry.row.id)"
                     @keydown.capture="onHandleKeyDown($event, entry.row.id)"
                   >
@@ -126,7 +141,10 @@
                   :rowspan="resolveValue(getColumnMeta(cell.column)?.rowspan?.td, cell)"
                   data-slot="rich-table-cell"
                   :class="
-                    ui.td({ override: resolveValue(getColumnMeta(cell.column)?.class?.td, cell) })
+                    ui.td({
+                      class: getPinnedCellClass(columnLayouts.get(cell.column.id)?.pinned),
+                      override: resolveValue(getColumnMeta(cell.column)?.class?.td, cell),
+                    })
                   "
                   :style="[
                     columnLayouts.get(cell.column.id)?.styles,
@@ -180,7 +198,11 @@
         <slot name="body-bottom" />
       </tbody>
 
-      <tfoot v-if="hasFooter" data-slot="rich-table-footer" :class="ui.tfoot()">
+      <tfoot
+        v-if="hasFooter"
+        data-slot="rich-table-footer"
+        :class="ui.tfoot({ class: isFooterSticky && STICKY_FOOTER_CLASS })"
+      >
         <tr
           v-for="(footerGroup, footerGroupIndex) in tableApi.getFooterGroups()"
           :key="footerGroup.id"
@@ -192,7 +214,7 @@
             :rowspan="tableApi.getFooterGroups().length"
             :data-pinned="dragColumnPinned"
             data-slot="rich-table-drag-column"
-            :class="ui.dragColumn()"
+            :class="ui.dragColumn({ class: dragColumnPinned && PINNED_DRAG_CLASS })"
           />
 
           <th
@@ -205,7 +227,10 @@
             :role="isEmptyFooter(header, slots) ? 'cell' : undefined"
             data-slot="rich-table-column"
             :class="
-              ui.th({ override: resolveValue(getColumnMeta(header.column)?.class?.th, header) })
+              ui.th({
+                class: getHeaderCellClass(header.column.getIsPinned()),
+                override: resolveValue(getColumnMeta(header.column)?.class?.th, header),
+              })
             "
             :style="[
               getColumnStyles(header.column, header.getSize()),
@@ -358,6 +383,27 @@ const { tableApi, columns } = useRichTableApi(props, {
 const isExternalScroll = computed(
   () => typeof props.virtualize === 'object' && !!props.virtualize.getScrollElement,
 )
+
+// Positioning the table needs to work, so it survives `unstyled`: the root is the scroll container (unless an
+// external element scrolls the rows), pinned columns stick, sticky header and footer stick, and a header cell anchors
+// absolutely positioned content such as a column resize handle. Pinned classes go on pinned cells only.
+const PINNED_CELL_CLASS = {
+  left: 'sticky z-2 left-(--rich-table-pin)',
+  right: 'sticky z-2 right-(--rich-table-pin)',
+}
+
+const getPinnedCellClass = (pinned: 'left' | 'right' | false | undefined) =>
+  pinned ? PINNED_CELL_CLASS[pinned] : undefined
+
+const getHeaderCellClass = (pinned: 'left' | 'right' | false | undefined) =>
+  pinned ? `relative ${PINNED_CELL_CLASS[pinned]}` : 'relative'
+
+const PINNED_DRAG_CLASS = 'sticky left-0 z-2'
+const STICKY_HEADER_CLASS = 'sticky top-0 inset-x-0 z-3'
+const STICKY_FOOTER_CLASS = 'sticky bottom-0 inset-x-0 z-3'
+
+const isHeaderSticky = computed(() => props.sticky === true || props.sticky === 'header')
+const isFooterSticky = computed(() => props.sticky === true || props.sticky === 'footer')
 
 const ui = useComponentUI('richTable', {
   theme,

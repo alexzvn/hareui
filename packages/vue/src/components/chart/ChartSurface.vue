@@ -29,7 +29,11 @@
           aria-hidden="true"
         />
       </svg>
-      <div :ref="setOverlay" data-slot="chart-overlay" :class="chart.classes('overlay')" />
+      <div
+        :ref="setOverlay"
+        data-slot="chart-overlay"
+        :class="['pointer-events-none absolute inset-0', chart.classes('overlay')]"
+      />
     </div>
     <slot v-if="legend && !isLegendFirst" name="legend" />
   </div>

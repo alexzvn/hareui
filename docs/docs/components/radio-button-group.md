@@ -163,8 +163,8 @@ The default indicator is the radio dot from [RadioGroup](/docs/components/radio-
 - `base` → `[data-slot="radio-button-group"]` – root (`flex flex-col gap-3`, or `grid` with `layout="grid"`)
 - `item` → `[data-slot="radio-button-group-item"]` – the card
 - `indicator` → `[data-slot="radio-button-group-indicator"]` – indicator in the top-end corner
-- `control` → `[data-slot="radio-control"]` – default radio circle. It extends the [RadioGroup](/docs/components/radio-group) `control` classes with the card's hover, press and focus states
-- `controlIndicator` → `[data-slot="radio-indicator"]` – dot in the radio circle. It extends the RadioGroup `indicator` classes
+- `control` → `[data-slot="radio-control"]` – default radio circle. It carries the [RadioGroup](/docs/components/radio-group) `control` classes; the card restates their hover, press and focus states
+- `controlIndicator` → `[data-slot="radio-indicator"]` – dot in the radio circle. It carries the RadioGroup `indicator` classes
 - `content` → `[data-slot="radio-button-group-item-content"]` – icon and text area
 - `icon` → `[data-slot="radio-button-group-item-icon"]` – leading icon (SVGs are sized to `size-6`)
 - `itemText` → `[data-slot="radio-button-group-item-text"]` – title, description and default slot
@@ -172,6 +172,10 @@ The default indicator is the radio dot from [RadioGroup](/docs/components/radio-
 - `itemDescription` → `[data-slot="radio-button-group-item-description"]` – description
 
 The card radius comes from `--radio-button-group-item-radius` (default `var(--radius-2xl)`).
+
+### CSS classes
+
+RadioButtonGroup's own styles are `.h-radio-button-group` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-radio-button-group` (plus `.h-radio-button-group--grid` with `layout="grid"`). Each card carries `.h-radio-button-group__item`, and its parts carry `__indicator` (plus `__indicator--custom` for a custom icon), `__content`, `__icon`, `__text`, `__label` and `__description`. With an icon, `__content--with-icon` and `__text--with-icon` are added.
 
 ### Interactive States
 

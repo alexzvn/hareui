@@ -191,6 +191,10 @@ Item labels and descriptions render with the [Label](/docs/components/label) and
 - `variant="default"` - Default item styling (per item, `item.variant`)
 - `variant="danger"` - Danger item styling: label and indicators in the danger colour
 
+### CSS classes
+
+The popover carries `.h-dropdown__popover` and the menu `.h-dropdown__menu`; items carry `.h-dropdown__item`, their indicators `.h-dropdown__indicator` and `.h-dropdown__submenu-indicator` (plus `--danger` on danger items), and sections, headers and separators `.h-dropdown__{section|header|separator}`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+
 ### Interactive States
 
 The component supports both CSS pseudo-classes and data attributes for flexibility:

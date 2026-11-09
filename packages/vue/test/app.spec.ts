@@ -4,6 +4,7 @@ import { defineComponent, h, inject, provide } from 'vue'
 
 import App from '@/components/app/App.vue'
 import { usePortal } from '@/composables/usePortal'
+import type { HareUIConfig } from '@/config'
 import { hareUIConfigKey } from '@/config'
 
 import { expectAccessible } from './a11y'
@@ -48,6 +49,52 @@ describe('app', () => {
     expect(el.attributes('data-to')).toBe('#from-config')
     expect(el.attributes('data-ui')).toBe('yes')
     expect(probe({ portal: '#own' }, { portal: '#from-config' }).attributes('data-to')).toBe('#own')
+  })
+
+  it('writes portal on its provided config through to the parent config', () => {
+    const parentConfig: HareUIConfig = {}
+    let config: HareUIConfig = {}
+    const Writer = defineComponent({
+      setup() {
+        config = inject(hareUIConfigKey, {})
+        return () => null
+      },
+    })
+
+    const Parent = defineComponent({
+      setup() {
+        provide(hareUIConfigKey, parentConfig)
+        return () => h(App, { toaster: null }, () => h(Writer))
+      },
+    })
+
+    mount(Parent)
+
+    expect(() => (config.portal = '#written')).not.toThrow()
+    expect(parentConfig.portal).toBe('#written')
+  })
+
+  it('keeps its portal prop ahead of a portal written to its config', () => {
+    const parentConfig: HareUIConfig = {}
+    let config: HareUIConfig = {}
+    const Writer = defineComponent({
+      setup() {
+        config = inject(hareUIConfigKey, {})
+        return () => null
+      },
+    })
+
+    const Parent = defineComponent({
+      setup() {
+        provide(hareUIConfigKey, parentConfig)
+        return () => h(App, { toaster: null, portal: '#own' }, () => h(Writer))
+      },
+    })
+
+    mount(Parent)
+    config.portal = '#written'
+
+    expect(config.portal).toBe('#own')
   })
 
   it('renders the app unwrapped next to its toast region, and passes axe', async () => {

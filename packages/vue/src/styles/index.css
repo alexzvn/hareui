@@ -14,6 +14,41 @@
 @import './toast.css';
 @import './dashboard.css';
 
+/* Component classes (BEM), one file per component, all in `@layer components`. That layer sits below utilities, so
+ * any utility from `class`, `ui` or a parent theme wins over a component class without tailwind-merge. Component
+ * headers only note extra sources of such utilities. */
+@import '../components/button/button.css' layer(components);
+@import '../components/calendar/calendar.css' layer(components);
+@import '../components/combo-box/combo-box.css' layer(components);
+@import '../components/date-input-group/date-input-group.css' layer(components);
+@import '../components/field-error/field-error.css' layer(components);
+@import '../components/input/input.css' layer(components);
+@import '../components/input-group/input-group.css' layer(components);
+@import '../components/label/label.css' layer(components);
+@import '../components/number-field/number-field.css' layer(components);
+@import '../components/number-stepper/number-stepper.css' layer(components);
+@import '../components/search-field/search-field.css' layer(components);
+@import '../components/select/select.css' layer(components);
+@import '../components/text-area/text-area.css' layer(components);
+@import '../components/dropdown/dropdown.css' layer(components);
+@import '../components/context-menu/context-menu.css' layer(components);
+@import '../components/list-box/list-box.css' layer(components);
+@import '../components/pagination/pagination.css' layer(components);
+@import '../components/rich-table/rich-table.css' layer(components);
+@import '../components/table/table.css' layer(components);
+@import '../components/tabs/tabs.css' layer(components);
+@import '../components/tag-group/tag-group.css' layer(components);
+@import '../components/tree/tree.css' layer(components);
+@import '../components/checkbox/checkbox.css' layer(components);
+@import '../components/checkbox-button-group/checkbox-button-group.css' layer(components);
+@import '../components/radio-group/radio-group.css' layer(components);
+@import '../components/radio-button-group/radio-button-group.css' layer(components);
+@import '../components/switch/switch.css' layer(components);
+@import '../components/toggle-button/toggle-button.css' layer(components);
+/* Focus and invalid rings of the component classes: in the utilities layer, so they beat a plain user utility like
+ * `ring-1` (as the tv utilities did) yet lose to a user state utility like `focus-visible:ring-4` */
+@import './focus.css' layer(utilities);
+
 /* Utilities and variants */
 @import './utilities.css';
 @import './variants.css';

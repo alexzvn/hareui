@@ -67,7 +67,8 @@
         :aria-label="t('searchField.clear')"
         tabindex="-1"
         :disabled="disabled || readonly || undefined"
-        :class="ui.clearButton()"
+        :inert="isEmpty || undefined"
+        :class="ui.clearButton({ class: isEmpty && 'pointer-events-none' })"
         @mousedown.prevent
         @click="onClear"
       >
@@ -79,7 +80,8 @@
         :aria-label="t('searchField.clear')"
         tabindex="-1"
         :disabled="disabled || readonly || undefined"
-        :class="ui.clearButton()"
+        :inert="isEmpty || undefined"
+        :class="ui.clearButton({ class: isEmpty && 'pointer-events-none' })"
         @mousedown.prevent
         @click="onClear"
       />

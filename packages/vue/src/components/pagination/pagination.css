@@ -1,0 +1,85 @@
+/* Pagination: ported from @heroui/styles components/pagination.css. */
+.h-pagination {
+  @apply flex w-full flex-col items-center justify-between gap-4 sm:flex-row;
+}
+
+.h-pagination__summary {
+  @apply flex items-center gap-2 self-start text-sm text-muted sm:self-center;
+}
+
+.h-pagination__content {
+  @apply flex items-center gap-1 self-start sm:self-center;
+}
+
+.h-pagination__item {
+  @apply inline-flex;
+}
+
+/* Width and height are split (`w-9 h-9`, not `size-9`) so `--nav` replaces the width at every breakpoint */
+.h-pagination__link {
+  @apply relative isolate inline-flex h-9 w-9 origin-center items-center justify-center rounded-3xl text-sm font-medium whitespace-nowrap outline-none select-none no-highlight md:h-8 md:w-8;
+  @apply cursor-(--cursor-interactive);
+  @apply [transition:transform_250ms_var(--ease-smooth),background-color_100ms_var(--ease-out),box-shadow_100ms_var(--ease-out)] transform-gpu motion-reduce:transition-none;
+
+  /* Ghost button tokens; the current page is a tertiary button */
+  --pagination-link-bg: transparent;
+  --pagination-link-bg-hover: var(--default-hover);
+  --pagination-link-bg-pressed: var(--default-hover);
+  --pagination-link-fg: var(--default-foreground);
+  @apply data-[active=true]:[--pagination-link-bg:var(--default)];
+
+  @apply bg-(--pagination-link-bg) text-(--pagination-link-fg);
+  @apply disabled:status-disabled aria-disabled:status-disabled;
+  @apply hover:bg-(--pagination-link-bg-hover);
+  @apply active:bg-(--pagination-link-bg-pressed) active:[transform:scale(0.97)];
+}
+
+/* Previous / Next */
+.h-pagination__link--nav {
+  @apply w-auto gap-1.5 px-2.5 md:w-auto;
+}
+
+/* Icon wrappers flip in RTL */
+.h-pagination__icon {
+  @apply rtl:rotate-180;
+}
+
+.h-pagination__ellipsis {
+  @apply inline-flex h-9 w-9 items-center justify-center text-sm text-muted select-none md:h-8 md:w-8;
+}
+
+.h-pagination--sm {
+  .h-pagination__summary {
+    @apply text-xs;
+  }
+
+  .h-pagination__link {
+    @apply h-8 w-8 text-xs md:h-7 md:w-7 active:[transform:scale(0.98)];
+  }
+
+  .h-pagination__link--nav {
+    @apply w-auto px-2 md:w-auto;
+  }
+
+  .h-pagination__ellipsis {
+    @apply h-8 w-8 text-xs md:h-7 md:w-7;
+  }
+}
+
+.h-pagination--lg {
+  .h-pagination__summary {
+    @apply text-base;
+  }
+
+  .h-pagination__link {
+    @apply h-10 w-10 text-base md:h-9 md:w-9 active:[transform:scale(0.96)];
+  }
+
+  .h-pagination__link--nav {
+    @apply w-auto px-3 md:w-auto;
+  }
+
+  .h-pagination__ellipsis {
+    @apply h-10 w-10 text-base md:h-9 md:w-9;
+  }
+}

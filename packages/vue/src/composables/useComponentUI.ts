@@ -66,6 +66,27 @@ const getComponent = (
   return component
 }
 
+// theme → slot functions without classes, so only the user layers apply. Variants add nothing, so one result serves
+// every variant key; cached apart from the styled results so the two never collide.
+const unstyledSlots = new WeakMap<object, Record<string, SlotFunction>>()
+
+const getUnstyledSlots = (theme: ThemeShape) => {
+  let slots = unstyledSlots.get(theme)
+  if (!slots) {
+    const empty = Object.fromEntries(Object.keys(theme.slots).map((slot) => [slot, '']))
+    slots = tv({ slots: empty })() as unknown as Record<string, SlotFunction>
+    unstyledSlots.set(theme, slots)
+  }
+
+  return slots
+}
+
+const isUnstyled = (config: HareUIConfig, name: keyof Themes) => {
+  const option = config.unstyled
+
+  return Array.isArray(option) ? option.includes(name) : option === true
+}
+
 // Keyed over every prop (compound variants may reference any of them); undefined if a value is an object.
 const memoKey = (props: Record<string, unknown>) => {
   let key = ''
@@ -166,6 +187,8 @@ export type UseComponentUIOptions<T extends ThemeShape> = {
  * option, then by the app config (`createHareUI({ ui })`), resolved for the current variant props.
  * Each slot function then layers the call's `class`, `props.ui[slot]`, `props.class` (on `classSlot`)
  * and the call's `override`. The tv component is shared by every instance of the same app config and theme.
+ * When the app config's `unstyled` covers `name`, the theme and both `ui` options are skipped: only the call's
+ * and the props' classes remain.
  */
 export const useComponentUI = <T extends ThemeShape>(
   name: keyof Themes,
@@ -175,9 +198,11 @@ export const useComponentUI = <T extends ThemeShape>(
   const component = getComponent(config, { name, base: getBase(name, theme) })
 
   // Memoized per variant key, so the layered slots below are rebuilt only when the variant result changes.
-  const slots = computed(
-    () => resolve(component.value, variantProps()) as Record<string, SlotFunction>,
-  )
+  const slots = computed(() => {
+    if (isUnstyled(config, name)) return getUnstyledSlots(theme)
+
+    return resolve(component.value, variantProps()) as Record<string, SlotFunction>
+  })
 
   return computed(() => layerSlots(slots.value, { props, classSlot }) as ComponentUI<T>)
 }

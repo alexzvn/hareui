@@ -1,0 +1,120 @@
+/* CheckboxButtonGroup: card-style checkbox buttons. */
+.h-checkbox-button-group {
+  @apply flex flex-col gap-3;
+  --checkbox-button-group-item-radius: var(--radius-2xl);
+}
+
+.h-checkbox-button-group--grid {
+  @apply grid;
+
+  & > :is([data-slot='label'], [data-slot='description'], [data-slot='field-error']) {
+    @apply col-span-full;
+  }
+}
+
+/* The card carries the checkbox state attributes (`data-selected`, `data-invalid`, `data-readonly` = "true") */
+.h-checkbox-button-group__item {
+  @apply relative flex flex-col items-stretch gap-4 px-5 py-4 text-start text-sm font-medium text-foreground;
+  @apply rounded-(--checkbox-button-group-item-radius) border border-border bg-surface;
+  @apply outline-none no-highlight;
+  cursor: var(--cursor-interactive);
+
+  &[data-selected='true'] {
+    @apply border-transparent ring-2;
+
+    &:not(:focus-visible) {
+      @apply ring-accent;
+    }
+  }
+
+  /* Reka sets `data-disabled=""` on the control (group or item disabled) */
+  &[data-disabled] {
+    @apply status-disabled;
+  }
+
+  /* Default checkmark, as Checkbox's root sizes it */
+  & [data-slot='checkbox-default-indicator--checkmark'] {
+    @apply size-2.5 stroke-[2.5px] text-accent-foreground transition-all duration-200 motion-reduce:transition-none;
+  }
+
+  &[data-selected='true'] [data-slot='checkbox-default-indicator--checkmark'] {
+    transition: stroke-dashoffset 150ms linear 15ms;
+  }
+}
+
+.h-checkbox-button-group__icon {
+  @apply shrink-0;
+
+  :where(& svg) {
+    @apply size-6;
+  }
+}
+
+.h-checkbox-button-group__content {
+  @apply flex min-w-0 flex-col;
+}
+
+.h-checkbox-button-group__content--with-icon {
+  @apply flex-row items-center gap-4;
+}
+
+/* Without an icon the title and description sit directly in the content column */
+.h-checkbox-button-group__text {
+  @apply contents min-w-0 flex-col gap-0.5;
+}
+
+/* Icon on the left, title and description stacked on the right */
+.h-checkbox-button-group__text--with-icon {
+  @apply flex;
+}
+
+.h-checkbox-button-group__label {
+  @apply text-sm font-medium text-foreground;
+}
+
+.h-checkbox-button-group__description {
+  @apply text-xs text-wrap wrap-break-word text-muted;
+}
+
+/* Out-ranks `.h-checkbox__control`'s `relative` when the default indicator is Checkbox's control */
+.h-checkbox-button-group__item > .h-checkbox-button-group__indicator {
+  @apply absolute end-4 top-3;
+}
+
+/* Custom icon: accent colored, fades in while selected */
+.h-checkbox-button-group__indicator--custom {
+  @apply text-accent opacity-0;
+  transition: opacity 150ms ease-out;
+  @apply motion-reduce:transition-none;
+
+  :where(& svg) {
+    @apply size-5;
+  }
+
+  .h-checkbox-button-group__item[data-selected='true'] & {
+    @apply opacity-100;
+  }
+}
+
+/* Default indicator: Checkbox's control, whose states key on the Checkbox root, so the card restates them */
+.h-checkbox-button-group__item {
+  &:not([data-readonly='true'][data-selected='true']):hover .h-checkbox__control {
+    @apply border-field-border-hover;
+  }
+
+  &:hover .h-checkbox__control::before {
+    @apply bg-accent-hover;
+  }
+
+  &[data-selected='true'] .h-checkbox__control {
+    @apply border-transparent text-accent-foreground;
+
+    &::before {
+      @apply scale-100 opacity-100;
+    }
+  }
+
+  &[data-selected='true'] .h-checkbox__indicator {
+    @apply border-accent-foreground;
+  }
+}

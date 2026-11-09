@@ -1,0 +1,127 @@
+/* RadioButtonGroup: card-style radio buttons. */
+.h-radio-button-group {
+  @apply flex flex-col gap-3;
+  --radio-button-group-item-radius: var(--radius-2xl);
+}
+
+.h-radio-button-group--grid {
+  @apply grid;
+
+  & > :is([data-slot='label'], [data-slot='description'], [data-slot='field-error']) {
+    @apply col-span-full;
+  }
+}
+
+/* The card carries the radio state attributes (`data-selected`, `data-invalid`, `data-readonly` = "true") */
+.h-radio-button-group__item {
+  @apply relative flex flex-col items-stretch gap-4 px-5 py-4 text-start text-sm font-medium text-foreground;
+  @apply rounded-(--radio-button-group-item-radius) border border-border bg-surface;
+  @apply outline-none no-highlight;
+  cursor: var(--cursor-interactive);
+
+  &[data-selected='true'] {
+    @apply border-transparent ring-2;
+
+    &:not(:focus-visible) {
+      @apply ring-accent;
+    }
+  }
+
+  /* Reka sets `data-disabled=""` on the radio (group or item disabled) */
+  &[data-disabled] {
+    @apply status-disabled;
+  }
+}
+
+.h-radio-button-group__icon {
+  @apply shrink-0;
+
+  :where(& svg) {
+    @apply size-6;
+  }
+}
+
+.h-radio-button-group__content {
+  @apply flex min-w-0 flex-col;
+}
+
+.h-radio-button-group__content--with-icon {
+  @apply flex-row items-center gap-4;
+}
+
+.h-radio-button-group__text {
+  @apply flex min-w-0 flex-col;
+}
+
+.h-radio-button-group__text--with-icon {
+  @apply gap-0.5;
+}
+
+.h-radio-button-group__label {
+  @apply text-sm font-medium text-foreground;
+}
+
+.h-radio-button-group__description {
+  @apply text-xs text-wrap wrap-break-word text-muted;
+}
+
+.h-radio-button-group__indicator {
+  @apply absolute end-4 top-3;
+}
+
+/* Custom icon: accent colored, fades in while selected */
+.h-radio-button-group__indicator--custom {
+  @apply text-accent opacity-0;
+  transition: opacity 150ms ease-out;
+  @apply motion-reduce:transition-none;
+
+  :where(& svg) {
+    @apply size-5;
+  }
+
+  .h-radio-button-group__item[data-selected='true'] & {
+    @apply opacity-100;
+  }
+}
+
+/* Default indicator: RadioGroup's dot, whose states key on its own row markup, so the card restates them */
+.h-radio-button-group__item {
+  &:not([data-readonly='true']):hover .h-radio__control {
+    @apply border-field-border-hover;
+  }
+
+  &:active .h-radio__control {
+    @apply scale-95;
+  }
+
+  &[data-selected='true'] .h-radio__control {
+    @apply border-transparent bg-accent;
+  }
+
+  &[data-selected='true']:active .h-radio__control {
+    @apply bg-accent-hover;
+  }
+
+  &:not([data-readonly='true']):not([data-selected='true']):hover
+    .h-radio__indicator:empty::before {
+    @apply bg-field-hover;
+  }
+
+  &[data-selected='true'] .h-radio__indicator:empty::before {
+    @apply bg-accent-foreground;
+    scale: 0.4286;
+  }
+
+  &[data-selected='true']:active .h-radio__indicator:empty::before {
+    scale: 0.5714;
+  }
+
+  &:not([data-selected='true']) .h-radio__indicator--secondary:empty::before {
+    background-color: var(--radio-control-bg);
+  }
+
+  &:not([data-readonly='true']):not([data-selected='true']):hover
+    .h-radio__indicator--secondary:empty::before {
+    background-color: var(--radio-control-bg-hover);
+  }
+}

@@ -1,0 +1,124 @@
+/* Tabs: ported from @heroui/styles components/tabs.css. Variant modifiers sit on the root; their rules reach through
+ * the list container only, so Tabs nested in a panel keep their own variant. */
+.h-tabs {
+  @apply flex gap-2 data-[orientation=horizontal]:flex-col data-[orientation=vertical]:flex-row;
+}
+
+.h-tabs__list-container {
+  @apply relative bg-default [border-radius:calc(var(--radius)*2.5)];
+}
+
+/* Overflow chevrons; Tabs.vue shows each (`v-show`) while there's hidden content on that side */
+.h-tabs__scroll-prev,
+.h-tabs__scroll-next {
+  @apply absolute z-2 inline-flex size-4 cursor-(--cursor-interactive) items-center justify-center rounded-full border-0 bg-transparent p-0 text-foreground outline-none;
+  @apply [transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none;
+  @apply [@media(hover:hover)]:hover:opacity-70;
+}
+
+.h-tabs__list {
+  @apply isolate inline-flex p-1 data-[orientation=horizontal]:w-max data-[orientation=horizontal]:min-w-full data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col data-[orientation=vertical]:gap-1;
+}
+
+.h-tabs__tab {
+  @apply relative flex h-8 w-full items-center justify-center rounded-3xl px-4 text-center text-sm font-medium text-muted outline-none no-highlight;
+  @apply z-[1] cursor-(--cursor-interactive);
+  @apply [transition:color_150ms_var(--ease-smooth),background-color_150ms_var(--ease-smooth),box-shadow_150ms_var(--ease-out),opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none;
+  @apply data-[state=active]:text-segment-foreground disabled:status-disabled data-disabled:status-disabled aria-disabled:status-disabled data-[orientation=vertical]:min-w-20;
+}
+
+/* `left-0`, not `start-0`: `--tabs-indicator-x` is measured from the list's left edge, in RTL too */
+.h-tabs__indicator {
+  @apply absolute top-0 left-0 -z-1 rounded-3xl bg-segment shadow-surface;
+  @apply cursor-(--cursor-interactive) text-center text-sm leading-5 font-medium text-segment-foreground;
+  @apply [transition-duration:250ms] [transition-property:translate,width,height] [transition-timing-function:var(--ease-out-fluid)] motion-reduce:transition-none;
+  @apply h-(--tabs-indicator-height) w-(--tabs-indicator-width) translate-x-(--tabs-indicator-x) translate-y-(--tabs-indicator-y);
+}
+
+.h-tabs__panel {
+  @apply w-full p-2 outline-none;
+}
+
+.h-tabs__separator {
+  @apply pointer-events-none absolute rounded-sm bg-muted/25;
+  @apply [transition:opacity_150ms_var(--ease-smooth)] motion-reduce:transition-none;
+  @apply data-[orientation=horizontal]:start-0 data-[orientation=horizontal]:top-1/4 data-[orientation=horizontal]:h-1/2 data-[orientation=horizontal]:w-px;
+  @apply data-[orientation=vertical]:start-[5%] data-[orientation=vertical]:top-0 data-[orientation=vertical]:h-px data-[orientation=vertical]:w-[90%];
+}
+
+.h-tabs--start > .h-tabs__list-container {
+  .h-tabs__tab {
+    @apply justify-start text-start;
+  }
+
+  .h-tabs__indicator {
+    @apply text-start;
+  }
+}
+
+.h-tabs--end > .h-tabs__list-container {
+  .h-tabs__tab {
+    @apply justify-end text-end;
+  }
+
+  .h-tabs__indicator {
+    @apply text-end;
+  }
+}
+
+.h-tabs--secondary > .h-tabs__list-container {
+  @apply rounded-none bg-transparent;
+
+  .h-tabs__list {
+    @apply p-0;
+  }
+
+  .h-tabs__tab {
+    @apply rounded-none data-[state=active]:text-foreground;
+  }
+
+  .h-tabs__indicator {
+    @apply rounded-none bg-accent text-foreground shadow-none;
+  }
+
+  .h-tabs__separator {
+    @apply hidden;
+  }
+}
+
+.h-tabs--horizontal > .h-tabs__list-container {
+  > .h-tabs__scroll-prev {
+    @apply start-1 top-1/2 -translate-y-1/2 rtl:rotate-180;
+  }
+
+  > .h-tabs__scroll-next {
+    @apply end-1 top-1/2 -translate-y-1/2 rtl:rotate-180;
+  }
+}
+
+.h-tabs--vertical > .h-tabs__list-container {
+  > .h-tabs__scroll-prev {
+    @apply top-1 left-1/2 -translate-x-1/2;
+  }
+
+  > .h-tabs__scroll-next {
+    @apply bottom-1 left-1/2 -translate-x-1/2;
+  }
+}
+
+/* The secondary indicator is a line under the selected tab (horizontal) or beside it (vertical) */
+.h-tabs--secondary.h-tabs--horizontal > .h-tabs__list-container {
+  @apply border-b border-border;
+
+  .h-tabs__indicator {
+    @apply top-auto bottom-0 h-0.5 translate-y-0;
+  }
+}
+
+.h-tabs--secondary.h-tabs--vertical > .h-tabs__list-container {
+  @apply border-s border-border;
+
+  .h-tabs__indicator {
+    @apply start-0 w-0.5 translate-x-0;
+  }
+}

@@ -19,7 +19,6 @@ describe('class precedence', () => {
     expect(classes).toContain('px-3')
     expect(classes).not.toContain('px-1')
     expect(classes).not.toContain('px-2')
-    expect(classes).not.toContain('px-4')
   })
 
   it('app config beats the theme default', () => {
@@ -28,7 +27,6 @@ describe('class precedence', () => {
     })
 
     expect(wrapper.classes()).toContain('px-1')
-    expect(wrapper.classes()).not.toContain('px-4')
   })
 
   it('app config can change default variants', () => {
@@ -36,11 +34,13 @@ describe('class precedence', () => {
       global: { plugins: [createHareUI({ ui: { button: { defaultVariants: { size: 'lg' } } } })] },
     })
 
-    expect(wrapper.classes()).toContain('[--button-height:--spacing(11)]')
+    expect(wrapper.classes()).toContain('h-button--lg')
   })
 
   it('uses the default theme without the plugin', () => {
-    expect(mount(Button).classes()).toContain('px-4')
+    expect(mount(Button).classes()).toEqual(
+      expect.arrayContaining(['h-button', 'h-button--primary']),
+    )
   })
 })
 
@@ -66,31 +66,22 @@ describe('font-size merging', () => {
   })
 })
 
-describe('responsive sizes', () => {
-  // Breakpoint values only set CSS variables; a single unprefixed class consumes them, so one user
-  // class evicts it and wins at every breakpoint.
-  it('lets a plain height class replace the responsive button height', () => {
+describe('BEM classes under user utilities', () => {
+  // The component styles live in `h-*` classes in `@layer components`; a user utility wins by layer order, so
+  // tailwind-merge must keep the block class next to a conflicting-looking `h-*` / `text-*` utility.
+  it('keeps the button block class under a height utility', () => {
     const classes = mount(Button, { props: { class: 'h-11' } }).classes()
-    expect(classes.filter((c) => /(^|:)h-/.test(c))).toEqual(['h-11'])
+    expect(classes).toEqual(expect.arrayContaining(['h-button', 'h-button--primary', 'h-11']))
   })
 
-  it('lets a named text size replace the responsive input font size and line-height', () => {
+  it('keeps the input block class under a named text size', () => {
     const classes = mount(Input, { attrs: { class: 'text-lg' } }).classes()
-    expect(classes.filter((c) => /(^|:)text-(xs|sm|base|lg|xl|\(length)/.test(c))).toEqual([
-      'text-lg',
-    ])
+    expect(classes).toEqual(expect.arrayContaining(['h-input', 'text-lg']))
   })
 
-  it('keeps the responsive line-height under an arbitrary length size, like HeroUI', () => {
-    // HeroUI's `.input` sizes sit in a lower layer, so `text-[18px]` only replaces the font-size.
-    // Tailwind sorts `text-[18px]` after the variable class, so its font-size wins.
-    const classes = mount(Input, { attrs: { class: 'text-[18px]' } }).classes()
-    expect(classes).toEqual(
-      expect.arrayContaining([
-        'text-[18px]',
-        'text-(length:--input-font-size)/(--input-line-height)',
-      ]),
-    )
+  it('keeps the input block class under an arbitrary length size', () => {
+    const classes = mount(Input, { attrs: { class: 'text-[18px] h-12' } }).classes()
+    expect(classes).toEqual(expect.arrayContaining(['h-input', 'text-[18px]', 'h-12']))
   })
 })
 
@@ -98,11 +89,10 @@ describe('shared theme components', () => {
   it('restyles a mounted instance when the app config `ui` changes', async () => {
     const config: HareUIConfig = reactive({})
     const wrapper = mount(Button, { global: { provide: { [hareUIConfigKey as symbol]: config } } })
-    expect(wrapper.classes()).toContain('px-4')
+    expect(wrapper.classes()).not.toContain('px-1')
     config.ui = { button: { slots: { base: 'px-1' } } }
     await nextTick()
     expect(wrapper.classes()).toContain('px-1')
-    expect(wrapper.classes()).not.toContain('px-4')
   })
 
   it('resolves variants per instance', async () => {
@@ -116,7 +106,7 @@ describe('shared theme components', () => {
       { global: { plugins: [createHareUI()] } },
     )
 
-    const lg = '[--button-height:--spacing(11)]'
+    const lg = 'h-button--lg'
     expect(wrapper.find('#a').classes()).not.toContain(lg)
     expect(wrapper.find('#b').classes()).toContain(lg)
     size.value = 'lg'

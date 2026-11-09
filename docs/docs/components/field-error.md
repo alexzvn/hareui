@@ -121,6 +121,10 @@ app.use(
 
 Inside a checkbox, switch or radio, the error is stacked like a description, without the collapse transition.
 
+### CSS classes
+
+The root carries `.h-field-error`. It lives in `@layer components`, so any utility from `class` or `ui` wins over it.
+
 ## API Reference
 
 ### Props

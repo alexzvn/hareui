@@ -20,7 +20,11 @@
         :data-panel="panel ? undefined : 'false'"
         role="status"
         aria-live="polite"
-        :class="panel ? chart.classes('tooltip') : 'sr-only'"
+        :class="
+          panel
+            ? ['pointer-events-none absolute top-0 left-0', chart.classes('tooltip')]
+            : 'sr-only'
+        "
         :style="wrapperStyle"
       >
         <template v-if="panel || isActive">

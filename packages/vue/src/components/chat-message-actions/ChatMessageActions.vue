@@ -40,7 +40,7 @@
       </Button>
     </ActionMenu>
     <!-- A focused button's new name isn't announced, so the copy is announced here. -->
-    <span role="status" :class="ui.status()">{{
+    <span role="status" :class="ui.status({ class: 'sr-only' })">{{
       isCopied ? t('chatMessageActions.copied') : ''
     }}</span>
     <slot />

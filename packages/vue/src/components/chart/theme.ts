@@ -2,7 +2,8 @@
 export const chartSlots = {
   base: 'relative w-full',
   surface: 'block overflow-visible rounded-sm outline-none focus-visible:status-focused',
-  overlay: 'pointer-events-none absolute inset-0',
+  // The overlay and tooltip positioning sits in ChartSurface / ChartTooltip, so it survives `unstyled`.
+  overlay: '',
   grid: 'stroke-muted [stroke-opacity:0.15]',
   axis: '',
   // Axis and tick lines are hidden; set `stroke-*` here to show them.
@@ -19,7 +20,7 @@ export const chartSlots = {
   /** `ChartLabel` text. */
   label: 'fill-muted text-[10px]',
   // Positioned with a translate in SVG (physical) coordinates.
-  tooltip: 'pointer-events-none absolute top-0 left-0 z-10',
+  tooltip: 'z-10',
   /** In-chart `ChartLegend` drawn from the root's `legend` prop. */
   legend: '',
 }

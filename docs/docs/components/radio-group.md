@@ -149,6 +149,10 @@ app.use(
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
+### CSS classes
+
+RadioGroup's own styles are `.h-radio-group` / `.h-radio` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-radio-group` plus `.h-radio-group--vertical` or `.h-radio-group--horizontal`. Each item carries `.h-radio`, and its slots carry `.h-radio__content`, `.h-radio__control` and `.h-radio__indicator`. `variant="secondary"` adds `.h-radio__control--secondary` and `.h-radio__indicator--secondary`. Items keep the `group/radio` class, so `group-data-[selected=true]/radio:` utilities work inside them.
+
 ### Interactive States
 
 RadioGroup sets these data attributes:

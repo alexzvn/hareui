@@ -197,7 +197,7 @@ app.use(
       rangeCalendar: {
         slots: {
           base: 'rounded-2xl border border-border bg-surface p-3 shadow-sm',
-          cell: 'rounded-lg',
+          cellButton: 'rounded-lg',
         },
       },
     },
@@ -206,6 +206,10 @@ app.use(
 ```
 
 ## Styling Reference
+
+### CSS classes
+
+RangeCalendar shares Calendar's classes: the root carries `.h-calendar .h-calendar--range`, and the header, grid and year picker carry Calendar's `.h-calendar__*` and `.h-calendar-year-picker__*` classes. Each day is a `.h-calendar__range-cell` (the range track) around a `.h-calendar__range-cell-button` (the day pill). Week and day views add `.h-calendar--week-view` / `.h-calendar--day-view` to the root. Day states come from the data attributes below, not from classes. The classes sit in `@layer components`, so any utility you pass through `class` or `ui` wins: a `rounded-*` on `cell` replaces the track's corner shapes.
 
 ### Interactive States
 

@@ -114,6 +114,70 @@ defineProps<{ label: string }>()
 </template>
 ```
 
+## Presets
+
+`defineAlias` makes a preset: a component that renders a HareUI component with your default props, `ui` and `class`. Use it when the same props repeat across the app.
+
+```ts [components/presets.ts]
+import { Button, defineAlias } from '@hareui/vue'
+
+export const DangerButton = defineAlias(Button, {
+  props: { variant: 'danger', size: 'sm' },
+  ui: { label: 'uppercase' },
+  class: 'min-w-24',
+})
+```
+
+```vue
+<template>
+  <DangerButton label="Delete" />
+  <DangerButton variant="primary" label="Archive" :ui="{ label: 'normal-case' }" />
+</template>
+```
+
+What you pass on the preset wins over its defaults:
+
+- Props and attributes replace the preset's value.
+- `ui` merges per slot. Your classes for a slot come after the preset's, so they win on conflicts.
+- `class` adds to the preset's classes.
+- A listener you pass replaces the preset's listener for the same event.
+
+Slots, `v-model` and template refs pass through to the wrapped component.
+
+A preset has the wrapped component's type, generics included. TypeScript doesn't know which props the preset sets, so a required prop stays required on the preset.
+
+### Registering presets globally
+
+Import a preset where you use it, or register it once with `createHareUI({ components })`:
+
+```ts [main.ts]
+import { createHareUI } from '@hareui/vue'
+import { createApp } from 'vue'
+
+import App from './App.vue'
+import { DangerButton } from './components/presets'
+
+createApp(App)
+  .use(createHareUI({ components: { DangerButton } }))
+  .mount('#app')
+```
+
+Declare the globals so templates type-check them:
+
+```ts [components.d.ts]
+import type { DangerButton } from './components/presets'
+
+declare module 'vue' {
+  interface GlobalComponents {
+    DangerButton: typeof DangerButton
+  }
+}
+
+export {}
+```
+
+To give a component another tag name without changing its defaults, use the Vite plugin's [`aliases`](/docs/getting-started/frameworks#vite-plugin-optional) option instead. It keeps tree-shaking and needs no registration.
+
 ## Custom Variants
 
 Extend a component's exported theme config with `tv()` to add variants the original doesn't have, instead of forking the component:

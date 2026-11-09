@@ -6,8 +6,8 @@
 // feeds only the one-shot `animate-in`/`animate-out` keyframes and the steady-state transition
 // properties are dropped.
 // `.date-range-picker .date-input-group__suffix/__prefix { pointer-events-auto }` is applied as a direct
-// `ui.suffix`/`ui.prefix` override on the embedded group in DateRangePicker.vue (twMerge drops the group's
-// `pointer-events-none` cleanly).
+// `ui.suffix`/`ui.prefix` utility on the embedded group in DateRangePicker.vue, which wins over the group's
+// `@layer components` CSS.
 export default {
   slots: {
     base: 'inline-flex flex-col gap-1',

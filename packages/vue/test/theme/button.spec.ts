@@ -14,17 +14,17 @@ describe('Button theme', () => {
     ['an avatar', { avatar: { fallback: 'MO' } }],
   ])('is square with only %s', (_, props) => {
     const wrapper = mount(Button, { props })
-    expect(wrapper.classes()).toContain('w-(--button-height)')
+    expect(wrapper.classes()).toContain('h-button--icon-only')
   })
 
   it('keeps its padding when an icon comes with a label', () => {
     const wrapper = mount(Button, { props: { leadingIcon: Star, label: 'Star' } })
-    expect(wrapper.classes()).not.toContain('w-(--button-height)')
+    expect(wrapper.classes()).not.toContain('h-button--icon-only')
   })
 
   it('keeps its padding when an icon comes with a default slot', () => {
     const wrapper = mount(Button, { props: { leadingIcon: Star }, slots: { default: 'Star' } })
-    expect(wrapper.classes()).not.toContain('w-(--button-height)')
+    expect(wrapper.classes()).not.toContain('h-button--icon-only')
   })
 
   it('renders a string trailing icon as the icon class', () => {

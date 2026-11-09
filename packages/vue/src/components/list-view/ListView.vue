@@ -52,7 +52,7 @@
 import type { VirtualItem, Virtualizer } from '@tanstack/vue-virtual'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import type { VNode } from 'vue'
-import { computed, getCurrentInstance, shallowRef, useSlots, useTemplateRef } from 'vue'
+import { computed, getCurrentInstance, shallowRef, useSlots, useTemplateRef, watch } from 'vue'
 
 import { useComponentUI } from '@/composables/useComponentUI'
 import { useLocale } from '@/composables/useLocale'
@@ -234,18 +234,27 @@ const getRowElement = (index: number) => {
   return children.find((el) => el.dataset.index === String(index)) ?? null
 }
 
-// Waits a few frames for the virtualizer to render a row it scrolled to
-const focusWhenRendered = (index: number) => {
-  let framesLeft = 10
+// Whether the virtualizer is scrolling to the focused row. That row renders at once as the kept focused row, then Vue
+// moves its node into the window when the scroll lands, which drops focus; so after every patch until then, focus
+// goes back to it unless the user has moved focus out of the list.
+let isScrollingToFocused = false
 
-  const attempt = () => {
+watch(
+  entries,
+  () => {
+    if (!isScrollingToFocused) return
+
+    const index = focusedIndex.value
     const el = getRowElement(index)
-    if (el) return el.focus()
-    if (framesLeft-- > 0) requestAnimationFrame(attempt)
-  }
+    const active = document.activeElement
+    const isFocusInList = !active || active === document.body || !!root.value?.contains(active)
+    if (el && isFocusInList && active !== el) el.focus()
 
-  requestAnimationFrame(attempt)
-}
+    const isInWindow = !!virtualizer?.value.getVirtualItems().some((row) => row.index === index)
+    if (index === -1 || isInWindow) isScrollingToFocused = false
+  },
+  { flush: 'post' },
+)
 
 const focusIndex = (index: number) => {
   const item = props.items[index]
@@ -253,10 +262,10 @@ const focusIndex = (index: number) => {
 
   focusedValue.value = item.value
   const el = getRowElement(index)
+  isScrollingToFocused = !el
   if (el) return el.focus()
 
   virtualizer?.value.scrollToIndex(index)
-  focusWhenRendered(index)
 }
 
 const getRowBox = (index: number): ListViewRowBox | undefined => {

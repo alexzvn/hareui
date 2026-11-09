@@ -129,6 +129,10 @@ app.use(
 
 > **Note:** The optional [Description](/docs/components/description) and [FieldError](/docs/components/field-error) children have their own themes. See their respective pages for customization options.
 
+### CSS classes
+
+Checkbox's own styles are `.h-checkbox` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-checkbox`, and the slots carry `.h-checkbox__content`, `.h-checkbox__control` and `.h-checkbox__indicator`. `variant="secondary"` adds `.h-checkbox__control--secondary` to the control. States are styled from the root's data attributes below, so there are no state classes.
+
 ### Interactive States
 
 Checkbox sets these data attributes on its root:

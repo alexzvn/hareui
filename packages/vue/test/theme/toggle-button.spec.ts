@@ -13,6 +13,14 @@ describe('ToggleButton theme', () => {
     })
 
     await nextTick()
-    expect(wrapper.get('[data-slot="toggle-button"]').classes()).toContain('px-3')
+    expect(wrapper.get('[data-slot="toggle-button"]').classes()).toContain('h-toggle-button--sm')
+  })
+
+  it('keeps a user class next to its own modifiers', () => {
+    const wrapper = mount(ToggleButton, { props: { variant: 'ghost', class: 'px-8' } })
+
+    const classes = wrapper.get('[data-slot="toggle-button"]').classes()
+    expect(classes).toContain('h-toggle-button--ghost')
+    expect(classes).toContain('px-8')
   })
 })

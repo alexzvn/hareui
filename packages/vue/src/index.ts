@@ -18,6 +18,8 @@ export type * from './types/chat'
 export type { CloseButtonOptions, CloseButtonProp } from './types/closeButton'
 export type { LinkBaseProps } from './types/link'
 export { tv } from './utils/tv'
+export { defineAlias } from './utils/defineAlias'
+export type { AliasPreset } from './utils/defineAlias'
 
 export * from './components/button'
 export * from './components/spinner'

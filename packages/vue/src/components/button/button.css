@@ -1,0 +1,155 @@
+/* Button: ported from @heroui/styles components/button.css. ButtonGroup's radii are utilities, so they win over it too.
+ */
+.h-button {
+  @apply relative isolate inline-flex w-fit origin-center items-center justify-center gap-2 rounded-3xl px-4 text-sm font-medium whitespace-nowrap outline-none select-none no-highlight;
+
+  /* Responsive height lives in a variable: parent themes resize a Button by setting `--button-height` */
+  --button-height: --spacing(10);
+  height: var(--button-height);
+
+  @variant md {
+    --button-height: --spacing(9);
+  }
+
+  /* motion-reduce must come after the transition */
+  transition:
+    transform 250ms var(--ease-smooth),
+    background-color 100ms var(--ease-out),
+    box-shadow 100ms var(--ease-out);
+  @apply transform-gpu motion-reduce:transition-none;
+
+  cursor: var(--cursor-interactive);
+
+  --button-bg: transparent;
+  --button-bg-hover: var(--button-bg);
+  --button-bg-pressed: var(--button-bg-hover);
+  --button-fg: currentColor;
+
+  background-color: var(--button-bg);
+  color: var(--button-fg);
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+
+  &[data-pending='true'] {
+    @apply status-pending;
+  }
+
+  /* RAC sets data-pressed on a menu trigger while its menu is open */
+  &:active,
+  &[data-pressed='true'] {
+    @apply will-change-transform;
+    background-color: var(--button-bg-pressed);
+    transform: scale(0.97);
+  }
+
+  /* After :active, so the hover background wins while pressing on hover-capable devices */
+  &:hover {
+    @media (hover: hover) {
+      background-color: var(--button-bg-hover);
+    }
+  }
+
+  & svg:not([data-slot='spinner'] svg, [data-slot='link-icon'] svg) {
+    @apply pointer-events-none -mx-0.5 my-0.5 size-5 shrink-0 self-center sm:my-1 sm:size-4;
+  }
+}
+
+/* `leadingIcon` / `trailingIcon`: the svg box above. A class-string icon (`icon-[…]`) is a utility sizing itself
+ * `1em`, which outranks this layer, so the font size carries the box size too; a size utility on the icon still wins. */
+.h-button__icon {
+  @apply pointer-events-none -mx-0.5 my-0.5 size-5 shrink-0 self-center text-[length:--spacing(5)] sm:my-1 sm:size-4 sm:text-[length:--spacing(4)];
+}
+
+.h-button--sm {
+  --button-height: --spacing(9);
+  @apply px-3;
+
+  @variant md {
+    --button-height: --spacing(8);
+  }
+
+  & svg:not([data-slot='spinner'] svg, [data-slot='link-icon'] svg),
+  & .h-button__icon {
+    @apply size-4 text-[length:--spacing(4)];
+  }
+
+  &:active,
+  &[data-pressed='true'] {
+    transform: scale(0.98);
+  }
+}
+
+.h-button--lg {
+  --button-height: --spacing(11);
+  @apply text-base;
+
+  @variant md {
+    --button-height: --spacing(10);
+  }
+
+  &:active,
+  &[data-pressed='true'] {
+    transform: scale(0.96);
+  }
+}
+
+.h-button--primary {
+  --button-bg: var(--accent);
+  --button-bg-hover: var(--accent-hover);
+  --button-bg-pressed: var(--accent-hover);
+  --button-fg: var(--accent-foreground);
+}
+
+.h-button--secondary {
+  --button-bg: var(--default);
+  --button-bg-hover: var(--default-hover);
+  --button-bg-pressed: var(--default-hover);
+  --button-fg: var(--accent-soft-foreground);
+}
+
+.h-button--tertiary {
+  --button-bg: var(--default);
+  --button-bg-hover: var(--default-hover);
+  --button-bg-pressed: var(--default-hover);
+}
+
+.h-button--ghost,
+.h-button--outline {
+  --button-bg: transparent;
+  --button-bg-hover: var(--default);
+  --button-bg-pressed: var(--default);
+  --button-fg: var(--default-foreground);
+}
+
+.h-button--outline {
+  @apply border border-border;
+  --button-bg-hover: color-mix(in srgb, var(--default) 60%, transparent);
+}
+
+.h-button--danger {
+  --button-bg: var(--danger);
+  --button-bg-hover: var(--danger-hover);
+  --button-bg-pressed: var(--danger-hover);
+  --button-fg: var(--danger-foreground);
+}
+
+.h-button--danger-soft {
+  --button-bg: var(--danger-soft);
+  --button-bg-hover: var(--danger-soft-hover);
+  --button-bg-pressed: var(--danger-soft-hover);
+  --button-fg: var(--danger-soft-foreground);
+}
+
+/* Square: the width follows the size's height */
+.h-button--icon-only {
+  @apply p-0;
+  width: var(--button-height);
+}
+
+/* After icon-only, so a full-width icon-only button stretches */
+.h-button--full-width {
+  @apply w-full;
+}

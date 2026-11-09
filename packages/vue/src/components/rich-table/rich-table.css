@@ -1,0 +1,217 @@
+/* RichTable: a data grid built on the HeroUI Table (../table/table.css). A column's `meta.class` utilities win over it
+ * too.
+ * Body-row styles live on `tbody` and target `[data-slot=rich-table-row]`, so header, footer and expanded rows (which
+ * share the `tr` slot) stay plain. Secondary-variant cell rules wrap the root modifier in `:where()` and reach the cells
+ * through child combinators: they keep the specificity of the slot class, and a table nested in an expanded row keeps
+ * its own variant. A variant rule that overrides a state colour re-applies the states that must still win over it.
+ * Positioning lives in the component markup so it survives `unstyled`: the root's scroll container, sticky pinned
+ * cells, sticky header and footer, and the header cell anchoring its resize handle.
+ * Reordering: rows drag by a 32px handle column holding a 16px `text-muted` grip (`text-foreground` on hover), headers
+ * drag themselves. A dragged row or header fades to 50%; the drop target draws a 2px `accent` line on the edge the
+ * drop lands on: a row's top or bottom, a header's start or end. */
+.h-rich-table {
+  @apply scrollbar outline-none;
+}
+
+.h-rich-table__content {
+  @apply min-w-full overflow-clip border-separate border-spacing-0 text-sm;
+}
+
+.h-rich-table__thead,
+.h-rich-table__tfoot {
+  @apply relative;
+}
+
+.h-rich-table__tbody {
+  @apply isolate;
+  @apply [&>[data-slot=rich-table-row]]:relative [&>[data-slot=rich-table-row]]:outline-none;
+  @apply [&>[data-slot=rich-table-row]]:data-[selectable=true]:cursor-(--cursor-interactive);
+
+  /* Hover/selected backgrounds go on the cells, like HeroUI's '.table__row:hover .table__cell' */
+  @apply [&>[data-slot=rich-table-row]]:hover:*:bg-surface/40 [&>[data-slot=rich-table-row]]:data-[selected=true]:*:bg-surface/10;
+
+  /* Pinned cells stay opaque so the cells scrolling underneath never show through: mix the translucent tint into the
+   * header colour instead */
+  @apply [&>[data-slot=rich-table-row]]:hover:*:data-pinned:bg-[color-mix(in_oklch,var(--surface)_40%,var(--surface-secondary))];
+  @apply [&>[data-slot=rich-table-row]]:data-[selected=true]:*:data-pinned:bg-[color-mix(in_oklch,var(--surface)_10%,var(--surface-secondary))];
+
+  /* Row focus: rounded ends here, the ring in focus.css */
+  @apply [&>[data-slot=rich-table-row]]:focus-visible:*:first:rounded-s-lg [&>[data-slot=rich-table-row]]:focus-visible:*:last:rounded-e-lg [&>[data-slot=rich-table-row]]:focus-visible:*:only:rounded-lg;
+  @apply [&>[data-slot=rich-table-row]]:aria-disabled:status-disabled;
+  @apply [&>[data-slot=rich-table-row]]:data-dragging:opacity-50;
+
+  /* The drop line is one straight bar across the row, above the pinned cells, whatever the cells' corners and edges */
+  @apply [&>[data-slot=rich-table-row]]:data-drop-target:after:pointer-events-none [&>[data-slot=rich-table-row]]:data-drop-target:after:absolute [&>[data-slot=rich-table-row]]:data-drop-target:after:inset-x-0 [&>[data-slot=rich-table-row]]:data-drop-target:after:z-3 [&>[data-slot=rich-table-row]]:data-drop-target:after:h-0.5 [&>[data-slot=rich-table-row]]:data-drop-target:after:bg-accent [&>[data-slot=rich-table-row]]:data-drop-target:after:content-[''];
+  @apply [&>[data-slot=rich-table-row]]:data-[drop-target=before]:after:top-0 [&>[data-slot=rich-table-row]]:data-[drop-target=after]:after:bottom-0;
+
+  /* The body card ends with its last row, so it carries no separator */
+  @apply [&>tr:last-child>td]:border-b-0;
+}
+
+.h-rich-table__th {
+  @apply relative px-4 py-2.5 text-start text-xs font-medium whitespace-nowrap text-muted bg-surface-secondary;
+
+  /* Pill separator between columns, hidden after the last one, after blank (e.g. expand) and selection columns, on
+   * columns with a resize handle (the handle is the separator) and on pinned columns (whose facing edge gets a
+   * full-height line once content scrolls under it) */
+  @apply not-last:after:pointer-events-none not-last:after:absolute not-last:after:end-0 not-last:after:top-1/2 not-last:after:h-4 not-last:after:w-px not-last:after:-translate-y-1/2 not-last:after:rounded-sm not-last:after:bg-separator not-last:after:content-[''];
+  @apply empty:after:content-none! [&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pe-0 [&:has([role=checkbox])]:after:content-none [&:has([role=separator])]:after:content-none data-pinned:after:content-none!;
+
+  /* Pinned columns: `data-pinned` is `left` | `right` (TanStack pins to physical sides), `data-edge` marks the edge
+   * facing the scrolling columns while content is scrolled under it */
+  @apply data-[edge=left]:shadow-[inset_-1px_0_0_0_var(--separator)] data-[edge=right]:shadow-[inset_1px_0_0_0_var(--separator)];
+
+  /* Draggable headers (`reorderableColumns`) are focusable: the drop line is a `before` element, as `after` draws the
+   * separator */
+  @apply data-[reorder-column]:cursor-grab data-[reorder-column]:active:cursor-grabbing data-dragging:opacity-50;
+  @apply focus-visible:outline-none;
+  @apply data-drop-target:before:pointer-events-none data-drop-target:before:absolute data-drop-target:before:inset-y-0 data-drop-target:before:z-1 data-drop-target:before:w-0.5 data-drop-target:before:bg-accent data-drop-target:before:content-[''];
+  @apply data-[drop-target=before]:before:start-0 data-[drop-target=after]:before:end-0;
+}
+
+.h-rich-table__td {
+  @apply border-b border-separator-tertiary/50 bg-surface px-4 py-3 align-middle text-sm whitespace-nowrap text-foreground;
+  @apply [&:has([role=checkbox])]:w-10 [&:has([role=checkbox])]:pe-0;
+  @apply data-[edge=left]:shadow-[inset_-1px_0_0_0_var(--separator)] data-[edge=right]:shadow-[inset_1px_0_0_0_var(--separator)];
+}
+
+/* Drag handle column (`reorderable`), outside TanStack's columns: with left-pinned columns it sticks to the left edge
+ * too, and they stick after it */
+.h-rich-table__drag-column {
+  @apply w-8 min-w-8 bg-surface-secondary p-0;
+}
+
+.h-rich-table__drag-cell {
+  @apply w-8 min-w-8 border-b border-separator-tertiary/50 bg-surface p-0 text-center align-middle;
+}
+
+.h-rich-table__drag-handle {
+  @apply inline-flex size-6 cursor-grab items-center justify-center rounded-md text-muted outline-none;
+  @apply transition-colors motion-reduce:transition-none hover:text-foreground active:cursor-grabbing [&_svg]:size-4;
+  @apply disabled:status-disabled;
+}
+
+.h-rich-table__empty {
+  @apply py-12 text-center text-sm text-muted;
+}
+
+.h-rich-table__loading {
+  @apply py-12 text-center;
+}
+
+/* Sticky, zero-height box after the table that carries the bottom corner masks (primary only) */
+.h-rich-table__corners {
+  @apply hidden;
+}
+
+/* The gutter around the body card is a transparent border rather than padding: it sits outside the scrollport, so rows
+ * scrolling under the sticky footer or the pinned columns never show through it, and sticky cells rest on its inner
+ * edge */
+.h-rich-table--primary {
+  @apply rounded-[min(32px,calc(var(--radius)*2.5))] border-x-4 border-t-0 border-b-4 border-transparent bg-surface-secondary [--rich-table-corner:min(32px,var(--radius-2xl))];
+}
+
+/* '.table__body tr:first-child td:first-child' etc. */
+.h-rich-table__tbody--primary {
+  @apply [&_tr:first-child_td:first-child]:rounded-ss-(--rich-table-corner) [&_tr:first-child_td:last-child]:rounded-se-(--rich-table-corner);
+  @apply [&_tr:last-child_td:first-child]:rounded-es-(--rich-table-corner) [&_tr:last-child_td:last-child]:rounded-ee-(--rich-table-corner);
+
+  /* A corner cell that is also the pinned edge goes square while content scrolls under it, so nothing shows through its
+   * rounded corner */
+  @apply [&_tr:first-child_td:first-child[data-edge=left]]:rounded-none [&_tr:last-child_td:first-child[data-edge=left]]:rounded-none;
+  @apply [&_tr:first-child_td:last-child[data-edge=right]]:rounded-none [&_tr:last-child_td:last-child[data-edge=right]]:rounded-none;
+}
+
+.h-rich-table__tbody--secondary {
+  @apply [&>[data-slot=rich-table-row]]:hover:*:bg-default/50 [&>[data-slot=rich-table-row]]:data-[selected=true]:*:bg-surface/10;
+}
+
+:where(.h-rich-table--secondary > table > * > tr) {
+  & > .h-rich-table__th {
+    @apply bg-surface-secondary first:rounded-s-[min(32px,var(--radius-2xl))] last:rounded-e-[min(32px,var(--radius-2xl))];
+  }
+
+  & > .h-rich-table__td,
+  & > .h-rich-table__drag-cell {
+    @apply bg-transparent data-pinned:bg-background;
+  }
+
+  & > .h-rich-table__drag-column {
+    @apply rounded-s-[min(32px,var(--radius-2xl))];
+  }
+}
+
+/* Primary body card corners while rows scroll: the visible window of rows keeps the card's rounded corners, but only
+ * the first and last rows are rounded. Each mask paints the gutter colour outside a quarter circle, so a row cut by the
+ * sticky header, the sticky footer or the bottom of the scrollport still shows a rounded corner. */
+.h-rich-table__thead--masked,
+.h-rich-table__tfoot--masked,
+.h-rich-table__corners--masked {
+  @apply before:pointer-events-none before:absolute before:inset-x-0 before:h-(--rich-table-corner) before:content-[''];
+}
+
+/* Corners cut out at the box's top edge, for a box hanging under the sticky header */
+.h-rich-table__thead--masked {
+  @apply before:top-full;
+  @apply before:[background:radial-gradient(circle_at_100%_100%,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_left_top/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat,radial-gradient(circle_at_0_100%,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_right_top/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat];
+}
+
+/* Corners cut out at the box's bottom edge, for a box resting on the sticky footer or the scrollport bottom */
+.h-rich-table__tfoot--masked,
+.h-rich-table__corners--masked {
+  @apply before:[background:radial-gradient(circle_at_100%_0,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_left_bottom/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat,radial-gradient(circle_at_0_0,transparent_calc(var(--rich-table-corner)_-_0.5px),var(--surface-secondary)_var(--rich-table-corner))_right_bottom/var(--rich-table-corner)_var(--rich-table-corner)_no-repeat];
+}
+
+.h-rich-table__tfoot--masked {
+  @apply before:bottom-full;
+}
+
+.h-rich-table__corners--masked {
+  @apply pointer-events-none sticky bottom-0 left-0 z-3 block h-0 before:bottom-0;
+}
+
+/* Loading bar under the header */
+.h-rich-table__thead--loading {
+  @apply after:absolute after:start-0 after:bottom-0 after:z-3 after:h-0.5 after:w-1/2 after:content-[''] motion-reduce:after:inset-x-0 motion-reduce:after:w-full motion-reduce:after:animate-pulse;
+}
+
+.h-rich-table__thead--loading-accent {
+  @apply after:bg-accent;
+}
+
+.h-rich-table__thead--loading-success {
+  @apply after:bg-success;
+}
+
+.h-rich-table__thead--loading-warning {
+  @apply after:bg-warning;
+}
+
+.h-rich-table__thead--loading-danger {
+  @apply after:bg-danger;
+}
+
+.h-rich-table__thead--loading-neutral {
+  @apply after:bg-foreground;
+}
+
+.h-rich-table__thead--loading-carousel {
+  @apply motion-safe:after:animate-rich-table-carousel motion-safe:rtl:after:animate-rich-table-carousel-rtl;
+}
+
+.h-rich-table__thead--loading-carousel-inverse {
+  @apply motion-safe:after:animate-rich-table-carousel-inverse motion-safe:rtl:after:animate-rich-table-carousel-inverse-rtl;
+}
+
+.h-rich-table__thead--loading-swing {
+  @apply motion-safe:after:animate-rich-table-swing;
+}
+
+.h-rich-table__thead--loading-elastic {
+  @apply motion-safe:after:animate-rich-table-elastic;
+}
+
+/* Rows scroll with the page, so there's no scrollport bottom to mask */
+.h-rich-table__corners--hidden {
+  @apply hidden;
+}

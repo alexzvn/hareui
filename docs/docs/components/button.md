@@ -130,7 +130,7 @@ The Button component supports ripple effects through composition, allowing you t
 
 ### Tailwind CSS
 
-Use the `class` prop to merge classes onto the root element (tailwind-merge resolves conflicts):
+Use the `class` prop to add classes to the root element. Button's own styles are `.h-button` classes in `@layer components`, so any utility you add wins:
 
 <ComponentPreview name="button/custom-styles" />
 
@@ -163,6 +163,10 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `leadingIcon`  | `button-leading-icon`  | The `leadingIcon` prop's icon                      |
 | `trailingIcon` | `button-trailing-icon` | The `trailingIcon` prop's icon                     |
 | `avatar`       | `button-avatar`        | The `avatar` prop's `Avatar`                       |
+
+### CSS classes
+
+The root carries `.h-button` plus one modifier per prop: `.h-button--{variant}`, `.h-button--{sm|lg}` (none for the default `md`), `.h-button--icon-only` and `.h-button--full-width`. The `leadingIcon` and `trailingIcon` elements carry `.h-button__icon`.
 
 ### Interactive states
 

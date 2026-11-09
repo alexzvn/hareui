@@ -1,20 +1,12 @@
-// Translated from @heroui/styles components/combo-box.css
-// The `[data-slot=input]` rules are nested under the root as in HeroUI, so they outrank the Input theme by specificity
-// (`.combo-box [data-slot=input]:focus`) instead of fighting it in tailwind-merge.
+// Root, input group and trigger map to the BEM classes of ./combo-box.css (ported from
+// @heroui/styles components/combo-box.css). Its `[data-slot=input]` rules are nested under the root as in HeroUI, so
+// they outrank the Input classes by specificity. The other slots stay utilities.
 export default {
   slots: {
-    base: [
-      'flex flex-col gap-1',
-      'data-[invalid=true]:[&_[data-slot=description]]:hidden aria-[invalid=true]:[&_[data-slot=description]]:hidden',
-      '[&_[data-slot=label]]:w-fit',
-      '[&_[data-slot=input]]:min-w-0 [&_[data-slot=input]]:flex-1',
-      '[&_[data-slot=input]:has(+[data-slot=combo-box-trigger])]:pe-7',
-      '[&_[data-slot=input]:focus]:status-focused-field [&_[data-slot=input]:focus]:border-(--field-border-focus) [&_[data-slot=input]:focus]:bg-(--field-focus)',
-      '[&_[data-slot=input]:disabled]:status-disabled [&_[data-slot=input][aria-disabled=true]]:status-disabled',
-    ],
+    base: 'h-combo-box',
     // Extra classes for the Label (HeroUI renders a `Label` here; its own theme still applies)
     label: '',
-    inputGroup: 'relative isolate inline-flex items-center',
+    inputGroup: 'h-combo-box__input-group',
     // Extra classes for the `<input>` (HeroUI renders an `Input` here; its own theme still applies)
     input: '',
     value: [
@@ -22,17 +14,7 @@ export default {
       'data-[placeholder=true]:text-field-placeholder',
       '[&_[data-slot=list-box-item-indicator]]:hidden',
     ],
-    trigger: [
-      'absolute end-0 top-1/2 flex h-full shrink-0 -translate-y-1/2 cursor-pointer items-center justify-center pe-2 text-field-placeholder transition duration-150 no-highlight',
-      'border-none bg-transparent outline-none',
-      'hover:text-field-foreground [@media(hover:hover)]:data-[hovered=true]:text-field-foreground',
-      'focus-visible:not-data-focused:rounded focus-visible:not-data-focused:ring-2 focus-visible:not-data-focused:ring-focus focus-visible:not-data-focused:ring-offset-2 focus-visible:not-data-focused:ring-offset-background',
-      'data-[focus-visible=true]:rounded data-[focus-visible=true]:ring-2 data-[focus-visible=true]:ring-focus data-[focus-visible=true]:ring-offset-2 data-[focus-visible=true]:ring-offset-background',
-      'data-[pressed=true]:opacity-70',
-      'disabled:cursor-not-allowed disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50',
-      '[&_[data-slot=combo-box-trigger-default-icon]]:size-4 [&_[data-slot=combo-box-trigger-default-icon]]:transition-transform [&_[data-slot=combo-box-trigger-default-icon]]:duration-150 motion-reduce:[&_[data-slot=combo-box-trigger-default-icon]]:transition-none',
-      'data-[open=true]:[&_[data-slot=combo-box-trigger-default-icon]]:rotate-180',
-    ],
+    trigger: 'h-combo-box__trigger',
     popover: [
       // Reka's combobox content sets an inline `display: flex`; RAC's popover is a block
       'block!',
@@ -51,7 +33,7 @@ export default {
   variants: {
     fullWidth: {
       false: {},
-      true: { base: 'w-full', inputGroup: 'w-full' },
+      true: { base: 'h-combo-box--full-width', inputGroup: 'h-combo-box__input-group--full-width' },
     },
   },
   defaultVariants: {

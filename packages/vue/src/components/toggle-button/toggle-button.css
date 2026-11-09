@@ -1,0 +1,114 @@
+/* ToggleButton: ported from @heroui/styles components/toggle-button.css, laid out like button.css. ToggleButtonGroup's
+ * radii and EditorToolbar's `--toggle-button-fg-selected` win over it too. */
+.h-toggle-button {
+  @apply relative isolate inline-flex w-fit origin-center items-center justify-center gap-2 rounded-3xl px-4 text-sm font-medium whitespace-nowrap outline-none select-none no-highlight;
+
+  /* Responsive height lives in a variable, so a plain `h-*` from the user wins at every breakpoint */
+  --toggle-button-height: --spacing(10);
+  height: var(--toggle-button-height);
+
+  @variant md {
+    --toggle-button-height: --spacing(9);
+  }
+
+  /* motion-reduce must come after the transition */
+  transition:
+    transform 250ms var(--ease-smooth),
+    background-color 100ms var(--ease-out),
+    box-shadow 100ms var(--ease-out);
+  @apply transform-gpu motion-reduce:transition-none;
+
+  cursor: var(--cursor-interactive);
+
+  --toggle-button-bg: var(--default);
+  --toggle-button-bg-hover: var(--default-hover);
+  --toggle-button-bg-pressed: var(--default-hover);
+  --toggle-button-fg: currentColor;
+  --toggle-button-bg-selected: var(--accent-soft);
+  --toggle-button-bg-selected-hover: var(--accent-soft-hover);
+  --toggle-button-bg-selected-pressed: var(--accent-soft-hover);
+  --toggle-button-fg-selected: var(--accent-soft-foreground);
+
+  background-color: var(--toggle-button-bg);
+  color: var(--toggle-button-fg);
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+
+  &:hover {
+    @media (hover: hover) {
+      background-color: var(--toggle-button-bg-hover);
+    }
+  }
+
+  /* After :hover, so the pressed background wins while pressing */
+  &:active {
+    background-color: var(--toggle-button-bg-pressed);
+    transform: scale(0.97);
+  }
+
+  &[data-selected='true'] {
+    background-color: var(--toggle-button-bg-selected);
+    color: var(--toggle-button-fg-selected);
+
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--toggle-button-bg-selected-hover);
+      }
+    }
+
+    &:active {
+      background-color: var(--toggle-button-bg-selected-pressed);
+    }
+  }
+
+  /* :where() keeps icon sizing at zero specificity, so a utility on the icon itself wins */
+  :where(& svg) {
+    @apply pointer-events-none -mx-0.5 my-0.5 size-5 shrink-0 self-center sm:my-1 sm:size-4;
+  }
+}
+
+.h-toggle-button--ghost {
+  --toggle-button-bg: transparent;
+  --toggle-button-bg-hover: var(--default);
+  --toggle-button-bg-pressed: var(--default);
+  --toggle-button-fg: var(--default-foreground);
+}
+
+.h-toggle-button--sm {
+  --toggle-button-height: --spacing(9);
+  @apply px-3;
+
+  @variant md {
+    --toggle-button-height: --spacing(8);
+  }
+
+  :where(& svg) {
+    @apply size-4;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.h-toggle-button--lg {
+  --toggle-button-height: --spacing(11);
+  @apply text-base;
+
+  @variant md {
+    --toggle-button-height: --spacing(10);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+/* Square: the width follows the size's height */
+.h-toggle-button--icon-only {
+  @apply p-0;
+  width: var(--toggle-button-height);
+}

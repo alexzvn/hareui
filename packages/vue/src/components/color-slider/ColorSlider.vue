@@ -31,7 +31,11 @@
     <span v-if="hasOutput" data-slot="color-slider-output" :class="ui.output()">
       <slot name="output" v-bind="slotProps">{{ slotProps.valueText }}</slot>
     </span>
-    <SliderTrack data-slot="color-slider-track" :style="trackStyle" :class="ui.track()">
+    <SliderTrack
+      data-slot="color-slider-track"
+      :style="trackStyle"
+      :class="ui.track({ class: 'relative' })"
+    >
       <ColorSliderThumb
         ref="thumbRef"
         data-slot="color-slider-thumb"

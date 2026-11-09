@@ -171,6 +171,10 @@ app.use(
 
 The default indicator uses the `control` and `indicator` classes of the [Checkbox](/docs/components/checkbox) theme. Its `variant` and global `checkbox` overrides apply to it too.
 
+### CSS classes
+
+CheckboxButtonGroup's own styles are `.h-checkbox-button-group` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-checkbox-button-group` (plus `.h-checkbox-button-group--grid` with `layout="grid"`). Each card carries `.h-checkbox-button-group__item`, and its parts carry `__indicator` (plus `__indicator--custom` for a custom icon), `__content`, `__icon`, `__text`, `__label` and `__description`. With an icon, `__content--with-icon` and `__text--with-icon` are added.
+
 ### Interactive States
 
 - **Selected**: `[data-selected="true"]` on the card (accent ring)

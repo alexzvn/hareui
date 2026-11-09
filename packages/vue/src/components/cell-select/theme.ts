@@ -1,7 +1,7 @@
 // Cell-style Select: a settings row with a leading label, the value and a chevrons indicator at the end.
 // The row classes are shared with CellSwitch / CellSlider / CellColorPicker. CellSelect passes these slots to the
-// wrapped Select's `ui`, where they are merged over the Select theme (tailwind-merge), so the overrides below
-// (`min-h-0`, `py-0`, `flex-none`, `static`, …) neutralise the Select trigger/value/indicator layout.
+// wrapped Select's `ui`. They win over the trigger's `@layer components` CSS and are tailwind-merged over the other
+// Select slots, so the overrides below (`min-h-0`, `py-0`, `flex-none`, `static`, …) neutralise its layout.
 export default {
   slots: {
     base: '',
