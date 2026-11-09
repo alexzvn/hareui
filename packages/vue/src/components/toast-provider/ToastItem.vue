@@ -28,7 +28,7 @@
         v-if="hasIndicator"
         data-slot="toast-indicator"
         :data-swapped="hasSwapped ? 'true' : undefined"
-        :class="ui.indicator()"
+        :class="ui.indicator({ class: 'select-none' })"
       >
         <Spinner v-if="content.isLoading" color="current" size="sm" />
         <component

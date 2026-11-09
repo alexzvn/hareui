@@ -73,10 +73,28 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | -------- | ----------- | --------------------- |
 | `base`   | `separator` | The separator element |
 
-These props control styling. Style it through `class`, `ui` or `createHareUI`:
+These props control styling:
 
 - `orientation`: `horizontal` (default, full width / 1px height), `vertical` (full height / 1px width)
 - `variant`: `default` for standard contrast, `secondary` for medium contrast, `tertiary` for subtle contrast
+
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Separator component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/separator/separator.css)):
+
+#### Base & Orientation Classes
+
+- `.h-separator` - Base separator styles
+- `.h-separator--horizontal` - Horizontal orientation (full width, 1px height)
+- `.h-separator--vertical` - Vertical orientation (full height, 1px width)
+
+#### Variant Classes
+
+- `.h-separator--default` - Default variant with standard contrast
+- `.h-separator--secondary` - Secondary variant with medium contrast
+- `.h-separator--tertiary` - Tertiary variant with subtle contrast
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

@@ -69,20 +69,30 @@ app.use(
 
 ## Styling Reference
 
-### Slots
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
 
-- `base` → `[data-slot="scroll-shadow"]` – root container element
+| `ui` key | `data-slot`     | Description            |
+| -------- | --------------- | ---------------------- |
+| `base`   | `scroll-shadow` | Root container element |
 
-#### Variants
+### CSS Classes
 
-- `orientation="vertical"` – vertical scrolling (default)
-- `orientation="horizontal"` – horizontal scrolling
-- `hide-scroll-bar` – hides the native scrollbar
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ScrollShadow component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/scroll-shadow/scroll-shadow.css)):
 
-The fade masks live in HareUI's stylesheet (`styles/scroll-shadow.css`) and key on
-`[data-scroll-shadow-mode]` and `[data-orientation]`, so they apply to any element carrying
-those attributes, even when a parent renames its `data-slot` (Tabs' scrolling list and Carousel's
-thumbnail strip use the same component).
+#### Base Classes
+
+- `.h-scroll-shadow` - Root container element
+
+#### Orientation Variants
+
+- `.h-scroll-shadow--vertical` - Vertical scrolling (`orientation="vertical"`, default)
+- `.h-scroll-shadow--horizontal` - Horizontal scrolling (`orientation="horizontal"`)
+
+#### State Modifiers
+
+- `.h-scroll-shadow--hide-scrollbar` - Hides native scrollbar (`hide-scroll-bar`)
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### CSS Variables
 

@@ -176,9 +176,29 @@ app.use(
 - `size`: `sm`, `md` (default), `lg`. Sets the button, icon and value sizes. Below the `md` breakpoint each size is one step larger for touch.
 - `reversed`: `true` swaps the button order.
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-number-stepper` plus `.h-number-stepper--sm` or `.h-number-stepper--lg`. The parts carry `.h-number-stepper__group` (plus `--reversed`), `.h-number-stepper__button` and `.h-number-stepper__value`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The NumberStepper component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/number-stepper/number-stepper.css)):
+
+#### Base & Size Classes
+
+- `.h-number-stepper` - Root container
+- `.h-number-stepper--sm` - Small size variant
+- `.h-number-stepper--lg` - Large size variant
+
+#### Element Classes
+
+- `.h-number-stepper__group` - Container for the buttons and value
+- `.h-number-stepper__button` - Increment and decrement buttons
+- `.h-number-stepper__value` - The displayed value
+
+#### Modifier Classes
+
+- `.h-number-stepper__group--reversed` - Reverses the order of the buttons
+
+The default `md` size adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

@@ -27,6 +27,12 @@ describe('ButtonGroup theme', () => {
     })
 
     expect(wrapper.find('button[data-slot="button"]').classes()).not.toContain('h-button--outline')
+
+    expect(wrapper.find('button[data-slot="button"]').classes()).not.toContain(
+      'h-button-group__button',
+    )
+
+    expect(wrapper.find('div[data-slot="button"]').classes()).toContain('h-button-group__button')
   })
 
   it('lets a user rounded-* class replace the group edge radii', () => {

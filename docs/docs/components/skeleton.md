@@ -119,11 +119,28 @@ The Skeleton root has no `data-slot`.
 | -------- | -------------------------------------------------------- |
 | `base`   | Base skeleton styles with background and rounded corners |
 
-The `animationType` prop selects the animation. Style it through `class`, `ui` or `createHareUI`:
+The `animationType` prop selects the animation:
 
 - `shimmer` (default): shimmer animation with a gradient
 - `pulse`: Tailwind's `animate-pulse`
 - `none`: static skeleton
+
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Skeleton component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/skeleton/skeleton.css)):
+
+#### Base Classes
+
+- `.h-skeleton` - Base skeleton styles with background and rounded corners
+
+#### Animation Variant Classes
+
+- `.h-skeleton--shimmer` - Adds shimmer animation with gradient effect (default)
+- `.h-skeleton--pulse` - Adds pulse animation using Tailwind's `animate-pulse`
+
+`animationType="none"` adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Animation
 
@@ -131,9 +148,11 @@ The `animationType` prop selects the animation. Style it through `class`, `ui` o
 
 The shimmer effect creates a gradient that moves across the skeleton element:
 
-```ts
-// theme/skeleton.ts, animationType.shimmer
-'after:absolute after:inset-0 after:-translate-x-full after:animate-skeleton after:bg-linear-to-r after:from-transparent after:via-surface-tertiary after:to-transparent after:content-[\'\']'
+```css
+/* skeleton.css */
+.h-skeleton--shimmer {
+  @apply after:absolute after:inset-0 after:-translate-x-full after:animate-skeleton after:bg-linear-to-r after:from-transparent after:via-surface-tertiary after:to-transparent after:content-[''];
+}
 ```
 
 The shimmer animation is defined in the theme using:
@@ -156,7 +175,7 @@ The pulse animation uses Tailwind's built-in `animate-pulse` utility.
 
 #### No Animation
 
-`animationType="none"` applies no animation classes.
+`animationType="none"` applies no animation class.
 
 ## API Reference
 

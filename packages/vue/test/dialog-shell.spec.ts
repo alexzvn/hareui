@@ -22,8 +22,8 @@ const waitUnmount = async () => {
   await nextTick()
 }
 
-// happy-dom has no CSS animations: report a running one for closed elements whose theme declares a closed-state
-// animation, so the dialog stays mounted through its exit until `finishExit` (see modal.spec.ts).
+// happy-dom has no CSS animations: report a running one for the closed dialog parts whose component CSS declares a
+// closed-state animation, so the dialog stays mounted through its exit until `finishExit` (see modal.spec.ts).
 const stubExitAnimations = () => {
   const original = window.getComputedStyle.bind(window)
   vi.spyOn(window, 'getComputedStyle').mockImplementation((el: Element, pseudo?: string | null) => {
@@ -31,7 +31,9 @@ const stubExitAnimations = () => {
 
     const animatesClosed =
       el.getAttribute?.('data-state') === 'closed' &&
-      /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
+      /\bh-(modal|drawer|alert-dialog)__(backdrop|container|dialog)\b/.test(
+        el.getAttribute('class') ?? '',
+      )
 
     if (!animatesClosed) return real
 

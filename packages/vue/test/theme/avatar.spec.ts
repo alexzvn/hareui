@@ -12,6 +12,6 @@ describe('Avatar theme', () => {
     })
 
     await nextTick()
-    expect(wrapper.find('picture-img').classes()).toContain('absolute')
+    expect(wrapper.find('picture-img').classes()).toContain('h-avatar__image')
   })
 })

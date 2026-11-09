@@ -1,0 +1,161 @@
+/* Typography: ported from @heroui/styles components/typography.css. Later classes win over earlier ones (type, then
+ * align, color, weight, truncate), as the variant order did. */
+.h-typography {
+  @apply text-foreground;
+}
+
+.h-typography-prose {
+  @apply text-foreground;
+
+  & h1 {
+    @apply text-4xl font-semibold tracking-tight;
+  }
+
+  & h2 {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+
+  & h3 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+
+  & h4 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+
+  & h5 {
+    @apply text-lg font-semibold tracking-tight;
+  }
+
+  & h6 {
+    @apply text-base font-semibold tracking-tight;
+  }
+
+  & p {
+    @apply text-base leading-7;
+  }
+
+  & code {
+    @apply rounded-md bg-default px-1.5 py-0.5 font-mono text-sm text-foreground;
+  }
+
+  & a {
+    @apply font-medium text-link underline underline-offset-4;
+  }
+
+  & blockquote {
+    @apply mt-4 border-s-4 border-border ps-4 text-muted italic;
+  }
+
+  & ul {
+    @apply my-4 list-disc space-y-2 ps-6;
+  }
+
+  & ol {
+    @apply my-4 list-decimal space-y-2 ps-6;
+  }
+
+  & li {
+    @apply text-base leading-7;
+  }
+
+  & hr {
+    @apply my-8 border-separator;
+  }
+
+  & pre {
+    @apply my-4 overflow-x-auto rounded-xl bg-default p-4 font-mono text-sm leading-relaxed;
+  }
+
+  & strong {
+    @apply font-semibold text-foreground;
+  }
+
+  & em {
+    @apply italic;
+  }
+
+  & img {
+    @apply my-4 rounded-xl;
+  }
+}
+
+.h-typography--h1 {
+  @apply text-4xl font-semibold tracking-tight;
+}
+
+.h-typography--h2 {
+  @apply text-3xl font-semibold tracking-tight;
+}
+
+.h-typography--h3 {
+  @apply text-2xl font-semibold tracking-tight;
+}
+
+.h-typography--h4 {
+  @apply text-xl font-semibold tracking-tight;
+}
+
+.h-typography--h5 {
+  @apply text-lg font-semibold tracking-tight;
+}
+
+.h-typography--h6 {
+  @apply text-base font-semibold tracking-tight;
+}
+
+.h-typography--body {
+  @apply text-base leading-7;
+}
+
+.h-typography--body-sm {
+  @apply text-sm leading-6;
+}
+
+.h-typography--body-xs {
+  @apply text-xs leading-5;
+}
+
+.h-typography--code {
+  @apply rounded-md bg-default px-1.5 py-0.5 font-mono text-sm text-foreground;
+}
+
+.h-typography--align-start {
+  @apply text-start;
+}
+
+.h-typography--align-center {
+  @apply text-center;
+}
+
+.h-typography--align-end {
+  @apply text-end;
+}
+
+.h-typography--align-justify {
+  @apply text-justify;
+}
+
+.h-typography--color-muted {
+  @apply text-muted;
+}
+
+.h-typography--weight-normal {
+  @apply font-normal;
+}
+
+.h-typography--weight-medium {
+  @apply font-medium;
+}
+
+.h-typography--weight-semibold {
+  @apply font-semibold;
+}
+
+.h-typography--weight-bold {
+  @apply font-bold;
+}
+
+.h-typography--truncate {
+  @apply block truncate;
+}

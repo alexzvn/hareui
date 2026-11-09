@@ -6,13 +6,17 @@ import SwitchGroup from '@/components/switch-group/SwitchGroup.vue'
 describe('SwitchGroup theme', () => {
   it('lays the items out in a column by default', () => {
     const wrapper = mount(SwitchGroup)
-    expect(wrapper.find('[data-slot=switch-group-items]').classes()).toContain('flex-col')
+    expect(wrapper.classes()).toEqual(['h-switch-group', 'h-switch-group--vertical'])
+
+    expect(wrapper.find('[data-slot=switch-group-items]').classes()).toEqual([
+      'h-switch-group__items',
+    ])
   })
 
   it('orientation="horizontal" switches the items container to a row layout', () => {
     const wrapper = mount(SwitchGroup, { props: { orientation: 'horizontal' } })
-    const items = wrapper.find('[data-slot=switch-group-items]')
-    expect(items.classes()).toContain('flex-row')
+    expect(wrapper.classes()).toContain('h-switch-group--horizontal')
+    expect(wrapper.classes()).not.toContain('h-switch-group--vertical')
   })
 
   it('merges `class` into the root and `:ui` into the items slot', () => {

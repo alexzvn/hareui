@@ -1,0 +1,162 @@
+/* AlertDialog: ported from @heroui/styles components/alert-dialog.css. Enter/exit run on Reka's `data-state`; every
+ * state sits in `:where()` so it adds no specificity. */
+.h-alert-dialog__backdrop {
+  @apply fixed inset-x-0 top-(--visual-viewport-top) z-(--z-index-overlay) flex h-(--visual-viewport-height) w-full flex-row items-center justify-center;
+
+  &:where([data-state='open']) {
+    @apply animate-in fade-in-0 ease-out [--tw-duration:150ms];
+  }
+
+  /* Reka has no entering state, so only exiting gets will-change (see modal.css) */
+  &:where([data-state='closed']) {
+    @apply animate-out fade-out-0 ease-out will-change-[opacity] [--tw-duration:100ms];
+  }
+
+  /* motion-reduce must come after the animations */
+  &:where([data-state]) {
+    @apply motion-reduce:animate-none;
+  }
+}
+
+.h-alert-dialog__backdrop--opaque {
+  @apply bg-backdrop;
+}
+
+.h-alert-dialog__backdrop--blur {
+  @apply bg-backdrop backdrop-blur-md;
+}
+
+.h-alert-dialog__backdrop--transparent {
+  @apply bg-transparent;
+}
+
+.h-alert-dialog__container {
+  @apply flex h-(--visual-viewport-height) w-full min-w-0 flex-1 flex-col items-center p-4 sm:w-fit sm:p-10;
+
+  &:where([data-state='open']) {
+    @apply animate-in fade-in-0 zoom-in-105 ease-out-quad [--tw-duration:250ms];
+  }
+
+  &:where([data-state='open'][data-placement='auto']) {
+    @apply slide-in-from-bottom-1 sm:slide-in-from-bottom-0;
+  }
+
+  &:where([data-state='open'][data-placement='top']) {
+    @apply slide-in-from-top-1;
+  }
+
+  &:where([data-state='open'][data-placement='center']) {
+    @apply slide-in-from-top-0;
+  }
+
+  &:where([data-state='open'][data-placement='bottom']) {
+    @apply slide-in-from-bottom-1;
+  }
+
+  &:where([data-state='closed']) {
+    @apply animate-out fade-out-0 zoom-out-95 ease-out-quad will-change-[opacity,transform] [--tw-duration:100ms];
+  }
+
+  &:where([data-state]) {
+    @apply motion-reduce:animate-none;
+  }
+}
+
+.h-alert-dialog__dialog {
+  @apply relative flex max-h-full min-h-0 w-full flex-col overflow-clip bg-overlay text-overlay-foreground p-6 shadow-overlay outline-none;
+  border-radius: min(32px, var(--radius-3xl));
+
+  /* Keeps the dialog mounted through the container's exit (see `presence-hold` in styles/keyframes.css) */
+  &:where([data-state='closed']) {
+    @apply animate-presence-hold;
+  }
+
+  &[data-placement='auto'] {
+    @apply mt-auto sm:my-auto;
+  }
+
+  &[data-placement='top'] {
+    @apply mt-0;
+  }
+
+  &[data-placement='center'] {
+    @apply my-auto;
+  }
+
+  &[data-placement='bottom'] {
+    @apply mt-auto;
+  }
+}
+
+.h-alert-dialog__dialog--xs {
+  @apply max-w-xs;
+}
+
+.h-alert-dialog__dialog--sm {
+  @apply max-w-sm;
+}
+
+.h-alert-dialog__dialog--md {
+  @apply max-w-md;
+}
+
+.h-alert-dialog__dialog--lg {
+  @apply max-w-lg;
+}
+
+.h-alert-dialog__dialog--cover {
+  @apply h-full min-h-full w-full;
+}
+
+.h-alert-dialog__header {
+  @apply mb-0 flex flex-col gap-3;
+}
+
+.h-alert-dialog__heading {
+  @apply align-middle text-base font-medium text-foreground;
+}
+
+.h-alert-dialog__icon {
+  @apply flex size-10 shrink-0 items-center justify-center rounded-3xl;
+
+  & [data-slot='alert-dialog-default-icon'] {
+    @apply box-content size-5;
+  }
+}
+
+.h-alert-dialog__icon--default {
+  @apply bg-default text-foreground;
+}
+
+.h-alert-dialog__icon--accent {
+  @apply bg-accent-soft text-accent-soft-foreground;
+}
+
+.h-alert-dialog__icon--success {
+  @apply bg-success-soft text-success-soft-foreground;
+}
+
+.h-alert-dialog__icon--warning {
+  @apply bg-warning-soft text-warning-soft-foreground;
+}
+
+.h-alert-dialog__icon--danger {
+  @apply bg-danger-soft text-danger-soft-foreground;
+}
+
+.h-alert-dialog__body {
+  @apply -m-[3px] my-0 scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain p-[3px] text-sm leading-[1.43] text-muted [-webkit-overflow-scrolling:touch];
+}
+
+.h-alert-dialog__footer {
+  @apply mt-0 flex flex-row items-center justify-end gap-2;
+}
+
+.h-alert-dialog__header + .h-alert-dialog__body {
+  @apply mt-2;
+}
+
+.h-alert-dialog__header + .h-alert-dialog__footer,
+.h-alert-dialog__body + .h-alert-dialog__footer {
+  @apply mt-5;
+}

@@ -19,12 +19,12 @@ describe('Toolbar theme', () => {
       },
     })
 
-    expect(wrapper.find('[data-slot=separator]').classes()).toEqual(
-      expect.arrayContaining(['w-1/2', 'justify-self-center']),
-    )
+    // `.h-toolbar--vertical` aligns its ButtonGroups and `.h-toolbar .h-separator--horizontal` sizes the Separator.
+    expect(wrapper.classes()).toEqual(expect.arrayContaining(['h-toolbar', 'h-toolbar--vertical']))
+    expect(wrapper.find('[data-slot=separator]').classes()).toContain('h-separator--horizontal')
 
     expect(wrapper.find('[data-slot=button-group]').classes()).toEqual(
-      expect.arrayContaining(['justify-start', 'flex-col']),
+      expect.arrayContaining(['h-button-group', 'h-button-group--vertical']),
     )
   })
 
@@ -35,6 +35,5 @@ describe('Toolbar theme', () => {
 
     const separator = wrapper.find('[data-slot=separator]')
     expect(separator.classes()).toContain('w-4')
-    expect(separator.classes()).not.toContain('w-1/2')
   })
 })

@@ -155,19 +155,46 @@ app.use(
 
 The default status icon inside `icon` carries `data-slot="alert-dialog-default-icon"`.
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The AlertDialog component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/alert-dialog/alert-dialog.css)):
+
+#### Base Classes
+
+- `.h-alert-dialog__backdrop` - Overlay backdrop behind the dialog
+- `.h-alert-dialog__container` - Positioning wrapper with placement support
+- `.h-alert-dialog__dialog` - Dialog content container
+- `.h-alert-dialog__header` - Header section for icon and title
+- `.h-alert-dialog__heading` - Heading text styles
+- `.h-alert-dialog__body` - Main content area
+- `.h-alert-dialog__footer` - Footer section for actions
+- `.h-alert-dialog__icon` - Icon container with status colors
+
+The close button carries the [CloseButton](/docs/components/close-button) classes. `placement` adds no class: the container and dialog read their `data-placement` attribute.
+
 #### Backdrop Variants
 
-- `variant="opaque"` - Opaque colored backdrop (default)
-- `variant="blur"` - Blurred backdrop with glass effect
-- `variant="transparent"` - Transparent backdrop (no overlay)
+- `.h-alert-dialog__backdrop--opaque` - Opaque colored backdrop (default)
+- `.h-alert-dialog__backdrop--blur` - Blurred backdrop with glass effect
+- `.h-alert-dialog__backdrop--transparent` - Transparent backdrop (no overlay)
 
 #### Status Variants (Icon)
 
-- `status="default"` - Default gray status
-- `status="accent"` - Accent blue status
-- `status="success"` - Success green status
-- `status="warning"` - Warning orange status
-- `status="danger"` - Danger red status (default)
+- `.h-alert-dialog__icon--default` - Default gray status
+- `.h-alert-dialog__icon--accent` - Accent blue status
+- `.h-alert-dialog__icon--success` - Success green status
+- `.h-alert-dialog__icon--warning` - Warning orange status
+- `.h-alert-dialog__icon--danger` - Danger red status (default)
+
+#### Size Classes
+
+- `.h-alert-dialog__dialog--xs` - Extra small width
+- `.h-alert-dialog__dialog--sm` - Small width
+- `.h-alert-dialog__dialog--md` - Medium width (default)
+- `.h-alert-dialog__dialog--lg` - Large width
+- `.h-alert-dialog__dialog--cover` - Fills the container, keeping its padding
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

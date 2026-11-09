@@ -157,9 +157,29 @@ app.use(
 - `tag` (from the `tag` theme) → `[data-slot="tag"]` – one tag
 - `removeButton` (from the `tag` theme) → `[data-slot="tag-remove-button"]` – the remove button
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-tag-group` and the list `.h-tag-group__list`. Each tag carries `.h-tag` plus `.h-tag--{sm|lg}` (none for the default `md`) and `.h-tag--{default|surface}`. The remove button keeps plain utilities, because they must replace CloseButton's own size. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The TagGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/tag-group/tag-group.css)):
+
+#### Base Classes
+
+- `.h-tag-group` - Base tag group container
+- `.h-tag-group__list` - Container for the list of tags
+- `.h-tag` - Base tag styles
+
+#### Size Classes
+
+- `.h-tag--sm` - Small size tag
+- `.h-tag--lg` - Large size tag
+
+#### Variant Classes
+
+- `.h-tag--default` - Default variant
+- `.h-tag--surface` - Surface variant with surface background
+
+The default `md` size adds no class. The remove button keeps plain utilities, because they must replace CloseButton's own size.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

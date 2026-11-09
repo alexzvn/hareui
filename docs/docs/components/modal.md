@@ -142,6 +142,49 @@ app.use(
 | `footer`       | `modal-footer`        | Footer section for actions, rendered when `#footer` is present                                                              |
 | `closeTrigger` | `modal-close-trigger` | The default close button, rendered unless `closeButton` is `false`                                                          |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Modal component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/modal/modal.css)):
+
+#### Base Classes
+
+- `.h-modal__backdrop` - Overlay backdrop behind the modal
+- `.h-modal__container` - Positioning wrapper with placement support
+- `.h-modal__dialog` - Modal content container
+- `.h-modal__header` - Header section for titles and icons
+- `.h-modal__heading` - Title text
+- `.h-modal__icon` - Icon wrapper before the title
+- `.h-modal__body` - Main content area
+- `.h-modal__footer` - Footer section for actions
+
+The close button carries the [CloseButton](/docs/components/close-button) classes. `placement` adds no class: the container and dialog read their `data-placement` attribute.
+
+#### Backdrop Variants
+
+- `.h-modal__backdrop--opaque` - Opaque colored backdrop (default)
+- `.h-modal__backdrop--blur` - Blurred backdrop with glass effect
+- `.h-modal__backdrop--transparent` - Transparent backdrop (no overlay)
+
+#### Scroll Variants
+
+- `.h-modal__dialog--scroll-inside` - Constrains modal height for body scrolling (default)
+- `.h-modal__body--scroll-inside` - Makes only the body scrollable (default)
+- `.h-modal__container--scroll-outside` - Enables scrolling the entire modal
+- `.h-modal__dialog--scroll-outside` - Lets the dialog grow with its content
+- `.h-modal__body--scroll-outside` - Allows full-page scrolling
+
+#### Size Classes
+
+- `.h-modal__dialog--xs` - Extra small width
+- `.h-modal__dialog--sm` - Small width
+- `.h-modal__dialog--md` - Medium width (default)
+- `.h-modal__dialog--lg` - Large width
+- `.h-modal__dialog--cover` - Fills the container, keeping its padding
+- `.h-modal__dialog--full` - Fills the whole viewport, without radius or shadow
+- `.h-modal__container--full` - Removes the padding and the zoom/slide entrance for the `full` size
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - `data-[state=open]` / `data-[state=closed]` — applied to `backdrop` and `container`

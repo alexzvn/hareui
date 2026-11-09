@@ -91,10 +91,35 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | `trackCircle` | `progress-circle-track-circle` | Background circle |
 | `fillCircle`  | `progress-circle-fill-circle`  | Progress arc      |
 
-These props control styling. Style it through `class`, `ui` or `createHareUI`:
+### CSS Classes
 
-- `size`: `sm`, `md` (default), `lg`
-- `color`: `default`, `accent` (default), `success`, `warning`, `danger`
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ProgressCircle component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/progress-circle/progress-circle.css)):
+
+#### Base & Element Classes
+
+- `.h-progress-circle` - Base container
+- `.h-progress-circle__track` - SVG element
+- `.h-progress-circle__track-circle` - Background circle
+- `.h-progress-circle__fill-circle` - Progress arc
+
+#### Size Classes
+
+- `.h-progress-circle--sm` - Small size variant
+- `.h-progress-circle--lg` - Large size variant
+
+The default `md` size adds no class.
+
+#### Color Classes
+
+- `.h-progress-circle--default` - Default color variant
+- `.h-progress-circle--accent` - Accent color variant
+- `.h-progress-circle--success` - Success color variant
+- `.h-progress-circle--warning` - Warning color variant
+- `.h-progress-circle--danger` - Danger color variant
+
+An indeterminate circle adds no class. The track spins because the root has no `aria-valuenow`.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

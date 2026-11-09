@@ -98,6 +98,40 @@ app.use(
 | `swatch`    | `color-swatch-picker-swatch`    | The ColorSwatch inside the item                     |
 | `indicator` | `color-swatch-picker-indicator` | Check icon wrapper, shown on the selected item only |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ColorSwatchPicker component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/color-swatch-picker/color-swatch-picker.css)):
+
+#### Base Classes
+
+- `.h-color-swatch-picker` - Base container (flex layout)
+- `.h-color-swatch-picker__item` - Individual swatch item wrapper
+- `.h-color-swatch-picker__swatch` - The colour swatch visual element
+- `.h-color-swatch-picker__indicator` - Checkmark shown on the selected item
+
+#### Size Classes
+
+- `.h-color-swatch-picker--xs` - Extra small (16px)
+- `.h-color-swatch-picker--sm` - Small (24px)
+- `.h-color-swatch-picker--lg` - Large (36px)
+- `.h-color-swatch-picker--xl` - Extra large (40px)
+
+The `md` size (32px) is the default and emits no class.
+
+#### Variant Classes
+
+- `.h-color-swatch-picker--square` - Square shape with rounded corners
+
+The `circle` variant is the default and emits no class.
+
+#### Layout Classes
+
+- `.h-color-swatch-picker--stack` - Vertical stacked layout
+
+The `grid` layout (horizontal wrapping) is the default and emits no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Hover**: swatch scales to 1.1 (not while selected)

@@ -21,7 +21,7 @@
           data-slot="alert-dialog-container"
           :data-state="isOpen ? 'open' : 'closed'"
           :data-placement="placement"
-          :class="ui.container()"
+          :class="ui.container({ class: 'pointer-events-none' })"
         >
           <DialogContent
             ref="dialogContent"
@@ -29,7 +29,7 @@
             role="alertdialog"
             :data-placement="placement"
             :aria-describedby="undefined"
-            :class="ui.dialog()"
+            :class="ui.dialog({ class: 'pointer-events-auto' })"
             @escape-key-down="onEscapeKeyDown"
             @interact-outside="onInteractOutside"
             @open-auto-focus="onOpenAutoFocus"
@@ -54,7 +54,11 @@
               </VisuallyHidden>
               <div v-if="hasHeader" data-slot="alert-dialog-header" :class="ui.header()">
                 <slot name="header">
-                  <div v-if="icon" data-slot="alert-dialog-icon" :class="ui.icon()">
+                  <div
+                    v-if="icon"
+                    data-slot="alert-dialog-icon"
+                    :class="ui.icon({ class: 'select-none' })"
+                  >
                     <slot name="icon">
                       <svg
                         v-if="status === 'success'"

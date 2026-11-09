@@ -1,0 +1,36 @@
+/* Spinner: ported from @heroui/styles components/spinner.css. */
+.h-spinner {
+  @apply inline-flex size-6 shrink-0 animate-spin-fast motion-reduce:animate-none;
+}
+
+.h-spinner--sm {
+  @apply size-4;
+}
+
+.h-spinner--lg {
+  @apply size-8;
+}
+
+.h-spinner--xl {
+  @apply size-10;
+}
+
+.h-spinner--current {
+  @apply text-inherit;
+}
+
+.h-spinner--accent {
+  @apply text-accent;
+}
+
+.h-spinner--danger {
+  @apply text-danger;
+}
+
+.h-spinner--success {
+  @apply text-success;
+}
+
+.h-spinner--warning {
+  @apply text-warning;
+}

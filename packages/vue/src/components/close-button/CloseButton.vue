@@ -4,7 +4,7 @@
     data-slot="close-button"
     :aria-label="ariaLabel ?? t('closeButton.close')"
     :disabled="disabled || undefined"
-    :class="ui.base()"
+    :class="ui.base({ class: 'select-none' })"
   >
     <slot>
       <svg

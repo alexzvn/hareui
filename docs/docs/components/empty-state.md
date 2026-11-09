@@ -88,6 +88,53 @@ The `#title`, `#description` and `#actions` slots replace their props.
 - The title is an `h3` and the description a `p`. The icon is decorative.
 - Add `role="status"` when the empty state appears after a search or a filter, so screen readers announce it.
 
+## Styling Reference
+
+Each rendered element carries a `data-slot` attribute, so you can target it with selectors.
+
+| `ui` key      | `data-slot`               | Description                                  |
+| ------------- | ------------------------- | -------------------------------------------- |
+| `base`        | `empty-state`             | Root container                               |
+| `header`      | `empty-state-header`      | Wrapper for the media, title and description |
+| `media`       | `empty-state-media`       | The `icon`, `avatar` or `#leading` content   |
+| `title`       | `empty-state-title`       | Title heading                                |
+| `description` | `empty-state-description` | Description text                             |
+| `actions`     | `empty-state-actions`     | The `#actions` content                       |
+
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The EmptyState component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/empty-state/empty-state.css)):
+
+#### Base & Element Classes
+
+- `.h-empty-state` - Base container, a plain muted line on its own
+- `.h-empty-state__header` - Wrapper for the media, title and description
+- `.h-empty-state__media` - Media container
+- `.h-empty-state__title` - Title heading
+- `.h-empty-state__description` - Description text
+- `.h-empty-state__actions` - Actions row
+
+#### Size Classes
+
+- `.h-empty-state--sm` - Small size variant
+- `.h-empty-state--lg` - Large size variant
+
+The default `md` size adds no class.
+
+#### Variant Classes
+
+- `.h-empty-state--outline` - Dashed border
+- `.h-empty-state--secondary` - Secondary surface background
+
+The default variant adds no class.
+
+#### Modifier Classes
+
+- `.h-empty-state--structured` - Centred column, added with any media, title, description or actions
+- `.h-empty-state__media--icon` - Muted circle around an `icon`
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

@@ -111,6 +111,13 @@
   @apply rounded-[min(32px,calc(var(--radius)*2.5))] border-x-4 border-t-0 border-b-4 border-transparent bg-surface-secondary [--rich-table-corner:min(32px,var(--radius-2xl))];
 }
 
+/* An outer element scrolls the table, so the root isn't a scrollport: `overflow-clip` still clips the header cells to
+ * the rounded frame without creating a scroll container (sticky cells keep following the outer scroller), and the
+ * frame grows with a table wider than that scroller */
+.h-rich-table--external-scroll {
+  @apply w-fit min-w-full overflow-clip;
+}
+
 /* '.table__body tr:first-child td:first-child' etc. */
 .h-rich-table__tbody--primary {
   @apply [&_tr:first-child_td:first-child]:rounded-ss-(--rich-table-corner) [&_tr:first-child_td:last-child]:rounded-se-(--rich-table-corner);

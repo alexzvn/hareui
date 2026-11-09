@@ -13,7 +13,7 @@ describe('Accordion theme', () => {
 
     const indicator = wrapper.find('[data-slot=accordion-indicator]')
     expect(indicator.classes()).toContain('custom')
-    expect(indicator.classes()).toContain('size-4')
+    expect(indicator.classes()).toContain('h-accordion__indicator')
   })
 
   it('renders a string item icon as the icon class', () => {

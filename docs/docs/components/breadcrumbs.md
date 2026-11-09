@@ -142,6 +142,22 @@ app.use(
 
 - `[data-slot="link"][data-current="true"]` – current page indicator (not a link)
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Breadcrumbs component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/breadcrumbs/breadcrumbs.css)):
+
+#### Base Classes
+
+- `.h-breadcrumbs` - Base breadcrumbs container
+- `.h-breadcrumbs__item` - Individual breadcrumb item wrapper
+- `.h-breadcrumbs__link` - Breadcrumb link element, on the Link component next to `.h-link`
+- `.h-breadcrumbs__icon` - Item icon, before the label
+- `.h-breadcrumbs__separator` - Separator icon between items
+
+The current item is styled through `.h-breadcrumbs__link[data-current="true"]` (current page indicator, not a link).
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 The component supports both CSS pseudo-classes and data attributes for flexibility:

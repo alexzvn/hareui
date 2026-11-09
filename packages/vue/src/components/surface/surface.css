@@ -1,0 +1,20 @@
+/* Surface: ported from @heroui/styles components/surface.css */
+.h-surface {
+  @apply relative text-foreground;
+}
+
+.h-surface--transparent {
+  @apply bg-transparent;
+}
+
+.h-surface--default {
+  @apply bg-surface text-surface-foreground;
+}
+
+.h-surface--secondary {
+  @apply bg-surface-secondary text-surface-secondary-foreground;
+}
+
+.h-surface--tertiary {
+  @apply bg-surface-tertiary text-surface-tertiary-foreground;
+}

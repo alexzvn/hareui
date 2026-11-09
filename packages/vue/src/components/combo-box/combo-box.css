@@ -72,3 +72,47 @@
 .h-combo-box__input-group--full-width {
   @apply w-full;
 }
+
+.h-combo-box__value {
+  @apply text-sm wrap-break-word text-field-foreground empty:hidden;
+
+  &[data-placeholder='true'] {
+    @apply text-field-placeholder;
+  }
+
+  /* The selected item's re-rendered indicator */
+  & [data-slot='list-box-item-indicator'] {
+    @apply hidden;
+  }
+}
+
+/* Same open/close animations as Popover; the states sit in zero-specificity selectors, so user utilities win */
+.h-combo-box__popover {
+  /* Reka's combobox content sets an inline `display: flex`; RAC's popover is a block */
+  display: block !important;
+  @apply z-(--z-index-overlay) min-w-(--reka-combobox-trigger-width) origin-(--reka-combobox-content-transform-origin) max-h-(--reka-combobox-content-available-height);
+  @apply scroll-py-1 scrollbar overflow-y-auto overscroll-contain bg-overlay text-overlay-foreground p-0 text-sm outline-none;
+  border-radius: min(32px, var(--radius-3xl));
+  box-shadow: var(--overlay-shadow);
+  @apply [&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-animation-duration:150ms] [&:where([data-state=open])]:ease-smooth [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-95;
+  @apply [&:where([data-state=open])]:[&:where([data-side=top])]:slide-in-from-bottom-1 [&:where([data-state=open])]:[&:where([data-side=bottom])]:slide-in-from-top-1 [&:where([data-state=open])]:[&:where([data-side=left])]:slide-in-from-right-1 [&:where([data-state=open])]:[&:where([data-side=right])]:slide-in-from-left-1;
+  @apply [&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:[--tw-animation-duration:100ms] [&:where([data-state=closed])]:ease-smooth [&:where([data-state=closed])]:zoom-out-95 [&:where([data-state=closed])]:fade-out [&:where([data-state=closed])]:pointer-events-none;
+
+  & [data-slot='list-box'] {
+    @apply p-1.5 outline-none;
+  }
+
+  /* `px-2.5` resets the item's room for its absolutely positioned checkmark: give it back */
+  & [data-slot='list-box-item'] {
+    @apply px-2.5;
+
+    &:has([data-slot='list-box-item-indicator']) {
+      @apply pe-7;
+    }
+
+    /* Single-select closes on selection, so the checkmark isn't animated */
+    & [data-slot='list-box-item-indicator--checkmark'] {
+      @apply transition-none;
+    }
+  }
+}

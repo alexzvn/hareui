@@ -1,0 +1,60 @@
+/* ProgressCircle: ported from @heroui/styles components/progress-circle.css. */
+.h-progress-circle {
+  @apply inline-flex items-center justify-center;
+  --progress-circle-stroke: var(--accent);
+  --progress-circle-track-stroke: var(--default);
+
+  &:disabled,
+  &[data-disabled='true'],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+.h-progress-circle__track {
+  @apply size-7;
+
+  /* Indeterminate: the root has no `aria-valuenow` */
+  .h-progress-circle:not([aria-valuenow]) & {
+    @apply animate-progress-circle-spin motion-reduce:animate-none;
+  }
+}
+
+.h-progress-circle__track-circle {
+  stroke: var(--progress-circle-track-stroke);
+}
+
+.h-progress-circle__fill-circle {
+  stroke: var(--progress-circle-stroke);
+
+  /* motion-reduce must come after the transition */
+  @apply transition-[stroke-dashoffset] duration-300 ease-out motion-reduce:transition-none;
+}
+
+.h-progress-circle--sm .h-progress-circle__track {
+  @apply size-5;
+}
+
+.h-progress-circle--lg .h-progress-circle__track {
+  @apply size-9;
+}
+
+.h-progress-circle--default {
+  --progress-circle-stroke: var(--default-foreground);
+}
+
+.h-progress-circle--accent {
+  --progress-circle-stroke: var(--accent);
+}
+
+.h-progress-circle--success {
+  --progress-circle-stroke: var(--success);
+}
+
+.h-progress-circle--warning {
+  --progress-circle-stroke: var(--warning);
+}
+
+.h-progress-circle--danger {
+  --progress-circle-stroke: var(--danger);
+}

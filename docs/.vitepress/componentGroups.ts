@@ -159,32 +159,7 @@ export const COMPONENT_GROUPS: Record<string, readonly string[]> = {
 }
 
 // Pages that get a "New" badge in the sidebar: components added in the latest release, or since it (`releases/unreleased.md`).
-export const NEW_COMPONENTS: ReadonlySet<string> = new Set([
-  'chain-of-thought',
-  'chat-attachment',
-  'chat-conversation',
-  'chat-list-view',
-  'chat-loader',
-  'chat-message',
-  'chat-message-actions',
-  'chat-source',
-  'chat-tool',
-  'editor-drag-handle',
-  'editor-mention-menu',
-  'editor-suggestion-menu',
-  'map',
-  'markdown',
-  'pressable-feedback',
-  'prompt-input',
-  'prompt-suggestion',
-  'scroll-area',
-  'sheet',
-  'text-shimmer',
-])
+export const NEW_COMPONENTS: ReadonlySet<string> = new Set<string>()
 
 // Pages that get an "Updated" badge in the sidebar: components with new features since the last release.
-export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>([
-  'editor',
-  'rich-table',
-  'tree',
-])
+export const UPDATED_COMPONENTS: ReadonlySet<string> = new Set<string>(['popover'])

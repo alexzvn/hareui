@@ -105,7 +105,25 @@ The ButtonGroup component automatically applies border radius to buttons:
 - Middle buttons have no border radius
 - Single button gets full border radius on all edges
 
-The edge radii are set through CSS variables, so a `rounded-*` class on a Button replaces them.
+A `rounded-*` class on a Button replaces them.
+
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ButtonGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/button-group/button-group.css)):
+
+#### Base Classes
+
+- `.h-button-group` - Base button group container
+- `.h-button-group--horizontal` - Horizontal orientation
+- `.h-button-group--vertical` - Vertical orientation
+- `.h-button-group--full-width` - Full width modifier
+
+#### Element Classes
+
+- `.h-button-group__button` - Each of the group's own Buttons: edge radii, no press scale, collapsed borders for `.h-button--outline`
+- `.h-button-group__separator` - Separator element between buttons
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

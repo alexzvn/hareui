@@ -1,18 +1,12 @@
-// Translated from @heroui/styles components/breadcrumbs.css
-// `link` is merged onto the Link component's own classes (HeroUI's `link breadcrumbs__link`).
+// Maps props to the BEM classes of ./breadcrumbs.css (ported from @heroui/styles components/breadcrumbs.css).
+// `link` lands on the Link component, next to its own `h-link` (HeroUI's `link breadcrumbs__link`).
 export default {
   slots: {
-    base: 'flex items-center gap-1.5',
-    item: 'flex shrink-0 items-center justify-center gap-1',
-    link: [
-      'relative text-sm leading-5 font-medium text-muted no-underline opacity-100',
-      // HeroUI's `[data-current]` rule outranks `.link[aria-disabled]` (the current item is disabled).
-      'data-[current=true]:text-link data-[current=true]:aria-disabled:opacity-100',
-      'hover:underline',
-    ].join(' '),
-    separator: 'size-3 text-muted rtl:rotate-180',
-    // `item.icon`, before the label inside the link
-    icon: 'me-1 size-4 shrink-0',
+    base: 'h-breadcrumbs',
+    item: 'h-breadcrumbs__item',
+    link: 'h-breadcrumbs__link',
+    separator: 'h-breadcrumbs__separator',
+    icon: 'h-breadcrumbs__icon',
   },
   variants: {},
   defaultVariants: {},

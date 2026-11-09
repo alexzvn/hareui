@@ -1,0 +1,136 @@
+/* Slider: ported from @heroui/styles components/slider.css. Every part carries the root's `data-orientation`;
+ * `data-dragging` on the thumb and `data-fill-start`/`data-fill-end` on the track come from Slider.vue. */
+.h-slider {
+  @apply grid w-full grid-cols-[1fr_auto] gap-1;
+  grid-template-areas: 'label output' 'track track';
+
+  &[data-orientation='horizontal'] {
+    @apply flex-col;
+  }
+
+  &[data-orientation='vertical'] {
+    @apply h-full grid-cols-[1fr] grid-rows-[auto_1fr_auto] flex-row gap-2;
+    grid-template-areas: 'output' 'track' 'label';
+  }
+
+  [data-slot='label'] {
+    @apply w-fit text-sm font-medium;
+    grid-area: label;
+  }
+
+  &[data-orientation='vertical'] [data-slot='label'] {
+    @apply text-center;
+  }
+
+  &:disabled,
+  &[data-disabled],
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+
+    [data-slot='label'] {
+      @apply opacity-100;
+    }
+  }
+}
+
+.h-slider__output {
+  @apply text-sm font-medium tabular-nums;
+  grid-area: output;
+
+  &[data-orientation='vertical'] {
+    @apply text-center;
+  }
+}
+
+/* `relative touch-none` sits in Slider.vue, so it survives `unstyled` */
+.h-slider__track {
+  @apply rounded-xl bg-default;
+  grid-area: track;
+
+  &[data-orientation='horizontal'] {
+    @apply h-5 w-full border-x-[0.75rem] border-x-transparent;
+
+    &[data-fill-start='true'] {
+      @apply border-s-accent;
+    }
+
+    &[data-fill-end='true'] {
+      @apply border-e-accent;
+    }
+  }
+
+  &[data-orientation='vertical'] {
+    @apply h-full w-5 justify-self-center border-y-[0.75rem] border-y-transparent;
+
+    &[data-fill-start='true'] {
+      @apply border-b-accent;
+    }
+
+    &[data-fill-end='true'] {
+      @apply border-t-accent;
+    }
+  }
+}
+
+/* `pointer-events-none absolute` sits in Slider.vue: Reka sets only the fill's inline start and end offsets */
+.h-slider__fill {
+  @apply bg-accent;
+
+  &[data-orientation='horizontal'] {
+    @apply h-full;
+  }
+
+  &[data-orientation='vertical'] {
+    @apply w-full;
+  }
+}
+
+.h-slider__thumb {
+  @apply absolute flex cursor-grab items-center justify-center rounded-xl bg-accent no-highlight;
+  transition:
+    background-color 250ms var(--ease-smooth),
+    transform 250ms var(--ease-out),
+    box-shadow 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  /* RAC focuses a hidden <input> inside the thumb, so the thumb never shows a native outline. The `outline: none`
+   * shorthand also resets the width/colour that Chrome's `:focus-visible` UA rule would otherwise set. */
+  outline: none;
+
+  &::after {
+    @apply relative z-10 origin-center rounded-lg bg-accent-foreground text-black shadow-field transition-all motion-reduce:transition-none;
+    content: '';
+  }
+
+  &[data-dragging='true'] {
+    @apply cursor-grabbing after:scale-[0.9] motion-reduce:after:scale-100;
+  }
+
+  &[data-focus-visible='true'] {
+    @apply z-10;
+  }
+
+  &[data-disabled] {
+    @apply cursor-default;
+  }
+
+  /* RAC centres the thumb on both axes (`translate(-50%, -50%)`); Reka's `--reka-slider-thumb-transform` only covers
+   * the main axis, so add the cross axis (sign of the main axis follows Reka: flipped in RTL / from bottom) */
+  &[data-orientation='horizontal'] {
+    @apply top-1/2 h-full w-7 after:h-4 after:w-6;
+    --reka-slider-thumb-transform: translate(-50%, -50%);
+  }
+
+  /* Reka flips the thumb from its own `dir` (prop / ConfigProvider), not CSS direction, and always renders it on the root */
+  [data-slot='slider'][dir='rtl'] &[data-orientation='horizontal'] {
+    --reka-slider-thumb-transform: translate(50%, -50%);
+  }
+
+  /* Reka positions vertical thumbs by `bottom`, RAC by `top`; keep RAC's computed `translate(-50%,-50%)` and move the
+   * thumb down by its full height with the separate `translate` property, so it ends up centred on the value */
+  &[data-orientation='vertical'] {
+    @apply left-1/2 h-7 w-full after:h-6 after:w-4;
+    --reka-slider-thumb-transform: translate(-50%, -50%);
+    translate: 0 100%;
+  }
+}

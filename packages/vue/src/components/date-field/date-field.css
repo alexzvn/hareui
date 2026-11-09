@@ -1,0 +1,17 @@
+/* DateField: ported from @heroui/styles components/date-field.css. Its input group carries the classes of
+ * ../date-input-group/date-input-group.css. */
+.h-date-field {
+  @apply flex flex-col gap-1;
+
+  &:is([data-invalid='true'], [aria-invalid='true']) [data-slot='description'] {
+    @apply hidden;
+  }
+
+  & [data-slot='label'] {
+    @apply w-fit;
+  }
+}
+
+.h-date-field--full-width {
+  @apply w-full;
+}

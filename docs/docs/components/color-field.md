@@ -156,6 +156,36 @@ app.use(
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ColorField component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/color-field/color-field.css)):
+
+#### Base Classes
+
+- `.h-color-field` - Root container
+- `.h-color-field--full-width` - Takes the full width of its container
+
+#### Input Group Classes
+
+- `.h-color-input-group` - Bordered group around the input
+- `.h-color-input-group__input` - The text input
+- `.h-color-input-group__prefix` - Leading content
+- `.h-color-input-group__suffix` - Trailing content
+
+#### Variant Classes
+
+- `.h-color-input-group--secondary` - Secondary variant for use inside surfaces
+- `.h-color-input-group--full-width` - Group takes the full width
+
+The primary variant is the default and emits no class.
+
+#### State Classes
+
+- `.h-color-input-group[data-invalid="true"]` - Invalid state
+- `.h-color-input-group[data-disabled]` - Disabled state
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 ColorField sets these data attributes:

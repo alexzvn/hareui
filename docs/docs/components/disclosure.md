@@ -79,6 +79,22 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `body`      | `disclosure-body`      | Body wrapper inside the content   |
 | `bodyInner` | -                      | Inner wrapper around the body     |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Disclosure component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/disclosure/disclosure.css)):
+
+#### Base Classes
+
+- `.h-disclosure` - Base container styles
+- `.h-disclosure__trigger` - Trigger button styles
+- `.h-disclosure__indicator` - Chevron indicator styles
+- `.h-disclosure__content` - Content container with animations
+- `.h-disclosure__body` - Body wrapper inside the content
+
+The heading and the inner body wrapper carry no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 The component supports both CSS pseudo-classes and data attributes for flexibility:

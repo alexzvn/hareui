@@ -105,6 +105,30 @@ app.use(
 - `fill` → `[data-slot="slider-fill"]` – selected part of the track
 - `thumb` → `[data-slot="slider-thumb"]` – draggable thumb
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Slider component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/slider/slider.css)):
+
+#### Base Classes
+
+- `.h-slider` - Base slider container
+- `.h-slider__output` - Output element displaying current value(s)
+- `.h-slider__track` - Track element containing the fill and thumbs
+- `.h-slider__fill` - Fill element showing the selected range
+- `.h-slider__thumb` - Individual thumb element
+
+#### State Classes
+
+- `.h-slider[data-disabled]` - Disabled slider state
+- `.h-slider[data-orientation="vertical"]` - Vertical orientation
+- `.h-slider__thumb[data-dragging="true"]` - Thumb being dragged
+- `.h-slider__thumb[data-focus-visible="true"]` - Thumb keyboard focused
+- `.h-slider__thumb[data-disabled]` - Disabled thumb state
+- `.h-slider__track[data-fill-start="true"]` - Fill starts at the beginning
+- `.h-slider__track[data-fill-end="true"]` - Fill ends at the end
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Disabled**: `[data-disabled]` on the slider and thumbs

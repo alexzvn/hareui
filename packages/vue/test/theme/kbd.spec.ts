@@ -9,8 +9,7 @@ describe('Kbd theme', () => {
       props: { variant: 'light', keys: 'up', ui: { abbr: 'font-bold' } },
     })
 
-    expect(wrapper.classes()).toContain('bg-transparent')
-    expect(wrapper.classes()).not.toContain('bg-default')
+    expect(wrapper.classes()).toEqual(['h-kbd', 'h-kbd--light'])
     expect(wrapper.get('abbr').classes()).toContain('font-bold')
   })
 })

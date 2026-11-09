@@ -147,9 +147,29 @@ app.use(
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-search-field` (plus `.h-search-field--full-width`). The group carries `.h-search-field__group` (plus `--secondary` and `--full-width` modifiers), and the parts carry `.h-search-field__input` and `.h-search-field__search-icon`. They live in `@layer components`, so any utility from `class` or `ui` wins over them. The clear button keeps Tailwind utilities.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The SearchField component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/search-field/search-field.css)):
+
+#### Base Classes
+
+- `.h-search-field` - Root container
+- `.h-search-field__group` - Container for search icon, input, and clear button with border and background styling
+- `.h-search-field__input` - The search input field
+- `.h-search-field__search-icon` - The search icon displayed on the left
+
+#### Variant Classes
+
+- `.h-search-field__group--secondary` - Secondary variant without shadow, suitable for use in surfaces
+
+#### Modifier Classes
+
+- `.h-search-field--full-width` - Stretches to the container width
+- `.h-search-field__group--full-width` - Stretches the group to the container width
+
+The default `primary` variant adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

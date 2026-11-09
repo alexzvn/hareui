@@ -243,9 +243,26 @@ app.use(
 - `variant: 'secondary'` – without shadow, `bg-default`, for use in surfaces
 - `fullWidth: true` – `w-full`
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-input-group` plus `.h-input-group--secondary` and `.h-input-group--full-width`. The parts carry `.h-input-group__input`, `.h-input-group__prefix` and `.h-input-group__suffix`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The InputGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/input-group/input-group.css)):
+
+#### Base Classes
+
+- `.h-input-group` - Root container with border, background and flex layout
+- `.h-input-group__input` - Input element with transparent background and no border
+- `.h-input-group__prefix` - Prefix container
+- `.h-input-group__suffix` - Suffix container
+
+#### Variant Classes
+
+- `.h-input-group--secondary` - Secondary variant without shadow, for use in surfaces
+
+#### Modifier Classes
+
+- `.h-input-group--full-width` - Stretches to the container width
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

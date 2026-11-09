@@ -77,6 +77,16 @@ app.use(
 
 - `base` → `[data-slot="disclosure-group"]` – base container styles with layout containment
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The DisclosureGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/disclosure-group/disclosure-group.css)):
+
+#### Base Classes
+
+- `.h-disclosure-group` - Base container styles with layout containment
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 The component supports both CSS pseudo-classes and data attributes for flexibility:

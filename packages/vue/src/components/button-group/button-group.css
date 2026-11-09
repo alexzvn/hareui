@@ -1,0 +1,102 @@
+/* ButtonGroup: ported from @heroui/styles components/button-group.css. The group's own Buttons carry
+ * `.h-button-group__button`, so the rules below reach them through any wrapper but not Buttons nested deeper. */
+.h-button-group {
+  @apply inline-flex h-auto items-center justify-center gap-0;
+}
+
+.h-button-group--horizontal {
+  @apply flex-row;
+}
+
+.h-button-group--vertical {
+  @apply flex-col;
+}
+
+.h-button-group--full-width {
+  @apply w-full;
+}
+
+.h-button-group .h-button-group__button {
+  @apply rounded-none;
+
+  &:active,
+  &[data-pressed='true'] {
+    transform: none;
+  }
+
+  /* Raise the focused button so its outward focus ring shows above its neighbours */
+  &:focus-visible {
+    @apply z-10;
+  }
+}
+
+.h-button-group--horizontal .h-button-group__button {
+  &:first-child {
+    @apply rounded-s-3xl;
+  }
+
+  &:last-child {
+    @apply rounded-e-3xl;
+  }
+
+  /* Outline buttons: adjacent borders collapse */
+  &.h-button--outline:first-child {
+    @apply border-e-0;
+  }
+
+  &.h-button--outline:last-child {
+    @apply border-s-0;
+  }
+
+  &.h-button--outline:not(:first-child, :last-child) {
+    @apply border-x-0;
+  }
+}
+
+.h-button-group--vertical .h-button-group__button {
+  &:first-child {
+    @apply rounded-t-3xl;
+  }
+
+  &:last-child {
+    @apply rounded-b-3xl;
+  }
+
+  &.h-button--outline:first-child {
+    @apply border-b-0;
+  }
+
+  &.h-button--outline:last-child {
+    @apply border-t-0;
+  }
+
+  &.h-button--outline:not(:first-child, :last-child) {
+    @apply border-y-0;
+  }
+}
+
+.h-button-group__separator {
+  @apply pointer-events-none absolute rounded-sm bg-current opacity-15;
+
+  /* motion-reduce must come after the transition */
+  transition: opacity 150ms var(--ease-smooth);
+  @apply motion-reduce:transition-none;
+
+  :first-child > & {
+    display: none;
+  }
+
+  .h-button-group--horizontal & {
+    inset-inline-start: -1px;
+    top: 25%;
+    width: 1px;
+    height: 50%;
+  }
+
+  .h-button-group--vertical & {
+    inset-inline-start: 25%;
+    top: -1px;
+    width: 50%;
+    height: 1px;
+  }
+}

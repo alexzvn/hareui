@@ -10,13 +10,18 @@
 @import './base.css' layer(base);
 @import './scrollbar.css' layer(base);
 @import './shadow-root.css' layer(base);
-@import './scroll-shadow.css';
 @import './toast.css';
 @import './dashboard.css';
 
 /* Component classes (BEM), one file per component, all in `@layer components`. That layer sits below utilities, so
  * any utility from `class`, `ui` or a parent theme wins over a component class without tailwind-merge. Component
- * headers only note extra sources of such utilities. */
+ * headers only note extra sources of such utilities.
+ * Order matters where a file restyles another component's classes at equal specificity: it loads after that
+ * component (number-stepper and button-group after button, checkbox-button-group after checkbox,
+ * radio-button-group after radio-group, toolbar after button-group and separator, header after button,
+ * date-picker and date-range-picker after calendar). */
+
+/* Button, calendar and form fields */
 @import '../components/button/button.css' layer(components);
 @import '../components/calendar/calendar.css' layer(components);
 @import '../components/combo-box/combo-box.css' layer(components);
@@ -30,6 +35,8 @@
 @import '../components/search-field/search-field.css' layer(components);
 @import '../components/select/select.css' layer(components);
 @import '../components/text-area/text-area.css' layer(components);
+
+/* Menus and collections */
 @import '../components/dropdown/dropdown.css' layer(components);
 @import '../components/context-menu/context-menu.css' layer(components);
 @import '../components/list-box/list-box.css' layer(components);
@@ -39,12 +46,84 @@
 @import '../components/tabs/tabs.css' layer(components);
 @import '../components/tag-group/tag-group.css' layer(components);
 @import '../components/tree/tree.css' layer(components);
+
+/* Choices and toggles */
 @import '../components/checkbox/checkbox.css' layer(components);
 @import '../components/checkbox-button-group/checkbox-button-group.css' layer(components);
 @import '../components/radio-group/radio-group.css' layer(components);
 @import '../components/radio-button-group/radio-button-group.css' layer(components);
 @import '../components/switch/switch.css' layer(components);
 @import '../components/toggle-button/toggle-button.css' layer(components);
+
+/* Surfaces and disclosure */
+@import '../components/surface/surface.css' layer(components);
+@import '../components/card/card.css' layer(components);
+@import '../components/separator/separator.css' layer(components);
+@import '../components/disclosure/disclosure.css' layer(components);
+@import '../components/disclosure-group/disclosure-group.css' layer(components);
+@import '../components/accordion/accordion.css' layer(components);
+
+/* Groups and bars */
+@import '../components/button-group/button-group.css' layer(components);
+@import '../components/toggle-button-group/toggle-button-group.css' layer(components);
+@import '../components/toolbar/toolbar.css' layer(components);
+@import '../components/header/header.css' layer(components);
+
+/* Date fields and pickers */
+@import '../components/date-field/date-field.css' layer(components);
+@import '../components/time-field/time-field.css' layer(components);
+@import '../components/date-picker/date-picker.css' layer(components);
+@import '../components/date-range-picker/date-range-picker.css' layer(components);
+
+/* Sliders and colors */
+@import '../components/slider/slider.css' layer(components);
+@import '../components/color-slider/color-slider.css' layer(components);
+@import '../components/color-area/color-area.css' layer(components);
+@import '../components/color-field/color-field.css' layer(components);
+@import '../components/color-picker/color-picker.css' layer(components);
+@import '../components/color-swatch/color-swatch.css' layer(components);
+@import '../components/color-swatch-picker/color-swatch-picker.css' layer(components);
+
+/* Overlays */
+@import '../components/popover/popover.css' layer(components);
+@import '../components/tooltip/tooltip.css' layer(components);
+@import '../components/toast-provider/toast-provider.css' layer(components);
+@import '../components/modal/modal.css' layer(components);
+@import '../components/alert-dialog/alert-dialog.css' layer(components);
+@import '../components/drawer/drawer.css' layer(components);
+@import '../components/sheet/sheet.css' layer(components);
+
+/* Feedback */
+@import '../components/alert/alert.css' layer(components);
+@import '../components/empty-state/empty-state.css' layer(components);
+@import '../components/meter/meter.css' layer(components);
+@import '../components/progress-bar/progress-bar.css' layer(components);
+@import '../components/progress-circle/progress-circle.css' layer(components);
+@import '../components/scroll-shadow/scroll-shadow.css' layer(components);
+@import '../components/typography/typography.css' layer(components);
+
+/* Display */
+@import '../components/avatar/avatar.css' layer(components);
+@import '../components/avatar-group/avatar-group.css' layer(components);
+@import '../components/badge/badge.css' layer(components);
+@import '../components/chip/chip.css' layer(components);
+@import '../components/kbd/kbd.css' layer(components);
+@import '../components/spinner/spinner.css' layer(components);
+@import '../components/skeleton/skeleton.css' layer(components);
+@import '../components/close-button/close-button.css' layer(components);
+@import '../components/link/link.css' layer(components);
+@import '../components/breadcrumbs/breadcrumbs.css' layer(components);
+
+/* Text fields and form groups */
+@import '../components/text-field/text-field.css' layer(components);
+@import '../components/description/description.css' layer(components);
+@import '../components/error-message/error-message.css' layer(components);
+@import '../components/fieldset/fieldset.css' layer(components);
+@import '../components/checkbox-group/checkbox-group.css' layer(components);
+@import '../components/switch-group/switch-group.css' layer(components);
+@import '../components/input-otp/input-otp.css' layer(components);
+@import '../components/autocomplete/autocomplete.css' layer(components);
+
 /* Focus and invalid rings of the component classes: in the utilities layer, so they beat a plain user utility like
  * `ring-1` (as the tv utilities did) yet lose to a user state utility like `focus-visible:ring-4` */
 @import './focus.css' layer(utilities);

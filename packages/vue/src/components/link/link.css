@@ -1,0 +1,35 @@
+/* Link: ported from @heroui/styles components/link.css. */
+.h-link {
+  @apply relative inline-flex h-fit w-fit items-center rounded-xl font-medium text-link no-underline decoration-separator-tertiary decoration-[1.5px] underline-offset-4 no-highlight;
+
+  /* motion-reduce must come after the transition */
+  transition:
+    color 100ms var(--ease-smooth),
+    background-color 150ms var(--ease-smooth),
+    box-shadow 150ms var(--ease-out),
+    opacity 100ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  cursor: var(--cursor-interactive);
+
+  @apply hover:underline hover:decoration-muted/50 hover:[&_[data-slot=link-icon]]:opacity-100;
+  @apply active:underline active:decoration-muted active:[&_[data-slot=link-icon]]:opacity-100;
+  @apply focus-visible:[&_[data-slot=link-icon]]:opacity-100;
+  @apply aria-disabled:status-disabled;
+}
+
+.h-link__icon {
+  @apply inline-flex size-[0.75em] shrink-0 items-center justify-center text-current opacity-60;
+
+  /* motion-reduce must come after the transition */
+  transition: opacity 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  & svg {
+    @apply transform-gpu;
+  }
+
+  &[data-default-icon='true'] {
+    @apply ms-1 pb-1.5;
+  }
+}

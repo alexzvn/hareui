@@ -1,0 +1,83 @@
+/* EmptyState: ported from @heroui/styles components/empty-state.css, which styles only the plain line (`.h-empty-state`).
+ * The structured layout (media, title, description, actions) is HareUI's own. */
+.h-empty-state {
+  @apply p-2 text-sm text-muted;
+}
+
+/* Any part beyond the default slot: a centred column, padded by size */
+.h-empty-state--structured {
+  @apply flex flex-col items-center gap-4 px-6 py-8 text-center;
+
+  &.h-empty-state--sm {
+    @apply gap-3 px-4 py-6;
+  }
+
+  &.h-empty-state--lg {
+    @apply gap-5 px-8 py-12;
+  }
+}
+
+.h-empty-state--outline {
+  @apply rounded-2xl border border-dashed border-border;
+}
+
+.h-empty-state--secondary {
+  @apply rounded-2xl bg-surface-secondary;
+}
+
+.h-empty-state__header {
+  @apply flex flex-col items-center gap-2;
+}
+
+.h-empty-state__media {
+  @apply flex shrink-0 items-center justify-center;
+}
+
+/* An avatar or custom `#leading` content brings its own shape */
+.h-empty-state__media--icon {
+  @apply size-12 rounded-full bg-default text-foreground;
+
+  & > * {
+    @apply size-5;
+  }
+
+  .h-empty-state--sm & {
+    @apply size-10;
+
+    & > * {
+      @apply size-4;
+    }
+  }
+
+  .h-empty-state--lg & {
+    @apply size-14;
+
+    & > * {
+      @apply size-6;
+    }
+  }
+}
+
+.h-empty-state__title {
+  @apply m-0 text-base font-semibold text-foreground;
+
+  .h-empty-state--sm & {
+    @apply text-sm;
+  }
+
+  .h-empty-state--lg & {
+    @apply text-lg;
+  }
+}
+
+.h-empty-state__description {
+  @apply m-0 text-sm text-pretty text-muted;
+
+  .h-empty-state--sm & {
+    @apply text-xs;
+  }
+}
+
+.h-empty-state__actions {
+  @apply flex flex-wrap items-center justify-center gap-2;
+}

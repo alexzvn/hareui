@@ -1,0 +1,8 @@
+/* CheckboxGroup: ported from @heroui/styles components/checkbox-group.css. The items carry the Checkbox classes. */
+.h-checkbox-group {
+  @apply flex flex-col;
+
+  & [data-slot='checkbox'] {
+    @apply mt-4;
+  }
+}

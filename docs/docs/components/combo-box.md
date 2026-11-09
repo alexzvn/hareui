@@ -219,9 +219,26 @@ app.use(
 
 ## Styling Reference
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-combo-box` (plus `.h-combo-box--full-width`), the input group carries `.h-combo-box__input-group` (plus `.h-combo-box__input-group--full-width`) and the trigger carries `.h-combo-box__trigger`. They live in `@layer components`, so any utility from `class` or `ui` wins over them. The text input carries the [Input](/docs/components/input) classes. The value and popover keep Tailwind utilities.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ComboBox component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/combo-box/combo-box.css)):
+
+#### Base Classes
+
+- `.h-combo-box` - Base ComboBox container
+- `.h-combo-box__input-group` - Container for the input and trigger button
+- `.h-combo-box__trigger` - The button that triggers the popover
+- `.h-combo-box__value` - The displayed value or placeholder
+- `.h-combo-box__popover` - The popover holding the list box
+
+#### Modifier Classes
+
+- `.h-combo-box--full-width` - Stretches to the container width
+- `.h-combo-box__input-group--full-width` - Stretches the input group to the container width
+
+The text input carries the [Input](/docs/components/input) classes, and the options carry the [ListBox](/docs/components/list-box) classes.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

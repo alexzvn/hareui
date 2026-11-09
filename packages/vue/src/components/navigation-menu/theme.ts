@@ -58,7 +58,7 @@ export default {
     separator: 'my-3 h-px shrink-0 bg-separator',
     viewportWrapper: 'absolute top-full start-0 flex w-full',
     viewport: [
-      'relative z-1 mt-1.5 h-(--reka-navigation-menu-viewport-height) w-full origin-[top_center] overflow-hidden bg-overlay shadow-overlay',
+      'relative z-1 mt-1.5 h-(--reka-navigation-menu-viewport-height) w-full origin-[top_center] overflow-hidden bg-overlay text-overlay-foreground shadow-overlay',
       'rounded-[min(32px,var(--radius-3xl))]',
       // Size/position morph between triggers: 200ms, synced with the content slide and the indicator.
       'transition-[width,height,left,right] duration-200 ease-[ease] motion-reduce:transition-none',

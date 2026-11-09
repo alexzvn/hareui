@@ -34,16 +34,9 @@ export default {
       },
     },
     sticky: {
-      true: {
-        thead: 'h-rich-table__thead--sticky',
-        tfoot: 'h-rich-table__tfoot--sticky',
-      },
-      header: {
-        thead: 'h-rich-table__thead--sticky',
-      },
-      footer: {
-        tfoot: 'h-rich-table__tfoot--sticky',
-      },
+      true: {},
+      header: {},
+      footer: {},
     },
     loading: {
       true: {
@@ -51,7 +44,7 @@ export default {
       },
     },
     externalScroll: {
-      true: '',
+      true: { root: 'h-rich-table--external-scroll' },
     },
     loadingAnimation: {
       carousel: '',

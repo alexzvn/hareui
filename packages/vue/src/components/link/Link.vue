@@ -67,7 +67,7 @@ const Icon = () =>
   h(
     'span',
     {
-      class: ui.value.icon(),
+      class: ui.value.icon({ class: 'pointer-events-none' }),
       'data-default-icon': slots.icon ? undefined : 'true',
       'data-slot': 'link-icon',
     },

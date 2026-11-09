@@ -98,6 +98,60 @@ app.use(
 - `size`: `sm`, `md`, `lg`
 - `placement`: `top-right`, `top-left`, `bottom-right`, `bottom-left`
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Badge component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/badge/badge.css)):
+
+#### Base Classes
+
+- `.h-badge` - Base badge container styles
+- `.h-badge__label` - Label text slot styles
+- `.h-badge-anchor` - Positioning wrapper for the anchored element
+
+#### Color Classes
+
+- `.h-badge--accent` - Accent color variant
+- `.h-badge--danger` - Danger color variant
+- `.h-badge--default` - Default color variant
+- `.h-badge--success` - Success color variant
+- `.h-badge--warning` - Warning color variant
+
+#### Variant Classes
+
+- `.h-badge--primary` - Primary variant with filled background
+- `.h-badge--soft` - Soft variant with lighter background
+
+The `secondary` variant adds no class: it keeps the default background.
+
+#### Size Classes
+
+- `.h-badge--sm` - Small size
+- `.h-badge--lg` - Large size
+
+The default `md` size adds no class.
+
+#### Placement Classes
+
+- `.h-badge--top-right` - Position at top-right corner (default)
+- `.h-badge--top-left` - Position at top-left corner
+- `.h-badge--bottom-right` - Position at bottom-right corner
+- `.h-badge--bottom-left` - Position at bottom-left corner
+
+#### Compound Variant Classes
+
+- `.h-badge--primary.h-badge--accent` - Primary accent with filled background
+- `.h-badge--primary.h-badge--default` - Primary default with filled background
+- `.h-badge--primary.h-badge--success` - Primary success with filled background
+- `.h-badge--primary.h-badge--warning` - Primary warning with filled background
+- `.h-badge--primary.h-badge--danger` - Primary danger with filled background
+- `.h-badge--soft.h-badge--accent` - Soft accent with lighter background
+- `.h-badge--soft.h-badge--default` - Soft default with lighter background
+- `.h-badge--soft.h-badge--success` - Soft success with lighter background
+- `.h-badge--soft.h-badge--warning` - Soft warning with lighter background
+- `.h-badge--soft.h-badge--danger` - Soft danger with lighter background
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

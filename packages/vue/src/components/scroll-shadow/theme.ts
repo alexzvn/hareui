@@ -1,17 +1,18 @@
+// Maps props to the BEM classes of ./scroll-shadow.css (ported from @heroui/styles components/scroll-shadow.css).
 export default {
   slots: {
-    base: 'relative',
+    base: 'h-scroll-shadow',
   },
   variants: {
     orientation: {
-      vertical: { base: 'overflow-y-auto' },
-      horizontal: { base: 'overflow-x-auto' },
+      vertical: { base: 'h-scroll-shadow--vertical' },
+      horizontal: { base: 'h-scroll-shadow--horizontal' },
     },
     hideScrollBar: {
-      // Split so `scrollbar` and `scrollbar-none` never meet in one class list.
-      false: { base: 'scrollbar' },
-      true: { base: 'scrollbar-none [--scroll-shadow-scrollbar-size:0px]' },
+      true: { base: 'h-scroll-shadow--hide-scrollbar' },
+      false: {},
     },
+    // The only variant: the fade masks are the root's own styles
     variant: {
       fade: {},
     },

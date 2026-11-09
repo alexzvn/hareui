@@ -92,10 +92,35 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | `track`  | `meter-track`  | Track background                                 |
 | `fill`   | `meter-fill`   | Filled portion of the track                      |
 
-These props control styling (HareUI renders Tailwind utilities, so style through `class`, `ui` or `createHareUI`):
+### CSS Classes
 
-- `size`: `sm` (thinner track), `md` (default), `lg` (thicker track)
-- `color`: `default`, `accent` (default), `success`, `warning`, `danger`
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Meter component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/meter/meter.css)):
+
+#### Base & Element Classes
+
+- `.h-meter` - Base container (grid layout)
+- `.h-meter__output` - Value text display
+- `.h-meter__track` - Track background
+- `.h-meter__fill` - Filled portion of the track
+
+The label is styled through `.h-meter [data-slot='label']`, on top of the Label classes.
+
+#### Size Classes
+
+- `.h-meter--sm` - Small size variant (thinner track)
+- `.h-meter--lg` - Large size variant (thicker track)
+
+The default `md` size adds no class.
+
+#### Color Classes
+
+- `.h-meter--default` - Default color variant
+- `.h-meter--accent` - Accent color variant
+- `.h-meter--success` - Success color variant
+- `.h-meter--warning` - Warning color variant
+- `.h-meter--danger` - Danger color variant
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

@@ -2,8 +2,14 @@
   <div ref="root" v-bind="rootAttrs" :class="ui.base()">
     <!-- `base` is HareUI's own wrapper (HeroUI composes Label/InputOTP/Description itself), so it carries no data-slot -->
     <FieldLabel :for="id" />
-    <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input> -->
-    <div ref="box" data-input-otp-container="true" :class="ui.root()">
+    <!-- Like the `input-otp` library's container: HeroUI's `data-slot="input-otp"` and state attributes land on the <input>,
+         and only the <input> takes the pointer. These pointer classes are kept in the .vue (not BEM) so it survives `unstyled` -->
+    <div
+      ref="box"
+      data-input-otp-container="true"
+      class="pointer-events-none select-none"
+      :class="ui.root()"
+    >
       <template v-for="(indexes, groupIndex) in groupSlots" :key="groupIndex">
         <div data-slot="input-otp-group" :class="ui.group()">
           <div
@@ -28,6 +34,7 @@
           :class="ui.separator()"
         />
       </template>
+      <!-- `pointer-events-auto` is kept in the .vue (not BEM) so it survives `unstyled` -->
       <input
         v-bind="fieldAttrs.focus"
         :id="id"
@@ -51,6 +58,7 @@
         data-slot="input-otp"
         :data-disabled="disabled ? 'true' : undefined"
         :data-invalid="invalid ? 'true' : undefined"
+        class="pointer-events-auto"
         :class="ui.input()"
         :style="
           shouldPushPwmBadge

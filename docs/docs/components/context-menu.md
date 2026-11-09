@@ -185,9 +185,23 @@ Submenu popovers use the `popover` and `menu` classes too. Their `data-slot` val
 - `variant="default"` - Default item styling (per item, `item.variant`)
 - `variant="danger"` - Danger item styling: label and indicators in the danger colour
 
-### CSS classes
+### CSS Classes
 
-The menu reuses the [Dropdown](/docs/components/dropdown) classes (`.h-dropdown__menu`, `.h-dropdown__item`, …). The trigger carries `.h-context-menu__trigger`, the popover `.h-context-menu__popover`, and items and separators add `.h-context-menu__item` and `.h-context-menu__separator`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ContextMenu component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/context-menu/context-menu.css)):
+
+#### Base Classes
+
+- `.h-context-menu__trigger` - The area that opens the menu
+- `.h-context-menu__popover` - The popover container
+
+#### MenuItem Classes
+
+- `.h-context-menu__item` - Menu item
+- `.h-context-menu__separator` - Separator between items or sections
+
+The menu also carries the [Dropdown](/docs/components/dropdown) classes.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

@@ -1,19 +1,19 @@
-// Translated from @heroui/styles components/card.css
+// Maps props to the BEM classes of ./card.css (ported from @heroui/styles components/card.css).
 export default {
   slots: {
-    base: 'relative flex flex-col gap-3 overflow-visible p-4 shadow-surface rounded-[min(32px,var(--radius-3xl))]',
-    header: 'flex flex-col',
-    title: 'text-sm leading-6 font-medium text-foreground',
-    description: 'text-sm leading-5 text-muted',
-    content: 'flex flex-1 flex-col gap-1',
-    footer: 'flex flex-row items-center',
+    base: 'h-card',
+    header: 'h-card__header',
+    title: 'h-card__title',
+    description: 'h-card__description',
+    content: 'h-card__content',
+    footer: 'h-card__footer',
   },
   variants: {
     variant: {
-      default: { base: 'bg-surface' },
-      secondary: { base: 'bg-surface-secondary' },
-      tertiary: { base: 'bg-surface-tertiary' },
-      transparent: { base: 'border-none bg-transparent shadow-none' },
+      default: { base: 'h-card--default' },
+      secondary: { base: 'h-card--secondary' },
+      tertiary: { base: 'h-card--tertiary' },
+      transparent: { base: 'h-card--transparent' },
     },
   },
   defaultVariants: {

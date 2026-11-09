@@ -1,0 +1,4 @@
+/* DisclosureGroup: ported from @heroui/styles components/disclosure-group.css */
+.h-disclosure-group {
+  @apply w-full [contain:layout_style];
+}

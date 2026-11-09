@@ -1,0 +1,45 @@
+/* Alert: ported from @heroui/styles components/alert.css. */
+.h-alert {
+  @apply flex w-full flex-row items-start justify-start gap-4 bg-surface px-4 py-3 shadow-surface;
+  border-radius: min(32px, var(--radius-3xl));
+}
+
+.h-alert__indicator {
+  @apply flex items-center justify-center p-1 select-none;
+
+  & [data-slot='alert-default-icon'] {
+    @apply box-content size-4;
+  }
+}
+
+.h-alert__content {
+  @apply flex h-full grow flex-col items-start;
+}
+
+.h-alert__title {
+  @apply text-sm leading-6 font-medium;
+}
+
+.h-alert__description {
+  @apply text-sm text-muted;
+}
+
+.h-alert--default :is(.h-alert__indicator, .h-alert__title) {
+  @apply text-foreground;
+}
+
+.h-alert--accent :is(.h-alert__indicator, .h-alert__title) {
+  @apply text-accent-soft-foreground;
+}
+
+.h-alert--success :is(.h-alert__indicator, .h-alert__title) {
+  @apply text-success-soft-foreground;
+}
+
+.h-alert--warning :is(.h-alert__indicator, .h-alert__title) {
+  @apply text-warning-soft-foreground;
+}
+
+.h-alert--danger :is(.h-alert__indicator, .h-alert__title) {
+  @apply text-danger-soft-foreground;
+}

@@ -76,6 +76,30 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | -------- | -------------- | ------------------------------------------------------------- |
 | `base`   | `color-swatch` | Base swatch styles with checkered background for transparency |
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The ColorSwatch component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/color-swatch/color-swatch.css)):
+
+#### Base Classes
+
+- `.h-color-swatch` - Base swatch styles with checkered background for transparency
+
+#### Shape Classes
+
+- `.h-color-swatch--circle` - Circular shape (default)
+- `.h-color-swatch--square` - Square shape with rounded corners
+
+#### Size Classes
+
+- `.h-color-swatch--xs` - Extra small (16px)
+- `.h-color-swatch--sm` - Small (24px)
+- `.h-color-swatch--lg` - Large (36px)
+- `.h-color-swatch--xl` - Extra large (40px)
+
+The `md` size (32px) is the default and emits no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

@@ -79,8 +79,27 @@ Each rendered element carries a `data-slot` attribute, so you can target it with
 | `description` | `alert-description` | Alert description text (renders as `span`) |
 | `close`       | `alert-close`       | Close button, rendered with `closeButton`  |
 
-The `status` prop sets the colors. HareUI renders utility classes, so style through `class`, `ui`
-or `createHareUI`.
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Alert component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/alert/alert.css)):
+
+#### Base Classes
+
+- `.h-alert` - Base alert container
+- `.h-alert__indicator` - Icon/indicator container
+- `.h-alert__content` - Content wrapper for title and description
+- `.h-alert__title` - Alert title text
+- `.h-alert__description` - Alert description text
+
+#### Status Variant Classes
+
+- `.h-alert--default` - Default gray status
+- `.h-alert--accent` - Accent blue status
+- `.h-alert--success` - Success green status
+- `.h-alert--warning` - Warning yellow/orange status
+- `.h-alert--danger` - Danger red status
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

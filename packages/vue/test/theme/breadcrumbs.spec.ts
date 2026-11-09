@@ -18,6 +18,6 @@ describe('Breadcrumbs theme', () => {
     })
 
     const sep = wrapper.find('[data-slot=breadcrumbs-separator]')
-    expect(sep.classes()).toEqual(expect.arrayContaining(['dot', 'size-3', 'text-muted']))
+    expect(sep.classes()).toEqual(expect.arrayContaining(['dot', 'h-breadcrumbs__separator']))
   })
 })

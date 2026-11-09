@@ -138,6 +138,29 @@ app.use(
 - `separator` → `[data-slot="input-otp-separator"]` — the dash between groups
 - `input` → `[data-slot="input-otp"]` — the real, invisible `<input>`
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The InputOtp component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/input-otp/input-otp.css)):
+
+#### Base Classes
+
+- `.h-input-otp-field` - HareUI's wrapper around the label, box, description and error
+- `.h-input-otp` - The box that holds the groups
+- `.h-input-otp__group` - Group of slots
+- `.h-input-otp__slot` - Individual input slot
+- `.h-input-otp__slot-value` - The character inside a slot
+- `.h-input-otp__caret` - Blinking caret indicator
+- `.h-input-otp__separator` - Visual separator between groups
+- `.h-input-otp__input` - The real, invisible `<input>` over the box
+
+#### Variant Classes
+
+- `.h-input-otp--secondary` - Secondary variant without shadow, suitable for use in surfaces
+
+The default `primary` variant adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Active**: `[data-active="true"]` on the slot that currently owns the (hidden) selection

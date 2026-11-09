@@ -1,0 +1,76 @@
+/* Avatar: ported from @heroui/styles components/avatar.css. */
+.h-avatar {
+  /* AvatarGroup's clip seam reads the avatar size */
+  --avatar-size: 2.5rem;
+  @apply relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-default;
+}
+
+.h-avatar__image {
+  @apply absolute inset-0 aspect-square size-full transition-opacity duration-250 motion-reduce:transition-none;
+}
+
+.h-avatar__fallback {
+  @apply flex size-full items-center justify-center bg-default text-sm font-medium;
+}
+
+.h-avatar--sm {
+  --avatar-size: 2rem;
+  @apply size-8 rounded-2xl;
+
+  & > .h-avatar__fallback {
+    @apply text-xs;
+  }
+}
+
+.h-avatar--lg {
+  --avatar-size: 3rem;
+  @apply size-12 rounded-3xl;
+
+  & > .h-avatar__fallback {
+    @apply text-base;
+  }
+}
+
+.h-avatar__fallback--accent {
+  @apply text-accent-soft-foreground;
+}
+
+.h-avatar__fallback--default {
+  @apply text-default-soft-foreground;
+}
+
+.h-avatar__fallback--success {
+  @apply text-success-soft-foreground;
+}
+
+.h-avatar__fallback--warning {
+  @apply text-warning-soft-foreground;
+}
+
+.h-avatar__fallback--danger {
+  @apply text-danger-soft-foreground;
+}
+
+.h-avatar--soft {
+  @apply bg-transparent;
+
+  & > .h-avatar__fallback--accent {
+    @apply bg-accent-soft text-accent-soft-foreground;
+  }
+
+  & > .h-avatar__fallback--success {
+    @apply bg-success-soft text-success-soft-foreground;
+  }
+
+  & > .h-avatar__fallback--warning {
+    @apply bg-warning-soft text-warning-soft-foreground;
+  }
+
+  & > .h-avatar__fallback--default {
+    @apply bg-default-soft text-default-soft-foreground;
+  }
+
+  & > .h-avatar__fallback--danger {
+    @apply bg-danger-soft text-danger-soft-foreground;
+  }
+}

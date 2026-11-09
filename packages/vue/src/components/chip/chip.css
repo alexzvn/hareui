@@ -1,0 +1,89 @@
+/* Chip: ported from @heroui/styles components/chip.css. */
+.h-chip {
+  --chip-bg: var(--default);
+  --chip-fg: currentColor;
+  @apply inline-flex w-fit shrink-0 items-center gap-0.5 rounded-2xl bg-(--chip-bg) px-2 py-0.5 text-xs leading-5 font-medium text-(--chip-fg);
+}
+
+.h-chip__label {
+  @apply px-0.5;
+}
+
+.h-chip--accent {
+  --chip-fg: var(--accent-soft-foreground);
+}
+
+.h-chip--danger {
+  --chip-fg: var(--danger-soft-foreground);
+}
+
+.h-chip--default {
+  --chip-fg: var(--default-foreground);
+}
+
+.h-chip--success {
+  --chip-fg: var(--success-soft-foreground);
+}
+
+.h-chip--warning {
+  --chip-fg: var(--warning-soft-foreground);
+}
+
+.h-chip--tertiary {
+  --chip-bg: transparent;
+}
+
+.h-chip--sm {
+  @apply px-1 py-0 text-xs;
+}
+
+.h-chip--lg {
+  @apply px-3 py-1 text-sm font-medium;
+}
+
+/* Primary: solid background */
+.h-chip--primary.h-chip--accent {
+  --chip-bg: var(--accent);
+  --chip-fg: var(--accent-foreground);
+}
+
+.h-chip--primary.h-chip--success {
+  --chip-bg: var(--success);
+  --chip-fg: var(--success-foreground);
+}
+
+.h-chip--primary.h-chip--warning {
+  --chip-bg: var(--warning);
+  --chip-fg: var(--warning-foreground);
+}
+
+.h-chip--primary.h-chip--danger {
+  --chip-bg: var(--danger);
+  --chip-fg: var(--danger-foreground);
+}
+
+/* Soft: muted background */
+.h-chip--soft.h-chip--accent {
+  --chip-bg: var(--accent-soft);
+  --chip-fg: var(--accent-soft-foreground);
+}
+
+.h-chip--soft.h-chip--success {
+  --chip-bg: var(--success-soft);
+  --chip-fg: var(--success-soft-foreground);
+}
+
+.h-chip--soft.h-chip--warning {
+  --chip-bg: var(--warning-soft);
+  --chip-fg: var(--warning-soft-foreground);
+}
+
+.h-chip--soft.h-chip--danger {
+  --chip-bg: var(--danger-soft);
+  --chip-fg: var(--danger-soft-foreground);
+}
+
+.h-chip--soft.h-chip--default {
+  --chip-bg: var(--default-soft);
+  --chip-fg: var(--default-soft-foreground);
+}

@@ -121,9 +121,15 @@ app.use(
 
 Inside a checkbox, switch or radio, the error is stacked like a description, without the collapse transition.
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-field-error`. It lives in `@layer components`, so any utility from `class` or `ui` wins over it.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The FieldError component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/field-error/field-error.css)):
+
+#### Base Classes
+
+- `.h-field-error` - Base error styles with danger color
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

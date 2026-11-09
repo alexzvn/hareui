@@ -67,7 +67,24 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 | -------- | ----------- | ---------------------- |
 | `base`   | `surface`   | Base surface container |
 
-The `variant` prop sets the background: transparent, default, secondary or tertiary. To restyle it, use `class`, `ui` or `createHareUI`.
+The `variant` prop sets the background: transparent, default, secondary or tertiary.
+
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Surface component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/surface/surface.css)):
+
+#### Base Classes
+
+- `.h-surface` - Base surface container
+
+#### Variant Classes
+
+- `.h-surface--transparent` - Transparent surface variant (bg-transparent)
+- `.h-surface--default` - Default surface variant (bg-surface)
+- `.h-surface--secondary` - Secondary surface variant (bg-surface-secondary)
+- `.h-surface--tertiary` - Tertiary surface variant (bg-surface-tertiary)
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## API Reference
 

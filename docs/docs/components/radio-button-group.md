@@ -173,9 +173,35 @@ The default indicator is the radio dot from [RadioGroup](/docs/components/radio-
 
 The card radius comes from `--radio-button-group-item-radius` (default `var(--radius-2xl)`).
 
-### CSS classes
+### CSS Classes
 
-RadioButtonGroup's own styles are `.h-radio-button-group` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-radio-button-group` (plus `.h-radio-button-group--grid` with `layout="grid"`). Each card carries `.h-radio-button-group__item`, and its parts carry `__indicator` (plus `__indicator--custom` for a custom icon), `__content`, `__icon`, `__text`, `__label` and `__description`. With an icon, `__content--with-icon` and `__text--with-icon` are added.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The RadioButtonGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/radio-button-group/radio-button-group.css)):
+
+#### Base Classes
+
+- `.h-radio-button-group` - Root container
+- `.h-radio-button-group__item` - One selectable card
+- `.h-radio-button-group__indicator` - Radio indicator in the card corner
+- `.h-radio-button-group__content` - Content row of the card
+- `.h-radio-button-group__icon` - Leading icon
+- `.h-radio-button-group__text` - Label and description column
+- `.h-radio-button-group__label` - Card label
+- `.h-radio-button-group__description` - Card description
+
+#### Modifier Classes
+
+- `.h-radio-button-group--grid` - `layout="grid"`
+- `.h-radio-button-group__indicator--custom` - Indicator with a custom icon
+- `.h-radio-button-group__content--with-icon` - Content row when an icon is set
+- `.h-radio-button-group__text--with-icon` - Text column when an icon is set
+
+#### Radio Classes
+
+- `.h-radio__control` - Radio control, restyled inside a card
+- `.h-radio__indicator` - Radio dot, restyled inside a card
+- `.h-radio__indicator--secondary` - Secondary radio dot, restyled inside a card
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

@@ -161,6 +161,38 @@ app.use(
 
 > **Note:** [Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error) and [RangeCalendar](/docs/components/range-calendar) have their own themes. See their respective pages for customization options.
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The DateRangePicker component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/date-range-picker/date-range-picker.css)):
+
+#### Base Classes
+
+- `.h-date-range-picker` - Root wrapper
+- `.h-date-range-picker__trigger` - Trigger button that opens the popover
+- `.h-date-range-picker__trigger-indicator` - Default or custom indicator inside the trigger
+- `.h-date-range-picker__range-separator` - Separator between the start and end inputs
+- `.h-date-range-picker__popover` - Popover content wrapper
+
+#### Modifier Classes
+
+- `.h-date-range-picker--full-width` - Stretches to the container width
+
+#### Input Group Classes
+
+The field carries the classes of the internal DateInputGroup part, shared with DateField, TimeField and DatePicker ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/date-input-group/date-input-group.css)):
+
+- `.h-date-input-group` - Container for the segments and the trigger, with border and background styling
+- `.h-date-input-group__input-container` - Scrollable container around both inputs, rendered with the `input-container` prop
+- `.h-date-input-group__input` - Wrapper around the start or the end segments
+- `.h-date-input-group__segment` - Each individual date part
+- `.h-date-input-group__suffix` - Holds the trigger button
+- `.h-date-input-group--secondary` - Secondary variant without shadow, suitable for use in surfaces
+- `.h-date-input-group--full-width` - Stretches the group to the container width
+
+The default `primary` variant adds no class. The popover's RangeCalendar carries the [RangeCalendar classes](/docs/components/range-calendar#css-classes).
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ### Interactive States
 
 - **Open**: `[data-state="open"|"closed"]` on the trigger and the popover

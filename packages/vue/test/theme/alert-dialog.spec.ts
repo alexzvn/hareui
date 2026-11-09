@@ -13,7 +13,7 @@ describe('AlertDialog theme', () => {
 
     await nextTick()
     const icon = document.querySelector('[data-slot=alert-dialog-icon]')
-    expect(icon?.className).toContain('bg-danger-soft')
+    expect(icon?.classList).toContain('h-alert-dialog__icon--danger')
     wrapper.unmount()
   })
 })

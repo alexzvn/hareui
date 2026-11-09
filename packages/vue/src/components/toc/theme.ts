@@ -43,7 +43,7 @@ export default {
       'after:transition-all after:duration-150 motion-reduce:after:transition-none',
     ],
     panel: [
-      'z-(--z-index-overlay) max-h-[min(60vh,400px)] overflow-y-auto overscroll-contain rounded-2xl bg-overlay p-1.5 shadow-overlay outline-none',
+      'z-(--z-index-overlay) max-h-[min(60vh,400px)] overflow-y-auto overscroll-contain rounded-2xl bg-overlay text-overlay-foreground p-1.5 shadow-overlay outline-none',
       'origin-(--reka-popover-content-transform-origin)',
       // `[&:where(…)]` keeps the animation states at zero added specificity, so user utilities win.
       '[&:where([data-state=open])]:animate-in [&:where([data-state=open])]:[--tw-animation-duration:150ms] [&:where([data-state=open])]:ease-out [&:where([data-state=open])]:fade-in-0 [&:where([data-state=open])]:zoom-in-97',

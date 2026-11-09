@@ -21,8 +21,8 @@ const waitUnmount = async () => {
   await nextTick()
 }
 
-// happy-dom has no CSS animations. Emulate them from the theme: a closed element whose classes declare a closed-state
-// animation (the backdrop's exit, the dialog's `presence-hold`) reports a running one, so reka's Presence keeps it
+// happy-dom has no CSS animations. Emulate alert-dialog.css's closed-state ones (the backdrop's exit, the dialog's
+// `presence-hold`): a closed element with those classes reports a running animation, so reka's Presence keeps it
 // mounted (`unmountSuspended`) until `animationend`. The backdrop's exit is the shortest, so `finishExit` ends only that.
 const stubExitAnimations = () => {
   const original = window.getComputedStyle.bind(window)
@@ -31,7 +31,7 @@ const stubExitAnimations = () => {
 
     const animatesClosed =
       el.getAttribute?.('data-state') === 'closed' &&
-      /\[data-state=closed\]\)\]:animate-(?!none)/.test(el.getAttribute('class') ?? '')
+      el.matches('.h-alert-dialog__backdrop, .h-alert-dialog__dialog')
 
     if (!animatesClosed) return real
 

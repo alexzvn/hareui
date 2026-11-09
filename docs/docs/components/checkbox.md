@@ -129,9 +129,24 @@ app.use(
 
 > **Note:** The optional [Description](/docs/components/description) and [FieldError](/docs/components/field-error) children have their own themes. See their respective pages for customization options.
 
-### CSS classes
+### CSS Classes
 
-Checkbox's own styles are `.h-checkbox` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-checkbox`, and the slots carry `.h-checkbox__content`, `.h-checkbox__control` and `.h-checkbox__indicator`. `variant="secondary"` adds `.h-checkbox__control--secondary` to the control. States are styled from the root's data attributes below, so there are no state classes.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Checkbox component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/checkbox/checkbox.css)):
+
+#### Base Classes
+
+- `.h-checkbox` - Base checkbox container (the field)
+- `.h-checkbox__content` - Clickable label wrapping the control and label text
+- `.h-checkbox__control` - Checkbox control box
+- `.h-checkbox__indicator` - Checkbox checkmark indicator
+
+#### Variant Classes
+
+- `.h-checkbox__control--secondary` - Secondary control box
+
+States come from the root's data attributes below, not from classes.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

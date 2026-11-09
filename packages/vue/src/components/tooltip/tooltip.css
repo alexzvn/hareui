@@ -1,0 +1,31 @@
+/* Tooltip: ported from @heroui/styles components/tooltip.css. React Aria's `[data-entering]` / `[data-exiting]` map to
+ * Reka's `data-state` (`delayed-open` / `instant-open` while open, `closed` while leaving). */
+.h-tooltip {
+  @apply max-w-xs origin-(--trigger-anchor-point) bg-overlay text-overlay-foreground p-2 text-xs break-all;
+  /* React Aria sets `z-index: 100000` inline on tooltips (HeroUI base.css `--z-index-overlay`); Reka copies it to the
+   * wrapper. */
+  @apply z-(--z-index-overlay);
+  @apply [border-radius:min(32px,var(--radius-xl))] shadow-overlay;
+
+  /* Before the animations: `duration-*` and `ease-*` below then set the transition's timing too */
+  @apply [&:where([data-state=delayed-open])]:transition-[opacity,transform] [&:where([data-state=delayed-open])]:will-change-[opacity,transform];
+  @apply [&:where([data-state=instant-open])]:transition-[opacity,transform] [&:where([data-state=instant-open])]:will-change-[opacity,transform];
+  @apply [&:where([data-state=closed])]:transition-[opacity,transform] [&:where([data-state=closed])]:will-change-[opacity,transform];
+
+  @apply [&:where([data-state=delayed-open])]:animate-in [&:where([data-state=delayed-open])]:duration-150 [&:where([data-state=delayed-open])]:ease-smooth [&:where([data-state=delayed-open])]:fade-in-0 [&:where([data-state=delayed-open])]:zoom-in-90;
+  @apply [&:where([data-state=instant-open])]:animate-in [&:where([data-state=instant-open])]:duration-150 [&:where([data-state=instant-open])]:ease-smooth [&:where([data-state=instant-open])]:fade-in-0 [&:where([data-state=instant-open])]:zoom-in-90;
+  @apply [&:where([data-state=delayed-open])]:[&:where([data-side=top])]:slide-in-from-bottom-1 [&:where([data-state=instant-open])]:[&:where([data-side=top])]:slide-in-from-bottom-1;
+  @apply [&:where([data-state=delayed-open])]:[&:where([data-side=bottom])]:slide-in-from-top-1 [&:where([data-state=instant-open])]:[&:where([data-side=bottom])]:slide-in-from-top-1;
+  @apply [&:where([data-state=delayed-open])]:[&:where([data-side=left])]:slide-in-from-right-1 [&:where([data-state=instant-open])]:[&:where([data-side=left])]:slide-in-from-right-1;
+  @apply [&:where([data-state=delayed-open])]:[&:where([data-side=right])]:slide-in-from-left-1 [&:where([data-state=instant-open])]:[&:where([data-side=right])]:slide-in-from-left-1;
+  @apply [&:where([data-state=closed])]:animate-out [&:where([data-state=closed])]:duration-100 [&:where([data-state=closed])]:ease-smooth [&:where([data-state=closed])]:zoom-out-95 [&:where([data-state=closed])]:fade-out [&:where([data-state=closed])]:pointer-events-none;
+
+  & [data-slot='overlay-arrow'] {
+    @apply fill-(--overlay) stroke-border/40;
+  }
+}
+
+/* Shortcut wrapper after the text, separated from it by a middle dot; hidden on small (touch) screens */
+.h-tooltip__kbds {
+  @apply hidden shrink-0 items-center gap-0.5 align-middle lg:inline-flex not-first-of-type:before:ms-1 not-first-of-type:before:me-1 not-first-of-type:before:content-['·'];
+}

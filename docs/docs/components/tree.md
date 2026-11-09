@@ -198,9 +198,44 @@ Set `virtualize` to render only the rows in view, for trees with hundreds or tho
 
 <ComponentPreview name="tree/virtualize" />
 
-## CSS classes
+## Styling Reference
 
-The root carries `.h-tree` plus `.h-tree--{sm|md|lg}`, `.h-tree--accent` (none for the default color) and, for `showGuideLines`, `.h-tree--guide-lines-{false|hover}`. Rows carry `.h-tree__link` inside `.h-tree__item`; their parts carry `.h-tree__{guide-line|chevron|label|trailing|drop-indicator}`, nested lists `.h-tree__group` and the empty state `.h-tree__empty`. Icon and checkbox parts keep plain utilities. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Tree component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/tree/tree.css)):
+
+#### Base Classes
+
+- `.h-tree` - Base tree container
+- `.h-tree__item` - A tree item
+- `.h-tree__group` - The nested list of a folder's children
+- `.h-tree__link` - The row of a tree item
+- `.h-tree__guide-line` - The guide line of an ancestor level
+- `.h-tree__chevron` - The expand and collapse chevron
+- `.h-tree__link-indicator` - The row's selection indicator
+- `.h-tree__label` - The row label
+- `.h-tree__trailing` - The trailing content of a row
+- `.h-tree__drop-indicator` - The drop position line shown while dragging
+- `.h-tree__empty` - The empty state
+
+#### Size Classes
+
+- `.h-tree--sm` - Small rows
+- `.h-tree--md` - Medium rows (default)
+- `.h-tree--lg` - Large rows
+
+#### Variant Classes
+
+- `.h-tree--accent` - Accent selection color
+
+#### Modifier Classes
+
+- `.h-tree--guide-lines-false` - Hides the guide lines
+- `.h-tree--guide-lines-hover` - Shows the guide lines only while the tree is hovered
+
+The default color and the default `showGuideLines` value add no class. Icon and checkbox parts keep plain utilities.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ## Motion
 

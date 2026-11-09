@@ -18,16 +18,25 @@ describe('AvatarGroup theme', () => {
     })
 
     const [first, second] = wrapper.element.children
-    expect(first.className).toContain('size-12')
-    expect(second.className).toContain('size-8')
-    expect(second.className).not.toContain('size-12')
+    expect(first.classList).toContain('h-avatar--lg')
+    expect(second.classList).toContain('h-avatar--sm')
+    expect(second.classList).not.toContain('h-avatar--lg')
   })
 
-  it('grid drops the stacked overlap', () => {
+  it('stacks with the clip overlap unless grid is set', () => {
     const stacked = mount(AvatarGroup, { slots: { default: avatars(2) } })
     const grid = mount(AvatarGroup, { props: { grid: true }, slots: { default: avatars(2) } })
-    expect(stacked.classes().join(' ')).toContain('mask-image')
-    expect(grid.classes().join(' ')).not.toContain('mask-image')
-    expect(grid.classes()).toContain('flex-wrap')
+    expect(stacked.classes()).toEqual(['h-avatar-group', 'h-avatar-group--clip'])
+    expect(grid.classes()).toContain('h-avatar-group--grid')
+  })
+
+  it('maps overlap="ring" to the ring modifier', () => {
+    const wrapper = mount(AvatarGroup, {
+      props: { overlap: 'ring' },
+      slots: { default: avatars(2) },
+    })
+
+    expect(wrapper.classes()).toContain('h-avatar-group--ring')
+    expect(wrapper.classes()).not.toContain('h-avatar-group--clip')
   })
 })

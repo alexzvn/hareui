@@ -1,0 +1,107 @@
+/* ColorSwatchPicker: ported from @heroui/styles components/color-swatch-picker.css. Reka's ListboxItem exposes
+ * selection as `data-state="checked"` (RAC: `data-selected`). The swatch is a ColorSwatch: its rules here carry two
+ * classes so they beat `.h-color-swatch`'s size and radius. */
+.h-color-swatch-picker {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.h-color-swatch-picker--stack {
+  @apply flex-col;
+}
+
+.h-color-swatch-picker__item {
+  @apply relative flex size-8 cursor-(--cursor-interactive) items-center justify-center rounded-2xl border-2 border-transparent outline-none no-highlight;
+  transition:
+    border-color 100ms var(--ease-out),
+    box-shadow 100ms var(--ease-out);
+  @apply transform-gpu motion-reduce:transition-none;
+
+  &[data-disabled] {
+    @apply status-disabled;
+  }
+
+  /* Selected: ring in the swatch colour with a white gap (swatch shrinks) */
+  &[data-state='checked'] {
+    border-color: var(--color-swatch-current);
+    box-shadow: var(--field-shadow);
+  }
+}
+
+.h-color-swatch-picker__item .h-color-swatch-picker__swatch {
+  @apply static block size-full rounded-[inherit];
+  /* The swatch is a ColorSwatch, whose `.h-color-swatch` draws a checkered `background` and an inset shadow; HeroUI's
+   * picker swatch is a bare colour, so drop both */
+  background-image: none;
+  box-shadow: none;
+  transition: transform 100ms var(--ease-out);
+  @apply transform-gpu motion-reduce:transition-none;
+
+  &:hover {
+    @media (hover: hover) {
+      transform: scale(1.1);
+    }
+  }
+}
+
+.h-color-swatch-picker__item[data-state='checked'] .h-color-swatch-picker__swatch {
+  transform: scale(0.77);
+}
+
+.h-color-swatch-picker__indicator {
+  @apply pointer-events-none absolute inset-0 z-10 flex items-center justify-center;
+
+  & > * {
+    @apply size-1/3 text-white motion-reduce:transition-none;
+    transform: scale(0) translateZ(0);
+    transition: transform 150ms var(--ease-out);
+  }
+}
+
+.h-color-swatch-picker__item[data-state='checked'] .h-color-swatch-picker__indicator > * {
+  transform: scale(1) translateZ(0);
+}
+
+/* Sizes */
+.h-color-swatch-picker--xs .h-color-swatch-picker__item {
+  @apply size-4 rounded-lg border;
+}
+
+.h-color-swatch-picker--sm .h-color-swatch-picker__item {
+  @apply size-6 rounded-xl border-2;
+}
+
+.h-color-swatch-picker--lg .h-color-swatch-picker__item {
+  @apply size-9 rounded-3xl border-3;
+}
+
+.h-color-swatch-picker--xl .h-color-swatch-picker__item {
+  @apply size-10 rounded-3xl border-3;
+}
+
+/* Square, after the sizes: its radius wins over theirs */
+.h-color-swatch-picker--square {
+  .h-color-swatch-picker__item {
+    @apply rounded-xl;
+  }
+
+  .h-color-swatch-picker__swatch {
+    @apply rounded-lg;
+  }
+
+  &.h-color-swatch-picker--xs {
+    .h-color-swatch-picker__item,
+    .h-color-swatch-picker__swatch {
+      @apply rounded-md;
+    }
+  }
+
+  &.h-color-swatch-picker--sm {
+    .h-color-swatch-picker__item {
+      @apply rounded-lg;
+    }
+
+    .h-color-swatch-picker__item[data-state='checked'] .h-color-swatch-picker__swatch {
+      @apply rounded-md;
+    }
+  }
+}

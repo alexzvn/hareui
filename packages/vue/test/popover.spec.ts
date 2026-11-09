@@ -99,6 +99,46 @@ describe('popover', () => {
     expect(document.activeElement).toBe(triggerEl())
   })
 
+  const pressOutside = () => {
+    outside!.dispatchEvent(
+      new PointerEvent('pointerdown', { bubbles: true, button: 0, pointerType: 'mouse' }),
+    )
+
+    outside!.dispatchEvent(
+      new PointerEvent('pointerup', { bubbles: true, button: 0, pointerType: 'mouse' }),
+    )
+
+    outside!.click()
+  }
+
+  it('leaves the outside usable when not modal', async () => {
+    mountPopover({ defaultOpen: true, modal: false })
+    await settle()
+    expect(content()).not.toBeNull()
+
+    // A modal popover makes the outside inert, blocks its pointer events and locks scroll
+    expect(hiddenFromAT(outside!)).toBe(false)
+    expect(document.body.style.pointerEvents).not.toBe('none')
+    expect(getComputedStyle(document.body).overflow).not.toBe('hidden')
+
+    const onClick = vi.fn<() => void>()
+    outside!.addEventListener('click', onClick)
+    pressOutside()
+    await settle()
+
+    expect(onClick).toHaveBeenCalledOnce()
+  })
+
+  it('closes on an outside press when not modal', async () => {
+    const w = mountPopover({ defaultOpen: true, modal: false })
+    await settle()
+
+    pressOutside()
+    await settle()
+
+    expect(w.emitted('update:open')?.at(-1)).toEqual([false])
+  })
+
   it('marks the trigger pressed only while the popover is open', async () => {
     // behaviour-final-check P3
     const w = mountPopover({ defaultOpen: true })

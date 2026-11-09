@@ -80,6 +80,16 @@ app.use(
 
 Inside a [TextField](/docs/components/text-field) with `[data-invalid="true"]`, the description is hidden.
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Description component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/description/description.css)):
+
+#### Base Classes
+
+- `.h-description` - Base description styles with `muted` text color
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

@@ -127,9 +127,29 @@ app.use(
 - `size="md"` – medium size variant (default)
 - `size="lg"` – large size variant
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-pagination` plus `.h-pagination--{sm|lg}` (none for the default `md`). Parts carry `.h-pagination__{summary|content|item|link|ellipsis}`; Previous / Next links add `.h-pagination__link--nav` and their icon wrappers `.h-pagination__icon`. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Pagination component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/pagination/pagination.css)):
+
+#### Base & Layout Classes
+
+- `.h-pagination` - Root navigation container with flex layout
+- `.h-pagination__summary` - Left-side info text container
+- `.h-pagination__content` - Container for pagination items
+- `.h-pagination__item` - Individual item wrapper
+- `.h-pagination__link` - Page number button (ghost button style)
+- `.h-pagination__link--nav` - Navigation button modifier (Previous/Next)
+- `.h-pagination__icon` - Icon wrapper of the Previous/Next links
+- `.h-pagination__ellipsis` - Ellipsis indicator
+
+#### Size Classes
+
+- `.h-pagination--sm` - Small size variant
+- `.h-pagination--lg` - Large size variant
+
+The default `md` size adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

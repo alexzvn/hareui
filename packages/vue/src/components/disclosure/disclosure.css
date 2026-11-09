@@ -1,0 +1,37 @@
+/* Disclosure: ported from @heroui/styles components/disclosure.css */
+.h-disclosure {
+  @apply relative;
+}
+
+.h-disclosure__trigger {
+  @apply inline-block cursor-(--cursor-interactive) no-highlight;
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    @apply status-disabled;
+  }
+}
+
+/* Inside a Button, HeroUI's `.button svg` margin (higher specificity) beats `ms-auto` */
+.h-disclosure__indicator {
+  @apply [:not([data-slot=button])>&]:ms-auto size-4 shrink-0 text-inherit;
+  @apply transition duration-250 motion-reduce:transition-none;
+  @apply data-[expanded=true]:-rotate-180;
+}
+
+.h-disclosure__content {
+  @apply h-(--disclosure-panel-height) [overflow:var(--disclosure-panel-overflow,clip)] opacity-0;
+  /* motion-reduce must come after the transition */
+  @apply [transition:height_200ms_var(--ease-out-quad),opacity_200ms_var(--ease-out)] motion-reduce:transition-none;
+  @apply data-[expanded=true]:opacity-100 data-[expanded=true]:will-change-[height,opacity];
+}
+
+.h-disclosure__body {
+  @apply p-2;
+}
+
+/* Inside a Button the indicator keeps its 16px box over the button's svg rule (specificity 0,2,2), as its size
+ * utility did */
+.h-button .h-disclosure__indicator[data-slot='disclosure-indicator'] {
+  @apply size-4;
+}

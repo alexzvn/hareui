@@ -1,0 +1,182 @@
+/* Header: HareUI's own app bar (HeroUI's `.header` is the listbox section heading, unrelated). Breakpoint modifiers sit
+ * on each element, not on the root, because the menu repeats the bar's pieces in a teleported copy outside it. */
+.h-header {
+  @apply sticky top-0 z-40 h-(--header-height) bg-background;
+  --header-height: 4rem;
+
+  /* Hide-on-scroll: the bar keeps its layout box and only slides out (`--navbar-transition-duration: .3s`, CSS `ease`).
+   * motion-reduce must come after the transition */
+  @apply transition-transform duration-300 ease-[ease] motion-reduce:transition-none;
+
+  &[data-hidden='true'] {
+    @apply -translate-y-full;
+  }
+}
+
+/* Inner row: 1024px max width, 24px inline padding and 16px gap at every width */
+.h-header__container {
+  @apply mx-auto flex h-full w-full max-w-(--container-max-width) items-center justify-between gap-4 px-(--container-padding);
+}
+
+.h-header__left {
+  @apply flex items-center gap-2;
+}
+
+.h-header__center {
+  @apply items-center gap-1;
+}
+
+.h-header__right {
+  @apply flex items-center justify-end gap-1.5;
+}
+
+.h-header__title {
+  @apply flex shrink-0 items-center gap-2 rounded-lg text-lg font-semibold text-foreground no-underline outline-none;
+}
+
+/* Menu toggle: a 36px square Button with `--radius` corners; `.h-button` doubles the class to beat Button's own rules */
+.h-button.h-header__toggle {
+  @apply rounded-lg;
+  --button-height: --spacing(9);
+}
+
+/* Pull the toggle out by the gap around its 24px icon, so the icon's edge sits on the container padding */
+.h-button.h-header__toggle--left {
+  @apply -ms-1.5;
+}
+
+.h-button.h-header__toggle--right {
+  @apply -me-1.5;
+}
+
+/* Two 24px hairlines 8px apart that rotate into an X (`transform 0.15s`, CSS `ease`) */
+.h-header__toggle-icon {
+  @apply flex h-full w-6 flex-col items-center justify-center;
+
+  &::before,
+  &::after {
+    @apply block h-px w-6 bg-current content-[""];
+    /* motion-reduce must come after the transition */
+    @apply transition-transform duration-150 ease-[ease] motion-reduce:transition-none;
+  }
+
+  &::before {
+    @apply -translate-y-1;
+  }
+
+  &::after {
+    @apply translate-y-1;
+  }
+
+  &[data-open='true']::before {
+    @apply translate-y-[0.5px] rotate-45;
+  }
+
+  &[data-open='true']::after {
+    @apply -translate-y-[0.5px] -rotate-45;
+  }
+}
+
+/* The menu's own header row repeats the bar (same height and container) */
+.h-header__menu-header {
+  @apply flex h-(--header-height) shrink-0;
+  --header-height: 4rem;
+}
+
+/* Same inline padding and max width as the container, so the item pills line up with the title */
+.h-header__menu-body {
+  @apply mx-auto min-h-0 w-full max-w-(--container-max-width) flex-1 overflow-y-auto overscroll-contain px-(--container-padding) pt-2 pb-6 text-foreground;
+}
+
+.h-header__menu-body--drawer {
+  @apply pt-6;
+}
+
+/* The viewport width from which the default slot shows inline and the toggle is dropped */
+.h-header__left--sm,
+.h-header__right--sm {
+  @variant sm {
+    @apply flex-1;
+  }
+}
+
+.h-header__center--sm {
+  @apply hidden;
+
+  @variant sm {
+    @apply flex;
+  }
+}
+
+.h-button.h-header__toggle--sm {
+  @variant sm {
+    @apply hidden;
+  }
+}
+
+.h-header__left--md,
+.h-header__right--md {
+  @variant md {
+    @apply flex-1;
+  }
+}
+
+.h-header__center--md {
+  @apply hidden;
+
+  @variant md {
+    @apply flex;
+  }
+}
+
+.h-button.h-header__toggle--md {
+  @variant md {
+    @apply hidden;
+  }
+}
+
+.h-header__left--lg,
+.h-header__right--lg {
+  @variant lg {
+    @apply flex-1;
+  }
+}
+
+.h-header__center--lg {
+  @apply hidden;
+
+  @variant lg {
+    @apply flex;
+  }
+}
+
+.h-button.h-header__toggle--lg {
+  @variant lg {
+    @apply hidden;
+  }
+}
+
+.h-header__left--xl,
+.h-header__right--xl {
+  @variant xl {
+    @apply flex-1;
+  }
+}
+
+.h-header__center--xl {
+  @apply hidden;
+
+  @variant xl {
+    @apply flex;
+  }
+}
+
+.h-button.h-header__toggle--xl {
+  @variant xl {
+    @apply hidden;
+  }
+}
+
+.h-header__center--none {
+  @apply hidden;
+}

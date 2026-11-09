@@ -1,0 +1,41 @@
+/* ColorArea: ported from @heroui/styles components/color-area.css. `relative` on the area sits in ColorArea.vue, which
+ * also sets its background inline (Reka's `getAreaBackgroundStyle`) and tracks the thumb's `data-dragging` and
+ * `data-focus-visible`. */
+.h-color-area {
+  @apply aspect-square w-full max-w-56 shrink-0 rounded-2xl shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] no-highlight;
+
+  /* Reka's ColorAreaArea sets a boolean `data-disabled` */
+  &[data-disabled] {
+    @apply status-disabled;
+  }
+}
+
+.h-color-area--show-dots::after {
+  @apply pointer-events-none absolute inset-0 rounded-[inherit];
+  content: '';
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* Reka positions the thumb inline (`left`/`top`/`transform`), so only visual styles live here */
+.h-color-area__thumb {
+  @apply size-4 rounded-xl border-3 border-white bg-(--color-area-thumb-color) no-highlight will-change-[width,height];
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  transition:
+    width 150ms var(--ease-out),
+    height 150ms var(--ease-out);
+  @apply motion-reduce:transition-none;
+
+  /* Reka focuses the thumb itself; the `outline: none` shorthand also resets Chrome's `:focus-visible` UA width/colour */
+  outline: none;
+
+  &[data-dragging='true'] {
+    @apply size-5;
+  }
+
+  &[data-disabled] {
+    @apply status-disabled;
+  }
+}

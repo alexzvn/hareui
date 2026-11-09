@@ -1,0 +1,51 @@
+/* ColorSwatch: ported from @heroui/styles components/color-swatch.css. Reka's ColorSwatch primitive exposes the
+ * resolved colour as `--reka-color-swatch-color` (HeroUI sets `--color-swatch-current` inline instead). */
+.h-color-swatch {
+  @apply relative box-border size-8 shrink-0;
+  /* Checkered background pattern for transparency */
+  background:
+    linear-gradient(var(--reka-color-swatch-color), var(--reka-color-swatch-color)),
+    repeating-conic-gradient(#efefef 0% 25%, #f7f7f7 0% 50%) 50% / 16px 16px;
+  /* Default border for visibility against similar backgrounds */
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.h-color-swatch--circle {
+  @apply rounded-2xl;
+}
+
+.h-color-swatch--square {
+  @apply rounded-md;
+}
+
+.h-color-swatch--xs {
+  @apply size-4;
+
+  &.h-color-swatch--circle {
+    @apply rounded-lg;
+  }
+}
+
+.h-color-swatch--sm {
+  @apply size-6;
+
+  &.h-color-swatch--circle {
+    @apply rounded-xl;
+  }
+}
+
+.h-color-swatch--lg {
+  @apply size-9;
+
+  &.h-color-swatch--circle {
+    @apply rounded-3xl;
+  }
+}
+
+.h-color-swatch--xl {
+  @apply size-10;
+
+  &.h-color-swatch--circle {
+    @apply rounded-3xl;
+  }
+}

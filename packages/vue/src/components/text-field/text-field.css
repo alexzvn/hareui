@@ -1,0 +1,17 @@
+/* TextField: ported from @heroui/styles components/textfield.css (`textfield`, so it can't clash with Tailwind's `text-`). */
+.h-textfield {
+  @apply flex flex-col gap-1;
+
+  &:is([data-invalid='true'], [aria-invalid='true']) [data-slot='description'] {
+    @apply hidden;
+  }
+}
+
+.h-textfield--full-width {
+  @apply w-full;
+
+  & [data-slot='input'],
+  & [data-slot='textarea'] {
+    @apply w-full;
+  }
+}

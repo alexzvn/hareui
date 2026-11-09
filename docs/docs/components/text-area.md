@@ -89,9 +89,23 @@ app.use(
 
 - `base` → `[data-slot="textarea"]` – Underlying `<textarea>` element styling
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-text-area` plus `.h-text-area--secondary` and `.h-text-area--full-width` from the matching props. They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The TextArea component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/text-area/text-area.css)):
+
+#### Base Classes
+
+- `.h-text-area` - Underlying `<textarea>` element styling
+
+#### Variant Classes
+
+- `.h-text-area--secondary` - Secondary variant without shadow, for use in surfaces
+
+#### Modifier Classes
+
+- `.h-text-area--full-width` - Stretches to the container width
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

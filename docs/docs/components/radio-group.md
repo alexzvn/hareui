@@ -149,9 +149,28 @@ app.use(
 
 > **Note:** The child components ([Label](/docs/components/label), [Description](/docs/components/description), [FieldError](/docs/components/field-error)) have their own themes. See their respective pages for customization options.
 
-### CSS classes
+### CSS Classes
 
-RadioGroup's own styles are `.h-radio-group` / `.h-radio` classes in `@layer components`, so any utility you add through `class` or `ui` wins. The root carries `.h-radio-group` plus `.h-radio-group--vertical` or `.h-radio-group--horizontal`. Each item carries `.h-radio`, and its slots carry `.h-radio__content`, `.h-radio__control` and `.h-radio__indicator`. `variant="secondary"` adds `.h-radio__control--secondary` and `.h-radio__indicator--secondary`. Items keep the `group/radio` class, so `group-data-[selected=true]/radio:` utilities work inside them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The RadioGroup component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/radio-group/radio-group.css)):
+
+#### Base Classes
+
+- `.h-radio-group` - Base radio group container
+- `.h-radio` - Individual radio item
+- `.h-radio__content` - Label wrapping the control and label text
+- `.h-radio__control` - Radio control (circular button)
+- `.h-radio__indicator` - Radio indicator (inner dot)
+
+#### Modifier Classes
+
+- `.h-radio-group--vertical` - Vertical layout
+- `.h-radio-group--horizontal` - Horizontal layout
+- `.h-radio__control--secondary` - Secondary control
+- `.h-radio__indicator--secondary` - Secondary indicator
+
+Items keep the `group/radio` class, so `group-data-[selected=true]/radio:` utilities work inside them.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 

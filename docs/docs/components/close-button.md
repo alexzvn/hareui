@@ -62,7 +62,22 @@ app.use(
 | `base`   | `close-button`      | The root `<button>`            |
 | `icon`   | `close-button-icon` | The default close icon `<svg>` |
 
-### Interactive states
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The CloseButton component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/close-button/close-button.css)):
+
+#### Base Classes
+
+- `.h-close-button` - Base component styles
+
+#### Variant Classes
+
+- `.h-close-button--default` - Default variant
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them. Their selectors
+have zero specificity, so a component that embeds CloseButton can restyle it with its own class too.
+
+### Interactive States
 
 - **Hover**: `:hover`
 - **Active/Pressed**: `:active`

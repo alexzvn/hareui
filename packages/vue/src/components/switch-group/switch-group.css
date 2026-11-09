@@ -1,0 +1,17 @@
+/* SwitchGroup: ported from @heroui/styles components/switch-group.css. */
+.h-switch-group {
+  @apply flex flex-col gap-6;
+}
+
+.h-switch-group__items {
+  @apply flex gap-4;
+}
+
+/* Child combinator, so a nested group keeps its own orientation */
+.h-switch-group--horizontal > .h-switch-group__items {
+  @apply flex-row;
+}
+
+.h-switch-group--vertical > .h-switch-group__items {
+  @apply flex-col;
+}

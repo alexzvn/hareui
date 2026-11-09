@@ -86,6 +86,24 @@ Kbd renders no `data-slot` attributes. Style it with `class`, the `ui` prop or t
 - `abbr` – abbreviation element for modifier keys
 - `content` – content wrapper for key text
 
+### CSS Classes
+
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Kbd component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/kbd/kbd.css)):
+
+#### Base Classes
+
+- `.h-kbd` - Base keyboard key styles with background and spacing
+- `.h-kbd__abbr` - Abbreviation element for modifier keys
+- `.h-kbd__content` - Content wrapper for key text
+
+#### Variant Classes
+
+- `.h-kbd--light` - Transparent background
+
+The default variant adds no class.
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
+
 ## API Reference
 
 ### Props

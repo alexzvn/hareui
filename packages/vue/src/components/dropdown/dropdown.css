@@ -1,7 +1,7 @@
 /* Dropdown menu: ported from @heroui/styles components/{dropdown,menu-item,menu-section,header}.css. ContextMenu
  * reuses the menu parts; its own classes live in ../context-menu/context-menu.css. */
 .h-dropdown__popover {
-  @apply max-h-(--reka-dropdown-menu-content-available-height) max-w-[48svw] origin-(--reka-dropdown-menu-content-transform-origin) scroll-py-1 scrollbar overflow-y-auto overscroll-contain bg-overlay p-0 text-sm;
+  @apply max-h-(--reka-dropdown-menu-content-available-height) max-w-[48svw] origin-(--reka-dropdown-menu-content-transform-origin) scroll-py-1 scrollbar overflow-y-auto overscroll-contain bg-overlay text-overlay-foreground p-0 text-sm;
   @apply md:[:where(&)]:min-w-55;
   @apply rounded-[min(32px,var(--radius-3xl))] shadow-overlay;
   @apply z-(--z-index-overlay) outline-none;

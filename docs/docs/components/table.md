@@ -148,9 +148,37 @@ Each rendered element carries a `data-slot` attribute you can target in selector
 
 Use the `variant` prop to change the look: `primary` (the default, rows on a secondary surface) or `secondary`. To restyle further, use `class`, `ui` or `createHareUI`.
 
-### CSS classes
+### CSS Classes
 
-The root carries `.h-table` plus `.h-table--{primary|secondary}`; every other part carries `.h-table__{part}` (`__scroll-container`, `__content`, `__header`, `__column`, `__body`, `__row`, `__cell`, `__column-resizer`, `__footer`, …). They live in `@layer components`, so any utility from `class` or `ui` wins over them.
+HareUI follows the [BEM](https://getbem.com/) methodology to keep component variants and states reusable and easy to customize. The Table component uses these CSS classes ([View source styles](https://github.com/alexzvn/hareui/blob/main/packages/vue/src/components/table/table.css)):
+
+#### Base Classes
+
+- `.h-table` - Root container
+- `.h-table__scroll-container` - Horizontal scroll wrapper with custom scrollbar
+- `.h-table__content` - The `<table>` element
+- `.h-table__header` - Header row (`<thead>`)
+- `.h-table__column` - Column header cell (`<th>`)
+- `.h-table__body` - Body section (`<tbody>`)
+- `.h-table__row` - Row element (`<tr>`)
+- `.h-table__cell` - Data cell (`<td>`)
+- `.h-table__footer` - Footer container (outside table)
+
+#### Advanced Classes
+
+- `.h-table__column-resizer` - Drag handle for column resizing
+- `.h-table__resizable-container` - Wrapper enabling column resizing
+- `.h-table__sortable-column-header` - Content of a sortable column header
+- `.h-table__sortable-column-indicator` - Sort direction indicator
+- `.h-table__load-more` - Sentinel row for infinite scrolling
+- `.h-table__load-more-content` - Styled container for the loading indicator
+
+#### Variant Classes
+
+- `.h-table--primary` - Gray background container with card-style body (default)
+- `.h-table--secondary` - No background, standalone rounded headers
+
+The classes sit in `@layer components`, so a utility you pass through `class` or `ui` wins over them.
 
 ### Interactive States
 
