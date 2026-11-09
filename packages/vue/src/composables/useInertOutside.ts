@@ -3,12 +3,18 @@ import { onScopeDispose, toValue, watch } from 'vue'
 
 type Target = Element | { $el: Element | null } | null | undefined
 
+// At the top of a shadow tree `parentElement` is null: continue from the shadow host.
+const parentAcrossShadow = (node: Element) =>
+  node.parentElement ?? (node.parentNode instanceof ShadowRoot ? node.parentNode.host : null)
+
 /**
  * Reka's modal overlays hide the rest of the page with `aria-hidden`, which leaves its buttons and links
  * focusable inside an aria-hidden tree (axe `aria-hidden-focus`). React Aria makes the outside `inert`
  * instead, so nothing there can be focused or clicked. This sets `inert` on the same nodes Reka hides
  * (every sibling along the path from the overlay content up to `<body>`, keeping live regions such as
- * toasts) while the content is mounted and `open` is true, and removes only the `inert` it added.
+ * toasts) while the content is mounted and `open` is true, and removes only the `inert` it added. The path
+ * crosses shadow roots, so an overlay inside a shadow tree keeps its host, and the host's other shadow
+ * children turn inert like any other sibling.
  *
  * `open` must turn false synchronously when the overlay starts closing (a `flush: 'sync'` source such as
  * the component's `update:open` handler): Reka returns focus to the trigger in a pre-flush watcher, which an
@@ -26,14 +32,30 @@ export const useInertOutside = (
 
   const apply = (el: Element) => {
     const body = el.ownerDocument.body
+    const root = el.getRootNode()
+    const liveRoots = root instanceof ShadowRoot ? [body, root] : [body]
     const keep = new Set<Element>()
-    for (const kept of [el, ...body.querySelectorAll('[aria-live], script')]) {
-      for (let node: Element | null = kept; node && !keep.has(node); node = node.parentElement)
+
+    const keptRoots = [
+      el,
+      ...liveRoots.flatMap((r) => [...r.querySelectorAll('[aria-live], script')]),
+    ]
+
+    for (const kept of keptRoots) {
+      for (
+        let node: Element | null = kept;
+        node && !keep.has(node);
+        node = parentAcrossShadow(node)
+      )
         keep.add(node)
     }
 
+    // A host is walked through its shadow root only when the kept path runs through it.
     const walk = (parent: Element) => {
-      for (const child of parent.children) {
+      const shadow = parent.shadowRoot
+      const isOnPath = shadow && [...shadow.children].some((c) => keep.has(c))
+      const children = isOnPath ? [...shadow.children, ...parent.children] : parent.children
+      for (const child of children) {
         if (child === el) continue
 
         if (keep.has(child)) {
